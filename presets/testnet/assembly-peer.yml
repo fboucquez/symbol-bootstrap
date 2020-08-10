@@ -1,0 +1,15 @@
+nodes:
+    - harvesting: true
+      type: peer-node
+      syncsource: true
+      filespooling: false
+      partialtransaction: false
+      name: 'peer-node'
+      openPort: true
+      host: 'peer-node'
+      sinkType: 'Sync'
+      roles: 'Peer'
+      enableSingleThreadPool: true
+      addressextraction: false
+      mongo: false
+      zeromq: false

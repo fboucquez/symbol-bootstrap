@@ -1,0 +1,33 @@
+databases:
+    - name: 'db'
+      openPort: false
+nodes:
+    - harvesting: true
+      type: peer-node
+      enableDispatcherInputAuditing: false
+      syncsource: true
+      filespooling: true
+      partialtransaction: true
+      name: 'api-node'
+      databaseHost: 'db'
+      host: ''
+      openPort: true
+      sinkType: 'Async'
+      roles: 'Api,Peer'
+      enableSingleThreadPool: false
+      brokerHost: 'api-broker'
+      openBrokerPort: true
+      addressextraction: true
+      enableAutoSyncCleanup: false
+      mongo: true
+      zeromq: true
+gateways:
+    - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
+      name: 'rest-gateway'
+      apiNodeHost: 'api-node'
+      apiNodeBrokerHost: 'api-broker'
+      description: 'catapult public test network'
+      databaseHost: 'db'
+      maxConnectionAttempts: 5
+      baseRetryDelay: 500
+      openPort: true

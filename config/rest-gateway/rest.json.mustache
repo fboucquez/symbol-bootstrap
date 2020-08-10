@@ -1,0 +1,80 @@
+{
+  "network": {
+    "name": "{{{networkName}}}",
+    "description": "{{{description}}}",
+    "propertiesFilePath": "{{{apiNodeConfigPath}}}/config-network.properties"
+  },
+
+  "port": 3000,
+  "crossDomain": {
+    "allowedHosts": ["*"],
+    "allowedMethods": ["GET", "POST", "PUT", "OPTIONS"]
+  },
+  "extensions": [
+    "accountLink",
+    "aggregate",
+    "lockHash",
+    "lockSecret",
+    "mosaic",
+    "metadata",
+    "multisig",
+    "namespace",
+    "receipts",
+    "restrictions",
+    "transfer"
+  ],
+  "db": {
+    "url": "mongodb://{{{databaseHost}}}:27017/",
+    "name": "catapult",
+    "pageSizeMin": 10,
+    "pageSizeMax": 100,
+    "maxConnectionAttempts": {{{maxConnectionAttempts}}},
+    "baseRetryDelay": {{{baseRetryDelay}}}
+  },
+
+  "apiNode": {
+    "host": "{{{apiNodeHost}}}",
+    "port": 7900,
+    "tlsClientCertificatePath": "{{{apiNodeConfigPath}}}/cert/node.crt.pem",
+    "tlsClientKeyPath": "{{{apiNodeConfigPath}}}/cert/node.key.pem",
+    "tlsCaCertificatePath": "{{{apiNodeConfigPath}}}/cert/ca.cert.pem",
+    "timeout": 1000
+  },
+
+  "websocket": {
+    "mq": {
+      "host": "{{{apiNodeBrokerHost}}}",
+      "port": 7902,
+      "monitorInterval": 500,
+      "connectTimeout": 10000,
+      "monitorLoggingThrottle": 60000
+    },
+    "allowOptionalAddress": true
+  },
+
+  "throttling": {
+    "burst": 35,
+    "rate": 20
+  },
+
+  "logging": {
+    "console": {
+      "formats": ["colorize", "simple"],
+
+      "level": "verbose",
+      "handleExceptions": true
+    },
+    "file": {
+      "formats": ["prettyPrint"],
+
+      "level": "verbose",
+      "handleExceptions": true,
+
+      "filename": "/logs/catapult-rest.log",
+      "maxsize": 20971520,
+      "maxFiles": 100
+    }
+  },
+
+  "numBlocksTransactionFeeStats": 300
+}

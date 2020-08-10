@@ -1,0 +1,51 @@
+[nemesis]
+
+networkIdentifier = {{{networkIdentifier}}}
+nemesisGenerationHashSeed = {{{nemesisGenerationHashSeed}}}
+nemesisSignerPrivateKey = {{{nemesisSignerPrivateKey}}}
+
+[cpp]
+
+cppFileHeader =
+
+[output]
+
+cppFile =
+binDirectory = {{{binDirectory}}}
+
+[transactions]
+transactionsDirectory = {{{transactionsDirectory}}}
+
+[namespaces]
+
+{{{baseNamespace}}} = true
+{{#mosaics}}
+{{{../baseNamespace}}}.{{{name}}} = true
+{{/mosaics}}
+
+[namespace>{{{baseNamespace}}}]
+
+duration = 0
+
+[mosaics]
+
+{{#mosaics}}
+{{../baseNamespace}}:{{{name}}} = true
+{{/mosaics}}
+
+{{#mosaics}}
+[mosaic>{{{../baseNamespace}}}:{{{name}}}]
+
+divisibility = {{{toAmount divisibility}}}
+duration = {{{toAmount duration}}}
+supply = {{{toAmount supply}}}
+isTransferable = {{{isTransferable}}}
+isSupplyMutable = {{{isSupplyMutable}}}
+isRestrictable = {{{isRestrictable}}}
+
+[distribution>{{{../baseNamespace}}}:{{{name}}}]
+{{#currencyDistributions}}
+{{{address}}} = {{{toAmount amount}}}
+{{/currencyDistributions}}
+
+{{/mosaics}}

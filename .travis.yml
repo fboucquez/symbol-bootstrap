@@ -1,0 +1,52 @@
+jobs:
+    include:
+        - os: linux
+          dist: trusty
+        - os: linux
+          dist: bionic
+        - os: linux
+          dist: xenial
+        - os: osx
+          osx_image: xcode12
+#    - os: windows
+language: node_js
+node_js:
+    - '10'
+    - '12'
+services:
+    - docker
+cache:
+    directories:
+        - 'node_modules'
+        - .eslintcache
+before_script:
+    - npm pack
+script:
+    - npm test
+    #  - CURRENT_VERSION=$(npm run version --silent)
+    #  - typedoc --out "ts-docs/$CURRENT_VERSION" src
+    #  - touch ./ts-docs/.nojekyll
+    - if [ "$TRAVIS_NODE_VERSION" = "10" ]; then npm run coveralls-report; fi
+deploy:
+    #  - provider: script
+    #    skip_cleanup: true
+    #    script: /bin/sh travis/github-pages.sh
+    #    on:
+    #      branch: main
+    #      node_js: "12"
+    - provider: script
+      skip_cleanup: true
+      script: /bin/sh travis/uploadArchives.sh
+      on:
+          branch: main
+          os: linux
+          dist: bionic
+          node_js: '12'
+    - provider: script
+      skip_cleanup: true
+      script: /bin/sh travis/release.sh
+      on:
+          branch: $RELEASE_BRANCH
+          os: linux
+          dist: bionic
+          node_js: '12'

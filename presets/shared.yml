@@ -1,0 +1,28 @@
+nodePort: 7900
+transactionsDirectory: '/nemesis/transactions'
+enableCacheDatabaseStorage: true
+enableAutoSyncCleanup: true
+enableVerifiableState: true
+enableVerifiableReceipts: true
+initialCurrencyAtomicUnits: 7831975436000000
+maxMosaicAtomicUnits: 9000000000000000
+totalChainImportance: 7831975436000000
+minHarvesterBalance: 10000000000
+maxHarvesterBalance: 50000000000000
+minVoterBalance: 1500000000000
+binDirectory: /data/seed
+harvestBeneficiaryPercentage: 10
+maxTransactionsPerBlock: 6000
+minNamespaceDuration: 1m
+enableDispatcherInputAuditing: true
+trustedHosts: 127.0.0.1, 172.20.0.10, 172.20.0.1
+localNetworks: 127.0.0.1, 172.20.0.10, 172.20.0.1
+batchVerificationRandomSource:
+# should be random addresses?
+harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
+mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
+namespaceRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.9.6.4
+symbolServerImage: symbolplatform/symbol-server:gcc-0.9.6.4
+symbolRestImage: symbolplatform/symbol-rest:1.2.0
+mongoImage: mongo:4.2.6-bionic

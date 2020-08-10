@@ -1,0 +1,90 @@
+nemgen: true
+initialCurrencyAtomicUnits: 8998999998000000
+maxMosaicAtomicUnits: 9000000000000000
+totalChainImportance: 15000000
+minHarvesterBalance: 500
+maxHarvesterBalance: 50000000000000
+minVoterBalance: 50000
+baseNamespace: 'cat'
+
+mosaics:
+    - name: 'currency'
+      divisibility: 6
+      duration: 0
+      supply: 8998999998000000
+      isTransferable: true
+      isSupplyMutable: false
+      isRestrictable: false
+      accounts: 5
+    - name: 'harvest'
+      divisibility: 3
+      duration: 0
+      supply: 15000000
+      isTransferable: true
+      isSupplyMutable: true
+      isRestrictable: false
+      accounts: 4
+databases:
+    - name: 'db'
+      openPort: true
+nodes:
+    - harvesting: true
+      type: peer-node
+      syncsource: true
+      filespooling: false
+      partialtransaction: false
+      name: 'peer-node-0'
+      friendlyName: 'peer-node-0'
+      host: 'peer-node-0'
+      sinkType: 'Sync'
+      roles: 'Peer'
+      enableSingleThreadPool: true
+      addressextraction: false
+      mongo: false
+      zeromq: false
+    - harvesting: false
+      type: peer-node
+      syncsource: true
+      filespooling: false
+      partialtransaction: false
+      friendlyName: 'peer-node-1'
+      name: 'peer-node-1'
+      host: 'peer-node-1'
+      sinkType: 'Sync'
+      roles: 'Peer'
+      enableSingleThreadPool: true
+      addressextraction: false
+      mongo: false
+      zeromq: false
+    - harvesting: false
+      type: api-node
+      syncsource: false
+      filespooling: true
+      partialtransaction: true
+      friendlyName: 'api-node-0'
+      name: 'api-node-0'
+      host: 'api-node-0'
+      brokerHost: 'api-node-broker-0'
+      openBrokerPort: true
+      sinkType: 'Async'
+      roles: 'Api'
+      enableSingleThreadPool: false
+      addressextraction: true
+      mongo: true
+      zeromq: true
+      databaseHost: 'db'
+      enableAutoSyncCleanup: false
+gateways:
+    - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
+      apiNodeHost: 'api-node-0'
+      apiNodeBrokerHost: 'api-node-broker-0'
+      name: 'rest-gateway'
+      description: 'catapult development network'
+      maxConnectionAttempts: 7
+      baseRetryDelay: 750
+      databaseHost: 'db'
+      openPort: true
+networkType: 152
+inflation:
+    starting-at-height-1: 0
+    starting-at-height-10000: 0
