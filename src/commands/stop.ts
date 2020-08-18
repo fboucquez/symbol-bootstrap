@@ -1,7 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { ConfigService } from '../service/ConfigService';
-import { RunService } from '../service/RunService';
-import { BootstrapUtils } from '../service/BootstrapUtils';
+import { BootstrapUtils, ConfigService, RunService } from '../service';
 
 export default class Stop extends Command {
     static description = `It stops the docker-compose network if it's running (example, when symbol-bootstrap start --daemon).`;
@@ -20,6 +18,6 @@ export default class Stop extends Command {
     public run(): Promise<void> {
         const { flags } = this.parse(Stop);
         BootstrapUtils.showBanner();
-        return new RunService({ ...flags, root: this.config.root }).stop();
+        return new RunService(flags).stop();
     }
 }

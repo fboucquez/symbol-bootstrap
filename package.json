@@ -12,12 +12,13 @@
         "@oclif/config": "^1.16.0",
         "@oclif/plugin-help": "^3.1.0",
         "dockerode": "^3.2.1",
-        "handlebars": "^4.7.6",
         "figlet": "^1.2.4",
+        "handlebars": "^4.7.6",
         "js-yaml": "^3.14.0",
+        "loadash": "^1.0.0",
         "memorystream": "^0.3.1",
         "node-forge": "^0.9.1",
-        "symbol-sdk": "0.20.6",
+        "symbol-sdk": "^0.20.8-alpha-202008211131",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
@@ -27,11 +28,11 @@
         "@oclif/test": "^1.2.6",
         "@types/chai": "^4.2.12",
         "@types/dockerode": "^2.5.34",
+        "@types/figlet": "^1.2.0",
         "@types/handlebars": "^4.1.0",
         "@types/js-yaml": "^3.12.5",
         "@types/memorystream": "^0.3.0",
         "@types/mocha": "^5.2.7",
-        "@types/figlet": "^1.2.0",
         "@types/node": "^10.17.28",
         "@types/node-forge": "^0.9.4",
         "@types/winston": "^2.4.4",
@@ -48,6 +49,7 @@
         "nyc": "^14.1.1",
         "prettier": "^2.0.5",
         "ts-node": "^8.10.2",
+        "typedoc": "^0.18.0",
         "typescript": "^3.9.7"
     },
     "engines": {
@@ -65,7 +67,7 @@
     "keywords": [
         "oclif"
     ],
-    "license": "MIT",
+    "license": "Apache-2.0",
     "main": "lib/index.js",
     "oclif": {
         "commands": "./lib/commands",
@@ -76,6 +78,7 @@
     },
     "repository": "fboucquez/symbol-bootstrap",
     "scripts": {
+        "doc": "typedoc --out \"ts-docs\" src && touch ./ts-docs/.nojekyll",
         "lint": "eslint --cache src/ test/ --ext .ts",
         "lint:fix": "eslint src/ test/ --ext .ts --fix",
         "prettier": "prettier --write ./src ./test",
@@ -84,10 +87,13 @@
         "posttest": "eslint src/ test/ --ext .ts",
         "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
         "test": "nyc --reporter=lcov --extension .ts mocha  --timeout 600000 --forbid-only \"test/**/*.test.ts\"",
+        "e2e": "nyc --reporter=lcov --extension .ts mocha  --timeout 600000 --forbid-only \"test/**/*.e2e.ts\"",
         "coveralls-report": "cat ./coverage/lcov.info | coveralls",
         "version": "echo $npm_package_version",
         "update-readme-version": "oclif-dev readme && git add README.md",
-        "install-cli": "npm pack && npm i -g"
+        "install-cli": "npm pack && npm i -g",
+        "clean-network": "symbol-bootstrap clean -t target/bootstrap-test",
+        "start-network": "symbol-bootstrap start -t target/bootstrap-test -u 'current'"
     },
     "types": "lib/index.d.ts"
 }

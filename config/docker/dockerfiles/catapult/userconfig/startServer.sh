@@ -4,7 +4,6 @@ name=$1
 echo "RUNNING startServer.sh $name"
 source /userconfig/prepare.sh $name
 id -a
-ls -alh /data
 
 sleep 4
 cd /data

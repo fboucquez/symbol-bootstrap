@@ -12,7 +12,6 @@ fi
 
 #cd /catapult
 id -a
-ls -alh /data
 cd /data
 rm /data/startup/datadir-initialized
 

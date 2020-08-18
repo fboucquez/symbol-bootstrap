@@ -1,18 +1,17 @@
-import { CertificatePair, ConfigParams, ConfigPreset } from './ConfigService';
+import { ConfigParams } from './ConfigService';
 import { BootstrapUtils } from './BootstrapUtils';
 import LoggerFactory from '../logger/LoggerFactory';
 import Logger from '../logger/Logger';
 import { LogType } from '../logger/LogType';
-import * as Docker from 'dockerode';
 import { resolve } from 'path';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const MemoryStream = require('memorystream');
+import { CertificatePair, ConfigPreset } from '../model';
+
 type CertificateParams = ConfigParams;
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class CertificateService {
-    constructor(protected readonly params: CertificateParams) {}
+    constructor(private readonly root: string, protected readonly params: CertificateParams) {}
 
     private getKey(stdout: string, from: string, to: string): string {
         const key = stdout
@@ -32,37 +31,25 @@ export class CertificateService {
         // https://www.npmjs.com/package/node-forge
 
         const presetData: ConfigPreset = BootstrapUtils.loadPresetData(
-            this.params.root,
+            this.root,
             this.params.preset,
             this.params.assembly,
             this.params.customPreset,
         );
         const symbolServerToolsImage = presetData.symbolServerToolsImage;
-        const copyFrom = `${this.params.root}/config/cert`;
+        const copyFrom = `${this.root}/config/cert`;
         const target = `${this.params.target}/config/${name}/resources/cert`;
         await BootstrapUtils.mkdir(target);
         const generatedContext = { name };
         const templateContext: any = { ...presetData, ...generatedContext };
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, target);
 
-        const docker = new Docker({ socketPath: '/var/run/docker.sock' });
-        await BootstrapUtils.pullImage(docker, symbolServerToolsImage);
         const command = this.createCertCommands('/data');
         await BootstrapUtils.writeTextFile(target + '/createCertificate.sh', command);
         const cmd = ['bash', '-c', 'cd /data && bash createCertificate.sh'];
         const binds = [`${resolve(target)}:/data:rw`];
         const userId = await BootstrapUtils.getDockerUserGroup();
-        const createOptions = { User: userId, HostConfig: { Binds: binds } };
-        const startOptions = {};
-
-        const memStream = new MemoryStream();
-        let stdout = '';
-        memStream.on('data', (data: any) => {
-            stdout += data.toString();
-        });
-
-        await docker.run(symbolServerToolsImage, cmd, memStream, createOptions, startOptions);
-
+        const stdout = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
         const privateKey = this.getKey(stdout, 'priv:', 'pub:');
         const publicKey = this.getKey(stdout, 'pub:', 'Certificate:');
 
@@ -75,6 +62,7 @@ export class CertificateService {
 cd ${target}
 set -e
 mkdir new_certs && chmod 700 new_certs
+touch index.txt.attr
 touch index.txt
 
 # create CA key

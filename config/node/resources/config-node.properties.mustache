@@ -1,46 +1,46 @@
 [node]
 
 port = {{{nodePort}}}
-maxIncomingConnectionsPerIdentity = 6
+maxIncomingConnectionsPerIdentity = {{{maxIncomingConnectionsPerIdentity}}}
 
 enableAddressReuse = false
 enableSingleThreadPool = {{enableSingleThreadPool}}
 enableCacheDatabaseStorage = {{{enableCacheDatabaseStorage}}}
 enableAutoSyncCleanup = {{{enableAutoSyncCleanup}}}
 
-enableTransactionSpamThrottling = true
-transactionSpamThrottlingMaxBoostFee = 10'000'000
+enableTransactionSpamThrottling = {{{enableTransactionSpamThrottling}}}
+transactionSpamThrottlingMaxBoostFee = {{{toAmount transactionSpamThrottlingMaxBoostFee}}}
 
-maxBlocksPerSyncAttempt = 1435
-maxChainBytesPerSyncAttempt = 100MB
+maxBlocksPerSyncAttempt = {{{maxBlocksPerSyncAttempt}}}
+maxChainBytesPerSyncAttempt = {{{maxChainBytesPerSyncAttempt}}}
 
-shortLivedCacheTransactionDuration = 10m
-shortLivedCacheBlockDuration = 100m
-shortLivedCachePruneInterval = 90s
-shortLivedCacheMaxSize = 200'000
+shortLivedCacheTransactionDuration = {{{shortLivedCacheTransactionDuration}}}
+shortLivedCacheBlockDuration = {{{shortLivedCacheBlockDuration}}}
+shortLivedCachePruneInterval = {{{shortLivedCachePruneInterval}}}
+shortLivedCacheMaxSize = {{{toAmount shortLivedCacheMaxSize}}}
 
-minFeeMultiplier = 100
-transactionSelectionStrategy = maximize-fee
-unconfirmedTransactionsCacheMaxResponseSize = 20MB
-unconfirmedTransactionsCacheMaxSize = 50'000
+minFeeMultiplier = {{{toAmount minFeeMultiplier}}}
+transactionSelectionStrategy = {{{transactionSelectionStrategy}}}
+unconfirmedTransactionsCacheMaxResponseSize = {{{unconfirmedTransactionsCacheMaxResponseSize}}}
+unconfirmedTransactionsCacheMaxSize = {{{toAmount unconfirmedTransactionsCacheMaxSize}}}
 
-connectTimeout = 15s
-syncTimeout = 120s
+connectTimeout = {{{connectTimeout}}}
+syncTimeout = {{{syncTimeout}}}
 
-socketWorkingBufferSize = 512KB
-socketWorkingBufferSensitivity = 100
-maxPacketDataSize = 150MB
+socketWorkingBufferSize = {{{socketWorkingBufferSize}}}
+socketWorkingBufferSensitivity = {{{socketWorkingBufferSensitivity}}}
+maxPacketDataSize = {{{maxPacketDataSize}}}
 
-blockDisruptorSize = 4096
-blockElementTraceInterval = 1
-transactionDisruptorSize = 16384
-transactionElementTraceInterval = 10
+blockDisruptorSize = {{{blockDisruptorSize}}}
+blockElementTraceInterval = {{{blockElementTraceInterval}}}
+transactionDisruptorSize = {{{transactionDisruptorSize}}}
+transactionElementTraceInterval = {{{transactionElementTraceInterval}}}
 
-enableDispatcherAbortWhenFull = false
-enableDispatcherInputAuditing = {{enableDispatcherInputAuditing}}
+enableDispatcherAbortWhenFull = {{{enableDispatcherAbortWhenFull}}}
+enableDispatcherInputAuditing = {{{enableDispatcherInputAuditing}}}
 
-maxCacheDatabaseWriteBatchSize = 5MB
-maxTrackedNodes = 5'000
+maxCacheDatabaseWriteBatchSize = {{{maxCacheDatabaseWriteBatchSize}}}
+maxTrackedNodes = {{{toAmount maxTrackedNodes}}}
 
 # all hosts are trusted when list is empty
 trustedHosts = {{{trustedHosts}}}
@@ -55,26 +55,26 @@ roles = {{roles}}
 
 [outgoing_connections]
 
-maxConnections = 10
-maxConnectionAge = 200
-maxConnectionBanAge = 20
-numConsecutiveFailuresBeforeBanning = 3
+maxConnections = {{outgoing_connections_maxConnections}}
+maxConnectionAge = {{{outgoing_connections_maxConnectionAge}}}
+maxConnectionBanAge = {{{outgoing_connections_maxConnectionBanAge}}}
+numConsecutiveFailuresBeforeBanning = {{{outgoing_connections_numConsecutiveFailuresBeforeBanning}}}
 
 [incoming_connections]
 
-maxConnections = 512
-maxConnectionAge = 200
-maxConnectionBanAge = 20
-numConsecutiveFailuresBeforeBanning = 3
-backlogSize = 512
+maxConnections = {{{incoming_connections_maxConnections}}}
+maxConnectionAge = {{{incoming_connections_maxConnectionAge}}}
+maxConnectionBanAge = {{{incoming_connections_maxConnectionBanAge}}}
+numConsecutiveFailuresBeforeBanning = {{{incoming_connections_numConsecutiveFailuresBeforeBanning}}}
+backlogSize = {{{incoming_connections_backlogSize}}}
 
 [banning]
 
-defaultBanDuration = 12h
-maxBanDuration = 72h
-keepAliveDuration = 48h
-maxBannedNodes = 5'000
+defaultBanDuration = {{{defaultBanDuration}}}
+maxBanDuration = {{{defaultBanDuration}}}
+keepAliveDuration = {{{keepAliveDuration}}}
+maxBannedNodes = {{{toAmount maxBannedNodes}}}
 
-numReadRateMonitoringBuckets = 4
-readRateMonitoringBucketDuration = 15s
-maxReadRateMonitoringTotalSize = 100MB
+numReadRateMonitoringBuckets = {{{numReadRateMonitoringBuckets}}}
+readRateMonitoringBucketDuration = {{{readRateMonitoringBucketDuration}}}
+maxReadRateMonitoringTotalSize = {{{maxReadRateMonitoringTotalSize}}}

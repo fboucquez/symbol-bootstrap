@@ -1,7 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { ConfigService } from '../service/ConfigService';
-import { RunService } from '../service/RunService';
-import { BootstrapUtils } from '../service/BootstrapUtils';
+import { BootstrapUtils, ConfigService, RunService } from '../service';
 
 export default class Run extends Command {
     static description = 'This command runs this network from the created configuration and docker-compose.yml file.';
@@ -24,11 +22,16 @@ export default class Run extends Command {
             char: 'b',
             description: 'If provided, docker-compose will run with -b (--build)',
         }),
+        timeout: flags.integer({
+            char: 't',
+            description: 'If running in daemon mode, how long before timing out (in MS)',
+            default: RunService.defaultParams.timeout,
+        }),
     };
 
     public run(): Promise<void> {
         const { flags } = this.parse(Run);
         BootstrapUtils.showBanner();
-        return new RunService({ ...flags, root: this.config.root }).run();
+        return new RunService(flags).run();
     }
 }

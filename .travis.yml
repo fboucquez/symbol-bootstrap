@@ -1,39 +1,62 @@
+dist: bionic
+language: node_js
+node_js:
+    - 10
+    - 12
 jobs:
     include:
-        - os: linux
-          dist: trusty
         - os: linux
           dist: bionic
         - os: linux
           dist: xenial
-        - os: osx
-          osx_image: xcode12
-#    - os: windows
-language: node_js
-node_js:
-    - '10'
-    - '12'
+        #          Docker is not supported for osx in Travis: https://github.com/travis-ci/travis-ci/issues/7773
+        #        - os: osx
+        #          osx_image: xcode12
+        #        - os: windows
 services:
     - docker
+#before_cache:
+#    # Save tagged docker images
+#    - >
+#        mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+#        | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
+#before_install:
+#    # Load cached docker images
+#    - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 cache:
+    bundler: true
     directories:
-        - 'node_modules'
+        - node_modules
         - .eslintcache
+#        - $HOME/docker
 before_script:
     - npm pack
 script:
     - npm test
-    #  - CURRENT_VERSION=$(npm run version --silent)
-    #  - typedoc --out "ts-docs/$CURRENT_VERSION" src
-    #  - touch ./ts-docs/.nojekyll
-    - if [ "$TRAVIS_NODE_VERSION" = "10" ]; then npm run coveralls-report; fi
+    - npm run e2e
+    - npm run doc
+    - npm run coveralls-report
+after_script:
+
 deploy:
-    #  - provider: script
-    #    skip_cleanup: true
-    #    script: /bin/sh travis/github-pages.sh
-    #    on:
-    #      branch: main
-    #      node_js: "12"
+    #    - provider: script
+    #      skip_cleanup: true
+    #      script: /bin/sh travis/github-pages.sh
+    #      on:
+    #          branch: main
+    #          os: linux
+    #          dist: bionic
+    #          node_js: '12'
+    - provider: pages
+      local_dir: ts-docs
+      skip_cleanup: true
+      github_token: $GITHUB_TOKEN
+      keep_history: true
+      on:
+          branch: main
+          os: linux
+          dist: bionic
+          node_js: '12'
     - provider: script
       skip_cleanup: true
       script: /bin/sh travis/uploadArchives.sh

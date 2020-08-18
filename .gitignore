@@ -12,3 +12,4 @@ node_modules
 symbol-bootstrap-*.tgz
 /.eslintcache
 coverage
+/ts-docs/

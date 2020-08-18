@@ -27,6 +27,6 @@ export default class Mongo extends Command {
 
     public run(): Promise<void> {
         const { flags } = this.parse(Mongo);
-        return new MongoService({ ...flags, root: this.config.root }).run();
+        return new MongoService(this.config.root, flags).run();
     }
 }

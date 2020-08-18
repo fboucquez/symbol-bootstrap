@@ -1,23 +1,35 @@
-import { existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync, readFileSync, promises as fsPromises } from 'fs';
+import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
 import { join } from 'path';
-import { ConfigPreset } from './ConfigService';
 import * as Handlebars from 'handlebars';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const yaml = require('js-yaml');
 import * as util from 'util';
 import * as Docker from 'dockerode';
+import * as _ from 'lodash';
 import { textSync } from 'figlet';
+import { Addresses, ConfigPreset } from '../model';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const MemoryStream = require('memorystream');
+import { Preset } from './ConfigService';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
+
 export class BootstrapUtils {
     private static presetInfoLogged = false;
     private static pulledImages: string[] = [];
 
-    public static deleteFolderRecursive(folder: string): void {
+    public static deleteFolder(folder: string): void {
+        if (existsSync(folder)) {
+            logger.info(`Deleting folder ${folder}`);
+        }
+        return BootstrapUtils.deleteFolderRecursive(folder);
+    }
+
+    private static deleteFolderRecursive(folder: string): void {
         if (existsSync(folder)) {
             readdirSync(folder).forEach((file: string) => {
                 const curPath = join(folder, file);
@@ -35,6 +47,12 @@ export class BootstrapUtils {
 
     public static showBanner(): void {
         console.log(textSync('symbol-bootstrap', { horizontalLayout: 'full' }));
+    }
+
+    public static createDocker(): Docker {
+        return new Docker({ socketPath: '/var/run/docker.sock' });
+        // return new Docker({ host: 'localhost', port: 2375 });
+        // return new Docker({ socketPath: 'tcp://0.0.0.0:2375' });
     }
 
     public static async pullImage(docker: Docker, image: string): Promise<void> {
@@ -58,17 +76,42 @@ export class BootstrapUtils {
         }
     }
 
+    public static async runImageUsingExec(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
+        const volumes = binds.map((b) => `-v ${b}`).join(' ');
+        const userParam = userId ? `-u ${userId}` : '';
+        const runCommand = `docker run ${userParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
+        logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
+        const { stdout } = await exec(runCommand);
+        return stdout;
+    }
+
+    public static async runImageUsingApi(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
+        const createOptions = { User: userId, HostConfig: { Binds: binds } };
+        const startOptions = {};
+        const memStream = new MemoryStream();
+        let stdout = '';
+        memStream.on('data', (data: any) => {
+            stdout += data.toString();
+        });
+        logger.info(`Running image using API: ${image} ${cmds.join(' ')}`);
+        const docker = BootstrapUtils.createDocker();
+        await BootstrapUtils.pullImage(docker, image);
+        await docker.run(image, cmds, memStream, createOptions, startOptions);
+        return stdout;
+    }
+
     public static loadPresetData(
         root: string,
-        preset: string,
+        preset: Preset,
         assembly: string | undefined,
         customPresetFile: string | undefined,
     ): ConfigPreset {
-        const sharedPreset = yaml.safeLoad(readFileSync(`${root}/presets/shared.yml`, 'utf8'));
-        const networkPreset = yaml.safeLoad(readFileSync(`${root}/presets/${preset}/network.yml`, 'utf8'));
-        const assemblyPreset = assembly ? yaml.safeLoad(readFileSync(`${root}/presets/${preset}/assembly-${assembly}.yml`, 'utf8')) : {};
-        const customPreset = customPresetFile ? yaml.safeLoad(readFileSync(customPresetFile, 'utf8')) : {};
-        const presetData = { ...sharedPreset, ...networkPreset, ...assemblyPreset, ...customPreset, preset };
+        const sharedPreset = this.loadYaml(join(root, 'presets', 'shared.yml'));
+        const networkPreset = this.loadYaml(`${root}/presets/${preset}/network.yml`);
+        const assemblyPreset = assembly ? this.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`) : {};
+        const customPreset = customPresetFile ? this.loadYaml(customPresetFile) : {};
+        //Deep merge
+        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPreset, { preset });
         if (!BootstrapUtils.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
@@ -86,28 +129,54 @@ export class BootstrapUtils {
     }
 
     public static loadExistingPresetData(target: string): ConfigPreset {
-        return yaml.safeLoad(readFileSync(`${target}/config/preset.yml`, 'utf8'));
+        return this.loadYaml(`${target}/config/preset.yml`);
+    }
+
+    public static loadExistingAddresses(target: string): Addresses {
+        return this.loadYaml(`${target}/config/generated-addresses/addresses.yml`);
+    }
+
+    public static sleep(ms: number): Promise<any> {
+        // Create a promise that rejects in <ms> milliseconds
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, ms);
+        });
+    }
+
+    public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {
+        const startTime = new Date().getMilliseconds();
+        return promiseFunction().then(async (result) => {
+            if (result) {
+                return true;
+            } else {
+                const endTime = new Date().getMilliseconds();
+                const newPollingTime: number = Math.max(totalPollingTime - pollIntervalMs - (endTime - startTime), 0);
+                if (newPollingTime) {
+                    await BootstrapUtils.sleep(pollIntervalMs);
+                    return this.poll(promiseFunction, newPollingTime, pollIntervalMs);
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 
     public static toAmount(renderedText: string | number): string {
         const numberAsString = (renderedText + '').split("'").join('');
+        if (!numberAsString.match(/^\d+$/)) {
+            throw new Error(`'${renderedText}' is not a valid integer`);
+        }
         return (numberAsString.match(/\d{1,3}(?=(\d{3})*$)/g) || [numberAsString]).join("'");
     }
 
     public static toHex(renderedText: string): string {
-        const numberAsString = renderedText
-            .split("'")
-            .join('')
-            .replace(/^(0x\.)/, '');
+        const numberAsString = renderedText.split("'").join('').replace(/^(0x)/, '');
         return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
     }
 
-    public static removeUndefined(obj: any): any {
-        return Object.keys(obj).reduce((acc, key) => {
-            return obj[key] !== undefined ? { ...acc, [key]: obj[key] } : acc;
-        }, {});
-    }
-
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static async generateConfiguration(templateContext: any, copyFrom: string, copyTo: string): Promise<void> {
         // Loop through all the files in the config folder
         await fsPromises.mkdir(copyTo, { recursive: true });
@@ -144,18 +213,32 @@ export class BootstrapUtils {
         await fsPromises.mkdir(path, { recursive: true });
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static async writeYaml(path: string, object: any): Promise<void> {
-        const yamlString = yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140 });
+        const yamlString = this.toYaml(object);
         await BootstrapUtils.writeTextFile(path, yamlString);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static toYaml(object: any): string {
+        return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140 });
+    }
+
+    public static fromYaml(yamlString: string): any {
+        return yaml.safeLoad(yamlString);
+    }
+
+    public static loadYaml(fileLocation: string): any {
+        return this.fromYaml(readFileSync(fileLocation, 'utf8'));
     }
 
     public static async writeTextFile(path: string, text: string): Promise<void> {
         await fsPromises.writeFile(path, text, 'utf8');
     }
 
-    public static dockerUserId: string;
+    private static dockerUserId: string;
 
-    public static async getDockerUserGroup() {
+    public static async getDockerUserGroup(): Promise<string> {
         if (BootstrapUtils.dockerUserId !== undefined) {
             return BootstrapUtils.dockerUserId;
         }

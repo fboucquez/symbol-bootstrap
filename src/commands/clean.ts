@@ -1,11 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { ConfigService } from '../service/ConfigService';
-import { BootstrapUtils } from '../service/BootstrapUtils';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+import { BootstrapUtils, ConfigService } from '../service';
 
 export default class Clean extends Command {
     static description = 'It removes the target folder (It may not work if you need root!!!)';
@@ -24,7 +18,6 @@ export default class Clean extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Clean);
         BootstrapUtils.showBanner();
-        logger.info(`Celeting folder ${flags.target}...`);
-        BootstrapUtils.deleteFolderRecursive(flags.target);
+        BootstrapUtils.deleteFolder(flags.target);
     }
 }

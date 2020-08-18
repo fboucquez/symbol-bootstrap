@@ -28,66 +28,39 @@ nemesis:
           isTransferable: true
           isSupplyMutable: true
           isRestrictable: false
-          accounts: 2
+          accounts: 4
 databases:
     - name: 'db'
       openPort: true
 nodes:
     - harvesting: true
       type: peer-node
+      enableDispatcherInputAuditing: false
       syncsource: true
-      filespooling: false
-      partialtransaction: false
-      name: 'peer-node-0'
-      friendlyName: 'peer-node-0'
-      host: 'peer-node-0'
-      sinkType: 'Sync'
-      roles: 'Peer'
-      enableSingleThreadPool: true
-      addressextraction: false
-      mongo: false
-      zeromq: false
-    - harvesting: false
-      type: peer-node
-      syncsource: true
-      filespooling: false
-      partialtransaction: false
-      friendlyName: 'peer-node-1'
-      name: 'peer-node-1'
-      host: 'peer-node-1'
-      sinkType: 'Sync'
-      roles: 'Peer'
-      enableSingleThreadPool: true
-      addressextraction: false
-      mongo: false
-      zeromq: false
-    - harvesting: false
-      type: api-node
-      syncsource: false
       filespooling: true
       partialtransaction: true
-      friendlyName: 'api-node-0'
-      name: 'api-node-0'
-      host: 'api-node-0'
-      brokerHost: 'api-node-broker-0'
-      openBrokerPort: true
+      name: 'api-node'
+      databaseHost: 'db'
+      host: ''
+      openPort: true
       sinkType: 'Async'
-      roles: 'Api'
+      roles: 'Api,Peer'
       enableSingleThreadPool: false
+      brokerHost: 'api-broker'
+      openBrokerPort: true
       addressextraction: true
+      enableAutoSyncCleanup: false
       mongo: true
       zeromq: true
-      databaseHost: 'db'
-      enableAutoSyncCleanup: false
 gateways:
     - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
-      apiNodeHost: 'api-node-0'
-      apiNodeBrokerHost: 'api-node-broker-0'
       name: 'rest-gateway'
-      description: 'catapult development network'
-      maxConnectionAttempts: 7
-      baseRetryDelay: 750
+      apiNodeHost: 'api-node'
+      apiNodeBrokerHost: 'api-broker'
+      description: 'catapult public test network'
       databaseHost: 'db'
+      maxConnectionAttempts: 5
+      baseRetryDelay: 500
       openPort: true
 networkType: 152
 inflation:

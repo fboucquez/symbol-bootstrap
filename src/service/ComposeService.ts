@@ -2,38 +2,52 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import { BootstrapUtils } from './BootstrapUtils';
-
-type ComposeParams = { target: string; root: string; user?: string };
+import { ConfigPreset } from '../model';
+import { join } from 'path';
+import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fs = require('fs');
+export type ComposeParams = { target: string; user?: string; reset?: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class ComposeService {
-    constructor(protected readonly params: ComposeParams) {}
+    public static defaultParams: ComposeParams = { target: 'target', user: 'current', reset: false };
 
-    public async run(): Promise<void> {
-        const presetData = BootstrapUtils.loadExistingPresetData(this.params.target);
+    constructor(private readonly root: string, protected readonly params: ComposeParams) {}
 
-        const workingDir = `${process.cwd()}`;
-        const target = `${workingDir}/${this.params.target}`;
-        const targetDocker = `${target}/docker/`;
-        await BootstrapUtils.mkdir(`${this.params.target}/state`);
+    public async run(passedPresetData?: ConfigPreset): Promise<void> {
+        const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
+
+        const workingDir = process.cwd();
+        const target = join(workingDir, this.params.target);
+        const targetDocker = join(target, `docker`);
+        if (this.params.reset) {
+            BootstrapUtils.deleteFolder(targetDocker);
+        }
+
+        const dockerFile = join(targetDocker, 'docker-compose.yml');
+        if (fs.existsSync(dockerFile)) {
+            logger.info(dockerFile + ' already exist. Reusing. (run -r to reset)');
+            return;
+        }
+
+        await BootstrapUtils.mkdir(join(this.params.target, 'state'));
         await BootstrapUtils.mkdir(targetDocker);
-        await BootstrapUtils.generateConfiguration(presetData, `${this.params.root}/config/docker`, targetDocker);
+        await BootstrapUtils.generateConfiguration(presetData, join(this.root, 'config', 'docker'), targetDocker);
 
-        const user: string | undefined = this.params.user === 'current' ? await BootstrapUtils.getDockerUserGroup() : this.params.user;
+        const user: string | undefined = await this.resolveUser();
 
         const vol = (hostFolder: string, imageFolder: string): string => {
-            const targetFolder = `${targetDocker}${hostFolder}`;
-            BootstrapUtils.mkdir(targetFolder);
             return hostFolder + ':' + imageFolder;
         };
 
         logger.info(`creating docker-compose.yml from last used profile.`);
 
-        const services: Record<string, any> = {};
+        const services: Record<string, DockerComposeService> = {};
 
         (presetData.databases || []).forEach((n) => {
-            const databaseService = {
+            services[n.name] = {
                 image: presetData.mongoImage,
                 user,
                 command: `bash -c "mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
@@ -41,7 +55,6 @@ export class ComposeService {
                 ports: n.openPort ? ['27017:27017'] : [],
                 volumes: [vol('../data/mongo', '/dbdata:rw')],
             };
-            services[n.name] = databaseService;
 
             services[n.name + '-init'] = {
                 image: presetData.mongoImage,
@@ -115,7 +128,7 @@ export class ComposeService {
             };
         });
 
-        const dockerCompose = {
+        const dockerCompose: DockerCompose = {
             version: '3',
             networks: {
                 default: {
@@ -131,8 +144,17 @@ export class ComposeService {
             services: services,
         };
 
-        const dockerFile = `${target}/docker/docker-compose.yml`;
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
+    }
+
+    private async resolveUser(): Promise<string | undefined> {
+        if (!this.params.user || this.params.user.trim() === '') {
+            return undefined;
+        }
+        if (this.params.user === 'current') {
+            return BootstrapUtils.getDockerUserGroup();
+        }
+        return this.params.user;
     }
 }

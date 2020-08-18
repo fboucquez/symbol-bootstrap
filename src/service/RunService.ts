@@ -2,16 +2,20 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import { spawn } from 'child_process';
-import { sep } from 'path';
+import { join } from 'path';
 import { RepositoryFactoryHttp } from 'symbol-sdk';
 import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
-import { sleep } from './sleep';
-
-type RunParams = { target: string; root: string; daemon?: boolean; build?: boolean };
+import { BootstrapUtils } from './BootstrapUtils';
+import { existsSync } from 'fs';
+import { DockerCompose } from '../model/DockerCompose';
+import * as _ from 'lodash';
+export type RunParams = { target: string; daemon?: boolean; build?: boolean; timeout?: number };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class RunService {
+    public static readonly defaultParams: RunParams = { target: 'target', timeout: 60000 };
+
     constructor(protected readonly params: RunParams) {}
 
     public async run(): Promise<void> {
@@ -22,31 +26,13 @@ export class RunService {
         if (this.params.build) {
             basicArgs.push('--build');
         }
-        await this.basicRun(basicArgs);
+        await this.basicRun(basicArgs, false, this.params.daemon || false);
         if (this.params.daemon) {
-            await this.pollServiceUntilIsUp();
+            await this.pollServiceUntilIsUp(this.params.timeout || RunService.defaultParams.timeout || 0);
         }
     }
 
-    promisePoll = (promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> => {
-        const startTime = new Date().getMilliseconds();
-        return promiseFunction().then(async (result) => {
-            if (result) {
-                return true;
-            } else {
-                const endTime = new Date().getMilliseconds();
-                const newPollingTime: number = Math.max(totalPollingTime - pollIntervalMs - (endTime - startTime), 0);
-                if (newPollingTime) {
-                    await sleep(pollIntervalMs);
-                    return this.promisePoll(promiseFunction, newPollingTime, pollIntervalMs);
-                } else {
-                    return false;
-                }
-            }
-        });
-    };
-
-    public async pollServiceUntilIsUp(totalPollingTime = 30000, pollIntervalMs = 2000) {
+    public async pollServiceUntilIsUp(totalPollingTime: number, pollIntervalMs = 10000): Promise<void> {
         const url = 'http://localhost:3000';
         const repositoryFactory = new RepositoryFactoryHttp(url);
         const nodeRepository = repositoryFactory.createNodeRepository();
@@ -70,25 +56,44 @@ export class RunService {
             }
         };
 
-        const started = await this.promisePoll(pollFunction, totalPollingTime, pollIntervalMs);
+        const started = await BootstrapUtils.poll(pollFunction, totalPollingTime, pollIntervalMs);
         if (!started) {
             throw new Error(`Network did NOT start!!!`);
         }
     }
 
     public async stop(): Promise<void> {
-        await this.basicRun(['down']);
+        await this.basicRun(['down'], true, false);
     }
 
-    private async basicRun(extraArgs: string[]): Promise<void> {
-        const target = `${this.params.target}`;
-        const dockerFile = `${target}${sep}docker${sep}docker-compose.yml`;
+    private async basicRun(extraArgs: string[], ignoreIfNotFound: boolean, daemon: boolean): Promise<void> {
+        const dockerFile = join(this.params.target, `docker`, `docker-compose.yml`);
         const dockerComposeArgs = ['-f', dockerFile];
+        const args = [...dockerComposeArgs, ...extraArgs];
+        if (!existsSync(dockerFile)) {
+            if (ignoreIfNotFound) {
+                logger.info(`Docker compose ${dockerFile} does not exist, ignoring: docker-compose ${args.join(' ')}`);
+                return;
+            } else {
+                throw new Error(`Docker compose ${dockerFile} does not exist. Cannot run: docker-compose ${args.join(' ')}`);
+            }
+        }
 
-        const cmd = spawn('docker-compose', [...dockerComposeArgs, ...extraArgs]);
+        //Creating folders to avoid being created using sudo. Is there a better way?
+        const dockerCompose: DockerCompose = await BootstrapUtils.loadYaml(dockerFile);
+
+        const volumenList = _.flatMap(Object.values(dockerCompose?.services), (s) => s.volumes?.map((v) => v.split(':')[0]) || []) || [];
+
+        await Promise.all(
+            volumenList.map(async (v) => {
+                await BootstrapUtils.mkdir(join(this.params.target, `docker`, v));
+            }),
+        );
+
+        const cmd = spawn('docker-compose', args);
 
         const log = (data: any) => {
-            if (!this.params.daemon) console.log(`${data}`.trim());
+            if (!daemon) console.log(`${data}`.trim());
         };
 
         cmd.stdout.on('data', (data) => {
@@ -115,6 +120,6 @@ export class RunService {
             log('Received SIGINT signal');
         });
 
-        logger.info(`running: docker-compose ${dockerComposeArgs.join(' ')}`);
+        logger.info(`running: docker-compose ${args.join(' ')}`);
     }
 }

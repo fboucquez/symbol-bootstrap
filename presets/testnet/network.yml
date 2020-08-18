@@ -1,4 +1,3 @@
-nemgen: false
 initialCurrencyAtomicUnits: 7831975436000000
 maxMosaicAtomicUnits: 9000000000000000
 totalChainImportance: 7831975436000000
@@ -13,10 +12,13 @@ harvestBeneficiaryPercentage: 25
 batchVerificationRandomSource: /dev/urandom
 trustedHosts: ''
 localNetworks: 127.0.0.1, 172.20.0.9
-currencyMosaicId: "0x5E62'990D'CAC5'BE8A"
-harvestingMosaicId: "0x5E62'990D'CAC5'BE8A"
+currencyMosaicId: 5E62990DCAC5BE8A
+harvestingMosaicId: 5E62990DCAC5BE8A
 nemesisGenerationHashSeed: 1DFB2FAA9E7F054168B0C5FCB84F4DEB62CC2B4D317D861F3168D161F54EA78B
 nemesisSignerPublicKey: 871B2F2F9D825252FFF43543066EE8D9141A3373F2F013BB449C6425A03362D8
+harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
+mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
+namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 inflation:
     starting-at-height-2: 95998521
     starting-at-height-200: 91882261

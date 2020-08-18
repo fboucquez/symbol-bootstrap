@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
-import { ConfigService } from '../service/ConfigService';
-import { BootstrapUtils } from '../service/BootstrapUtils';
+import { BootstrapUtils, ConfigService, Preset } from '../service';
+import { BootstrapService } from '../service/BootstrapService';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
@@ -9,10 +9,10 @@ export default class Config extends Command {
 
     static flags = {
         help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        preset: flags.string({
+        preset: flags.enum({
             char: 'p',
             description: 'the network preset',
-            options: ['bootstrap', 'testnet' /*, 'devnet', 'mainnet', 'testnet'*/],
+            options: Object.keys(Preset).map((v) => v as Preset),
             default: ConfigService.defaultParams.preset,
         }),
         assembly: flags.string({
@@ -36,9 +36,9 @@ export default class Config extends Command {
         }),
     };
 
-    public run(): Promise<void> {
+    public async run(): Promise<void> {
         const { flags } = this.parse(Config);
         BootstrapUtils.showBanner();
-        return new ConfigService({ ...flags, root: this.config.root }).run();
+        await new BootstrapService(this.config.root).config(flags);
     }
 }

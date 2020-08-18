@@ -8,6 +8,8 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json)
 [![Build Status](https://travis-ci.com/fboucquez/symbol-bootstrap.svg?branch=main)](https://travis-ci.com/fboucquez/symbol-bootstrap)
 [![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
+[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://fboucquez.github.io/symbol-bootstrap/)
+
 
 <!-- toc -->
 * [symbol-bootstrap](#symbol-bootstrap)
@@ -17,7 +19,6 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 * [Requirements](#requirements)
 * [Usage](#usage)
 * [E2E Testing support](#e2e-testing-support)
-* [Node Clients:](#node-clients)
 * [Commands](#commands)
 <!-- tocstop -->
 
@@ -55,14 +56,15 @@ Presets are defined at 4 levels from general to specific:
 
 -   Shared: Default configurations for all the networks.
 -   Network: It defines the main preset of a given network, example: `bootstrap` or `testnet`.
--   Assembly: It defines a slightly modification of a network, example: `testnet peer`, `tesnet dual`, `testnet api`. Assembly is required for some networks (like `testnet`).
+-   Assembly: It defines a modification of a network, example: `testnet peer`, `tesnet dual`, `testnet api`. Assembly is required for some networks (like `testnet`).
 -   Custom: A user provided yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
 Properties in each file override the previous values (by shallow object merge).
 
-### Out-of-the-box-presets:
+### Out-of-the-box presets:
 
 -   `-p botstrap`: Default [preset](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
+-   `-p light`: A [light](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/light/network.yml) network. It's a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
 -   `-p testnet -a peer`: A [haversting](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/fboucquez/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a api`: A [api](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/fboucquez/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a dual`: A [dual](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/fboucquez/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
@@ -91,7 +93,7 @@ It's recommended to run the commands from en empty working dir.
 
 The network configuration, data and docker files will be created inside the target folder ('./target') by default.
 
-```sh-session
+```
 mkdir my-networks
 cd my-networks
 ```
@@ -104,7 +106,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.0 linux-x64 node-v12.16.3
+symbol-bootstrap/0.0.0-alpha-202008211310 linux-x64 node-v12.16.3
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -114,7 +116,7 @@ USAGE
 
 The general usage would be:
 
-```sh-session
+```
 symbol-bootstrap config -p bootstrap
 symbol-bootstrap compose
 symbol-bootstrap run
@@ -122,13 +124,13 @@ symbol-bootstrap run
 
 You can aggregate all these commands with this one liner:
 
-```sh-session
+```
 symbol-bootstrap start -p bootstrap
 ```
 
 If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:
 
-```sh-session
+```
 sudo rm -rf ./target
 ```
 
@@ -136,7 +138,7 @@ sudo rm -rf ./target
 
 One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:
 
-```sh-session
+```
 symbol-bootstrap start -p bootstrap --daemon
 YOUR TEST (e.g: npm run test, gradle test, selenium etc.)
 symbol-bootstrap stop
@@ -146,7 +148,7 @@ symbol-bootstrap stop
 
 You can also provide your own custom preset (`-c`) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)
 
-# Node Clients:
+## Node client E2E via CLI:
 
 The CLI can also be used as npm project (dev) dependency (`npm install --save-dev symbol-bootstrap`). Then you can integrate the network to your npm test cycle.
 Your `package.json` can look like this:
@@ -172,9 +174,42 @@ scripts": {
 
 Then, you, Jenkins, Travis or your CI tool can run;
 
-```sh-session
+```
 npm run e2e
 ```
+
+
+## Node client E2E via API:
+
+Alternative, you can use the [BootstrapService](https://github.com/fboucquez/symbol-bootstrap/blob/main/src/service/BootstrapService.ts) facade to programmatically start and stop a server.
+
+Example:
+
+```
+it('Bootstrap e2e test', async () => {
+    const service = new BootstrapService();
+    const config: StartParams = {
+        preset: Preset.bootstrap,
+        reset: true,
+        timeout: 60000 * 5,
+        target: 'target/bootstrap-test',
+        daemon: true,
+        user: 'current',
+    };
+    try {
+        await service.stop(config);
+        const configResult = await service.start(config);
+        expect(configResult.presetData).not.null;
+        expect(configResult.addresses).not.null;
+        // Here you can write unit tests against a http://localhost:3000 network
+    } finally {
+        await service.stop(config);
+    }
+});
+```
+
+It's recommended to reuse the same server for multiple tests by using `beforeAll`, `afterAll` kind of statements. 
+
 
 # Commands
 
@@ -203,7 +238,7 @@ EXAMPLE
   $ symbol-bootstrap clean
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/clean.ts)_
 
 ## `symbol-bootstrap compose`
 
@@ -215,6 +250,7 @@ USAGE
 
 OPTIONS
   -h, --help           It shows the help of this command.
+  -r, --reset          It resets the configuration generating a new one
   -t, --target=target  [default: target] the target folder
 
   -u, --user=user      [default: current] User used to run the services in the docker-compose.yml file. "current" means
@@ -224,7 +260,7 @@ EXAMPLE
   $ symbol-bootstrap compose
 ```
 
-_See code: [src/commands/compose.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0/src/commands/compose.ts)_
+_See code: [src/commands/compose.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/compose.ts)_
 
 ## `symbol-bootstrap config`
 
@@ -235,24 +271,24 @@ USAGE
   $ symbol-bootstrap config
 
 OPTIONS
-  -a, --assembly=assembly          An optional assembly type, example "dual" for testnet
+  -a, --assembly=assembly                 An optional assembly type, example "dual" for testnet
 
-  -c, --customPreset=customPreset  External preset file. Values in this file will override the provided presets
-                                   (optional)
+  -c, --customPreset=customPreset         External preset file. Values in this file will override the provided presets
+                                          (optional)
 
-  -h, --help                       It shows the help of this command.
+  -h, --help                              It shows the help of this command.
 
-  -p, --preset=bootstrap|testnet   [default: bootstrap] the network preset
+  -p, --preset=(bootstrap|testnet|light)  [default: bootstrap] the network preset
 
-  -r, --reset                      It resets the configuration generating a new one
+  -r, --reset                             It resets the configuration generating a new one
 
-  -t, --target=target              [default: target] the target folder
+  -t, --target=target                     [default: target] the target folder
 
 EXAMPLE
   $ symbol-bootstrap config -p bootstrap
 ```
 
-_See code: [src/commands/config.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/config.ts)_
 
 ## `symbol-bootstrap help [COMMAND]`
 
@@ -280,20 +316,22 @@ USAGE
   $ symbol-bootstrap run
 
 OPTIONS
-  -b, --build          If provided, docker-compose will run with -b (--build)
+  -b, --build            If provided, docker-compose will run with -b (--build)
 
-  -d, --daemon         If provided, docker-compose will run with -d (--detached) and this command will wait unit server
-                       is running before returning
+  -d, --daemon           If provided, docker-compose will run with -d (--detached) and this command will wait unit
+                         server is running before returning
 
-  -h, --help           It shows the help of this command.
+  -h, --help             It shows the help of this command.
 
-  -t, --target=target  [default: target] the target folder
+  -t, --target=target    [default: target] the target folder
+
+  -t, --timeout=timeout  [default: 60000] If running in daemon mode, how long before timing out (in MS)
 
 EXAMPLE
   $ symbol-bootstrap run
 ```
 
-_See code: [src/commands/run.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/run.ts)_
 
 ## `symbol-bootstrap start`
 
@@ -304,25 +342,27 @@ USAGE
   $ symbol-bootstrap start
 
 OPTIONS
-  -a, --assembly=assembly          An optional assembly type, example "dual" for testnet
-  -b, --build                      If provided, docker-compose will run with -b (--build)
+  -a, --assembly=assembly                 An optional assembly type, example "dual" for testnet
+  -b, --build                             If provided, docker-compose will run with -b (--build)
 
-  -c, --customPreset=customPreset  External preset file. Values in this file will override the provided presets
-                                   (optional)
+  -c, --customPreset=customPreset         External preset file. Values in this file will override the provided presets
+                                          (optional)
 
-  -d, --daemon                     If provided, docker-compose will run with -d (--detached) and this command will wait
-                                   unit server is running before returning
+  -d, --daemon                            If provided, docker-compose will run with -d (--detached) and this command
+                                          will wait unit server is running before returning
 
-  -h, --help                       It shows the help of this command.
+  -h, --help                              It shows the help of this command.
 
-  -p, --preset=bootstrap|testnet   [default: bootstrap] the network preset
+  -p, --preset=(bootstrap|testnet|light)  [default: bootstrap] the network preset
 
-  -r, --reset                      It resets the configuration generating a new one
+  -r, --reset                             It resets the configuration generating a new one
 
-  -t, --target=target              [default: target] the target folder
+  -t, --target=target                     [default: target] the target folder
 
-  -u, --user=user                  [default: current] User used to run the services in the docker-compose.yml file.
-                                   "current" means the current user.
+  -t, --timeout=timeout                   [default: 60000] If running in daemon mode, how long before timing out (in MS)
+
+  -u, --user=user                         [default: current] User used to run the services in the docker-compose.yml
+                                          file. "current" means the current user.
 
 EXAMPLES
   $ symbol-bootstrap start
@@ -330,7 +370,7 @@ EXAMPLES
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/start.ts)_
 
 ## `symbol-bootstrap stop`
 
@@ -348,6 +388,6 @@ EXAMPLE
   $ symbol-bootstrap stop
 ```
 
-_See code: [src/commands/stop.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0/src/commands/stop.ts)_
+_See code: [src/commands/stop.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/stop.ts)_
 <!-- commandsstop -->
 ```

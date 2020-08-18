@@ -2,7 +2,7 @@
 
 networkIdentifier = {{{networkIdentifier}}}
 nemesisGenerationHashSeed = {{{nemesisGenerationHashSeed}}}
-nemesisSignerPrivateKey = {{{nemesisSignerPrivateKey}}}
+nemesisSignerPrivateKey = {{{nemesis.nemesisSignerPrivateKey}}}
 
 [cpp]
 
@@ -11,17 +11,17 @@ cppFileHeader =
 [output]
 
 cppFile =
-binDirectory = {{{binDirectory}}}
+binDirectory = {{{nemesis.binDirectory}}}
 
 [transactions]
-transactionsDirectory = {{{transactionsDirectory}}}
+transactionsDirectory = {{{nemesis.transactionsDirectory}}}
 
 [namespaces]
 
 {{{baseNamespace}}} = true
-{{#mosaics}}
+{{#nemesis.mosaics}}
 {{{../baseNamespace}}}.{{{name}}} = true
-{{/mosaics}}
+{{/nemesis.mosaics}}
 
 [namespace>{{{baseNamespace}}}]
 
@@ -29,11 +29,11 @@ duration = 0
 
 [mosaics]
 
-{{#mosaics}}
+{{#nemesis.mosaics}}
 {{../baseNamespace}}:{{{name}}} = true
-{{/mosaics}}
+{{/nemesis.mosaics}}
 
-{{#mosaics}}
+{{#nemesis.mosaics}}
 [mosaic>{{{../baseNamespace}}}:{{{name}}}]
 
 divisibility = {{{toAmount divisibility}}}
@@ -48,4 +48,4 @@ isRestrictable = {{{isRestrictable}}}
 {{{address}}} = {{{toAmount amount}}}
 {{/currencyDistributions}}
 
-{{/mosaics}}
+{{/nemesis.mosaics}}
