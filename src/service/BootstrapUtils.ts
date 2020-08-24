@@ -239,6 +239,10 @@ export class BootstrapUtils {
     private static dockerUserId: string;
 
     public static async getDockerUserGroup(): Promise<string> {
+        const isWin = process.platform === 'win32';
+        if (isWin) {
+            return '';
+        }
         if (BootstrapUtils.dockerUserId !== undefined) {
             return BootstrapUtils.dockerUserId;
         }
