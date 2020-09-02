@@ -9,6 +9,10 @@ import { BootstrapUtils } from './BootstrapUtils';
 import { existsSync } from 'fs';
 import { DockerCompose } from '../model/DockerCompose';
 import * as _ from 'lodash';
+
+/**
+ * params necessary to run the docker-compose network.
+ */
 export type RunParams = { target: string; daemon?: boolean; build?: boolean; timeout?: number };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -26,7 +30,7 @@ export class RunService {
         if (this.params.build) {
             basicArgs.push('--build');
         }
-        await this.basicRun(basicArgs, false, this.params.daemon || false);
+        await this.basicRun(basicArgs, false);
         if (this.params.daemon) {
             await this.pollServiceUntilIsUp(this.params.timeout || RunService.defaultParams.timeout || 0);
         }
@@ -63,10 +67,10 @@ export class RunService {
     }
 
     public async stop(): Promise<void> {
-        await this.basicRun(['down'], true, false);
+        await this.basicRun(['down'], true);
     }
 
-    private async basicRun(extraArgs: string[], ignoreIfNotFound: boolean, daemon: boolean): Promise<void> {
+    private async basicRun(extraArgs: string[], ignoreIfNotFound: boolean): Promise<void> {
         const dockerFile = join(this.params.target, `docker`, `docker-compose.yml`);
         const dockerComposeArgs = ['-f', dockerFile];
         const args = [...dockerComposeArgs, ...extraArgs];
@@ -93,7 +97,7 @@ export class RunService {
         const cmd = spawn('docker-compose', args);
 
         const log = (data: any) => {
-            if (!daemon) console.log(`${data}`.trim());
+            console.log(`${data}`.trim());
         };
 
         cmd.stdout.on('data', (data) => {

@@ -2,6 +2,4 @@
 set -e
 
 sudo ./cmds/clean-all.sh
-./bin/run config -p bootstrap -c test/optin_preset.yml
-./bin/run compose -u current
-./bin/run run
+./bin/run start -u current -p bootstrap -c test/optin_preset.yml -t target/bootstrap-optin

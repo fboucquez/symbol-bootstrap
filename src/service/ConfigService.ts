@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 import { BootstrapUtils } from './BootstrapUtils';
 import {
     Account,
@@ -15,15 +14,16 @@ import {
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
 import { CertificateService } from './CertificateService';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import { NemgenService } from './NemgenService';
 import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
+import * as fs from 'fs';
 
+/**
+ * Defined presets.
+ */
 export enum Preset {
     bootstrap = 'bootstrap',
     testnet = 'testnet',
@@ -306,18 +306,6 @@ export class ConfigService {
         const moveTo = `${this.params.target}/config/nemesis`;
         const templateContext = { ...(presetData as any), addresses };
         await Promise.all((addresses.nodes || []).map((n) => this.createVrfTransaction(presetData, n)));
-
-        //OPT IN!!
-        // const namespacesBalances =
-        //     storedTransactions
-        //         .filter((t) => t.type === TransactionType.NAMESPACE_REGISTRATION)
-        //         .map((t) => {
-        //             const namespaceTransaction = t as NamespaceRegistrationTransaction;
-        //             return parseInt(namespaceTransaction?.duration?.toString() || '0');
-        //         })
-        //         .reduce((p, n) => {
-        //             return p + n;
-        //         }, 0) || 0;
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
             logger.info('Opt In mode is ON!!! balances or transactions have been provided');

@@ -2,7 +2,7 @@ import { Command, flags } from '@oclif/command';
 import { BootstrapUtils, ConfigService, RunService } from '../service';
 
 export default class Stop extends Command {
-    static description = `It stops the docker-compose network if it's running (example, when symbol-bootstrap start --daemon).`;
+    static description = `It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.`;
 
     static examples = [`$ symbol-bootstrap stop`];
 

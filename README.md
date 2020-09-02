@@ -5,10 +5,10 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
 [![Downloads/week](https://img.shields.io/npm/dw/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
-[![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json)
-[![Build Status](https://travis-ci.com/fboucquez/symbol-bootstrap.svg?branch=main)](https://travis-ci.com/fboucquez/symbol-bootstrap)
-[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
-[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://fboucquez.github.io/symbol-bootstrap/)
+[![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/nemtech/symbol-bootstrap/blob/master/package.json)
+[![Build Status](https://travis-ci.com/nemtech/symbol-bootstrap.svg?branch=main)](https://travis-ci.com/nemtech/symbol-bootstrap)
+[![Coverage Status](https://coveralls.io/repos/github/nemtech/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/nemtech/symbol-bootstrap?branch=main)
+[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://nemtech.github.io/symbol-bootstrap/)
 
 
 <!-- toc -->
@@ -63,11 +63,11 @@ Properties in each file override the previous values (by shallow object merge).
 
 ### Out-of-the-box presets:
 
--   `-p botstrap`: Default [preset](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
--   `-p light`: A [light](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/light/network.yml) network. It's a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
--   `-p testnet -a peer`: A [haversting](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/fboucquez/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
--   `-p testnet -a api`: A [api](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/fboucquez/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
--   `-p testnet -a dual`: A [dual](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/fboucquez/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/fboucquez/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+-   `-p botstrap`: Default [preset](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
+-   `-p light`: A [light](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/light/network.yml) network. It's a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
+-   `-p testnet -a peer`: A [haversting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+-   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+-   `-p testnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 
 ## Target:
 
@@ -106,7 +106,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.0-alpha-202008211310 linux-x64 node-v12.16.3
+symbol-bootstrap/0.0.0 linux-x64 node-v14.8.0
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -181,7 +181,7 @@ npm run e2e
 
 ## Node client E2E via API:
 
-Alternative, you can use the [BootstrapService](https://github.com/fboucquez/symbol-bootstrap/blob/main/src/service/BootstrapService.ts) facade to programmatically start and stop a server.
+Alternative, you can use the [BootstrapService](https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts) facade to programmatically start and stop a server.
 
 Example:
 
@@ -238,7 +238,7 @@ EXAMPLE
   $ symbol-bootstrap clean
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/clean.ts)_
 
 ## `symbol-bootstrap compose`
 
@@ -260,7 +260,7 @@ EXAMPLE
   $ symbol-bootstrap compose
 ```
 
-_See code: [src/commands/compose.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/compose.ts)_
+_See code: [src/commands/compose.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/compose.ts)_
 
 ## `symbol-bootstrap config`
 
@@ -288,7 +288,7 @@ EXAMPLE
   $ symbol-bootstrap config -p bootstrap
 ```
 
-_See code: [src/commands/config.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/config.ts)_
 
 ## `symbol-bootstrap help [COMMAND]`
 
@@ -309,7 +309,7 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.1.0
 
 ## `symbol-bootstrap run`
 
-This command runs this network from the created configuration and docker-compose.yml file.
+It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call
 
 ```
 USAGE
@@ -331,7 +331,7 @@ EXAMPLE
   $ symbol-bootstrap run
 ```
 
-_See code: [src/commands/run.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/run.ts)_
 
 ## `symbol-bootstrap start`
 
@@ -370,11 +370,11 @@ EXAMPLES
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/start.ts)_
 
 ## `symbol-bootstrap stop`
 
-It stops the docker-compose network if it's running (example, when symbol-bootstrap start --daemon).
+It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.
 
 ```
 USAGE
@@ -388,6 +388,6 @@ EXAMPLE
   $ symbol-bootstrap stop
 ```
 
-_See code: [src/commands/stop.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v0.0.0-alpha-202008211310/src/commands/stop.ts)_
+_See code: [src/commands/stop.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/stop.ts)_
 <!-- commandsstop -->
 ```
