@@ -125,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L11">src/service/BootstrapService.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L12">src/service/BootstrapService.ts:12</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -147,7 +147,7 @@
 					<div class="tsd-signature tsd-kind-icon">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L12">src/service/BootstrapService.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L13">src/service/BootstrapService.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -158,19 +158,34 @@
 					<a name="compose" class="tsd-anchor"></a>
 					<h3>compose</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">compose<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../modules/_service_composeservice_.html#composeparams" class="tsd-signature-type">ComposeParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">compose<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../modules/_service_composeservice_.html#composeparams" class="tsd-signature-type">ComposeParams</a>, passedPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L20">src/service/BootstrapService.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L32">src/service/BootstrapService.ts:32</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It generates the docker-compose.yaml file from the previously generated configuration.</p>
+								</div>
+								<p>The config method/command needs to be called before this method</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../modules/_service_composeservice_.html#composeparams" class="tsd-signature-type">ComposeParams</a><span class="tsd-signature-symbol"> = ComposeService.defaultParams</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the params of the compose command.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> passedPresetData: <a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the created preset if you know if, otherwise will load the latest one resolved from the target folder.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -187,13 +202,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L16">src/service/BootstrapService.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L20">src/service/BootstrapService.ts:20</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It generates the configuration and nemesis for the provided preset</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/_service_configservice_.configparams.html" class="tsd-signature-type">ConfigParams</a><span class="tsd-signature-symbol"> = ConfigService.defaultParams</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the params of the config command.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_configservice_.configresult.html" class="tsd-signature-type">ConfigResult</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -210,13 +233,23 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L24">src/service/BootstrapService.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L45">src/service/BootstrapService.ts:45</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It boots the network via docker using the generated docker-compose.yml file and configuration</p>
+								</div>
+								<p>The config and compose methods/commands need to be called before this method.</p>
+								<p>This is just a wrapper for docker-compose up bash call.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../modules/_service_runservice_.html#runparams" class="tsd-signature-type">RunParams</a><span class="tsd-signature-symbol"> = RunService.defaultParams</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the params of the run command.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -233,13 +266,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L28">src/service/BootstrapService.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L54">src/service/BootstrapService.ts:54</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This method aggregates config, compose and run all in one.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>config: <a href="../modules/_service_bootstrapservice_.html#startparams" class="tsd-signature-type">StartParams</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the aggregated params in order to run all the sub commands.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_configservice_.configresult.html" class="tsd-signature-type">ConfigResult</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -256,13 +297,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/f3cbd27/src/service/BootstrapService.ts#L39">src/service/BootstrapService.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/bea974d/src/service/BootstrapService.ts#L71">src/service/BootstrapService.ts:71</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It stops the docker-compose network if running.</p>
+								</div>
+								<p>This is just a wrapper for docker-compose down bash call.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../modules/_service_runservice_.html#runparams" class="tsd-signature-type">RunParams</a><span class="tsd-signature-symbol"> = RunService.defaultParams</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the params necessary to detect and stop the network.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
