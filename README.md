@@ -211,6 +211,21 @@ it('Bootstrap e2e test', async () => {
 It's recommended to reuse the same server for multiple tests by using `beforeAll`, `afterAll` kind of statements. 
 
 
+# Development
+
+If you want to contribute to this tool, clone this repo and run:
+
+```
+npm install -g
+```
+
+Then, ``symbol-bootstrap`` runs from the source code. You can now try your features after changing the code.
+
+Pull Requests are appreciated! Please follow the contributing [guidelines](CONTRIBUTING.md).
+
+Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request. 
+General users should install this tool like any other node module. 
+
 # Commands
 
 <!-- commands -->

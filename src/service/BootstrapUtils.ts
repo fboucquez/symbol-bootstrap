@@ -79,7 +79,7 @@ export class BootstrapUtils {
     public static async runImageUsingExec(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
-        const runCommand = `docker run ${userParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
+        const runCommand = `docker run --rm ${userParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
         const { stdout } = await exec(runCommand);
         return stdout;
