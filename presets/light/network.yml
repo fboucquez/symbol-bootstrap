@@ -10,8 +10,6 @@ harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 namespaceRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 nemesis:
-    transactionsDirectory: '/nemesis/transactions'
-    binDirectory: /data/seed
     mosaics:
         - name: 'currency'
           divisibility: 6
@@ -36,25 +34,16 @@ nodes:
     - harvesting: true
       voting: true
       api: true
-      type: peer-node
-      syncsource: true
-      filespooling: true
-      partialtransaction: true
       name: 'api-node'
       databaseHost: 'db'
-      host: ''
       openPort: true
-      sinkType: 'Async'
-      enableSingleThreadPool: false
       brokerHost: 'api-broker'
       openBrokerPort: true
-      addressextraction: true
-      enableAutoSyncCleanup: false
-      mongo: true
-      zeromq: true
+      trustedHosts: 127.0.0.1, 172.20.0.25
+      localNetworks: 127.0.0.1, 172.20.0.25
 gateways:
-    - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
-      name: 'rest-gateway'
+    - name: 'rest-gateway'
+      apiNodeName: 'api-node'
       apiNodeHost: 'api-node'
       apiNodeBrokerHost: 'api-broker'
       description: 'catapult public test network'
@@ -62,6 +51,7 @@ gateways:
       maxConnectionAttempts: 5
       baseRetryDelay: 500
       openPort: true
+      ipv4_address: 172.20.0.25
 networkType: 152
 inflation:
     starting-at-height-1: 0

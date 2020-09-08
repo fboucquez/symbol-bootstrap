@@ -1,0 +1,12 @@
+# custom repeat preset for bootstrap preset.
+# 4 mongos
+databases:
+    - repeat: 4
+nodes:
+    # 3 peers
+    - repeat: 3
+    # 4 apis
+    - repeat: 4
+# 4 rests
+gateways:
+    - repeat: 4

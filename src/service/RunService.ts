@@ -13,16 +13,19 @@ import * as _ from 'lodash';
 /**
  * params necessary to run the docker-compose network.
  */
-export type RunParams = { target: string; detached?: boolean; build?: boolean; timeout?: number; service?: string };
+export type RunParams = { target: string; detached?: boolean; build?: boolean; timeout?: number; service?: string; resetData?: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class RunService {
-    public static readonly defaultParams: RunParams = { target: 'target', timeout: 60000 };
+    public static readonly defaultParams: RunParams = { target: 'target', timeout: 60000, resetData: false };
 
     constructor(protected readonly params: RunParams) {}
 
     public async run(): Promise<void> {
+        if (this.params.resetData) {
+            await this.resetData();
+        }
         const basicArgs = ['up', '--remove-orphans'];
         if (this.params.detached) {
             basicArgs.push('--detach');
@@ -67,6 +70,27 @@ export class RunService {
         if (!started) {
             throw new Error(`Network did NOT start!!!`);
         }
+    }
+
+    public async resetData(): Promise<void> {
+        logger.info('Resetting data');
+        const target = this.params.target;
+        const preset = BootstrapUtils.loadExistingPresetData(target);
+        const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
+        await Promise.all(
+            (preset.nodes || []).map(async (node) => {
+                const componentConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, node.name);
+                const dataFolder = join(componentConfigFolder, 'data');
+                BootstrapUtils.deleteFolder(join(componentConfigFolder, 'data'), ['private_key_tree1.dat']);
+                BootstrapUtils.deleteFolder(join(componentConfigFolder, 'logs'));
+                logger.info(`Copying block 1 seed to ${dataFolder}`);
+                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder);
+            }),
+        );
+        (preset.gateways || []).forEach((node) => {
+            BootstrapUtils.deleteFolder(BootstrapUtils.getTargetGatewayFolder(target, false, node.name, 'logs'));
+        });
+        BootstrapUtils.deleteFolder(BootstrapUtils.getTargetDatabasesFolder(target, false));
     }
 
     public async stop(): Promise<void> {

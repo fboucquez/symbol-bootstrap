@@ -8,7 +8,7 @@ import * as util from 'util';
 import * as Docker from 'dockerode';
 import * as _ from 'lodash';
 import { textSync } from 'figlet';
-import { Addresses, ConfigPreset } from '../model';
+import { Addresses, ConfigPreset, NodePreset } from '../model';
 import { Preset } from './ConfigService';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const MemoryStream = require('memorystream');
@@ -19,30 +19,42 @@ const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class BootstrapUtils {
+    public static targetNodesFolder = 'nodes';
+    public static targetGatewaysFolder = 'gateways';
+    public static targetDatabasesFolder = 'databases';
+    public static targetNemesisFolder = 'nemesis';
+
     public static readonly CURRENT_USER = 'current';
     private static presetInfoLogged = false;
     private static pulledImages: string[] = [];
 
-    public static deleteFolder(folder: string): void {
+    public static deleteFolder(folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             logger.info(`Deleting folder ${folder}`);
         }
-        return BootstrapUtils.deleteFolderRecursive(folder);
+        return BootstrapUtils.deleteFolderRecursive(folder, excludeFiles);
     }
 
-    private static deleteFolderRecursive(folder: string): void {
+    private static deleteFolderRecursive(folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             readdirSync(folder).forEach((file: string) => {
-                const curPath = join(folder, file);
-                if (lstatSync(curPath).isDirectory()) {
+                const currentPath = join(folder, file);
+                if (excludeFiles.find((f) => f === currentPath)) {
+                    logger.info(`File ${currentPath} excluded from deletion.`);
+                    return;
+                }
+                if (lstatSync(currentPath).isDirectory()) {
                     // recurse
-                    this.deleteFolderRecursive(curPath);
+                    this.deleteFolderRecursive(
+                        currentPath,
+                        excludeFiles.map((file) => join(currentPath, file)),
+                    );
                 } else {
                     // delete file
-                    unlinkSync(curPath);
+                    unlinkSync(currentPath);
                 }
             });
-            rmdirSync(folder);
+            if (!readdirSync(folder).length) rmdirSync(folder);
         }
     }
 
@@ -84,12 +96,14 @@ export class BootstrapUtils {
     }
 
     public static async runImageUsingExec({
+        catapultAppFolder,
         image,
         userId,
         workdir,
         cmds,
         binds,
     }: {
+        catapultAppFolder: string;
         image: string;
         userId?: string | undefined;
         workdir?: string | undefined;
@@ -99,13 +113,12 @@ export class BootstrapUtils {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
-        const environmentParam = '--env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps';
+        const environmentParam = `--env LD_LIBRARY_PATH=${catapultAppFolder}/lib:${catapultAppFolder}/deps`;
         const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${cmds
             .map((a) => `"${a}"`)
             .join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
-        const { stdout, stderr } = await exec(runCommand);
-        return { stdout, stderr };
+        return await this.exec(runCommand);
     }
 
     public static async runImageUsingApi(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
@@ -149,23 +162,143 @@ export class BootstrapUtils {
         if (presetData.assemblies && !assembly) {
             throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
         }
-        return presetData;
+        const presetDataWithDynamicDefaults = {
+            ...presetData,
+            nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
+        };
+        return this.expandRepeat(presetDataWithDynamicDefaults);
+    }
+
+    public static dynamicDefaultNodeConfiguration(nodes?: NodePreset[]): NodePreset[] {
+        return _.map(nodes || [], (node) => {
+            const roles = this.resolveRoles(node);
+            if (node.harvesting && node.api) {
+                return {
+                    syncsource: true,
+                    filespooling: true,
+                    partialtransaction: true,
+                    openPort: true,
+                    sinkType: 'Async',
+                    enableSingleThreadPool: false,
+                    openBrokerPort: true,
+                    addressextraction: true,
+                    enableAutoSyncCleanup: false,
+                    mongo: true,
+                    zeromq: true,
+                    ...node,
+                    roles,
+                };
+            }
+            if (node.harvesting) {
+                return {
+                    sinkType: 'Sync',
+                    enableSingleThreadPool: true,
+                    addressextraction: false,
+                    mongo: false,
+                    zeromq: false,
+                    syncsource: true,
+                    filespooling: false,
+                    enableAutoSyncCleanup: true,
+                    partialtransaction: false,
+                    ...node,
+                    roles,
+                };
+            }
+            if (node.api) {
+                return {
+                    sinkType: 'Async',
+                    syncsource: false,
+                    filespooling: true,
+                    partialtransaction: true,
+                    enableSingleThreadPool: false,
+                    addressextraction: true,
+                    mongo: true,
+                    zeromq: true,
+                    enableAutoSyncCleanup: false,
+                    ...node,
+                    roles,
+                };
+            }
+            throw new Error('A node must have at least one harvesting: true or api: true');
+        });
+    }
+    private static resolveRoles(nodePreset: NodePreset): string {
+        if (nodePreset.roles) {
+            return nodePreset.roles;
+        }
+        const roles: string[] = [];
+        if (nodePreset.harvesting) {
+            roles.push('Peer');
+        }
+        if (nodePreset.api) {
+            roles.push('Api');
+        }
+        if (nodePreset.voting) {
+            roles.push('Voting');
+        }
+        return roles.join(',');
+    }
+
+    public static expandRepeat(presetData: ConfigPreset): ConfigPreset {
+        return {
+            ...presetData,
+            databases: this.expandServicesRepeat(presetData.databases),
+            nodes: this.expandServicesRepeat(presetData.nodes),
+            gateways: this.expandServicesRepeat(presetData.gateways),
+        };
+    }
+
+    public static applyIndex(index: number, value: boolean | string | number): any {
+        if (!value || !_.isString(value)) {
+            return value;
+        }
+        if (value.indexOf('$index') < 0) {
+            return value;
+        }
+        const compiledTemplate = Handlebars.compile(value);
+        return compiledTemplate({ $index: index });
+    }
+
+    public static expandServicesRepeat(services?: any[]): any[] {
+        return _.flatMap(services || [], (service) => {
+            if (service.repeat === 0) {
+                return [];
+            }
+            if (!service.repeat) {
+                return [service];
+            }
+
+            return _.range(service.repeat).map((index) => {
+                return _.omit(
+                    _.mapValues(service, (v: any) => this.applyIndex(index, v)),
+                    'repeat',
+                );
+            });
+        });
     }
 
     public static loadExistingPresetData(target: string): ConfigPreset {
         try {
-            return this.loadYaml(`${target}/config/preset.yml`);
+            return this.loadYaml(this.getGeneratedPresetLocation(target));
         } catch (e) {
             throw new Error(`${e.message}. Have you executed the 'config' command?`);
         }
     }
 
+    public static getGeneratedPresetLocation(target: string): string {
+        return join(target, 'preset.yml');
+    }
+
     public static loadExistingAddresses(target: string): Addresses {
         try {
-            return this.loadYaml(`${target}/config/generated-addresses/addresses.yml`);
+            return this.loadYaml(this.getGeneratedAddressLocation(target));
         } catch (e) {
             throw new Error(`${e.message}. Have you executed the 'config' command?`);
         }
+    }
+
+    public static getGeneratedAddressLocation(target: string): string {
+        return join(target, 'addresses.yml');
     }
 
     public static sleep(ms: number): Promise<any> {
@@ -199,19 +332,6 @@ export class BootstrapUtils {
         });
     }
 
-    public static toAmount(renderedText: string | number): string {
-        const numberAsString = (renderedText + '').split("'").join('');
-        if (!numberAsString.match(/^\d+$/)) {
-            throw new Error(`'${renderedText}' is not a valid integer`);
-        }
-        return (numberAsString.match(/\d{1,3}(?=(\d{3})*$)/g) || [numberAsString]).join("'");
-    }
-
-    public static toHex(renderedText: string): string {
-        const numberAsString = renderedText.split("'").join('').replace(/^(0x)/, '');
-        return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
-    }
-
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static async generateConfiguration(templateContext: any, copyFrom: string, copyTo: string): Promise<void> {
         // Loop through all the files in the config folder
@@ -229,8 +349,7 @@ export class BootstrapUtils {
                     if (toPath.indexOf('.mustache') > -1) {
                         const destinationFile = toPath.replace('.mustache', '');
                         const template = await BootstrapUtils.readTextFile(fromPath);
-                        Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
-                        Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
+
                         const compiledTemplate = Handlebars.compile(template);
                         const renderedTemplate = compiledTemplate({ ...templateContext });
                         await fsPromises.writeFile(destinationFile, renderedTemplate);
@@ -257,7 +376,7 @@ export class BootstrapUtils {
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static toYaml(object: any): string {
-        return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140 });
+        return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140, noRefs: true });
     }
 
     public static fromYaml(yamlString: string): any {
@@ -287,6 +406,17 @@ export class BootstrapUtils {
         }
         return paramUser;
     }
+    public static async createImageUsingExec(targetFolder: string, dockerFile: string, tag: string): Promise<string> {
+        const runCommand = `docker build -f ${dockerFile} ${targetFolder} -t ${tag}`;
+        logger.info(`Creating image image '${tag}' from ${dockerFile}`);
+        return (await this.exec(runCommand)).stdout;
+    }
+
+    public static async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
+        logger.debug(`Running command: ${runCommand}`);
+        const { stdout, stderr } = await exec(runCommand);
+        return { stdout, stderr };
+    }
 
     public static async getDockerUserGroup(): Promise<string> {
         const isWin = process.platform === 'win32';
@@ -297,7 +427,7 @@ export class BootstrapUtils {
             return BootstrapUtils.dockerUserId;
         }
         try {
-            const { stdout }: { stdout: string } = await exec('echo $(id -u):$(id -g)');
+            const { stdout } = await this.exec('echo $(id -u):$(id -g)');
             logger.info(`User for docker resolved: ${stdout}`);
             const user = stdout.trim();
             BootstrapUtils.dockerUserId = user;
@@ -306,5 +436,79 @@ export class BootstrapUtils {
             logger.info(`User for docker could not be resolved: ${e}`);
             return '';
         }
+    }
+
+    public static validateFolder(workingDirFullPath: string): void {
+        if (!existsSync(workingDirFullPath)) {
+            throw new Error(`${workingDirFullPath} folder does not exist`);
+        }
+        if (!lstatSync(workingDirFullPath).isDirectory()) {
+            throw new Error(`${workingDirFullPath} is not a folder!`);
+        }
+    }
+
+    public static getTargetFolder(target: string, absolute: boolean, ...paths: string[]): string {
+        if (absolute) {
+            return join(process.cwd(), target, ...paths);
+        } else {
+            return join(target, ...paths);
+        }
+    }
+
+    public static getTargetNodesFolder(target: string, absolute: boolean, ...paths: string[]): string {
+        return this.getTargetFolder(target, absolute, this.targetNodesFolder, ...paths);
+    }
+
+    public static getTargetGatewayFolder(target: string, absolute: boolean, ...paths: string[]): string {
+        return this.getTargetFolder(target, absolute, this.targetGatewaysFolder, ...paths);
+    }
+
+    public static getTargetNemesisFolder(target: string, absolute: boolean, ...paths: string[]): string {
+        return this.getTargetFolder(target, absolute, this.targetNemesisFolder, ...paths);
+    }
+
+    public static getTargetDatabasesFolder(target: string, absolute: boolean, ...paths: string[]): string {
+        return this.getTargetFolder(target, absolute, this.targetDatabasesFolder, ...paths);
+    }
+
+    //HANDLEBARS READY FUNCTIONS:
+    private static initialize = (() => {
+        Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
+        Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
+        Handlebars.registerHelper('add', BootstrapUtils.add);
+        Handlebars.registerHelper('minus', BootstrapUtils.minus);
+    })();
+
+    private static add(a: any, b: any): string | number {
+        if (_.isNumber(a) && _.isNumber(b)) {
+            return Number(a) + Number(b);
+        }
+        if (typeof a === 'string' && typeof b === 'string') {
+            return a + b;
+        }
+        return '';
+    }
+
+    private static minus(a: any, b: any): number {
+        if (!_.isNumber(a)) {
+            throw new TypeError('expected the first argument to be a number');
+        }
+        if (!_.isNumber(b)) {
+            throw new TypeError('expected the second argument to be a number');
+        }
+        return Number(a) - Number(b);
+    }
+
+    public static toAmount(renderedText: string | number): string {
+        const numberAsString = (renderedText + '').split("'").join('');
+        if (!numberAsString.match(/^\d+$/)) {
+            throw new Error(`'${renderedText}' is not a valid integer`);
+        }
+        return (numberAsString.match(/\d{1,3}(?=(\d{3})*$)/g) || [numberAsString]).join("'");
+    }
+
+    public static toHex(renderedText: string): string {
+        const numberAsString = renderedText.split("'").join('').replace(/^(0x)/, '');
+        return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
     }
 }

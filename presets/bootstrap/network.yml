@@ -10,8 +10,6 @@ harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 namespaceRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 nemesis:
-    transactionsDirectory: '/nemesis/transactions'
-    binDirectory: /data/seed
     mosaics:
         - name: 'currency'
           divisibility: 6
@@ -30,68 +28,42 @@ nemesis:
           isRestrictable: false
           accounts: 2
 databases:
-    - name: 'db'
-      openPort: true
+    - repeat: 1
+      name: 'db-{{$index}}'
+      openPort: '{{add $index 27017}}'
 nodes:
-    - harvesting: true
+    - repeat: 2
+      harvesting: true
       voting: true
       api: false
-      type: peer-node
-      syncsource: true
-      filespooling: false
-      partialtransaction: false
-      name: 'peer-node-0'
-      friendlyName: 'peer-node-0'
-      host: 'peer-node-0'
-      sinkType: 'Sync'
-      enableSingleThreadPool: true
-      addressextraction: false
-      mongo: false
-      zeromq: false
-    - harvesting: true
-      voting: true
-      api: false
-      type: peer-node
-      syncsource: true
-      filespooling: false
-      partialtransaction: false
-      friendlyName: 'peer-node-1'
-      name: 'peer-node-1'
-      host: 'peer-node-1'
-      sinkType: 'Sync'
-      enableSingleThreadPool: true
-      addressextraction: false
-      mongo: false
-      zeromq: false
-    - harvesting: false
+      name: 'peer-node-{{$index}}'
+      friendlyName: 'peer-node-{{$index}}'
+      host: 'peer-node-{{$index}}'
+      openPort: '{{add $index 7900}}'
+    - repeat: 1
+      harvesting: false
       voting: false
       api: true
-      type: api-node
-      syncsource: false
-      filespooling: true
-      partialtransaction: true
-      friendlyName: 'api-node-0'
-      name: 'api-node-0'
-      host: 'api-node-0'
-      brokerHost: 'api-node-broker-0'
-      openBrokerPort: true
-      sinkType: 'Async'
-      enableSingleThreadPool: false
-      addressextraction: true
-      mongo: true
-      zeromq: true
-      databaseHost: 'db'
-      enableAutoSyncCleanup: false
+      friendlyName: 'api-node-{{$index}}'
+      name: 'api-node-{{$index}}'
+      host: 'api-node-{{$index}}'
+      brokerHost: 'api-node-broker-{{$index}}'
+      openBrokerPort: '{{add $index 8002}}'
+      databaseHost: 'db-{{$index}}'
+      trustedHosts: '127.0.0.1, 172.20.0.{{add $index 25}}'
+      localNetworks: '127.0.0.1, 172.20.0.{{add $index 25}}'
 gateways:
-    - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
-      apiNodeHost: 'api-node-0'
-      apiNodeBrokerHost: 'api-node-broker-0'
-      name: 'rest-gateway'
+    - repeat: 1
+      apiNodeName: 'api-node-{{$index}}'
+      apiNodeHost: 'api-node-{{$index}}'
+      apiNodeBrokerHost: 'api-node-broker-{{add $index 5}}'
+      name: 'rest-gateway-{{$index}}'
       description: 'catapult development network'
       maxConnectionAttempts: 7
       baseRetryDelay: 750
-      databaseHost: 'db'
-      openPort: true
+      databaseHost: 'db-{{$index}}'
+      openPort: '{{add $index 3000}}'
+      ipv4_address: '172.20.0.{{add $index 25}}'
 networkType: 152
 inflation:
     starting-at-height-1: 0

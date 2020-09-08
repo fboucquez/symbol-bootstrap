@@ -1,7 +1,6 @@
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { RunParams, RunService } from './RunService';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ReportParams, ReportService } from './ReportService';
 import { Addresses, ConfigPreset } from '../model';
 import { LinkParams, LinkService } from './LinkService';
@@ -81,14 +80,20 @@ export class BootstrapService {
     }
 
     /**
+     * It resets the data keeping generated configuration, block 1, certificates and keys.
+     *
+     * @param config the params of the clean command.
+     */
+    public async resetData(config: RunParams = RunService.defaultParams): Promise<void> {
+        await new RunService(config).resetData();
+    }
+
+    /**
      * This method aggregates config, compose and run all in one.
      *
      * @param config the aggregated params in order to run all the sub commands.
      */
     public async start(config: StartParams): Promise<ConfigResult> {
-        if (config.reset) {
-            BootstrapUtils.deleteFolder(config.target);
-        }
         const configResult = await this.config(config);
         await this.compose(config, configResult.presetData);
         await this.run(config);

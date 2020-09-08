@@ -83,7 +83,7 @@ export class ReportService {
         const target = join(workingDir, this.params.target);
         const descriptions = await BootstrapUtils.loadYaml(join(this.root, 'presets', 'descriptions.yml'));
         const promises: Promise<ReportNode>[] = (presetData.nodes || []).map(async (n) => {
-            const resourcesFolder = join(target, 'config', n.name, 'resources');
+            const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'userconfig', 'resources');
             const files = await fsPromises.readdir(resourcesFolder);
             const reportFiles = files
                 .filter((fileName) => fileName.indexOf('.properties') > -1)
@@ -113,7 +113,7 @@ export class ReportService {
     public async run(passedPresetData?: ConfigPreset): Promise<string[]> {
         const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
 
-        const reportFolder = join(this.params.target, 'report');
+        const reportFolder = join(this.params.target, 'reports');
         BootstrapUtils.deleteFolder(reportFolder);
         const reportNodes: ReportNode[] = await this.createReportsPerNode(presetData);
 

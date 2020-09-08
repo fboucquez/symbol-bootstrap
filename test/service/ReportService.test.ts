@@ -1,23 +1,44 @@
 import 'mocha';
-import { BootstrapUtils, ConfigService, Preset } from '../../src/service';
+import { BootstrapUtils, ConfigParams, ConfigService, Preset } from '../../src/service';
 import { ReportService } from '../../src/service/ReportService';
 import { expect } from '@oclif/test';
+import { readdirSync } from 'fs';
+import { join } from 'path';
 
 describe('ReportService', () => {
-    it('ReportService testnet report', async () => {
-        const target = 'target/ReportService.testnet.report';
+    const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
+        const configResult = await new ConfigService('.', params).run();
+
+        const paths = await new ReportService('.', params).run(configResult.presetData);
+        const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
+        expect(paths.length).to.eq(readdirSync(expectedReportFolder).length);
+
+        const promises = paths.map(async (reportPath) => {
+            expect(reportPath.indexOf(`${params.target}/report`)).to.be.greaterThan(-1);
+            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
+            const expectedReport = await BootstrapUtils.readTextFile(join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, '')));
+            expect(
+                generatedReport.trim(),
+                `Report ${reportPath} doesn't match
+
+`,
+            ).to.be.eq(expectedReport.trim());
+        });
+
+        await Promise.all(promises);
+    };
+
+    it('ReportService testnet dual voting report', async () => {
+        const target = 'target/ReportService.testnet.voting.report';
         const customPresetObject = {
             nodes: [
                 {
                     voting: true,
-                    roles: 'Api,Peer,Voting',
                     friendlyName: 'myFriendlyName',
-                    signingPrivateKey: '19CBD6AE842F9FDDC8F6F2AE8081981CF2268435BACA6A8A6A91740D631494BD',
-                    vrfPrivateKey: '620857FB100B5F34379DAD160C9A43D6B1BDC562D83DC37A468DD99D31C830F6',
                 },
             ],
         };
-        const configResult = await new ConfigService('.', {
+        const params = {
             ...ConfigService.defaultParams,
             reset: false,
             preset: Preset.testnet,
@@ -25,24 +46,60 @@ describe('ReportService', () => {
             assembly: 'dual',
             target: target,
             report: true,
-        }).run();
+        };
 
-        const paths = await new ReportService('.', { target }).run(configResult.presetData);
-        expect(paths.length).to.eq(2);
-        {
-            const reportPath = paths[0];
-            expect(reportPath).to.eq('target/ReportService.testnet.report/report/api-node-config.rst');
-            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
-            const expectedReport = await BootstrapUtils.readTextFile('./test/expected-api-node-config.rst');
-            expect(generatedReport.trim()).to.be.eq(expectedReport.trim());
-        }
+        await assertReport(params, 'testnet-dual-voting');
+    });
 
-        {
-            const reportPath = paths[1];
-            expect(reportPath).to.eq('target/ReportService.testnet.report/report/api-node-config.csv');
-            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
-            const expectedReport = await BootstrapUtils.readTextFile('./test/expected-api-node-config.csv');
-            expect(generatedReport.trim()).to.be.eq(expectedReport.trim());
-        }
+    it('ReportService testnet peer voting report', async () => {
+        const target = 'target/ReportService.testnet.peer.report';
+        const customPresetObject = {
+            nodes: [
+                {
+                    voting: true,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.testnet,
+            customPresetObject: customPresetObject,
+            assembly: 'peer',
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'testnet-peer');
+    });
+
+    it('ReportService bootstrap report', async () => {
+        const target = 'target/ReportService.bootstrap.voting.report';
+        const customPresetObject = {
+            nemesisGenerationHashSeed: '6AF8E35BBC7AC341E7931B39E2C9A591EDBE9F9111996053E6771D48E9C53B31',
+            nemesis: {
+                nemesisSignerPrivateKey: 'AA0863BDB0C2C275EE8CADECC8FAF01CAF632A2D6E1DE9ECB58917F65C89B204',
+            },
+            nodes: [
+                {
+                    voting: true,
+                    friendlyName: 'my-peer-node-{{$index}}',
+                },
+                {
+                    friendlyName: 'my-api-node-{{$index}}',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.bootstrap,
+            customPresetObject: customPresetObject,
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'bootstrap-voting');
     });
 });

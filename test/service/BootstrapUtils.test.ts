@@ -66,4 +66,132 @@ describe('BootstrapUtils', () => {
         const votingKey = Convert.uint8ToHex(Crypto.randomBytes(48));
         expect(BootstrapUtils.createVotingKey(votingKey)).to.be.eq(votingKey);
     });
+
+    it('applyIndex', async () => {
+        expect(BootstrapUtils.applyIndex(10, 'hello')).to.be.eq('hello');
+        expect(BootstrapUtils.applyIndex(10, 'index')).to.be.eq('index');
+        expect(BootstrapUtils.applyIndex(10, '$index')).to.be.eq('$index');
+        expect(BootstrapUtils.applyIndex(10, '{{index}}')).to.be.eq('{{index}}');
+        expect(BootstrapUtils.applyIndex(10, '{{$index}}')).to.be.eq('10');
+        expect(BootstrapUtils.applyIndex(10, '{{add $index 2}}')).to.be.eq('12');
+        expect(BootstrapUtils.applyIndex(10, '100.100.{{add $index 2}}')).to.be.eq('100.100.12');
+        expect(BootstrapUtils.applyIndex(10, '100.100.{{add $index 5}}')).to.be.eq('100.100.15');
+    });
+
+    it('expandServicesRepeat when repeat 3', async () => {
+        const services = [
+            {
+                repeat: 3,
+                apiNodeName: 'api-node-{{$index}}',
+                apiNodeHost: 'api-node-{{$index}}',
+                apiNodeBrokerHost: 'api-node-broker-{{$index}}',
+                name: 'rest-gateway-{{$index}}',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-{{$index}}',
+                openPort: true,
+                ipv4_address: '172.20.0.{{add $index 5}}',
+            },
+        ];
+
+        const expandedServices = BootstrapUtils.expandServicesRepeat(services);
+
+        const expectedExpandedServices = [
+            {
+                apiNodeName: 'api-node-0',
+                apiNodeHost: 'api-node-0',
+                apiNodeBrokerHost: 'api-node-broker-0',
+                name: 'rest-gateway-0',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-0',
+                openPort: true,
+                ipv4_address: '172.20.0.5',
+            },
+            {
+                apiNodeName: 'api-node-1',
+                apiNodeHost: 'api-node-1',
+                apiNodeBrokerHost: 'api-node-broker-1',
+                name: 'rest-gateway-1',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-1',
+                openPort: true,
+                ipv4_address: '172.20.0.6',
+            },
+            {
+                apiNodeName: 'api-node-2',
+                apiNodeHost: 'api-node-2',
+                apiNodeBrokerHost: 'api-node-broker-2',
+                name: 'rest-gateway-2',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-2',
+                openPort: true,
+                ipv4_address: '172.20.0.7',
+            },
+        ];
+        expect(expandedServices).to.be.deep.eq(expectedExpandedServices);
+    });
+
+    it('expandServicesRepeat when repeat 0', async () => {
+        const services = [
+            {
+                repeat: 0,
+                apiNodeName: 'api-node-{{$index}}',
+                apiNodeHost: 'api-node-{{$index}}',
+                apiNodeBrokerHost: 'api-node-broker-{{$index}}',
+                name: 'rest-gateway-{{$index}}',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-{{$index}}',
+                openPort: true,
+                ipv4_address: '172.20.0.{{add $index 5}}',
+            },
+        ];
+
+        const expandedServices = BootstrapUtils.expandServicesRepeat(services);
+
+        expect(expandedServices).to.be.deep.eq([]);
+    });
+
+    it('expandServicesRepeat when no repeat', async () => {
+        const services = [
+            {
+                apiNodeName: 'api-node-{{$index}}',
+                apiNodeHost: 'api-node-{{$index}}',
+                apiNodeBrokerHost: 'api-node-broker-{{$index}}',
+                name: 'rest-gateway-{{$index}}',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-{{$index}}',
+                openPort: true,
+                ipv4_address: '172.20.0.{{add $index 5}}',
+            },
+        ];
+
+        const expandedServices = BootstrapUtils.expandServicesRepeat(services);
+
+        const expectedExpandedServices = [
+            {
+                apiNodeName: 'api-node-{{$index}}',
+                apiNodeHost: 'api-node-{{$index}}',
+                apiNodeBrokerHost: 'api-node-broker-{{$index}}',
+                name: 'rest-gateway-{{$index}}',
+                description: 'catapult development network',
+                maxConnectionAttempts: 7,
+                baseRetryDelay: 750,
+                databaseHost: 'db-{{$index}}',
+                openPort: true,
+                ipv4_address: '172.20.0.{{add $index 5}}',
+            },
+        ];
+        expect(expandedServices).to.be.deep.eq(expectedExpandedServices);
+    });
 });

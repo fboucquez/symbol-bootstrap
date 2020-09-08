@@ -14,8 +14,9 @@ export interface MosaicPreset {
 }
 
 export interface DatabasePreset {
+    repeat?: number;
     name: string;
-    openPort: boolean;
+    openPort?: boolean | number | string;
 }
 
 export interface NemesisPreset {
@@ -29,14 +30,15 @@ export interface NemesisPreset {
 
 export interface NodePreset {
     // At least these properties.
-    databaseHost: string;
-    openBrokerPort: boolean;
+    repeat?: number;
     harvesting: boolean;
     api: boolean;
     voting: boolean;
+    databaseHost: string;
+    openBrokerPort?: boolean | number | string;
+    openPort?: boolean | number | string;
     host?: string;
     name: string;
-    type: NodeType;
     roles: string;
     friendlyName?: string;
     brokerHost?: string;
@@ -48,13 +50,19 @@ export interface NodePreset {
 
 export interface GatewayPreset {
     // At least these properties.
+    repeat?: number;
+    ipv4_address?: string;
+    apiNodeName: string;
     apiNodeHost: string;
     databaseHost: string;
-    openPort?: boolean;
+    openPort?: boolean | number | string;
     name: string;
 }
 
 export interface ConfigPreset {
+    catapultAppFolder: string;
+    subnet?: string;
+    transactionsDirectory: string;
     faucetUrl?: string;
     nemesis?: NemesisPreset;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
