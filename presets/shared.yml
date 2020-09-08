@@ -44,8 +44,8 @@ maxTransactionsPerBlock: 6000
 stepDuration: 4m
 minNamespaceDuration: 1m
 enableDispatcherInputAuditing: true
-trustedHosts: 127.0.0.1, 172.20.0.25
-localNetworks: 127.0.0.1, 172.20.0.25
+trustedHosts: 127.0.0.1
+localNetworks: 127.0.0.1
 lockedFundsPerAggregate: 10000000
 maxHashLockDuration: 2d
 maxSecretLockDuration: 30d
@@ -70,6 +70,12 @@ logLevel: 'Info'
 # brokerLogLevel: 'Info'
 # recoveryLogLevel: 'Info'
 # serverLogLevel: 'Info'
+transactionsDirectory: './transactions'
+binDirectory: ./seed
+certificateDirectory: ./userconfig/resources/cert
+dataDirectory: ./data
+votingKeysDirectory: ./data/votingkeys
+enableDelegatedHarvestersAutoDetection: true
 
 # node default info
 
@@ -121,3 +127,6 @@ maxReadRateMonitoringTotalSize: 100MB
 #Rest
 throttlingBurst: 35
 throttlingRate: 20
+restLoggingFilename: /symbol-workdir/logs/catapult-rest.log
+apiNodeConfigPath: /symbol-workdir/api-node-config
+subnet: '172.20.0.0/24'

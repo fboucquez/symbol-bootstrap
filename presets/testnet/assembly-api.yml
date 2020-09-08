@@ -21,9 +21,11 @@ nodes:
       enableAutoSyncCleanup: false
       openPort: true
       voting: false
+      trustedHosts: 127.0.0.1, 172.20.0.25
+      localNetworks: 127.0.0.1, 172.20.0.25
 gateways:
-    - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
-      name: 'rest-gateway'
+    - name: 'rest-gateway'
+      apiNodeName: 'api-node'
       apiNodeHost: 'api-node'
       apiNodeBrokerHost: 'api-broker'
       description: 'catapult public test network'
@@ -31,3 +33,4 @@ gateways:
       maxConnectionAttempts: 5
       baseRetryDelay: 500
       openPort: true
+      ipv4_address: 172.20.0.25

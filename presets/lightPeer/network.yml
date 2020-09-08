@@ -27,43 +27,22 @@ nemesis:
           isSupplyMutable: true
           isRestrictable: false
           accounts: 4
-databases:
-    - name: 'db'
-      openPort: true
 nodes:
-    - harvesting: true
-      type: peer-node
-      enableDispatcherInputAuditing: false
-      syncsource: true
-      filespooling: true
-      partialtransaction: true
-      voting: true
-      name: 'api-node'
-      databaseHost: 'db'
-      host: ''
-      openPort: true
-      sinkType: 'Async'
-      roles: 'Api,Peer,Voting'
-      enableSingleThreadPool: false
-      brokerHost: 'api-broker'
-      openBrokerPort: true
-      addressextraction: true
-      enableAutoSyncCleanup: false
-      mongo: true
-      zeromq: true
-      trustedHosts: 127.0.0.1, 172.20.0.25
-      localNetworks: 127.0.0.1, 172.20.0.25
-gateways:
-    - name: 'rest-gateway'
-      apiNodeName: 'api-node'
-      apiNodeHost: 'api-node'
-      apiNodeBrokerHost: 'api-broker'
-      description: 'catapult public test network'
-      databaseHost: 'db'
-      maxConnectionAttempts: 5
-      baseRetryDelay: 500
-      openPort: true
-      ipv4_address: 172.20.0.25
+  - harvesting: true
+    type: peer-node
+    syncsource: true
+    filespooling: false
+    openPort: true
+    partialtransaction: false
+    name: 'peer-node'
+    friendlyName: 'peer-node'
+    host: 'peer-node'
+    sinkType: 'Sync'
+    roles: 'Peer'
+    enableSingleThreadPool: true
+    addressextraction: false
+    mongo: false
+    zeromq: false
 networkType: 152
 inflation:
     starting-at-height-1: 0

@@ -19,6 +19,7 @@ const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class BootstrapUtils {
+    public static targetConfigFolder = 'config';
     public static readonly CURRENT_USER = 'current';
     private static presetInfoLogged = false;
     private static pulledImages: string[] = [];
@@ -83,6 +84,18 @@ export class BootstrapUtils {
         }
     }
 
+    public static async createImageUsingExec(targetFolder: string, dockerFile: string, tag: string): Promise<string> {
+        const runCommand = `docker build -f ${dockerFile} ${targetFolder} -t ${tag}`;
+        logger.info(`Creating image image '${tag}' from ${dockerFile}`);
+        return (await this.exec(runCommand)).stdout;
+    }
+
+    public static async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
+        logger.info(`Running command: ${runCommand}`);
+        const { stdout, stderr } = await exec(runCommand);
+        return { stdout, stderr };
+    }
+
     public static async runImageUsingExec(
         image: string,
         userId: string | undefined,
@@ -94,8 +107,7 @@ export class BootstrapUtils {
         const environmentParam = '--env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps';
         const runCommand = `docker run --rm ${userParam} ${environmentParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
-        const { stdout, stderr } = await exec(runCommand);
-        return { stdout, stderr };
+        return await this.exec(runCommand);
     }
 
     public static async runImageUsingApi(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
@@ -234,7 +246,7 @@ export class BootstrapUtils {
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static toYaml(object: any): string {
-        return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140 });
+        return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140, noRefs: true });
     }
 
     public static fromYaml(yamlString: string): any {
@@ -270,7 +282,7 @@ export class BootstrapUtils {
             return BootstrapUtils.dockerUserId;
         }
         try {
-            const { stdout }: { stdout: string } = await exec('echo $(id -u):$(id -g)');
+            const { stdout } = await this.exec('echo $(id -u):$(id -g)');
             logger.info(`User for docker resolved: ${stdout}`);
             const user = stdout.trim();
             BootstrapUtils.dockerUserId = user;

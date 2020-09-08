@@ -15,7 +15,7 @@ export interface MosaicPreset {
 
 export interface DatabasePreset {
     name: string;
-    openPort: boolean;
+    openPort?: boolean | number;
 }
 
 export interface NemesisPreset {
@@ -30,7 +30,8 @@ export interface NemesisPreset {
 export interface NodePreset {
     // At least these properties.
     databaseHost: string;
-    openBrokerPort: boolean;
+    openBrokerPort?: boolean | number;
+    openPort?: boolean | number;
     name: string;
     type: NodeType;
     roles: string;
@@ -40,13 +41,17 @@ export interface NodePreset {
 
 export interface GatewayPreset {
     // At least these properties.
+    ipv4_address?: string;
+    apiNodeName: string;
     apiNodeHost: string;
     databaseHost: string;
-    openPort?: boolean;
+    openPort?: boolean | number;
     name: string;
 }
 
 export interface ConfigPreset {
+    subnet?: string;
+    transactionsDirectory: string;
     nemesis?: NemesisPreset;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
     assemblies?: string;

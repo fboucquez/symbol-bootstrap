@@ -29,8 +29,8 @@ export class BootstrapService {
      * @param config the params of the compose command.
      * @param passedPresetData the created preset if you know if, otherwise will load the latest one resolved from the target folder.
      */
-    public async compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<void> {
-        await new ComposeService(this.root, config).run(passedPresetData);
+    public async compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<string> {
+        return await new ComposeService(this.root, config).run(passedPresetData);
     }
 
     /**

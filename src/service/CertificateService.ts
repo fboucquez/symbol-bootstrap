@@ -10,6 +10,8 @@ type CertificateParams = ConfigParams;
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
+const targetConfigFolder = BootstrapUtils.targetConfigFolder;
+
 export class CertificateService {
     constructor(private readonly root: string, protected readonly params: CertificateParams) {}
 
@@ -38,7 +40,7 @@ export class CertificateService {
         );
         const symbolServerToolsImage = presetData.symbolServerToolsImage;
         const copyFrom = `${this.root}/config/cert`;
-        const target = `${this.params.target}/config/${name}/resources/cert`;
+        const target = join(this.params.target, targetConfigFolder, name, 'userconfig', 'resources', 'cert');
         await BootstrapUtils.mkdir(target);
         await BootstrapUtils.mkdir(join(target, 'new_certs'));
         const generatedContext = { name };

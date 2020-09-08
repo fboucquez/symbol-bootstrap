@@ -11,6 +11,8 @@ type VotingParams = ConfigParams;
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
+const targetConfigFolder = BootstrapUtils.targetConfigFolder;
+
 export class VotingService {
     constructor(protected readonly params: VotingParams) {}
 
@@ -24,7 +26,8 @@ export class VotingService {
         if (this.isVotingNode(nodePreset)) {
             const privateKeyTreeFileName = 'private_key_tree1.dat';
             const dir = `${process.cwd()}/${this.params.target}`;
-            const votingKeysFolder = `${dir}/data/${nodeAccount.name}/votingkeys`;
+            const dataFolder = join(dir, targetConfigFolder, nodeAccount.name, 'data');
+            const votingKeysFolder = join(dataFolder, `votingkeys`);
             const cmd = [
                 'bash',
                 '-c',
