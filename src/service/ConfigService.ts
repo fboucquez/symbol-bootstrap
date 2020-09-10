@@ -398,18 +398,26 @@ export class ConfigService {
     }
 
     private async createVotingKey(votingPublicKey: string): Promise<string> {
-        return votingPublicKey + "00000000000000000000000000000000";
+        return votingPublicKey + '00000000000000000000000000000000';
     }
 
     private async createVotingKeyTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
         const deadline = (Deadline as any)['createFromDTO']('1');
         const votingKey = await this.createVotingKey(node.voting.publicKey);
-        const voting = VotingKeyLinkTransaction.create(deadline, votingKey, UInt64.fromUint(1), UInt64.fromUint(26280), LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
+        const voting = VotingKeyLinkTransaction.create(
+            deadline,
+            votingKey,
+            UInt64.fromUint(1),
+            UInt64.fromUint(26280),
+            LinkAction.Link,
+            presetData.networkType,
+            UInt64.fromUint(0),
+        );
         const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
         const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(presetData, `voting_${node.name}`, signedTransaction.payload);
     }
-    
+
     private async storeTransaction(presetData: ConfigPreset, name: string, payload: string): Promise<Transaction> {
         const transaction = TransactionMapping.createFromPayload(payload);
         const transactionsDirectory = `${this.params.target}/config${presetData.nemesis?.transactionsDirectory}`;
