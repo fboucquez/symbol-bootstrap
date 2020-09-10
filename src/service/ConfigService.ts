@@ -12,6 +12,7 @@ import {
     TransactionMapping,
     UInt64,
     VrfKeyLinkTransaction,
+    VotingKeyLinkTransaction,
 } from 'symbol-sdk';
 import { CertificateService } from './CertificateService';
 import Logger from '../logger/Logger';
@@ -20,6 +21,7 @@ import { LogType } from '../logger/LogType';
 import { NemgenService } from './NemgenService';
 import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import * as fs from 'fs';
+import { VotingService } from './VotingService';
 
 /**
  * Defined presets.
@@ -101,9 +103,10 @@ export class ConfigService {
         const name = node.name || `${type}-${index}`;
         const signing = this.toConfig(Account.generateNewAccount(networkType));
         const vrf = this.toConfig(Account.generateNewAccount(networkType));
+        const voting = this.toConfig(Account.generateNewAccount(networkType));
         const ssl = await new CertificateService(this.root, this.params).run(name);
         const friendlyName = node.friendlyName || ssl.publicKey.substr(0, 7);
-        return { signing, vrf, ssl, type, name, friendlyName };
+        return { signing, vrf, voting, ssl, type, name, friendlyName };
     }
 
     public async generateNodeAccounts(networkType: NetworkType, nodes: NodePreset[]): Promise<NodeAccount[]> {
@@ -312,6 +315,7 @@ export class ConfigService {
         const moveTo = `${this.params.target}/config/nemesis`;
         const templateContext = { ...(presetData as any), addresses };
         await Promise.all((addresses.nodes || []).map((n) => this.createVrfTransaction(presetData, n)));
+        await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransaction(presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
             logger.info('Opt In mode is ON!!! balances or transactions have been provided');
@@ -381,6 +385,7 @@ export class ConfigService {
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+        await new VotingService(this.root, this.params).run(addresses, presetData);
         await new NemgenService(this.root, this.params).run(presetData);
     }
 
@@ -392,6 +397,19 @@ export class ConfigService {
         return await this.storeTransaction(presetData, `vrf_${node.name}`, signedTransaction.payload);
     }
 
+    private async createVotingKey(votingPublicKey: string): Promise<string> {
+        return votingPublicKey + "00000000000000000000000000000000";
+    }
+
+    private async createVotingKeyTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
+        const deadline = (Deadline as any)['createFromDTO']('1');
+        const votingKey = await this.createVotingKey(node.voting.publicKey);
+        const voting = VotingKeyLinkTransaction.create(deadline, votingKey, UInt64.fromUint(1), UInt64.fromUint(26280), LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
+        const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+        const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
+        return await this.storeTransaction(presetData, `voting_${node.name}`, signedTransaction.payload);
+    }
+    
     private async storeTransaction(presetData: ConfigPreset, name: string, payload: string): Promise<Transaction> {
         const transaction = TransactionMapping.createFromPayload(payload);
         const transactionsDirectory = `${this.params.target}/config${presetData.nemesis?.transactionsDirectory}`;

@@ -39,12 +39,14 @@ nodes:
       syncsource: true
       filespooling: true
       partialtransaction: true
+      voting: true
       name: 'api-node'
       databaseHost: 'db'
       host: ''
       openPort: true
       sinkType: 'Async'
-      roles: 'Api,Peer'
+      logLevel: 'Info'
+      roles: 'Api,Peer,Voting'
       enableSingleThreadPool: false
       brokerHost: 'api-broker'
       openBrokerPort: true
