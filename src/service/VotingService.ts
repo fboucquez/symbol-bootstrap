@@ -24,17 +24,18 @@ export class VotingService {
         await Promise.all(
             (addresses.nodes || []).map(async (n) => {
                 if (this.isVotingNode(n, presetData.nodes)) {
+                    const privateKeyTreeFileName = 'private_key_tree1.dat'
+                    const dir = `${process.cwd()}/${this.params.target}`;
+                    const votingKeysFolder = `${dir}/data/${n.name}/votingkeys`;
                     const cmd = [
                         'bash',
                         '-c',
-                        `/usr/catapult/bin/catapult.tools.votingkey --secret ${n.voting.privateKey} --output /data/voting_ots_tree.dat`,
+                        `/usr/catapult/bin/catapult.tools.votingkey --secret ${n.voting.privateKey} --output /votingKeys/${privateKeyTreeFileName}`,
                     ];
-
-                    const dir = `${process.cwd()}/${this.params.target}`;
-                    const dataFolder = `${dir}/data/${n.name}`;
-                    await BootstrapUtils.mkdir(dataFolder);
-                    await BootstrapUtils.deleteFile(join(dataFolder, 'voting_ots_tree.dat'));
-                    const binds = [`${dataFolder}:/data:rw`];
+                    
+                    await BootstrapUtils.mkdir(votingKeysFolder);
+                    await BootstrapUtils.deleteFile(join(votingKeysFolder, privateKeyTreeFileName));
+                    const binds = [`${votingKeysFolder}:/votingKeys:rw`];
 
                     const stdout = await BootstrapUtils.runImageUsingExec(
                         symbolServerToolsImage,
