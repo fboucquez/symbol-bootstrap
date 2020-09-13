@@ -12,7 +12,6 @@ nodes:
       brokerHost: 'api-node-broker'
       openBrokerPort: true
       sinkType: 'Async'
-      logLevel: 'Info'
       roles: 'Api'
       enableSingleThreadPool: false
       addressextraction: true

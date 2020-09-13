@@ -45,7 +45,6 @@ nodes:
       host: ''
       openPort: true
       sinkType: 'Async'
-      logLevel: 'Info'
       roles: 'Api,Peer,Voting'
       enableSingleThreadPool: false
       brokerHost: 'api-broker'

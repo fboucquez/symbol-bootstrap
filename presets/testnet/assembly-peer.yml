@@ -8,7 +8,6 @@ nodes:
       openPort: true
       host: 'peer-node'
       sinkType: 'Sync'
-      logLevel: 'Info'
       roles: 'Peer'
       enableSingleThreadPool: true
       addressextraction: false
