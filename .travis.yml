@@ -33,11 +33,11 @@ before_script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - npm pack
 script:
-    - npm test
-    - npm run e2e
-    - npm run doc
-    - npm run coveralls-report
-after_script:
+  - npm test
+  #    - npm run e2e
+  - npm run doc
+after_success:
+  - npm run coveralls-report
 
 deploy:
     #    - provider: script
