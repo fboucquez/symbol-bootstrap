@@ -167,7 +167,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.0 linux-x64 node-v12.16.3
+symbol-bootstrap/0.0.0 linux-x64 node-v12.18.3
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
