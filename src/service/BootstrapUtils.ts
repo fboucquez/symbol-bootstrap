@@ -45,6 +45,12 @@ export class BootstrapUtils {
         }
     }
 
+    public static deleteFile(file: string): void {
+        if (existsSync(file) && lstatSync(file).isFile()) {
+            unlinkSync(file);
+        }
+    }
+
     public static showBanner(): void {
         console.log(textSync('symbol-bootstrap', { horizontalLayout: 'full' }));
     }

@@ -51,6 +51,7 @@ export class NemgenService {
             logger.info(stdout);
             throw new Error('Nemgen failed. Check the logs!');
         }
+        await BootstrapUtils.deleteFolder(`${dir}/data/nemesis-data/statedb`);
         logger.info('Nemgen executed!!!!');
     }
 }

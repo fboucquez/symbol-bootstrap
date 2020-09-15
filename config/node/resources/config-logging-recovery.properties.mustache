@@ -1,7 +1,7 @@
 [console]
 
 sinkType = {{sinkType}}
-level = Info
+level = {{#if recoveryLogLevel}}{{recoveryLogLevel}}{{else}}{{logLevel}}{{/if}}
 colorMode = Ansi
 
 [console.component.levels]
@@ -12,7 +12,7 @@ colorMode = Ansi
 [file]
 
 sinkType = Async
-level = Info
+level = {{#if recoveryLogLevel}}{{recoveryLogLevel}}{{else}}{{logLevel}}{{/if}}
 directory = logs
 filePattern = catapult_recovery%4N.log
 rotationSize = 25MB

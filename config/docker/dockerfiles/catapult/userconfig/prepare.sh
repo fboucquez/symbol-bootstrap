@@ -15,7 +15,6 @@ if [ ! -d /data/00000 ]; then
     fi
     echo "copying nemesis data"
     cp -r /nemesis-data/seed/* /data*
-    cp -r /nemesis-data/statedb /data/
 fi
 
 if  [ ! -d /data/00000 ]; then

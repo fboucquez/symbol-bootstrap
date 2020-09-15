@@ -1,7 +1,7 @@
 [console]
 
 sinkType = {{sinkType}}
-level = Info
+level = {{#if serverLogLevel}}{{serverLogLevel}}{{else}}{{logLevel}}{{/if}}
 colorMode = Ansi
 
 [console.component.levels]
@@ -11,8 +11,8 @@ colorMode = Ansi
 
 [file]
 
-sinkType = Async
-level = Info
+sinkType = {{sinkType}}
+level = {{#if serverLogLevel}}{{serverLogLevel}}{{else}}{{logLevel}}{{/if}}
 directory = logs
 filePattern = catapult_server%4N.log
 rotationSize = 25MB

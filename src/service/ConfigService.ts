@@ -402,7 +402,7 @@ export class ConfigService {
                     restPrivateKey: account.privateKey,
                 };
                 const gatewayPreset = (presetData.gateways || [])[index];
-                const templateContext: any = { ...presetData, ...generatedContext, ...gatewayPreset };
+                const templateContext = { ...presetData, ...generatedContext, ...gatewayPreset };
                 const name = templateContext.name || `rest-gateway-${index}`;
                 const moveTo = `${this.params.target}/config/${name}`;
                 return BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);

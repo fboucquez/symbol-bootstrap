@@ -18,7 +18,7 @@
         "loadash": "^1.0.0",
         "memorystream": "^0.3.1",
         "node-forge": "^0.9.1",
-        "symbol-sdk": "^0.20.8-alpha-202008211131",
+        "symbol-sdk": "^0.20.7",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
@@ -85,12 +85,12 @@
         "style:fix": "npm run prettier && npm run lint:fix",
         "postpack": "rm -f oclif.manifest.json",
         "posttest": "eslint src/ test/ --ext .ts",
-        "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+        "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme --multi",
         "test": "nyc --reporter=lcov --extension .ts mocha  --timeout 600000 --forbid-only \"test/**/*.test.ts\"",
         "e2e": "nyc --reporter=lcov --extension .ts mocha  --timeout 600000 --forbid-only \"test/**/*.e2e.ts\"",
         "coveralls-report": "cat ./coverage/lcov.info | coveralls",
         "version": "echo $npm_package_version",
-        "update-readme-version": "oclif-dev readme && git add README.md",
+        "update-readme-version": "oclif-dev readme --multi && git add README.md",
         "install-cli": "npm pack && npm i -g",
         "clean-network": "symbol-bootstrap clean -t target/bootstrap-test",
         "start-network": "symbol-bootstrap start -t target/bootstrap-test -u 'current'"

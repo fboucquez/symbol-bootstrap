@@ -19,7 +19,9 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 * [Requirements](#requirements)
 * [Usage](#usage)
 * [E2E Testing support](#e2e-testing-support)
+* [Development](#development)
 * [Commands](#commands)
+* [Command Topics](#command-topics)
 <!-- tocstop -->
 
 # Why this tool?
@@ -59,7 +61,7 @@ Presets are defined at 4 levels from general to specific:
 -   Assembly: It defines a modification of a network, example: `testnet peer`, `tesnet dual`, `testnet api`. Assembly is required for some networks (like `testnet`).
 -   Custom: A user provided yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
-Properties in each file override the previous values (by shallow object merge).
+Properties in each file override the previous values (by object deep merge).
 
 ### Out-of-the-box presets:
 
@@ -68,6 +70,65 @@ Properties in each file override the previous values (by shallow object merge).
 -   `-p testnet -a peer`: A [haversting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+
+
+### Custom preset:
+
+It's the way you can tune the network without modifying the code. It's a yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
+
+Most people would use the out-of-box preset or tune a few attributes.
+
+The file a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations. 
+The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).  
+
+The best way to validate your configuration if by inspecting the generated configuration and preset.yml files in the target folder
+
+**Examples:**
+
+Custom reset image and throttling:
+
+````
+symbolRestImage: symbolplatform/symbol-rest:1.3.1-alpha
+throttlingBurst: 35
+throttlingRate: 1000
+````
+
+Custom number of nemesis accounts:
+
+````
+nemesis:
+  mosaics:
+    - accounts: 20
+````
+
+Zero fee nodes:
+
+````
+minFeeMultiplier: 0
+````
+
+Not exposed rest gateway:
+
+````
+gateways:
+    - openPort: false
+````
+
+Custom generation hash seed, balances and block 1 transactions:
+
+````
+nemesisGenerationHashSeed: 7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA
+nemesis:
+    balances:
+        TDN2CNADENSTASFK6SCB7MFQLAYNZB3JBZCBLLA: 898300000
+        TBK7C5SI3NR3ZEZTMNXRISY6FENDK3YDE63HK7Q: 98800000
+        TA45K3WZYQQKSFHJ3DSEQTOO6N7RMBQUVE7H6MA: 984750000
+transactions:
+        '16963_581474': A1000000000000...(serialized hex transaction)
+        '16963_580690': A1000000000000...
+        'MyTransaction': 01000000000000...
+````
+
 
 ## Target:
 
@@ -106,7 +167,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.0 linux-x64 node-v14.8.0
+symbol-bootstrap/0.0.0 linux-x64 node-v12.16.3
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -229,180 +290,15 @@ General users should install this tool like any other node module.
 # Commands
 
 <!-- commands -->
-* [`symbol-bootstrap clean`](#symbol-bootstrap-clean)
-* [`symbol-bootstrap compose`](#symbol-bootstrap-compose)
-* [`symbol-bootstrap config`](#symbol-bootstrap-config)
-* [`symbol-bootstrap help [COMMAND]`](#symbol-bootstrap-help-command)
-* [`symbol-bootstrap run`](#symbol-bootstrap-run)
-* [`symbol-bootstrap start`](#symbol-bootstrap-start)
-* [`symbol-bootstrap stop`](#symbol-bootstrap-stop)
+# Command Topics
 
-## `symbol-bootstrap clean`
+* [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder (It may not work if you need root!!!)
+* [`symbol-bootstrap compose`](docs/compose.md) - It generates the docker-compose.yml file from the configured network.
+* [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
+* [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
+* [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call
+* [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one liner!
+* [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.
 
-It removes the target folder (It may not work if you need root!!!)
-
-```
-USAGE
-  $ symbol-bootstrap clean
-
-OPTIONS
-  -h, --help           It shows the help of this command.
-  -t, --target=target  [default: target] the target folder
-
-EXAMPLE
-  $ symbol-bootstrap clean
-```
-
-_See code: [src/commands/clean.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/clean.ts)_
-
-## `symbol-bootstrap compose`
-
-It generates the docker-compose.yml file from the configured network.
-
-```
-USAGE
-  $ symbol-bootstrap compose
-
-OPTIONS
-  -h, --help           It shows the help of this command.
-  -r, --reset          It resets the configuration generating a new one
-  -t, --target=target  [default: target] the target folder
-
-  -u, --user=user      [default: current] User used to run the services in the docker-compose.yml file. "current" means
-                       the current user.
-
-EXAMPLE
-  $ symbol-bootstrap compose
-```
-
-_See code: [src/commands/compose.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/compose.ts)_
-
-## `symbol-bootstrap config`
-
-Command used to set up the configuration files and the nemesis block for the current network
-
-```
-USAGE
-  $ symbol-bootstrap config
-
-OPTIONS
-  -a, --assembly=assembly                 An optional assembly type, example "dual" for testnet
-
-  -c, --customPreset=customPreset         External preset file. Values in this file will override the provided presets
-                                          (optional)
-
-  -h, --help                              It shows the help of this command.
-
-  -p, --preset=(bootstrap|testnet|light)  [default: bootstrap] the network preset
-
-  -r, --reset                             It resets the configuration generating a new one
-
-  -t, --target=target                     [default: target] the target folder
-
-EXAMPLE
-  $ symbol-bootstrap config -p bootstrap
-```
-
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/config.ts)_
-
-## `symbol-bootstrap help [COMMAND]`
-
-display help for symbol-bootstrap
-
-```
-USAGE
-  $ symbol-bootstrap help [COMMAND]
-
-ARGUMENTS
-  COMMAND  command to show help for
-
-OPTIONS
-  --all  see all commands in CLI
-```
-
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.1.0/src/commands/help.ts)_
-
-## `symbol-bootstrap run`
-
-It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call
-
-```
-USAGE
-  $ symbol-bootstrap run
-
-OPTIONS
-  -b, --build            If provided, docker-compose will run with -b (--build)
-
-  -d, --daemon           If provided, docker-compose will run with -d (--detached) and this command will wait unit
-                         server is running before returning
-
-  -h, --help             It shows the help of this command.
-
-  -t, --target=target    [default: target] the target folder
-
-  -t, --timeout=timeout  [default: 60000] If running in daemon mode, how long before timing out (in MS)
-
-EXAMPLE
-  $ symbol-bootstrap run
-```
-
-_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/run.ts)_
-
-## `symbol-bootstrap start`
-
-Single command that aggregates config, compose and run in one liner!
-
-```
-USAGE
-  $ symbol-bootstrap start
-
-OPTIONS
-  -a, --assembly=assembly                 An optional assembly type, example "dual" for testnet
-  -b, --build                             If provided, docker-compose will run with -b (--build)
-
-  -c, --customPreset=customPreset         External preset file. Values in this file will override the provided presets
-                                          (optional)
-
-  -d, --daemon                            If provided, docker-compose will run with -d (--detached) and this command
-                                          will wait unit server is running before returning
-
-  -h, --help                              It shows the help of this command.
-
-  -p, --preset=(bootstrap|testnet|light)  [default: bootstrap] the network preset
-
-  -r, --reset                             It resets the configuration generating a new one
-
-  -t, --target=target                     [default: target] the target folder
-
-  -t, --timeout=timeout                   [default: 60000] If running in daemon mode, how long before timing out (in MS)
-
-  -u, --user=user                         [default: current] User used to run the services in the docker-compose.yml
-                                          file. "current" means the current user.
-
-EXAMPLES
-  $ symbol-bootstrap start
-  $ symbol-bootstrap start -p bootstrap
-  $ symbol-bootstrap start -p testnet -a dual
-```
-
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/start.ts)_
-
-## `symbol-bootstrap stop`
-
-It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.
-
-```
-USAGE
-  $ symbol-bootstrap stop
-
-OPTIONS
-  -h, --help           It shows the help of this command.
-  -t, --target=target  [default: target] the target folder
-
-EXAMPLE
-  $ symbol-bootstrap stop
-```
-
-_See code: [src/commands/stop.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/stop.ts)_
 <!-- commandsstop -->
 ```

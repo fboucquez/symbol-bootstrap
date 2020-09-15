@@ -67,7 +67,7 @@ export class ComposeService {
 
         (presetData.nodes || []).forEach((n) => {
             const nodeService = {
-                build: `dockerfiles/catapult`,
+                image: presetData.symbolServerImage,
                 user,
                 command: `bash -c "/bin/bash /userconfig/runServerRecover.sh  ${n.name} && /bin/bash /userconfig/startServer.sh ${n.name}"`,
                 stop_signal: 'SIGINT',
@@ -75,6 +75,7 @@ export class ComposeService {
                 restart: 'on-failure:2',
                 ports: n.openBrokerPort ? ['7900:7900'] : [],
                 volumes: [
+                    vol(`./dockerfiles/catapult/userconfig/`, `/userconfig`),
                     vol(`./bin/bash`, `/bin-mount`),
                     vol(`../config/${n.name}/resources/`, `/userconfig/resources/`),
                     vol('../data/' + n.name, '/data:rw'),
@@ -88,13 +89,14 @@ export class ComposeService {
             services[n.name] = nodeService;
             if (n.brokerHost) {
                 services[n.brokerHost] = {
-                    build: `dockerfiles/catapult`,
+                    image: presetData.symbolServerImage,
                     user,
                     command: `bash -c "/bin/bash /userconfig/runServerRecover.sh ${n.brokerHost} && /bin/bash /userconfig/startBroker.sh ${n.brokerHost}"`,
                     stop_signal: 'SIGINT',
                     ports: n.openBrokerPort ? ['7902:7902'] : [],
                     restart: 'on-failure:2',
                     volumes: [
+                        vol(`./dockerfiles/catapult/userconfig/`, `/userconfig`),
                         vol(`./bin/bash`, `/bin-mount`),
                         vol(`../config/${n.name}/resources/`, `/userconfig/resources/`),
                         vol('../data/' + n.name, '/data:rw'),
@@ -122,7 +124,7 @@ export class ComposeService {
                 depends_on: [n.databaseHost + '-init'],
                 networks: {
                     default: {
-                        ipv4_address: '172.20.0.10',
+                        ipv4_address: '172.20.0.25',
                     },
                 },
             };

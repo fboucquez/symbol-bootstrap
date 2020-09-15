@@ -44,8 +44,8 @@ maxBondedTransactionLifetime: 48h
 maxTransactionsPerBlock: 6000
 minNamespaceDuration: 1m
 enableDispatcherInputAuditing: true
-trustedHosts: 127.0.0.1, 172.20.0.10, 172.20.0.1
-localNetworks: 127.0.0.1, 172.20.0.10, 172.20.0.1
+trustedHosts: 127.0.0.1, 172.20.0.25
+localNetworks: 127.0.0.1, 172.20.0.25
 lockedFundsPerAggregate: 10000000
 maxHashLockDuration: 2d
 maxSecretLockDuration: 30d
@@ -66,6 +66,10 @@ symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.9.6.4
 symbolServerImage: symbolplatform/symbol-server:gcc-0.9.6.4
 symbolRestImage: symbolplatform/symbol-rest:1.2.0
 mongoImage: mongo:4.2.6-bionic
+logLevel: 'Info'
+# brokerLogLevel: 'Info'
+# recoveryLogLevel: 'Info'
+# serverLogLevel: 'Info'
 
 # node default info
 

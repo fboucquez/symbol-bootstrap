@@ -7,7 +7,6 @@ id -a
 
 sleep 4
 cd /data
-find .
 mkdir -p startup
 rm -f /data/startup/mongo-initialized
 touch /data/startup/datadir-initialized

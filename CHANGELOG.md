@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.0.0] - 14-Aug-2020
+## [0.0.0] - 14-Sep-2020
 
 **Milestone**: Gorilla.1(0.9.6.4)
 
