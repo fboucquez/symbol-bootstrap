@@ -85,7 +85,8 @@
 					<li><a href="#usage">Usage</a></li>
 					<li><a href="#e2e-testing-support">E2E Testing support</a></li>
 					<li><a href="#development">Development</a></li>
-					<li><a href="#commands">Commands</a><!-- tocstop -->
+					<li><a href="#commands">Commands</a></li>
+					<li><a href="#command-topics">Command Topics</a><!-- tocstop -->
 					</li>
 				</ul>
 				<a href="#why-this-tool" id="why-this-tool" style="color: inherit; text-decoration: none;">
@@ -128,7 +129,7 @@
 					<li>Assembly: It defines a modification of a network, example: <code>testnet peer</code>, <code>tesnet dual</code>, <code>testnet api</code>. Assembly is required for some networks (like <code>testnet</code>).</li>
 					<li>Custom: A user provided yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</li>
 				</ul>
-				<p>Properties in each file override the previous values (by shallow object merge).</p>
+				<p>Properties in each file override the previous values (by object deep merge).</p>
 				<a href="#out-of-the-box-presets" id="out-of-the-box-presets" style="color: inherit; text-decoration: none;">
 					<h3>Out-of-the-box presets:</h3>
 				</a>
@@ -139,6 +140,39 @@
 					<li><code>-p testnet -a api</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml">api</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 					<li><code>-p testnet -a dual</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml">dual</a> haversting peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 				</ul>
+				<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
+					<h3>Custom preset:</h3>
+				</a>
+				<p>It&#39;s the way you can tune the network without modifying the code. It&#39;s a yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</p>
+				<p>Most people would use the out-of-box preset or tune a few attributes.</p>
+				<p>The file a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations.
+				The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).  </p>
+				<p>The best way to validate your configuration if by inspecting the generated configuration and preset.yml files in the target folder</p>
+				<p><strong>Examples:</strong></p>
+				<p>Custom reset image and throttling:</p>
+				<pre><code><span class="hljs-attribute">symbolRestImage</span>: symbolplatform/symbol-rest:<span class="hljs-number">1</span>.<span class="hljs-number">3</span>.<span class="hljs-number">1</span>-alpha
+<span class="hljs-attribute">throttlingBurst</span>: <span class="hljs-number">35</span>
+<span class="hljs-attribute">throttlingRate</span>: <span class="hljs-number">1000</span></code></pre>
+				<p>Custom number of nemesis accounts:</p>
+				<pre><code><span class="hljs-attr">nemesis:</span>
+  <span class="hljs-attr">mosaics:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-attr">accounts:</span> <span class="hljs-number">20</span></code></pre>
+				<p>Zero fee nodes:</p>
+				<pre><code><span class="hljs-attr">minFeeMultiplier:</span> <span class="hljs-number">0</span></code></pre>
+				<p>Not exposed rest gateway:</p>
+				<pre><code><span class="hljs-attr">gateways:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-attr">openPort:</span> <span class="hljs-literal">false</span></code></pre>
+				<p>Custom generation hash seed, balances and block 1 transactions:</p>
+				<pre><code><span class="hljs-attr">nemesisGenerationHashSeed:</span> <span class="hljs-string">7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA</span>
+<span class="hljs-attr">nemesis:</span>
+    <span class="hljs-attr">balances:</span>
+        <span class="hljs-attr">TDN2CNADENSTASFK6SCB7MFQLAYNZB3JBZCBLLA:</span> <span class="hljs-number">898300000</span>
+        <span class="hljs-attr">TBK7C5SI3NR3ZEZTMNXRISY6FENDK3YDE63HK7Q:</span> <span class="hljs-number">98800000</span>
+        <span class="hljs-attr">TA45K3WZYQQKSFHJ3DSEQTOO6N7RMBQUVE7H6MA:</span> <span class="hljs-number">984750000</span>
+<span class="hljs-attr">transactions:</span>
+        <span class="hljs-attr">&#x27;16963_581474&#x27;:</span> <span class="hljs-string">A1000000000000...(serialized</span> <span class="hljs-string">hex</span> <span class="hljs-string">transaction)</span>
+        <span class="hljs-attr">&#x27;16963_580690&#x27;:</span> <span class="hljs-string">A1000000000000...</span>
+        <span class="hljs-attr">&#x27;MyTransaction&#x27;:</span> <span class="hljs-number">01000000000000</span><span class="hljs-string">...</span></code></pre>
 				<a href="#target" id="target" style="color: inherit; text-decoration: none;">
 					<h2>Target:</h2>
 				</a>
@@ -258,155 +292,18 @@ scripts<span class="hljs-string">&quot;: {
 					<h1>Commands</h1>
 				</a>
 				<!-- commands -->
+				<a href="#command-topics" id="command-topics" style="color: inherit; text-decoration: none;">
+					<h1>Command Topics</h1>
+				</a>
 				<ul>
-					<li><a href="#symbol-bootstrap-clean"><code>symbol-bootstrap clean</code></a></li>
-					<li><a href="#symbol-bootstrap-compose"><code>symbol-bootstrap compose</code></a></li>
-					<li><a href="#symbol-bootstrap-config"><code>symbol-bootstrap config</code></a></li>
-					<li><a href="#symbol-bootstrap-help-command"><code>symbol-bootstrap help [COMMAND]</code></a></li>
-					<li><a href="#symbol-bootstrap-run"><code>symbol-bootstrap run</code></a></li>
-					<li><a href="#symbol-bootstrap-start"><code>symbol-bootstrap start</code></a></li>
-					<li><a href="#symbol-bootstrap-stop"><code>symbol-bootstrap stop</code></a></li>
+					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder (It may not work if you need root!!!)</li>
+					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the docker-compose.yml file from the configured network.</li>
+					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
+					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
+					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call</li>
+					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one liner!</li>
+					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.</li>
 				</ul>
-				<a href="#symbol-bootstrap-clean" id="symbol-bootstrap-clean" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap clean</code></h2>
-				</a>
-				<p>It removes the target folder (It may not work if you need root!!!)</p>
-				<pre><code><span class="hljs-keyword">USAGE</span>
-  $ symbol-bootstrap clean
-
-<span class="hljs-keyword">OPTIONS</span>
-  -h, <span class="hljs-comment">--help           It shows the help of this command.</span>
-  -t, <span class="hljs-comment">--target=target  [default: target] the target folder</span>
-
-EXAMPLE
-  $ symbol-bootstrap clean</code></pre>
-				<p><em>See code: <a href="https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/clean.ts">src/commands/clean.ts</a></em></p>
-				<a href="#symbol-bootstrap-compose" id="symbol-bootstrap-compose" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap compose</code></h2>
-				</a>
-				<p>It generates the docker-compose.yml file from the configured network.</p>
-				<pre><code>USAGE
-  $ symbol-bootstrap compose
-
-OPTIONS
-  -h, --help           It shows the help of this command.
-  -r, --reset          It resets the configuration generating a new one
-  -t, <span class="hljs-attribute">--target</span>=target  [default: target] the target folder
-
-  -u, <span class="hljs-attribute">--user</span>=user      [default: current]<span class="hljs-built_in"> User </span>used <span class="hljs-keyword">to</span> <span class="hljs-builtin-name">run</span> the services <span class="hljs-keyword">in</span> the docker-compose.yml file. <span class="hljs-string">&quot;current&quot;</span> means
-                       the current user.
-
-EXAMPLE
-  $ symbol-bootstrap compose</code></pre>
-				<p><em>See code: <a href="https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/compose.ts">src/commands/compose.ts</a></em></p>
-				<a href="#symbol-bootstrap-config" id="symbol-bootstrap-config" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap config</code></h2>
-				</a>
-				<p>Command used to set up the configuration files and the nemesis block for the current network</p>
-				<pre><code>USAGE
-  $ symbol-bootstrap<span class="hljs-built_in"> config
-</span>
-OPTIONS
-  -a, <span class="hljs-attribute">--assembly</span>=assembly                 An optional assembly type, example <span class="hljs-string">&quot;dual&quot;</span> <span class="hljs-keyword">for</span> testnet
-
-  -c, <span class="hljs-attribute">--customPreset</span>=customPreset         External preset file. Values <span class="hljs-keyword">in</span> this file will override the provided presets
-                                          (optional)
-
-  -h, --help                              It shows the help of this command.
-
-  -p, --preset=(bootstrap|testnet|light)  [default: bootstrap] the<span class="hljs-built_in"> network </span>preset
-
-  -r, --reset                             It resets the configuration generating a new one
-
-  -t, <span class="hljs-attribute">--target</span>=target                     [default: target] the target folder
-
-EXAMPLE
-  $ symbol-bootstrap<span class="hljs-built_in"> config </span>-p bootstrap</code></pre>
-				<p><em>See code: <a href="https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/config.ts">src/commands/config.ts</a></em></p>
-				<a href="#symbol-bootstrap-help-command" id="symbol-bootstrap-help-command" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap help [COMMAND]</code></h2>
-				</a>
-				<p>display help for symbol-bootstrap</p>
-				<pre><code>USAGE
-  $ symbol-bootstrap <span class="hljs-keyword">help</span> [COMMAND]
-
-ARGUMENTS
-  COMMAND  <span class="hljs-keyword">command</span> <span class="hljs-keyword">to</span> show <span class="hljs-keyword">help</span> <span class="hljs-keyword">for</span>
-
-OPTIONS
-  --<span class="hljs-keyword">all</span>  see <span class="hljs-keyword">all</span> commands in CLI</code></pre>
-				<p><em>See code: <a href="https://github.com/oclif/plugin-help/blob/v3.1.0/src/commands/help.ts">@oclif/plugin-help</a></em></p>
-				<a href="#symbol-bootstrap-run" id="symbol-bootstrap-run" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap run</code></h2>
-				</a>
-				<p>It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call</p>
-				<pre><code>USAGE
-  $ symbol-bootstrap <span class="hljs-builtin-name">run</span>
-
-OPTIONS
-  -b, --build            <span class="hljs-keyword">If</span> provided, docker-compose will <span class="hljs-builtin-name">run</span> with -b (--build)
-
-  -d, --daemon           <span class="hljs-keyword">If</span> provided, docker-compose will <span class="hljs-builtin-name">run</span> with -d (--detached) <span class="hljs-keyword">and</span> this command will wait unit
-                        <span class="hljs-built_in"> server </span>is running before returning
-
-  -h, --help             It shows the help of this command.
-
-  -t, <span class="hljs-attribute">--target</span>=target    [default: target] the target folder
-
-  -t, <span class="hljs-attribute">--timeout</span>=timeout  [default: 60000] <span class="hljs-keyword">If</span> running <span class="hljs-keyword">in</span> daemon mode, how long before timing out (<span class="hljs-keyword">in</span> MS)
-
-EXAMPLE
-  $ symbol-bootstrap run</code></pre>
-				<p><em>See code: <a href="https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/run.ts">src/commands/run.ts</a></em></p>
-				<a href="#symbol-bootstrap-start" id="symbol-bootstrap-start" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap start</code></h2>
-				</a>
-				<p>Single command that aggregates config, compose and run in one liner!</p>
-				<pre><code>USAGE
-  $ symbol-bootstrap start
-
-OPTIONS
-  -a, <span class="hljs-attribute">--assembly</span>=assembly                 An optional assembly type, example <span class="hljs-string">&quot;dual&quot;</span> <span class="hljs-keyword">for</span> testnet
-  -b, --build                             <span class="hljs-keyword">If</span> provided, docker-compose will <span class="hljs-builtin-name">run</span> with -b (--build)
-
-  -c, <span class="hljs-attribute">--customPreset</span>=customPreset         External preset file. Values <span class="hljs-keyword">in</span> this file will override the provided presets
-                                          (optional)
-
-  -d, --daemon                            <span class="hljs-keyword">If</span> provided, docker-compose will <span class="hljs-builtin-name">run</span> with -d (--detached) <span class="hljs-keyword">and</span> this command
-                                          will wait unit<span class="hljs-built_in"> server </span>is running before returning
-
-  -h, --help                              It shows the help of this command.
-
-  -p, --preset=(bootstrap|testnet|light)  [default: bootstrap] the<span class="hljs-built_in"> network </span>preset
-
-  -r, --reset                             It resets the configuration generating a new one
-
-  -t, <span class="hljs-attribute">--target</span>=target                     [default: target] the target folder
-
-  -t, <span class="hljs-attribute">--timeout</span>=timeout                   [default: 60000] <span class="hljs-keyword">If</span> running <span class="hljs-keyword">in</span> daemon mode, how long before timing out (<span class="hljs-keyword">in</span> MS)
-
-  -u, <span class="hljs-attribute">--user</span>=user                         [default: current]<span class="hljs-built_in"> User </span>used <span class="hljs-keyword">to</span> <span class="hljs-builtin-name">run</span> the services <span class="hljs-keyword">in</span> the docker-compose.yml
-                                          file. <span class="hljs-string">&quot;current&quot;</span> means the current user.
-
-EXAMPLES
-  $ symbol-bootstrap start
-  $ symbol-bootstrap start -p bootstrap
-  $ symbol-bootstrap start -p testnet -a dual</code></pre>
-				<p><em>See code: <a href="https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/start.ts">src/commands/start.ts</a></em></p>
-				<a href="#symbol-bootstrap-stop" id="symbol-bootstrap-stop" style="color: inherit; text-decoration: none;">
-					<h2><code>symbol-bootstrap stop</code></h2>
-				</a>
-				<p>It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.</p>
-				<pre><code>USAGE
-  $ symbol-bootstrap <span class="hljs-keyword">stop</span>
-
-OPTIONS
-  -h, --help           It shows the help of this command<span class="hljs-number">.</span>
-  -t, --<span class="hljs-keyword">target</span>=<span class="hljs-keyword">target</span>  [<span class="hljs-keyword">default</span>: <span class="hljs-keyword">target</span>] the <span class="hljs-keyword">target</span> folder
-
-EXAMPLE
-  $ symbol-bootstrap <span class="hljs-keyword">stop</span></code></pre>
-				<p><em>See code: <a href="https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/stop.ts">src/commands/stop.ts</a></em></p>
 				<!-- commandsstop -->
 				<pre><code></code></pre>
 			</div>

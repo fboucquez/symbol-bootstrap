@@ -93,6 +93,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_bootstraputils_.bootstraputils.html#createdocker" class="tsd-kind-icon">create<wbr>Docker</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_bootstraputils_.bootstraputils.html#deletefile" class="tsd-kind-icon">delete<wbr>File</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_bootstraputils_.bootstraputils.html#deletefolder" class="tsd-kind-icon">delete<wbr>Folder</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="_service_bootstraputils_.bootstraputils.html#deletefolderrecursive" class="tsd-kind-icon">delete<wbr>Folder<wbr>Recursive</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_bootstraputils_.bootstraputils.html#fromyaml" class="tsd-kind-icon">from<wbr>Yaml</a></li>
@@ -127,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">docker<wbr>User<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L239">src/service/BootstrapUtils.ts:239</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L245">src/service/BootstrapUtils.ts:245</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -137,7 +138,7 @@
 					<div class="tsd-signature tsd-kind-icon">preset<wbr>Info<wbr>Logged<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L22">src/service/BootstrapUtils.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L22">src/service/BootstrapUtils.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -147,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">pulled<wbr>Images<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L23">src/service/BootstrapUtils.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L23">src/service/BootstrapUtils.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,10 +165,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L52">src/service/BootstrapUtils.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L58">src/service/BootstrapUtils.ts:58</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Docker</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="deletefile" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> delete<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>File<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L48">src/service/BootstrapUtils.ts:48</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>file: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -181,7 +205,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L25">src/service/BootstrapUtils.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L25">src/service/BootstrapUtils.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -204,7 +228,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L32">src/service/BootstrapUtils.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L32">src/service/BootstrapUtils.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -227,7 +251,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L227">src/service/BootstrapUtils.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L233">src/service/BootstrapUtils.ts:233</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -250,7 +274,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L180">src/service/BootstrapUtils.ts:180</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L186">src/service/BootstrapUtils.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -279,7 +303,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L241">src/service/BootstrapUtils.ts:241</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L247">src/service/BootstrapUtils.ts:247</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -296,7 +320,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L135">src/service/BootstrapUtils.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L141">src/service/BootstrapUtils.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -319,7 +343,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L131">src/service/BootstrapUtils.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L137">src/service/BootstrapUtils.ts:137</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -342,7 +366,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L103">src/service/BootstrapUtils.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L109">src/service/BootstrapUtils.ts:109</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -374,7 +398,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L231">src/service/BootstrapUtils.ts:231</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L237">src/service/BootstrapUtils.ts:237</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -397,7 +421,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L212">src/service/BootstrapUtils.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L218">src/service/BootstrapUtils.ts:218</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -420,7 +444,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L148">src/service/BootstrapUtils.ts:148</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L154">src/service/BootstrapUtils.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -461,7 +485,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L58">src/service/BootstrapUtils.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L64">src/service/BootstrapUtils.ts:64</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -487,7 +511,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L88">src/service/BootstrapUtils.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L94">src/service/BootstrapUtils.ts:94</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -519,7 +543,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L79">src/service/BootstrapUtils.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L85">src/service/BootstrapUtils.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -551,7 +575,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L48">src/service/BootstrapUtils.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L54">src/service/BootstrapUtils.ts:54</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -568,7 +592,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L139">src/service/BootstrapUtils.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L145">src/service/BootstrapUtils.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -591,7 +615,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L166">src/service/BootstrapUtils.ts:166</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L172">src/service/BootstrapUtils.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -614,7 +638,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L174">src/service/BootstrapUtils.ts:174</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L180">src/service/BootstrapUtils.ts:180</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -637,7 +661,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L223">src/service/BootstrapUtils.ts:223</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L229">src/service/BootstrapUtils.ts:229</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -660,7 +684,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L235">src/service/BootstrapUtils.ts:235</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L241">src/service/BootstrapUtils.ts:241</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -686,7 +710,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/2d82219/src/service/BootstrapUtils.ts#L217">src/service/BootstrapUtils.ts:217</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/fb23a49/src/service/BootstrapUtils.ts#L223">src/service/BootstrapUtils.ts:223</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -733,6 +757,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_service_bootstraputils_.bootstraputils.html#createdocker" class="tsd-kind-icon">create<wbr>Docker</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_service_bootstraputils_.bootstraputils.html#deletefile" class="tsd-kind-icon">delete<wbr>File</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_service_bootstraputils_.bootstraputils.html#deletefolder" class="tsd-kind-icon">delete<wbr>Folder</a>
