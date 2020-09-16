@@ -25,7 +25,7 @@ export class NemgenService {
         const cmd = [
             'bash',
             '-c',
-            'cd /data && /usr/catapult/bin/catapult.tools.nemgen  -r /userconfig --nemesisProperties /nemesis/block-properties-file.properties',
+            'cd /data && /usr/catapult/bin/catapult.tools.nemgen  -r /userconfig --nemesisProperties /nemesis/block-properties-file.properties && rm -rf statedb',
         ];
 
         if (!presetData.nodes) {
@@ -48,7 +48,6 @@ export class NemgenService {
             logger.error(stderr);
             throw new Error('Nemgen failed. Check the logs!');
         }
-        await BootstrapUtils.deleteFolder(`${dir}/data/nemesis-data/statedb`);
         logger.info('Nemgen executed!!!!');
     }
 }

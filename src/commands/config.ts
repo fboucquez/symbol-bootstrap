@@ -1,6 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { BootstrapUtils, ConfigService, Preset } from '../service';
-import { BootstrapService } from '../service/BootstrapService';
+import { BootstrapService, BootstrapUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';

@@ -33,8 +33,8 @@ OPTIONS
 
   -t, --timeout=timeout                   [default: 60000] If running in daemon mode, how long before timing out (in MS)
 
-  -u, --user=user                         [default: current] User used to run the services in the docker-compose.yml
-                                          file. "current" means the current user.
+  -u, --user=user                         [default: current] User used to run docker images when creating configuration
+                                          files like certificates or nemesis block. "current" means the current user.
 
 EXAMPLES
   $ symbol-bootstrap start
@@ -42,4 +42,4 @@ EXAMPLES
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.0/src/commands/start.ts)_

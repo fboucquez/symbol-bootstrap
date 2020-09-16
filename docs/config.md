@@ -27,8 +27,11 @@ OPTIONS
 
   -t, --target=target                     [default: target] the target folder
 
+  -u, --user=user                         [default: current] User used to run docker images when creating configuration
+                                          files like certificates or nemesis block. "current" means the current user.
+
 EXAMPLE
   $ symbol-bootstrap config -p bootstrap
 ```
 
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.0/src/commands/config.ts)_
