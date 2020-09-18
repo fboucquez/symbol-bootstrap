@@ -134,7 +134,7 @@
 					<h3>Out-of-the-box presets:</h3>
 				</a>
 				<ul>
-					<li><code>-p botstrap</code>: Default <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml">preset</a>. It&#39;s a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.</li>
+					<li><code>-p bootstrap</code>: Default <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml">preset</a>. It&#39;s a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.</li>
 					<li><code>-p light</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/light/network.yml">light</a> network. It&#39;s a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.</li>
 					<li><code>-p testnet -a peer</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml">haversting</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a>. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 					<li><code>-p testnet -a api</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml">api</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
@@ -145,25 +145,25 @@
 				</a>
 				<p>It&#39;s the way you can tune the network without modifying the code. It&#39;s a yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</p>
 				<p>Most people would use the out-of-box preset or tune a few attributes.</p>
-				<p>The file a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations.
+				<p>The file is a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations.
 				The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).  </p>
-				<p>The best way to validate your configuration if by inspecting the generated configuration and preset.yml files in the target folder</p>
+				<p>The best way to validate your configuration is by inspecting the generated configuration and preset.yml files in the target folder</p>
 				<p><strong>Examples:</strong></p>
 				<p>Custom reset image and throttling:</p>
-				<pre><code><span class="hljs-attribute">symbolRestImage</span>: symbolplatform/symbol-rest:<span class="hljs-number">1</span>.<span class="hljs-number">3</span>.<span class="hljs-number">1</span>-alpha
-<span class="hljs-attribute">throttlingBurst</span>: <span class="hljs-number">35</span>
-<span class="hljs-attribute">throttlingRate</span>: <span class="hljs-number">1000</span></code></pre>
+				<pre><code class="language-yaml"><span class="hljs-attr">symbolRestImage:</span> <span class="hljs-string">symbolplatform/symbol-rest:1.3.1-alpha</span>
+<span class="hljs-attr">throttlingBurst:</span> <span class="hljs-number">35</span>
+<span class="hljs-attr">throttlingRate:</span> <span class="hljs-number">1000</span></code></pre>
 				<p>Custom number of nemesis accounts:</p>
-				<pre><code><span class="hljs-attr">nemesis:</span>
+				<pre><code class="language-yaml"><span class="hljs-attr">nemesis:</span>
   <span class="hljs-attr">mosaics:</span>
     <span class="hljs-bullet">-</span> <span class="hljs-attr">accounts:</span> <span class="hljs-number">20</span></code></pre>
 				<p>Zero fee nodes:</p>
-				<pre><code><span class="hljs-attr">minFeeMultiplier:</span> <span class="hljs-number">0</span></code></pre>
+				<pre><code class="language-yaml"><span class="hljs-attr">minFeeMultiplier:</span> <span class="hljs-number">0</span></code></pre>
 				<p>Not exposed rest gateway:</p>
-				<pre><code><span class="hljs-attr">gateways:</span>
+				<pre><code class="language-yaml"><span class="hljs-attr">gateways:</span>
     <span class="hljs-bullet">-</span> <span class="hljs-attr">openPort:</span> <span class="hljs-literal">false</span></code></pre>
 				<p>Custom generation hash seed, balances and block 1 transactions:</p>
-				<pre><code><span class="hljs-attr">nemesisGenerationHashSeed:</span> <span class="hljs-string">7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA</span>
+				<pre><code class="language-yaml"><span class="hljs-attr">nemesisGenerationHashSeed:</span> <span class="hljs-string">7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA</span>
 <span class="hljs-attr">nemesis:</span>
     <span class="hljs-attr">balances:</span>
         <span class="hljs-attr">TDN2CNADENSTASFK6SCB7MFQLAYNZB3JBZCBLLA:</span> <span class="hljs-number">898300000</span>
@@ -207,7 +207,7 @@ cd <span class="hljs-keyword">my</span>-networks</code></pre>
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.1 linux-x64 node-v12.18.3
+symbol-bootstrap/0.0.1 linux-x64 node-v12.18.4
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -228,51 +228,51 @@ symbol-bootstrap run</code></pre>
 				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span> --daemon
 YOUR <span class="hljs-keyword">TEST</span> (<span class="hljs-keyword">e</span>.<span class="hljs-keyword">g</span>: npm <span class="hljs-keyword">run</span> <span class="hljs-keyword">test</span>, gradle <span class="hljs-keyword">test</span>, selenium etc.)
 symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
-				<p><code>--daemon</code> starts the server waiting until is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds</p>
+				<p><code>--daemon</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
 				<p>You can also provide your own custom preset (<code>-c</code>) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)</p>
 				<a href="#node-client-e2e-via-cli" id="node-client-e2e-via-cli" style="color: inherit; text-decoration: none;">
 					<h2>Node client E2E via CLI:</h2>
 				</a>
 				<p>The CLI can also be used as npm project (dev) dependency (<code>npm install --save-dev symbol-bootstrap</code>). Then you can integrate the network to your npm test cycle.
 				Your <code>package.json</code> can look like this:</p>
-				<pre><code>
-<span class="hljs-string">&quot;devDependencies&quot;</span>: {
-    <span class="hljs-built_in">..</span><span class="hljs-built_in">..</span>
-    <span class="hljs-string">&quot;symbol-bootstrap&quot;</span>: <span class="hljs-string">&quot;0.0.x&quot;</span>,
-    <span class="hljs-built_in">..</span><span class="hljs-built_in">..</span>
+				<pre><code class="language-yaml">
+<span class="hljs-attr">&quot;devDependencies&quot;:</span> {
+    <span class="hljs-string">....</span>
+    <span class="hljs-attr">&quot;symbol-bootstrap&quot;:</span> <span class="hljs-string">&quot;0.0.x&quot;</span>,
+    <span class="hljs-string">....</span>
 }
 
-scripts<span class="hljs-string">&quot;: {
-...
-    &quot;</span>clean-network<span class="hljs-string">&quot;: &quot;</span>symbol-bootstrap clean<span class="hljs-string">&quot;,
-    &quot;</span>run-network<span class="hljs-string">&quot;: &quot;</span>symbol-bootstrap start -c ./output/my_custom_preset.yml --daemon<span class="hljs-string">&quot;,
-    &quot;</span>run-stop<span class="hljs-string">&quot;: &quot;</span>symbol-bootstrap stop<span class="hljs-string">&quot;,
-    &quot;</span>integration-test<span class="hljs-string">&quot;: &quot;</span><span class="hljs-built_in">..</span><span class="hljs-built_in">..</span>some mocha/jest/etc tests running against localhost:3000 network<span class="hljs-built_in">..</span><span class="hljs-built_in">..</span><span class="hljs-string">&quot;,
-    &quot;</span>e2e<span class="hljs-string">&quot;: &quot;</span>npm <span class="hljs-builtin-name">run</span> clean-network &amp;&amp; npm <span class="hljs-builtin-name">run</span> run-network &amp;&amp; npm <span class="hljs-builtin-name">run</span> integration-test &amp;&amp; npm <span class="hljs-builtin-name">run</span> stop-network<span class="hljs-string">&quot;,
-...
-}</span></code></pre>
+<span class="hljs-string">scripts&quot;:</span> {
+<span class="hljs-string">...</span>
+    <span class="hljs-attr">&quot;clean-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap clean&quot;</span>,
+    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --daemon&quot;</span>,
+    <span class="hljs-attr">&quot;run-stop&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap stop&quot;</span>,
+    <span class="hljs-attr">&quot;integration-test&quot;:</span> <span class="hljs-string">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span>,
+    <span class="hljs-attr">&quot;e2e&quot;:</span> <span class="hljs-string">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span>,
+<span class="hljs-string">...</span>
+}</code></pre>
 				<p>Then, you, Jenkins, Travis or your CI tool can run;</p>
 				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> e2e</span></code></pre>
 				<a href="#node-client-e2e-via-api" id="node-client-e2e-via-api" style="color: inherit; text-decoration: none;">
 					<h2>Node client E2E via API:</h2>
 				</a>
-				<p>Alternative, you can use the <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
+				<p>Alternatively, you can use the <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
 				<p>Example:</p>
-				<pre><code>it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; {
+				<pre><code class="language-ts">it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; {
     <span class="hljs-keyword">const</span> service = <span class="hljs-keyword">new</span> BootstrapService();
     <span class="hljs-keyword">const</span> config: StartParams = {
         preset: Preset.bootstrap,
-        reset: <span class="hljs-keyword">true</span>,
+        reset: <span class="hljs-literal">true</span>,
         timeout: <span class="hljs-number">60000</span> * <span class="hljs-number">5</span>,
         target: <span class="hljs-string">&#x27;target/bootstrap-test&#x27;</span>,
-        daemon: <span class="hljs-keyword">true</span>,
+        daemon: <span class="hljs-literal">true</span>,
         user: <span class="hljs-string">&#x27;current&#x27;</span>,
     };
     <span class="hljs-keyword">try</span> {
         <span class="hljs-keyword">await</span> service.stop(config);
         <span class="hljs-keyword">const</span> configResult = <span class="hljs-keyword">await</span> service.start(config);
-        expect(configResult.presetData).not.<span class="hljs-keyword">null</span>;
-        expect(configResult.addresses).not.<span class="hljs-keyword">null</span>;
+        expect(configResult.presetData).not.null;
+        expect(configResult.addresses).not.null;
         <span class="hljs-comment">// Here you can write unit tests against a http://localhost:3000 network</span>
     } <span class="hljs-keyword">finally</span> {
         <span class="hljs-keyword">await</span> service.stop(config);
