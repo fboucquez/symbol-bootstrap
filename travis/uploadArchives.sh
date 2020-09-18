@@ -9,7 +9,6 @@ cp travis/.npmrc $HOME/.npmrc
 
 npm version "$NEW_VERSION" --commit-hooks false --git-tag-version false
 
-# npm publish --tag alpha
-npm publish
+npm publish --tag alpha
 
 npm version "$CURRENT_VERSION" --commit-hooks false --git-tag-version false
