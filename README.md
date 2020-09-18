@@ -65,7 +65,7 @@ Properties in each file override the previous values (by object deep merge).
 
 ### Out-of-the-box presets:
 
--   `-p botstrap`: Default [preset](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
+-   `-p bootstrap`: Default [preset](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
 -   `-p light`: A [light](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/light/network.yml) network. It's a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
 -   `-p testnet -a peer`: A [haversting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
@@ -78,16 +78,16 @@ It's the way you can tune the network without modifying the code. It's a yml fil
 
 Most people would use the out-of-box preset or tune a few attributes.
 
-The file a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations. 
+The file is a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations. 
 The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).  
 
-The best way to validate your configuration if by inspecting the generated configuration and preset.yml files in the target folder
+The best way to validate your configuration is by inspecting the generated configuration and preset.yml files in the target folder
 
 **Examples:**
 
 Custom reset image and throttling:
 
-````
+````yaml
 symbolRestImage: symbolplatform/symbol-rest:1.3.1-alpha
 throttlingBurst: 35
 throttlingRate: 1000
@@ -95,7 +95,7 @@ throttlingRate: 1000
 
 Custom number of nemesis accounts:
 
-````
+````yaml
 nemesis:
   mosaics:
     - accounts: 20
@@ -103,20 +103,20 @@ nemesis:
 
 Zero fee nodes:
 
-````
+````yaml
 minFeeMultiplier: 0
 ````
 
 Not exposed rest gateway:
 
-````
+````yaml
 gateways:
     - openPort: false
 ````
 
 Custom generation hash seed, balances and block 1 transactions:
 
-````
+````yaml
 nemesisGenerationHashSeed: 7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA
 nemesis:
     balances:
@@ -205,7 +205,7 @@ YOUR TEST (e.g: npm run test, gradle test, selenium etc.)
 symbol-bootstrap stop
 ```
 
-`--daemon` starts the server waiting until is up (by polling the network http://localhost:3000/node/health). The command will fail if the components are not up in 30 seconds
+`--daemon` starts the server waiting until it is up (by polling the network http://localhost:3000/node/health). The command will fail if the components are not up in 30 seconds.
 
 You can also provide your own custom preset (`-c`) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)
 
@@ -214,7 +214,7 @@ You can also provide your own custom preset (`-c`) if you want your e2e test to 
 The CLI can also be used as npm project (dev) dependency (`npm install --save-dev symbol-bootstrap`). Then you can integrate the network to your npm test cycle.
 Your `package.json` can look like this:
 
-````
+````yaml
 
 "devDependencies": {
     ....
@@ -242,11 +242,11 @@ npm run e2e
 
 ## Node client E2E via API:
 
-Alternative, you can use the [BootstrapService](https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts) facade to programmatically start and stop a server.
+Alternatively, you can use the [BootstrapService](https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts) facade to programmatically start and stop a server.
 
 Example:
 
-```
+```ts
 it('Bootstrap e2e test', async () => {
     const service = new BootstrapService();
     const config: StartParams = {
@@ -292,13 +292,13 @@ General users should install this tool like any other node module.
 <!-- commands -->
 # Command Topics
 
-* [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder (It may not work if you need root!!!)
-* [`symbol-bootstrap compose`](docs/compose.md) - It generates the docker-compose.yml file from the configured network.
+* [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder (It may not work if you need root privileges!!!)
+* [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
-* [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call
-* [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one liner!
-* [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.
+* [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call
+* [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
+* [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --daemon). This is just a wrapper for the `docker-compose down` bash call.
 
 <!-- commandsstop -->
 ```
