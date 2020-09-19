@@ -64,7 +64,7 @@ maxNamespaceDepth: 3
 batchVerificationRandomSource:
 symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.1
 symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.1
-symbolRestImage: symbolplatform/symbol-rest:1.3.1-alpha
+symbolRestImage: symbolplatform/symbol-rest:2.0.0
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -120,5 +120,5 @@ maxReadRateMonitoringTotalSize: 100MB
 
 #Rest
 
-throttlingBurst: 35
-throttlingRate: 20
+throttlingBurst: 1500
+throttlingRate: 1000
