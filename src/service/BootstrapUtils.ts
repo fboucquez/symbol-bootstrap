@@ -9,9 +9,9 @@ import * as Docker from 'dockerode';
 import * as _ from 'lodash';
 import { textSync } from 'figlet';
 import { Addresses, ConfigPreset } from '../model';
+import { Preset } from './ConfigService';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const MemoryStream = require('memorystream');
-import { Preset } from './ConfigService';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -19,6 +19,7 @@ const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class BootstrapUtils {
+    public static readonly CURRENT_USER = 'current';
     private static presetInfoLogged = false;
     private static pulledImages: string[] = [];
 
@@ -82,13 +83,18 @@ export class BootstrapUtils {
         }
     }
 
-    public static async runImageUsingExec(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
+    public static async runImageUsingExec(
+        image: string,
+        userId: string | undefined,
+        cmds: string[],
+        binds: string[],
+    ): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const runCommand = `docker run --rm ${userParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
-        const { stdout } = await exec(runCommand);
-        return stdout;
+        const { stdout, stderr } = await exec(runCommand);
+        return { stdout, stderr };
     }
 
     public static async runImageUsingApi(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
@@ -243,6 +249,16 @@ export class BootstrapUtils {
     }
 
     private static dockerUserId: string;
+
+    public static async resolveDockerUserFromParam(paramUser: string | undefined): Promise<string | undefined> {
+        if (!paramUser || paramUser.trim() === '') {
+            return undefined;
+        }
+        if (paramUser === BootstrapUtils.CURRENT_USER) {
+            return BootstrapUtils.getDockerUserGroup();
+        }
+        return paramUser;
+    }
 
     public static async getDockerUserGroup(): Promise<string> {
         const isWin = process.platform === 'win32';

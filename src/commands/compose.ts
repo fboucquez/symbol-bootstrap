@@ -21,7 +21,7 @@ export default class Compose extends Command {
         }),
         user: flags.string({
             char: 'u',
-            description: 'User used to run the services in the docker-compose.yml file. "current" means the current user.',
+            description: `User used to run the services in the docker-compose.yml file. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: 'current',
         }),
     };

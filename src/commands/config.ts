@@ -34,6 +34,11 @@ export default class Config extends Command {
             description: 'It resets the configuration generating a new one',
             default: ConfigService.defaultParams.reset,
         }),
+        user: flags.string({
+            char: 'u',
+            description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
+            default: BootstrapUtils.CURRENT_USER,
+        }),
     };
 
     public async run(): Promise<void> {

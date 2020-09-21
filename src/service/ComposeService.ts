@@ -12,7 +12,11 @@ export type ComposeParams = { target: string; user?: string; reset?: boolean };
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class ComposeService {
-    public static defaultParams: ComposeParams = { target: 'target', user: 'current', reset: false };
+    public static defaultParams: ComposeParams = {
+        target: 'target',
+        user: BootstrapUtils.CURRENT_USER,
+        reset: false,
+    };
 
     constructor(private readonly root: string, protected readonly params: ComposeParams) {}
 
@@ -36,7 +40,7 @@ export class ComposeService {
         await BootstrapUtils.mkdir(targetDocker);
         await BootstrapUtils.generateConfiguration(presetData, join(this.root, 'config', 'docker'), targetDocker);
 
-        const user: string | undefined = await this.resolveUser();
+        const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
 
         const vol = (hostFolder: string, imageFolder: string): string => {
             return hostFolder + ':' + imageFolder;
@@ -148,15 +152,5 @@ export class ComposeService {
 
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
-    }
-
-    private async resolveUser(): Promise<string | undefined> {
-        if (!this.params.user || this.params.user.trim() === '') {
-            return undefined;
-        }
-        if (this.params.user === 'current') {
-            return BootstrapUtils.getDockerUserGroup();
-        }
-        return this.params.user;
     }
 }

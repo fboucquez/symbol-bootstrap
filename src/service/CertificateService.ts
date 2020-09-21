@@ -3,7 +3,7 @@ import { BootstrapUtils } from './BootstrapUtils';
 import LoggerFactory from '../logger/LoggerFactory';
 import Logger from '../logger/Logger';
 import { LogType } from '../logger/LogType';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { CertificatePair, ConfigPreset } from '../model';
 
 type CertificateParams = ConfigParams;
@@ -40,6 +40,7 @@ export class CertificateService {
         const copyFrom = `${this.root}/config/cert`;
         const target = `${this.params.target}/config/${name}/resources/cert`;
         await BootstrapUtils.mkdir(target);
+        await BootstrapUtils.mkdir(join(target, 'new_certs'));
         const generatedContext = { name };
         const templateContext: any = { ...presetData, ...generatedContext };
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, target);
@@ -48,12 +49,18 @@ export class CertificateService {
         await BootstrapUtils.writeTextFile(target + '/createCertificate.sh', command);
         const cmd = ['bash', '-c', 'cd /data && bash createCertificate.sh'];
         const binds = [`${resolve(target)}:/data:rw`];
-        const userId = await BootstrapUtils.getDockerUserGroup();
-        const stdout = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
+        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
         const privateKey = this.getKey(stdout, 'priv:', 'pub:');
         const publicKey = this.getKey(stdout, 'pub:', 'Certificate:');
 
         logger.info(`Certificate for node ${name} created`);
+        if (stdout.indexOf('Certificate Created') < 0) {
+            logger.info(stdout);
+            logger.error(stderr);
+            throw new Error('Certificate creation failed. Check the logs!');
+        }
+
         return { privateKey, publicKey };
     }
 
@@ -61,7 +68,7 @@ export class CertificateService {
         return `
 cd ${target}
 set -e
-mkdir new_certs && chmod 700 new_certs
+chmod 700 new_certs
 touch index.txt.attr
 touch index.txt
 
@@ -93,6 +100,7 @@ openssl verify -CAfile ca.cert.pem node.crt.pem
 
 # finally create full crt
 cat node.crt.pem ca.cert.pem > node.full.crt.pem
+echo "Certificate Created"
 `;
     }
 }

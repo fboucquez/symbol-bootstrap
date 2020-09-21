@@ -1,5 +1,5 @@
 import 'mocha';
-import { BootstrapService, ConfigResult, Preset, StartParams } from '../../src/service';
+import { BootstrapService, BootstrapUtils, ConfigResult, Preset, StartParams } from '../../src/service';
 import { expect } from '@oclif/test';
 import {
     Account,
@@ -70,7 +70,7 @@ describe('BootstrapService', () => {
             timeout: 60000 * 5,
             target: 'target/bootstrap-test',
             daemon: true,
-            user: 'current',
+            user: BootstrapUtils.CURRENT_USER,
         };
 
         await service.stop(config);
@@ -91,7 +91,7 @@ describe('BootstrapService', () => {
             timeout: 60000 * 5,
             target: 'target/light-test',
             daemon: true,
-            user: 'current',
+            user: BootstrapUtils.CURRENT_USER,
         };
         try {
             await service.stop(config);

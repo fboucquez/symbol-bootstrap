@@ -40,18 +40,14 @@ export class NemgenService {
             `${dir}/data/nemesis-data:/data:rw`,
         ];
 
-        const stdout = await BootstrapUtils.runImageUsingExec(
-            symbolServerToolsImage,
-            await BootstrapUtils.getDockerUserGroup(),
-            cmd,
-            binds,
-        );
+        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
 
         if (stdout.indexOf('<error> ') > -1) {
             logger.info(stdout);
+            logger.error(stderr);
             throw new Error('Nemgen failed. Check the logs!');
         }
-        await BootstrapUtils.deleteFolder(`${dir}/data/nemesis-data/statedb`);
         logger.info('Nemgen executed!!!!');
     }
 }
