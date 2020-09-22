@@ -36,10 +36,11 @@ export class VotingService {
             const binds = [`${votingKeysFolder}:/votingKeys:rw`];
 
             const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-            const stdout = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
+            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
 
             if (stdout.indexOf('<error> ') > -1) {
                 logger.info(stdout);
+                logger.error(stderr);
                 throw new Error('Voting key failed. Check the logs!');
             }
             logger.info(`Voting key executed for node ${nodeAccount.name}!`);

@@ -6,13 +6,13 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [0.1.0] - 15-Sep-2020
 
-**Milestone**: Gorilla.1(0.9.7.0)
+**Milestone**: Gorilla.1(0.10.0.1)
 
  Package  | Version  | Link
 ---|---|---
 Symbol Bootstrap | v0.1.0 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
-- 0.9.7.0 server support.
+- 0.10.0.1 server support.
 
 ## [0.0.0] - 14-Sep-2020
 
