@@ -10,8 +10,6 @@ minNamespaceDuration: 30d
 assemblies: 'api, dual, peer'
 harvestBeneficiaryPercentage: 25
 batchVerificationRandomSource: /dev/urandom
-trustedHosts: ''
-localNetworks: 127.0.0.1, 172.20.0.9
 currencyMosaicId: 5E62990DCAC5BE8A
 harvestingMosaicId: 5E62990DCAC5BE8A
 nemesisGenerationHashSeed: 1DFB2FAA9E7F054168B0C5FCB84F4DEB62CC2B4D317D861F3168D161F54EA78B
