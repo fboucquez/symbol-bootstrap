@@ -31,7 +31,6 @@ minVotingKeyLifetime: 72
 mosaicRentalFee: 500
 votingSetGrouping: 100
 maxVotingKeysPerAccount: 3
-blockPruneInterval: 360
 maxTransactionsPerAggregate: 1000
 maxCosignaturesPerAggregate: 25
 harvestBeneficiaryPercentage: 10
@@ -62,8 +61,8 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.1
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.1
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.2
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.2
 symbolRestImage: symbolplatform/symbol-rest:2.0.0
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
@@ -119,6 +118,5 @@ readRateMonitoringBucketDuration: 15s
 maxReadRateMonitoringTotalSize: 100MB
 
 #Rest
-
-throttlingBurst: 1500
-throttlingRate: 1000
+throttlingBurst: 35
+throttlingRate: 20
