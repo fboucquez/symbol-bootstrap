@@ -11,11 +11,11 @@ maxHarvesterBalance: 50000000000000
 minVoterBalance: 1500000000000
 blockGenerationTargetTime: 15s
 blockTimeSmoothingFactor: 3000
-importanceGrouping: 600
+importanceGrouping: 180
 importanceActivityPercentage: 5
 maxDifficultyBlocks: 60
 maxRollbackBlocks: 0
-maxTransactionLifetime: 24h
+maxTransactionLifetime: 6h
 maxBlockFutureTime: 500ms
 maxNamespaceDuration: 365d
 namespaceGracePeriodDuration: 30d
@@ -27,11 +27,11 @@ defaultDynamicFeeMultiplier: 1000
 minFeeMultiplier: 100
 epochAdjustment: 1573430400s
 maxVotingKeyLifetime: 26280
-minVotingKeyLifetime: 72
+minVotingKeyLifetime: 28
 mosaicRentalFee: 500
-votingSetGrouping: 100
+votingSetGrouping: 720
 maxVotingKeysPerAccount: 3
-maxTransactionsPerAggregate: 1000
+maxTransactionsPerAggregate: 100
 maxCosignaturesPerAggregate: 25
 harvestBeneficiaryPercentage: 10
 harvestNetworkPercentage: 5
@@ -41,15 +41,16 @@ enableStrictCosignatureCheck: false
 enableBondedAggregateSupport: true
 maxBondedTransactionLifetime: 48h
 maxTransactionsPerBlock: 6000
+stepDuration: 4m
 minNamespaceDuration: 1m
 enableDispatcherInputAuditing: true
 trustedHosts: 127.0.0.1, 172.20.0.25
 localNetworks: 127.0.0.1, 172.20.0.25
 lockedFundsPerAggregate: 10000000
 maxHashLockDuration: 2d
-maxSecretLockDuration: 30d
-minProofSize: 1
-maxProofSize: 1000
+maxSecretLockDuration: 365d
+minProofSize: 20
+maxProofSize: 1024
 maxValueSize: 1024
 maxMosaicsPerAccount: 1000
 maxMosaicDuration: 3650d
@@ -61,9 +62,9 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.2
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.2
-symbolRestImage: symbolplatform/symbol-rest:2.0.0
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.3
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.3
+symbolRestImage: symbolplatform/symbol-rest:2.1.0
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'

@@ -13,4 +13,4 @@ touch /data/startup/datadir-initialized
 
 echo "!!!! Going to start server now...."
 
-exec /usr/catapult/bin/catapult.server /userconfig
+exec env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps /usr/catapult/bin/catapult.server /userconfig

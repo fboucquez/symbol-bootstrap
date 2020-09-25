@@ -17,4 +17,4 @@ rm /data/startup/datadir-initialized
 
 touch "/state/$name"
 
-exec /usr/catapult/bin/catapult.broker /userconfig
+exec env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps /usr/catapult/bin/catapult.broker /userconfig

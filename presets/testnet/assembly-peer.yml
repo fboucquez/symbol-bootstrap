@@ -13,3 +13,4 @@ nodes:
       addressextraction: false
       mongo: false
       zeromq: false
+      voting: true
