@@ -91,7 +91,7 @@ export class BootstrapUtils {
     ): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
-        const environmentParam = '--env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps'
+        const environmentParam = '--env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps';
         const runCommand = `docker run --rm ${userParam} ${environmentParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
         const { stdout, stderr } = await exec(runCommand);

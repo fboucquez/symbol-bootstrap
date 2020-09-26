@@ -2,4 +2,4 @@
 set -e
 
 # docker rm -f $(docker ps -aq)
-./bin/run stop -t target/bootstrap
+symbol-bootstrap stop -t target/bootstrap

@@ -1,13 +1,13 @@
 `symbol-bootstrap clean`
 ========================
 
-It removes the target folder (It may not work if you need root!!!)
+It removes the target folder (It may not work if you need root privileges!!!)
 
 * [`symbol-bootstrap clean`](#symbol-bootstrap-clean)
 
 ## `symbol-bootstrap clean`
 
-It removes the target folder (It may not work if you need root!!!)
+It removes the target folder (It may not work if you need root privileges!!!)
 
 ```
 USAGE

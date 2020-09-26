@@ -1,13 +1,13 @@
 `symbol-bootstrap stop`
 =======================
 
-It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.
+It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
 
 * [`symbol-bootstrap stop`](#symbol-bootstrap-stop)
 
 ## `symbol-bootstrap stop`
 
-It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.
+It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
 
 ```
 USAGE

@@ -6,7 +6,7 @@ import Run from './run';
 import Clean from './clean';
 
 export default class Start extends Command {
-    static description = 'Single command that aggregates config, compose and run in one liner! ';
+    static description = 'Single command that aggregates config, compose and run in one line!';
 
     static examples = [`$ symbol-bootstrap start`, `$ symbol-bootstrap start -p bootstrap`, `$ symbol-bootstrap start -p testnet -a dual`];
 

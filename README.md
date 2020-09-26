@@ -189,7 +189,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.0 linux-x64 node-v12.18.3
+symbol-bootstrap/0.1.0 linux-x64 node-v14.8.0
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -222,12 +222,12 @@ sudo rm -rf ./target
 One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:
 
 ```
-symbol-bootstrap start -p bootstrap --daemon
+symbol-bootstrap start -p bootstrap --detached
 YOUR TEST (e.g: npm run test, gradle test, selenium etc.)
 symbol-bootstrap stop
 ```
 
-`--daemon` starts the server waiting until it is up (by polling the network http://localhost:3000/node/health). The command will fail if the components are not up in 30 seconds.
+`--detached` starts the server waiting until it is up (by polling the network http://localhost:3000/node/health). The command will fail if the components are not up in 30 seconds.
 
 You can also provide your own custom preset (`-c`) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)
 
@@ -247,7 +247,7 @@ Your `package.json` can look like this:
 scripts": {
 ...
     "clean-network": "symbol-bootstrap clean",
-    "run-network": "symbol-bootstrap start -c ./output/my_custom_preset.yml --daemon",
+    "run-network": "symbol-bootstrap start -c ./output/my_custom_preset.yml --detached",
     "run-stop": "symbol-bootstrap stop",
     "integration-test": "....some mocha/jest/etc tests running against localhost:3000 network....",
     "e2e": "npm run clean-network && npm run run-network && npm run integration-test && npm run stop-network",
@@ -276,7 +276,7 @@ it('Bootstrap e2e test', async () => {
         reset: true,
         timeout: 60000 * 5,
         target: 'target/bootstrap-test',
-        daemon: true,
+        detached: true,
         user: 'current',
     };
     try {
@@ -318,9 +318,9 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
-* [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call
+* [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 * [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
-* [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --daemon). This is just a wrapper for the `docker-compose down` bash call.
+* [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
 
 <!-- commandsstop -->
 ```

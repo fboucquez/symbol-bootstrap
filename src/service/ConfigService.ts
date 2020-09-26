@@ -11,8 +11,8 @@ import {
     Transaction,
     TransactionMapping,
     UInt64,
-    VrfKeyLinkTransaction,
     VotingKeyLinkTransaction,
+    VrfKeyLinkTransaction,
 } from 'symbol-sdk';
 import { CertificateService } from './CertificateService';
 import Logger from '../logger/Logger';
@@ -22,6 +22,7 @@ import { NemgenService } from './NemgenService';
 import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import * as fs from 'fs';
 import { VotingService } from './VotingService';
+import { join } from 'path';
 
 /**
  * Defined presets.
@@ -127,8 +128,8 @@ export class ConfigService {
         if (this.params.reset) {
             BootstrapUtils.deleteFolder(configFolder);
         }
-        if (fs.existsSync(configFolder)) {
-            logger.info('Config folder exist, ignoring configuration. (run -r to reset)');
+        if (fs.existsSync(join(configFolder, 'preset.yml'))) {
+            logger.info(`The preset.yml file in config folder '${configFolder}' exist, ignoring configuration. (run -r to reset)`);
             const presetData: ConfigPreset = BootstrapUtils.loadExistingPresetData(this.params.target);
             const addresses: Addresses = BootstrapUtils.loadExistingAddresses(this.params.target);
             return { presetData, addresses };
