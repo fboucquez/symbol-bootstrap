@@ -98,6 +98,8 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_configservice_.configservice.html#completepresetdatawithrandomconfiguration" class="tsd-kind-icon">complete<wbr>Preset<wbr>Data<wbr>With<wbr>Random<wbr>Configuration</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_configservice_.configservice.html#createvotingkey" class="tsd-kind-icon">create<wbr>Voting<wbr>Key</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_configservice_.configservice.html#createvotingkeytransaction" class="tsd-kind-icon">create<wbr>Voting<wbr>Key<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_configservice_.configservice.html#createvrftransaction" class="tsd-kind-icon">create<wbr>Vrf<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_configservice_.configservice.html#generateaddress" class="tsd-kind-icon">generate<wbr>Address</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_configservice_.configservice.html#generateaddresses" class="tsd-kind-icon">generate<wbr>Addresses</a></li>
@@ -138,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L55">src/service/ConfigService.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L58">src/service/ConfigService.ts:58</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -163,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_service_configservice_.configparams.html" class="tsd-signature-type">ConfigParams</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L57">src/service/ConfigService.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L60">src/service/ConfigService.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -173,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L57">src/service/ConfigService.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L60">src/service/ConfigService.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -190,7 +192,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L163">src/service/ConfigService.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L167">src/service/ConfigService.ts:167</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -210,6 +212,55 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="createvotingkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Voting<wbr>Key</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Voting<wbr>Key<span class="tsd-signature-symbol">(</span>votingPublicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L401">src/service/ConfigService.ts:401</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>votingPublicKey: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="createvotingkeytransaction" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Voting<wbr>Key<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Voting<wbr>Key<wbr>Transaction<span class="tsd-signature-symbol">(</span>presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a>, node<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_addresses_.nodeaccount.html" class="tsd-signature-type">NodeAccount</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L405">src/service/ConfigService.ts:405</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>presetData: <a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a></h5>
+								</li>
+								<li>
+									<h5>node: <a href="../interfaces/_model_addresses_.nodeaccount.html" class="tsd-signature-type">NodeAccount</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="createvrftransaction" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Vrf<wbr>Transaction</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -219,7 +270,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L387">src/service/ConfigService.ts:387</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L393">src/service/ConfigService.ts:393</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -245,7 +296,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L113">src/service/ConfigService.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L117">src/service/ConfigService.ts:117</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -268,7 +319,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L95">src/service/ConfigService.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L98">src/service/ConfigService.ts:98</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -294,7 +345,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L402">src/service/ConfigService.ts:402</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L429">src/service/ConfigService.ts:429</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -320,7 +371,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L305">src/service/ConfigService.ts:305</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L310">src/service/ConfigService.ts:310</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -346,7 +397,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L99">src/service/ConfigService.ts:99</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L102">src/service/ConfigService.ts:102</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -375,7 +426,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L109">src/service/ConfigService.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L113">src/service/ConfigService.ts:113</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +452,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L253">src/service/ConfigService.ts:253</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L257">src/service/ConfigService.ts:257</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -433,7 +484,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L245">src/service/ConfigService.ts:245</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L249">src/service/ConfigService.ts:249</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -459,7 +510,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L270">src/service/ConfigService.ts:270</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L275">src/service/ConfigService.ts:275</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -494,7 +545,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L191">src/service/ConfigService.ts:191</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L195">src/service/ConfigService.ts:195</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -520,7 +571,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L121">src/service/ConfigService.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L125">src/service/ConfigService.ts:125</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_configservice_.configresult.html" class="tsd-signature-type">ConfigResult</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -537,7 +588,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L395">src/service/ConfigService.ts:395</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L422">src/service/ConfigService.ts:422</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -566,7 +617,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L59">src/service/ConfigService.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L62">src/service/ConfigService.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -589,7 +640,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L117">src/service/ConfigService.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L121">src/service/ConfigService.ts:121</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -612,7 +663,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L67">src/service/ConfigService.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L70">src/service/ConfigService.ts:70</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -635,7 +686,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L81">src/service/ConfigService.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L84">src/service/ConfigService.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -657,7 +708,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L50">src/service/ConfigService.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L53">src/service/ConfigService.ts:53</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -666,7 +717,7 @@
 						<div class="tsd-signature tsd-kind-icon">preset<span class="tsd-signature-symbol">:</span> <a href="../enums/_service_configservice_.preset.html#bootstrap" class="tsd-signature-type">bootstrap</a><span class="tsd-signature-symbol"> = Preset.bootstrap</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L52">src/service/ConfigService.ts:52</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L55">src/service/ConfigService.ts:55</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -676,7 +727,7 @@
 						<div class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L53">src/service/ConfigService.ts:53</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L56">src/service/ConfigService.ts:56</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -686,7 +737,7 @@
 						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;target&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L51">src/service/ConfigService.ts:51</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L54">src/service/ConfigService.ts:54</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -696,7 +747,7 @@
 						<div class="tsd-signature tsd-kind-icon">user<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = BootstrapUtils.CURRENT_USER</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cb0f7b1/src/service/ConfigService.ts#L54">src/service/ConfigService.ts:54</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/ConfigService.ts#L57">src/service/ConfigService.ts:57</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -735,6 +786,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_service_configservice_.configservice.html#completepresetdatawithrandomconfiguration" class="tsd-kind-icon">complete<wbr>Preset<wbr>Data<wbr>With<wbr>Random<wbr>Configuration</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_service_configservice_.configservice.html#createvotingkey" class="tsd-kind-icon">create<wbr>Voting<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_service_configservice_.configservice.html#createvotingkeytransaction" class="tsd-kind-icon">create<wbr>Voting<wbr>Key<wbr>Transaction</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_service_configservice_.configservice.html#createvrftransaction" class="tsd-kind-icon">create<wbr>Vrf<wbr>Transaction</a>

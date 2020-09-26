@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>MongoService | symbol-bootstrap</title>
+	<title>VotingService | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_service_mongoservice_.html">&quot;service/MongoService&quot;</a>
+					<a href="../modules/_service_votingservice_.html">&quot;service/VotingService&quot;</a>
 				</li>
 				<li>
-					<a href="_service_mongoservice_.mongoservice.html">MongoService</a>
+					<a href="_service_votingservice_.votingservice.html">VotingService</a>
 				</li>
 			</ul>
-			<h1>Class MongoService</h1>
+			<h1>Class VotingService</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">MongoService</span>
+						<span class="target">VotingService</span>
 					</li>
 				</ul>
 			</section>
@@ -84,21 +84,20 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_service_mongoservice_.mongoservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_service_votingservice_.votingservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_service_mongoservice_.mongoservice.html#params" class="tsd-kind-icon">params</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_service_mongoservice_.mongoservice.html#root" class="tsd-kind-icon">root</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_service_votingservice_.votingservice.html#params" class="tsd-kind-icon">params</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_mongoservice_.mongoservice.html#initdb" class="tsd-kind-icon">init<wbr>Db</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_mongoservice_.mongoservice.html#run" class="tsd-kind-icon">run</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_votingservice_.votingservice.html#isvotingnode" class="tsd-kind-icon">is<wbr>Voting<wbr>Node</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_votingservice_.votingservice.html#run" class="tsd-kind-icon">run</a></li>
 							</ul>
 						</section>
 					</div>
@@ -110,25 +109,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Mongo<wbr>Service<span class="tsd-signature-symbol">(</span>root<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><a href="../modules/_service_mongoservice_.html#mongoparams" class="tsd-signature-type">MongoParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_service_mongoservice_.mongoservice.html" class="tsd-signature-type">MongoService</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Voting<wbr>Service<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/_service_votingservice_.html#votingparams" class="tsd-signature-type">VotingParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_service_votingservice_.votingservice.html" class="tsd-signature-type">VotingService</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/MongoService.ts#L12">src/service/MongoService.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/VotingService.ts#L14">src/service/VotingService.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>root: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>params: <a href="../modules/_service_mongoservice_.html#mongoparams" class="tsd-signature-type">MongoParams</a></h5>
+									<h5>params: <a href="../modules/_service_votingservice_.html#votingparams" class="tsd-signature-type">VotingParams</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_service_mongoservice_.mongoservice.html" class="tsd-signature-type">MongoService</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_service_votingservice_.votingservice.html" class="tsd-signature-type">VotingService</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -138,46 +134,36 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 					<a name="params" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> params</h3>
-					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <a href="../modules/_service_mongoservice_.html#mongoparams" class="tsd-signature-type">MongoParams</a></div>
+					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <a href="../modules/_service_votingservice_.html#votingparams" class="tsd-signature-type">VotingParams</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/MongoService.ts#L13">src/service/MongoService.ts:13</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="root" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> root</h3>
-					<div class="tsd-signature tsd-kind-icon">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/MongoService.ts#L13">src/service/MongoService.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/VotingService.ts#L15">src/service/VotingService.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="initdb" class="tsd-anchor"></a>
-					<h3>init<wbr>Db</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">init<wbr>Db<span class="tsd-signature-symbol">(</span>presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="isvotingnode" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> is<wbr>Voting<wbr>Node</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Voting<wbr>Node<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_configpreset_.nodepreset.html" class="tsd-signature-type">NodePreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/MongoService.ts#L48">src/service/MongoService.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/VotingService.ts#L17">src/service/VotingService.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>presetData: <a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> n: <a href="../interfaces/_model_configpreset_.nodepreset.html" class="tsd-signature-type">NodePreset</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -185,15 +171,27 @@
 					<a name="run" class="tsd-anchor"></a>
 					<h3>run</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">run<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">run<span class="tsd-signature-symbol">(</span>presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a>, nodeAccount<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_addresses_.nodeaccount.html" class="tsd-signature-type">NodeAccount</a>, nodePreset<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_configpreset_.nodepreset.html" class="tsd-signature-type">NodePreset</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/MongoService.ts#L15">src/service/MongoService.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/e2bb4a1/src/service/VotingService.ts#L21">src/service/VotingService.ts:21</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>presetData: <a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a></h5>
+								</li>
+								<li>
+									<h5>nodeAccount: <a href="../interfaces/_model_addresses_.nodeaccount.html" class="tsd-signature-type">NodeAccount</a></h5>
+								</li>
+								<li>
+									<h5>nodePreset: <a href="../interfaces/_model_configpreset_.nodepreset.html" class="tsd-signature-type">NodePreset</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -207,7 +205,7 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_service_mongoservice_.html">&quot;service/<wbr>Mongo<wbr>Service&quot;</a>
+						<a href="../modules/_service_votingservice_.html">&quot;service/<wbr>Voting<wbr>Service&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -216,32 +214,29 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="_service_mongoservice_.mongoservice.html" class="tsd-kind-icon">Mongo<wbr>Service</a>
+						<a href="_service_votingservice_.votingservice.html" class="tsd-kind-icon">Voting<wbr>Service</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_service_mongoservice_.mongoservice.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_service_votingservice_.votingservice.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-								<a href="_service_mongoservice_.mongoservice.html#params" class="tsd-kind-icon">params</a>
+								<a href="_service_votingservice_.votingservice.html#params" class="tsd-kind-icon">params</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_service_mongoservice_.mongoservice.html#root" class="tsd-kind-icon">root</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_service_mongoservice_.mongoservice.html#initdb" class="tsd-kind-icon">init<wbr>Db</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_service_votingservice_.votingservice.html#isvotingnode" class="tsd-kind-icon">is<wbr>Voting<wbr>Node</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_service_mongoservice_.mongoservice.html#run" class="tsd-kind-icon">run</a>
+								<a href="_service_votingservice_.votingservice.html#run" class="tsd-kind-icon">run</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_service_mongoservice_.html#mongoparams" class="tsd-kind-icon">Mongo<wbr>Params</a>
+						<a href="../modules/_service_votingservice_.html#votingparams" class="tsd-kind-icon">Voting<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_service_mongoservice_.html#logger" class="tsd-kind-icon">logger</a>
+						<a href="../modules/_service_votingservice_.html#logger" class="tsd-kind-icon">logger</a>
 					</li>
 				</ul>
 			</nav>
@@ -271,7 +266,7 @@
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
 			</ul>
 		</div>
 	</div>

@@ -217,7 +217,7 @@ cd <span class="hljs-keyword">my</span>-networks</code></pre>
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.0.1 linux-x64 node-v12.18.4
+symbol-bootstrap/0.1.0 linux-x64 node-v12.18.4
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -235,10 +235,10 @@ symbol-bootstrap run</code></pre>
 					<h1>E2E Testing support</h1>
 				</a>
 				<p>One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:</p>
-				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span> --daemon
+				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span> --detached
 YOUR <span class="hljs-keyword">TEST</span> (<span class="hljs-keyword">e</span>.<span class="hljs-keyword">g</span>: npm <span class="hljs-keyword">run</span> <span class="hljs-keyword">test</span>, gradle <span class="hljs-keyword">test</span>, selenium etc.)
 symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
-				<p><code>--daemon</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
+				<p><code>--detached</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
 				<p>You can also provide your own custom preset (<code>-c</code>) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)</p>
 				<a href="#node-client-e2e-via-cli" id="node-client-e2e-via-cli" style="color: inherit; text-decoration: none;">
 					<h2>Node client E2E via CLI:</h2>
@@ -255,7 +255,7 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 <span class="hljs-string">scripts&quot;:</span> {
 <span class="hljs-string">...</span>
     <span class="hljs-attr">&quot;clean-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap clean&quot;</span>,
-    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --daemon&quot;</span>,
+    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --detached&quot;</span>,
     <span class="hljs-attr">&quot;run-stop&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap stop&quot;</span>,
     <span class="hljs-attr">&quot;integration-test&quot;:</span> <span class="hljs-string">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span>,
     <span class="hljs-attr">&quot;e2e&quot;:</span> <span class="hljs-string">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span>,
@@ -275,7 +275,7 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
         reset: <span class="hljs-literal">true</span>,
         timeout: <span class="hljs-number">60000</span> * <span class="hljs-number">5</span>,
         target: <span class="hljs-string">&#x27;target/bootstrap-test&#x27;</span>,
-        daemon: <span class="hljs-literal">true</span>,
+        detached: <span class="hljs-literal">true</span>,
         user: <span class="hljs-string">&#x27;current&#x27;</span>,
     };
     <span class="hljs-keyword">try</span> {
@@ -306,13 +306,13 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					<h1>Command Topics</h1>
 				</a>
 				<ul>
-					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder (It may not work if you need root!!!)</li>
-					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the docker-compose.yml file from the configured network.</li>
+					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder (It may not work if you need root privileges!!!)</li>
+					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
 					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
-					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated docker-compose.yml file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for docker-compose up bash call</li>
-					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one liner!</li>
-					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap start with --daemon). This is just a wrapper for docker-compose down bash call.</li>
+					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
+					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
+					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
 				</ul>
 				<!-- commandsstop -->
 				<pre><code></code></pre>
@@ -398,6 +398,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_runservice_.html">&quot;service/<wbr>Run<wbr>Service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_service_votingservice_.html">&quot;service/<wbr>Voting<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_index_.html">&quot;service/index&quot;</a>
