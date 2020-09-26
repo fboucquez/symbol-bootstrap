@@ -122,7 +122,7 @@ export class ComposeService {
                     vol(`./bin/ash`, `/bin-mount`),
                     vol(`../config/${n.name}/`, `/userconfig/`),
                     vol('../state', '/state'),
-                    vol(`../data/${n.apiNodeHost}`, `/logs:rw`),
+                    vol(`../data/${n.apiNodeHost}/logs`, `/logs:rw`),
                     vol(`../config/${n.apiNodeHost}/resources/`, `/usr/local/share/symbol/api-node-config/`),
                 ],
                 depends_on: [n.databaseHost + '-init'],

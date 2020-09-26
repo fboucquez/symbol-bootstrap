@@ -69,7 +69,7 @@ describe('BootstrapService', () => {
             reset: true,
             timeout: 60000 * 5,
             target: 'target/bootstrap-test',
-            daemon: true,
+            detached: true,
             user: BootstrapUtils.CURRENT_USER,
         };
 
@@ -90,7 +90,7 @@ describe('BootstrapService', () => {
             reset: true,
             timeout: 60000 * 5,
             target: 'target/light-test',
-            daemon: true,
+            detached: true,
             user: BootstrapUtils.CURRENT_USER,
         };
         try {

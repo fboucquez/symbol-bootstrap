@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 describe('RunService', () => {
     it('pollServiceUntilIsUp', async () => {
-        const service = new RunService({ ...ConfigService.defaultParams, daemon: true, build: false });
+        const service = new RunService({ ...ConfigService.defaultParams, detached: true, build: false });
         try {
             await service.pollServiceUntilIsUp(1200, 500);
         } catch (e) {

@@ -15,6 +15,7 @@ export interface NodeAccount {
     ssl: CertificatePair;
     type: NodeType;
     vrf: ConfigAccount;
+    voting: ConfigAccount;
     name: string;
     friendlyName: string;
 }

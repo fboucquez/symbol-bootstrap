@@ -20,6 +20,7 @@ nodes:
       databaseHost: 'db'
       enableAutoSyncCleanup: false
       openPort: true
+      voting: false
 gateways:
     - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
       name: 'rest-gateway'

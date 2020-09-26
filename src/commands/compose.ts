@@ -3,7 +3,7 @@ import { BootstrapUtils, ComposeService } from '../service';
 import { BootstrapService } from '../service';
 
 export default class Compose extends Command {
-    static description = 'It generates the docker-compose.yml file from the configured network.';
+    static description = 'It generates the `docker-compose.yml` file from the configured network.';
 
     static examples = [`$ symbol-bootstrap compose`];
 

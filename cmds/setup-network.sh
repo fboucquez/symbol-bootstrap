@@ -1,2 +1,2 @@
 #!/bin/bash
-./bin/run config -r
+symbol-bootstrap config -r

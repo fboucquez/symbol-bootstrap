@@ -1,3 +1,4 @@
+localNetworks: 127.0.0.1
 nodes:
     - harvesting: true
       type: peer-node
@@ -13,3 +14,4 @@ nodes:
       addressextraction: false
       mongo: false
       zeromq: false
+      voting: false

@@ -38,11 +38,12 @@ nodes:
       syncsource: true
       filespooling: false
       partialtransaction: false
+      voting: true
       name: 'peer-node-0'
       friendlyName: 'peer-node-0'
       host: 'peer-node-0'
       sinkType: 'Sync'
-      roles: 'Peer'
+      roles: 'Peer,Voting'
       enableSingleThreadPool: true
       addressextraction: false
       mongo: false
@@ -52,11 +53,12 @@ nodes:
       syncsource: true
       filespooling: false
       partialtransaction: false
+      voting: true
       friendlyName: 'peer-node-1'
       name: 'peer-node-1'
       host: 'peer-node-1'
       sinkType: 'Sync'
-      roles: 'Peer'
+      roles: 'Peer,Voting'
       enableSingleThreadPool: true
       addressextraction: false
       mongo: false
@@ -66,13 +68,14 @@ nodes:
       syncsource: false
       filespooling: true
       partialtransaction: true
+      voting: true
       friendlyName: 'api-node-0'
       name: 'api-node-0'
       host: 'api-node-0'
       brokerHost: 'api-node-broker-0'
       openBrokerPort: true
       sinkType: 'Async'
-      roles: 'Api'
+      roles: 'Api,Voting'
       enableSingleThreadPool: false
       addressextraction: true
       mongo: true

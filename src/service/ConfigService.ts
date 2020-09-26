@@ -11,6 +11,7 @@ import {
     Transaction,
     TransactionMapping,
     UInt64,
+    VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
 import { CertificateService } from './CertificateService';
@@ -20,6 +21,8 @@ import { LogType } from '../logger/LogType';
 import { NemgenService } from './NemgenService';
 import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import * as fs from 'fs';
+import { VotingService } from './VotingService';
+import { join } from 'path';
 
 /**
  * Defined presets.
@@ -101,9 +104,10 @@ export class ConfigService {
         const name = node.name || `${type}-${index}`;
         const signing = this.toConfig(Account.generateNewAccount(networkType));
         const vrf = this.toConfig(Account.generateNewAccount(networkType));
+        const voting = this.toConfig(Account.generateNewAccount(networkType));
         const ssl = await new CertificateService(this.root, this.params).run(name);
         const friendlyName = node.friendlyName || ssl.publicKey.substr(0, 7);
-        return { signing, vrf, ssl, type, name, friendlyName };
+        return { signing, vrf, voting, ssl, type, name, friendlyName };
     }
 
     public async generateNodeAccounts(networkType: NetworkType, nodes: NodePreset[]): Promise<NodeAccount[]> {
@@ -124,8 +128,8 @@ export class ConfigService {
         if (this.params.reset) {
             BootstrapUtils.deleteFolder(configFolder);
         }
-        if (fs.existsSync(configFolder)) {
-            logger.info('Config folder exist, ignoring configuration. (run -r to reset)');
+        if (fs.existsSync(join(configFolder, 'preset.yml'))) {
+            logger.info(`The preset.yml file in config folder '${configFolder}' exist, ignoring configuration. (run -r to reset)`);
             const presetData: ConfigPreset = BootstrapUtils.loadExistingPresetData(this.params.target);
             const addresses: Addresses = BootstrapUtils.loadExistingAddresses(this.params.target);
             return { presetData, addresses };
@@ -265,6 +269,7 @@ export class ConfigService {
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder);
         await this.generateP2PFile(presetData, addresses, outputFolder, NodeType.PEER_NODE, 'peers-p2p.json');
         await this.generateP2PFile(presetData, addresses, outputFolder, NodeType.API_NODE, 'peers-api.json');
+        await new VotingService(this.params).run(presetData, account, nodePreset);
     }
 
     private async generateP2PFile(
@@ -312,6 +317,7 @@ export class ConfigService {
         const moveTo = `${this.params.target}/config/nemesis`;
         const templateContext = { ...(presetData as any), addresses };
         await Promise.all((addresses.nodes || []).map((n) => this.createVrfTransaction(presetData, n)));
+        await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransaction(presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
             logger.info('Opt In mode is ON!!! balances or transactions have been provided');
@@ -390,6 +396,27 @@ export class ConfigService {
         const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(presetData, `vrf_${node.name}`, signedTransaction.payload);
+    }
+
+    private async createVotingKey(votingPublicKey: string): Promise<string> {
+        return votingPublicKey + '00000000000000000000000000000000';
+    }
+
+    private async createVotingKeyTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
+        const deadline = (Deadline as any)['createFromDTO']('1');
+        const votingKey = await this.createVotingKey(node.voting.publicKey);
+        const voting = VotingKeyLinkTransaction.create(
+            deadline,
+            votingKey,
+            1,
+            26280,
+            LinkAction.Link,
+            presetData.networkType,
+            UInt64.fromUint(0),
+        );
+        const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+        const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
+        return await this.storeTransaction(presetData, `voting_${node.name}`, signedTransaction.payload);
     }
 
     private async storeTransaction(presetData: ConfigPreset, name: string, payload: string): Promise<Transaction> {

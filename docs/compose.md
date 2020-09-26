@@ -1,13 +1,13 @@
 `symbol-bootstrap compose`
 ==========================
 
-It generates the docker-compose.yml file from the configured network.
+It generates the `docker-compose.yml` file from the configured network.
 
 * [`symbol-bootstrap compose`](#symbol-bootstrap-compose)
 
 ## `symbol-bootstrap compose`
 
-It generates the docker-compose.yml file from the configured network.
+It generates the `docker-compose.yml` file from the configured network.
 
 ```
 USAGE
@@ -25,4 +25,4 @@ EXAMPLE
   $ symbol-bootstrap compose
 ```
 
-_See code: [src/commands/compose.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.0.0/src/commands/compose.ts)_
+_See code: [src/commands/compose.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.0/src/commands/compose.ts)_
