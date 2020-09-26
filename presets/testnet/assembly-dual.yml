@@ -21,7 +21,7 @@ nodes:
       enableAutoSyncCleanup: false
       mongo: true
       zeromq: true
-      voting: true
+      voting: false
 gateways:
     - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
       name: 'rest-gateway'

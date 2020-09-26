@@ -25,7 +25,7 @@ export class NemgenService {
         const cmd = [
             'bash',
             '-c',
-            'cd /data && exec env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps /usr/catapult/bin/catapult.tools.nemgen  -r /userconfig --nemesisProperties /nemesis/block-properties-file.properties',
+            'cd /data && /usr/catapult/bin/catapult.tools.nemgen  -r /userconfig --nemesisProperties /nemesis/block-properties-file.properties',
         ];
 
         if (!presetData.nodes) {

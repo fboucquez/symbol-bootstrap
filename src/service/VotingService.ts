@@ -28,7 +28,7 @@ export class VotingService {
             const cmd = [
                 'bash',
                 '-c',
-                `exec env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps /usr/catapult/bin/catapult.tools.votingkey --secret ${nodeAccount.voting.privateKey} --output /votingKeys/${privateKeyTreeFileName}`,
+                `/usr/catapult/bin/catapult.tools.votingkey --secret ${nodeAccount.voting.privateKey} --output /votingKeys/${privateKeyTreeFileName}`,
             ];
 
             await BootstrapUtils.mkdir(votingKeysFolder);

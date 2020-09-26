@@ -29,7 +29,7 @@ epochAdjustment: 1573430400s
 maxVotingKeyLifetime: 26280
 minVotingKeyLifetime: 28
 mosaicRentalFee: 500
-votingSetGrouping: 720
+votingSetGrouping: 100
 maxVotingKeysPerAccount: 3
 maxTransactionsPerAggregate: 100
 maxCosignaturesPerAggregate: 25
@@ -48,7 +48,7 @@ trustedHosts: 127.0.0.1, 172.20.0.25
 localNetworks: 127.0.0.1, 172.20.0.25
 lockedFundsPerAggregate: 10000000
 maxHashLockDuration: 2d
-maxSecretLockDuration: 365d
+maxSecretLockDuration: 30d
 minProofSize: 20
 maxProofSize: 1024
 maxValueSize: 1024
