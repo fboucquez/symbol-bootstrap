@@ -29,8 +29,8 @@ OPTIONS
 
   -r, --reset                             It resets the configuration generating a new one
 
-  -s, --service=service                   If you are starting a particular service, example rest-gateway, db,
-                                          node-peer-0
+  -s, --service=service                   To start a particular docker compose service by name, example rest-gateway,
+                                          db, node-peer-0
 
   -t, --target=target                     [default: target] the target folder
 
