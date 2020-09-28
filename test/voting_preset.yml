@@ -1,3 +1,3 @@
 nodes:
-    - roles: 'Peer,Voting'
+    - roles: 'Api,Peer,Voting'
       voting: true

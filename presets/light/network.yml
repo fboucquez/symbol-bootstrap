@@ -35,7 +35,6 @@ databases:
 nodes:
     - harvesting: true
       type: peer-node
-      enableDispatcherInputAuditing: false
       syncsource: true
       filespooling: true
       partialtransaction: true

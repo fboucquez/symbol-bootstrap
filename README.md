@@ -161,7 +161,7 @@ nodes:
     voting: true
 ````
 
-In order to activate the voting node, you will need to announce a `VotingKeyLinkTransaction` singed using the node's signing private, and the voting public key (suffixed with `00000000000000000000000000000000`).
+In order to activate the voting node, you will need to announce a `VotingKeyLinkTransaction` signed using the node's signing private, and the voting public key (suffixed with `00000000000000000000000000000000`).
 
 The node signing and voting keys are stored in the `./target/config/generated-addresses/addresses.yml`. Keep this file private!
 
