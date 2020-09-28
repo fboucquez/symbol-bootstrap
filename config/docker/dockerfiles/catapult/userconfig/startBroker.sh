@@ -2,6 +2,7 @@
 
 name=$1
 echo "RUNNING running startBroker.sh $name"
+hostname
 source /userconfig/prepare.sh $name
 
 ulimit -c unlimited

@@ -2,6 +2,7 @@
 
 name=$1
 echo "RUNNING startServer.sh $name"
+hostname
 source /userconfig/prepare.sh $name
 id -a
 

@@ -285,15 +285,14 @@ export class ConfigService {
                     return undefined;
                 }
                 const nodePresetData = (presetData.nodes || [])[index];
-                const name = node.name;
                 return {
                     publicKey: node.ssl.publicKey,
                     endpoint: {
-                        host: name,
+                        host: nodePresetData.host,
                         port: 7900,
                     },
                     metadata: {
-                        name: name,
+                        name: nodePresetData.friendlyName,
                         roles: nodePresetData.roles,
                     },
                 };

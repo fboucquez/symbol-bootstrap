@@ -31,6 +31,7 @@ export interface NodePreset {
     // At least these properties.
     databaseHost: string;
     openBrokerPort: boolean;
+    host?: string;
     name: string;
     type: NodeType;
     roles: string;

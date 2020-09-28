@@ -1,0 +1,6 @@
+nodes:
+    - friendlyName: Peer Node 1 custom friendly name
+    - friendlyName: Peer Node 2 custom friendly name
+      host: 'peer2.custom.hostname'
+    - friendlyName: Api Node 1 custom friendly name
+      host: 'api1.custom.hostname'

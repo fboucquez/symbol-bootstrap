@@ -70,12 +70,12 @@ export class ComposeService {
         });
 
         (presetData.nodes || []).forEach((n) => {
-            const nodeService = {
+            const nodeService: DockerComposeService = {
                 image: presetData.symbolServerImage,
                 user,
                 command: `bash -c "/bin/bash /userconfig/runServerRecover.sh  ${n.name} && /bin/bash /userconfig/startServer.sh ${n.name}"`,
                 stop_signal: 'SIGINT',
-                depends_on: [] as string[],
+                depends_on: [],
                 restart: 'on-failure:2',
                 ports: n.openBrokerPort ? ['7900:7900'] : [],
                 volumes: [
@@ -87,8 +87,13 @@ export class ComposeService {
                     vol('../state', '/state'),
                 ],
             };
+            if (n.host) {
+                nodeService.hostname = n.host;
+                nodeService.networks = { default: { aliases: [n.host] } };
+            }
+
             if (n.databaseHost) {
-                nodeService.depends_on.push(n.databaseHost + '-init');
+                nodeService.depends_on?.push(n.databaseHost + '-init');
             }
             services[n.name] = nodeService;
             if (n.brokerHost) {
@@ -107,7 +112,7 @@ export class ComposeService {
                         vol('../state', '/state'),
                     ],
                 };
-                nodeService.depends_on.push(n.brokerHost);
+                nodeService.depends_on?.push(n.brokerHost);
             }
         });
 
