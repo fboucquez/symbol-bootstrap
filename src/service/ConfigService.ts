@@ -104,10 +104,12 @@ export class ConfigService {
         const name = node.name || `${type}-${index}`;
         const signing = this.toConfig(Account.generateNewAccount(networkType));
         const vrf = this.toConfig(Account.generateNewAccount(networkType));
-        const voting = this.toConfig(Account.generateNewAccount(networkType));
         const ssl = await new CertificateService(this.root, this.params).run(name);
         const friendlyName = node.friendlyName || ssl.publicKey.substr(0, 7);
-        return { signing, vrf, voting, ssl, type, name, friendlyName };
+        const roles = this.resolveRoles(node);
+        const nodeAccount: NodeAccount = { type, name, friendlyName, roles: roles, signing, vrf, ssl };
+        if (node.voting) nodeAccount.voting = this.toConfig(Account.generateNewAccount(networkType));
+        return nodeAccount;
     }
 
     public async generateNodeAccounts(networkType: NetworkType, nodes: NodePreset[]): Promise<NodeAccount[]> {
@@ -200,6 +202,9 @@ export class ConfigService {
         };
 
         if (presetData.nodes) {
+            presetData.nodes?.forEach((node) => {
+                node.roles = this.resolveRoles(node);
+            });
             addresses.nodes = await this.generateNodeAccounts(networkType, presetData.nodes);
         }
 
@@ -272,6 +277,23 @@ export class ConfigService {
         await new VotingService(this.params).run(presetData, account, nodePreset);
     }
 
+    private resolveRoles(nodePreset: NodePreset): string {
+        if (nodePreset.roles) {
+            return nodePreset.roles;
+        }
+        const roles: string[] = [];
+        if (nodePreset.harvesting) {
+            roles.push('Peer');
+        }
+        if (nodePreset.api) {
+            roles.push('Api');
+        }
+        if (nodePreset.voting) {
+            roles.push('Voting');
+        }
+        return roles.join(',');
+    }
+
     private async generateP2PFile(
         presetData: ConfigPreset,
         addresses: Addresses,
@@ -316,7 +338,7 @@ export class ConfigService {
         const moveTo = `${this.params.target}/config/nemesis`;
         const templateContext = { ...(presetData as any), addresses };
         await Promise.all((addresses.nodes || []).map((n) => this.createVrfTransaction(presetData, n)));
-        await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransaction(presetData, n)));
+        await Promise.all((addresses.nodes || []).filter((n) => n.voting).map((n) => this.createVotingKeyTransaction(presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
             logger.info('Opt In mode is ON!!! balances or transactions have been provided');
@@ -402,7 +424,10 @@ export class ConfigService {
     }
 
     private async createVotingKeyTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
-        const deadline = (Deadline as any)['createFromDTO']('1');
+        if (!node.voting) {
+            throw new Error('Voting keys should have been generated!!');
+        }
+        const deadline = Deadline.createFromDTO('1');
         const votingKey = await this.createVotingKey(node.voting.publicKey);
         const voting = VotingKeyLinkTransaction.create(
             deadline,

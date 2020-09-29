@@ -1,6 +1,8 @@
 localNetworks: 127.0.0.1
 nodes:
     - harvesting: true
+      voting: false
+      api: false
       type: peer-node
       syncsource: true
       filespooling: false
@@ -9,9 +11,7 @@ nodes:
       openPort: true
       host: 'peer-node'
       sinkType: 'Sync'
-      roles: 'Peer'
       enableSingleThreadPool: true
       addressextraction: false
       mongo: false
       zeromq: false
-      voting: false

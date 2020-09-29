@@ -3,6 +3,8 @@ databases:
       openPort: true
 nodes:
     - harvesting: false
+      voting: false
+      api: true
       type: api-node
       syncsource: false
       filespooling: true
@@ -12,7 +14,6 @@ nodes:
       brokerHost: 'api-node-broker'
       openBrokerPort: true
       sinkType: 'Async'
-      roles: 'Api'
       enableSingleThreadPool: false
       addressextraction: true
       mongo: true
@@ -20,7 +21,6 @@ nodes:
       databaseHost: 'db'
       enableAutoSyncCleanup: false
       openPort: true
-      voting: false
 gateways:
     - apiNodeConfigPath: '/usr/local/share/symbol/api-node-config'
       name: 'rest-gateway'

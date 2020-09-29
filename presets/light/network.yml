@@ -34,17 +34,17 @@ databases:
       openPort: true
 nodes:
     - harvesting: true
+      voting: true
+      api: true
       type: peer-node
       syncsource: true
       filespooling: true
       partialtransaction: true
-      voting: true
       name: 'api-node'
       databaseHost: 'db'
       host: ''
       openPort: true
       sinkType: 'Async'
-      roles: 'Api,Peer,Voting'
       enableSingleThreadPool: false
       brokerHost: 'api-broker'
       openBrokerPort: true

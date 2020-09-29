@@ -157,8 +157,7 @@ transactions:
 
 ````yaml
 nodes:
-  - roles: 'Peer,Voting'
-    voting: true
+  - voting: true
 ````
 
 In order to activate the voting node, you will need to announce a `VotingKeyLinkTransaction` signed using the node's signing private, and the voting public key (suffixed with `00000000000000000000000000000000`).
@@ -166,6 +165,15 @@ In order to activate the voting node, you will need to announce a `VotingKeyLink
 The node signing and voting keys are stored in the `./target/config/generated-addresses/addresses.yml`. Keep this file private!
 
 **Note:** Full network `-p bootstrap` nodes are fully configured voting nodes. `VotingKeyLinkTransaction` are added to the nemesis block automatically. 
+
+
+##### Disable voting mode in all bootstrap nodes:
+
+````yaml
+nodes:
+  - voting: false
+  - voting: false
+````
 
 ## Target:
 
@@ -182,7 +190,7 @@ The folder where the generated config, docker files and data are stored. The fol
 
 # Requirements
 
--   NPM 10+
+-   Node 10+
 -   Docker
 -   Docker Compose
 
