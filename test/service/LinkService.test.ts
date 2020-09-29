@@ -1,5 +1,5 @@
 import 'mocha';
-import { BootstrapService, ConfigService, Preset } from '../../src/service';
+import { BootstrapService } from '../../src/service';
 import { LinkService } from '../../src/service/LinkService';
 import { expect } from '@oclif/test';
 
