@@ -19,7 +19,7 @@ describe('ReportService', () => {
         };
         const configResult = await new ConfigService('.', {
             ...ConfigService.defaultParams,
-            reset: true,
+            reset: false,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'dual',
@@ -28,12 +28,21 @@ describe('ReportService', () => {
         }).run();
 
         const paths = await new ReportService('.', { target }).run(configResult.presetData);
-        expect(paths.length).to.eq(1);
-        const reportPath = paths[0];
-        expect(reportPath).to.eq('target/ReportService.testnet.report/report/api-node-config.rst');
+        expect(paths.length).to.eq(2);
+        {
+            const reportPath = paths[0];
+            expect(reportPath).to.eq('target/ReportService.testnet.report/report/api-node-config.rst');
+            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
+            const expectedReport = await BootstrapUtils.readTextFile('./test/expected-api-node-config.rst');
+            expect(generatedReport.trim()).to.be.eq(expectedReport.trim());
+        }
 
-        const generatedReport = await BootstrapUtils.readTextFile(reportPath);
-        const expectedReport = await BootstrapUtils.readTextFile('./test/expected-api-node-config.rst');
-        expect(generatedReport.trim()).to.be.eq(expectedReport.trim());
+        {
+            const reportPath = paths[1];
+            expect(reportPath).to.eq('target/ReportService.testnet.report/report/api-node-config.csv');
+            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
+            const expectedReport = await BootstrapUtils.readTextFile('./test/expected-api-node-config.csv');
+            expect(generatedReport.trim()).to.be.eq(expectedReport.trim());
+        }
     });
 });

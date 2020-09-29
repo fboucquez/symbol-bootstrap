@@ -155,9 +155,11 @@ Property:
 harvesterSigningPrivateKey:
     type: string
     description: Harvester signing private key.
+    hidden: true
 harvesterVrfPrivateKey:
     type: string
     description: Harvester vrf private key.
+    hidden: true
 enableAutoHarvesting:
     type: bool
     description: Set to true if auto harvesting is enabled.
@@ -365,3 +367,214 @@ maxMosaicRestrictionValues:
 maxMessageSize:
     type: uint16_t
     description: Maximum transaction message size.
+#    Complete the following:
+databaseUri:
+    type: ''
+    description: ''
+databaseName:
+    type: ''
+    description: ''
+maxWriterThreads:
+    type: ''
+    description: ''
+catapult.mongo.plugins.accountlink:
+    type: ''
+    description: ''
+catapult.mongo.plugins.aggregate:
+    type: ''
+    description: ''
+catapult.mongo.plugins.lockhash:
+    type: ''
+    description: ''
+catapult.mongo.plugins.locksecret:
+    type: ''
+    description: ''
+catapult.mongo.plugins.metadata:
+    type: ''
+    description: ''
+catapult.mongo.plugins.mosaic:
+    type: ''
+    description: ''
+catapult.mongo.plugins.multisig:
+    type: ''
+    description: ''
+catapult.mongo.plugins.namespace:
+    type: ''
+    description: ''
+catapult.mongo.plugins.restrictionaccount:
+    type: ''
+    description: ''
+catapult.mongo.plugins.restrictionmosaic:
+    type: ''
+    description: ''
+catapult.mongo.plugins.transfer:
+    type: ''
+    description: ''
+extension.addressextraction:
+    type: ''
+    description: ''
+extension.mongo:
+    type: ''
+    description: ''
+extension.zeromq:
+    type: ''
+    description: ''
+extension.hashcache:
+    type: ''
+    description: ''
+extension.filespooling:
+    type: ''
+    description: ''
+extension.partialtransaction:
+    type: ''
+    description: ''
+extension.eventsource:
+    type: ''
+    description: ''
+extension.harvesting:
+    type: ''
+    description: ''
+extension.syncsource:
+    type: ''
+    description: ''
+extension.diagnostics:
+    type: ''
+    description: ''
+extension.finalization:
+    type: ''
+    description: ''
+extension.networkheight:
+    type: ''
+    description: ''
+extension.nodediscovery:
+    type: ''
+    description: ''
+extension.packetserver:
+    type: ''
+    description: ''
+extension.pluginhandlers:
+    type: ''
+    description: ''
+extension.sync:
+    type: ''
+    description: ''
+extension.timesync:
+    type: ''
+    description: ''
+extension.transactionsink:
+    type: ''
+    description: ''
+extension.unbondedpruning:
+    type: ''
+    description: ''
+enableVoting:
+    type: ''
+    description: ''
+size:
+    type: ''
+    description: ''
+threshold:
+    type: ''
+    description: ''
+stepDuration:
+    type: ''
+    description: ''
+shortLivedCacheMessageDuration:
+    type: ''
+    description: ''
+messageSynchronizationMaxResponseSize:
+    type: ''
+    description: ''
+maxHashesPerPoint:
+    type: ''
+    description: ''
+prevoteBlocksMultiple:
+    type: ''
+    description: ''
+votingKeyDilution:
+    type: ''
+    description: ''
+sinkType:
+    type: ''
+    description: ''
+level:
+    type: ''
+    description: ''
+colorMode:
+    type: ''
+    description: ''
+directory:
+    type: ''
+    description: ''
+filePattern:
+    type: ''
+    description: ''
+rotationSize:
+    type: ''
+    description: ''
+maxTotalSize:
+    type: ''
+    description: ''
+minFreeSpace:
+    type: ''
+    description: ''
+subscriberPort:
+    type: ''
+    description: ''
+generationHashSeed:
+    type: ''
+    description: ''
+votingSetGrouping:
+    type: ''
+    description: ''
+dummy:
+    type: ''
+    description: ''
+maxNodes:
+    type: ''
+    description: ''
+maxHashesPerSyncAttempt:
+    type: ''
+    description: ''
+cacheMaxResponseSize:
+    type: ''
+    description: ''
+cacheMaxSize:
+    type: ''
+    description: ''
+startDelay:
+    type: ''
+    description: ''
+repeatDelay:
+    type: ''
+    description: ''
+minDelay:
+    type: ''
+    description: ''
+maxDelay:
+    type: ''
+    description: ''
+numPhaseOneRounds:
+    type: ''
+    description: ''
+numTransitionRounds:
+    type: ''
+    description: ''
+minImportance:
+    type: ''
+    description: ''
+enableDelegatedHarvestersAutoDetection:
+    type: ''
+    description: ''
+certificateDirectory:
+    type: ''
+    description: ''
+dataDirectory:
+    type: ''
+    description: ''
+pluginsDirectory:
+    type: ''
+    description: ''
+votingKeysDirectory:
+    type: ''
+    description: ''

@@ -111,13 +111,12 @@ export class ConfigService {
         const roles = this.resolveRoles(node);
         const nodeAccount: NodeAccount = { type, name, friendlyName, roles: roles, ssl };
 
-      const generateAccount = (networkType: NetworkType, privateKey: string | undefined): Account =>
-        privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
+        const generateAccount = (networkType: NetworkType, privateKey: string | undefined): Account =>
+            privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
 
-
-      if (node.harvesting || node.voting) nodeAccount.signing = this.toConfig(generateAccount(networkType, node.s));
-        if (node.voting) nodeAccount.voting = this.toConfig(generateAccount(networkType));
-        if (node.harvesting) nodeAccount.vrf = this.toConfig(generateAccount(networkType));
+        if (node.harvesting || node.voting) nodeAccount.signing = this.toConfig(generateAccount(networkType, node.signingPrivateKey));
+        if (node.voting) nodeAccount.voting = this.toConfig(generateAccount(networkType, node.votingPrivateKey));
+        if (node.harvesting) nodeAccount.vrf = this.toConfig(generateAccount(networkType, node.vrfPrivateKey));
         return nodeAccount;
     }
 
