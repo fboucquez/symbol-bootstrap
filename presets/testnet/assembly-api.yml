@@ -1,6 +1,6 @@
 databases:
     - name: 'db'
-      openPort: true
+      openPort: false
 nodes:
     - harvesting: false
       voting: false
@@ -10,7 +10,7 @@ nodes:
       filespooling: true
       partialtransaction: true
       name: 'api-node'
-      host: 'api-node'
+      host: ''
       brokerHost: 'api-node-broker'
       openBrokerPort: true
       sinkType: 'Async'
