@@ -9,7 +9,7 @@ nodes:
       partialtransaction: false
       name: 'peer-node'
       openPort: true
-      host: 'peer-node'
+      host: ''
       sinkType: 'Sync'
       enableSingleThreadPool: true
       addressextraction: false
