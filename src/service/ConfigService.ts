@@ -412,15 +412,11 @@ export class ConfigService {
     }
 
     private async createVrfTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
-        const deadline = (Deadline as any)['createFromDTO']('1');
+        const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
         const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(presetData, `vrf_${node.name}`, signedTransaction.payload);
-    }
-
-    private async createVotingKey(votingPublicKey: string): Promise<string> {
-        return votingPublicKey + '00000000000000000000000000000000';
     }
 
     private async createVotingKeyTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
@@ -428,7 +424,7 @@ export class ConfigService {
             throw new Error('Voting keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
-        const votingKey = await this.createVotingKey(node.voting.publicKey);
+        const votingKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
         const voting = VotingKeyLinkTransaction.create(
             deadline,
             votingKey,

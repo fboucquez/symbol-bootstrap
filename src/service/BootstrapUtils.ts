@@ -158,6 +158,10 @@ export class BootstrapUtils {
         });
     }
 
+    public static createVotingKey(votingPublicKey: string): string {
+        return votingPublicKey + '00000000000000000000000000000000';
+    }
+
     public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {
         const startTime = new Date().getMilliseconds();
         return promiseFunction().then(async (result) => {
