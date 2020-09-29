@@ -35,6 +35,7 @@ export class CertificateService {
             this.params.preset,
             this.params.assembly,
             this.params.customPreset,
+            this.params.customPresetObject,
         );
         const symbolServerToolsImage = presetData.symbolServerToolsImage;
         const copyFrom = `${this.root}/config/cert`;

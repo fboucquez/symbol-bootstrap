@@ -128,13 +128,14 @@ export class BootstrapUtils {
         preset: Preset,
         assembly: string | undefined,
         customPresetFile: string | undefined,
+        customPresetObject: any | undefined,
     ): ConfigPreset {
         const sharedPreset = this.loadYaml(join(root, 'presets', 'shared.yml'));
         const networkPreset = this.loadYaml(`${root}/presets/${preset}/network.yml`);
         const assemblyPreset = assembly ? this.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`) : {};
         const customPreset = customPresetFile ? this.loadYaml(customPresetFile) : {};
         //Deep merge
-        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPreset, { preset });
+        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPreset, customPresetObject, { preset });
         if (!BootstrapUtils.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
@@ -152,11 +153,19 @@ export class BootstrapUtils {
     }
 
     public static loadExistingPresetData(target: string): ConfigPreset {
-        return this.loadYaml(`${target}/config/preset.yml`);
+        try {
+            return this.loadYaml(`${target}/config/preset.yml`);
+        } catch (e) {
+            throw new Error(`${e.message}. Have you executed the 'config' command?`);
+        }
     }
 
     public static loadExistingAddresses(target: string): Addresses {
-        return this.loadYaml(`${target}/config/generated-addresses/addresses.yml`);
+        try {
+            return this.loadYaml(`${target}/config/generated-addresses/addresses.yml`);
+        } catch (e) {
+            throw new Error(`${e.message}. Have you executed the 'config' command?`);
+        }
     }
 
     public static sleep(ms: number): Promise<any> {
@@ -219,7 +228,7 @@ export class BootstrapUtils {
                 if (stat.isFile()) {
                     if (toPath.indexOf('.mustache') > -1) {
                         const destinationFile = toPath.replace('.mustache', '');
-                        const template = await fsPromises.readFile(fromPath, 'utf8');
+                        const template = await BootstrapUtils.readTextFile(fromPath);
                         Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
                         Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
                         const compiledTemplate = Handlebars.compile(template);
@@ -261,6 +270,10 @@ export class BootstrapUtils {
 
     public static async writeTextFile(path: string, text: string): Promise<void> {
         await fsPromises.writeFile(path, text, 'utf8');
+    }
+
+    public static async readTextFile(path: string): Promise<string> {
+        return await fsPromises.readFile(path, 'utf8');
     }
 
     private static dockerUserId: string;
