@@ -90,22 +90,24 @@ export class LinkService {
         const listener = repositoryFactory.createListener();
         await listener.open();
 
-        const faucetUrl = 'http://faucet-0.10.0.x-01.symboldev.network/';
+        const faucetUrl = presetData.faucetUrl;
 
         const signedTransactionObservable = fromArray(transactionNodes).pipe(
             mergeMap(({ node, transactions }) => {
                 const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const noFundsMessage = faucetUrl
+                    ? `Does node signing signing have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
+                    : `Does node signing signing have any network coin? Send some tokens to ${account.address.plain()} .`;
                 return repositoryFactory
                     .createAccountRepository()
                     .getAccountInfo(account.address)
                     .pipe(
                         mergeMap((a) => {
-                            const mosaic = a.mosaics.find((m) => m.id.toHex().toLowerCase() === presetData.currencyMosaicId.toLowerCase());
+                            const currencyMosaicIdHex = BootstrapUtils.toHex(presetData.currencyMosaicId);
+                            const mosaic = a.mosaics.find((m) => BootstrapUtils.toHex(m.id.toHex()) === currencyMosaicIdHex);
                             if (!mosaic || mosaic.amount.compare(UInt64.fromUint(0)) < 1) {
                                 logger.error(
-                                    `Node signing account ${account.address.plain()} doesn't not have enough currency. Mosaic id: ${
-                                        presetData.currencyMosaicId
-                                    }. \n\nDo do you need to assign some founds? Send some tokens to ${account.address.plain()}  You can try the latest faucet ${faucetUrl}`,
+                                    `Node signing account ${account.address.plain()} doesn't not have enough currency. Mosaic id: ${currencyMosaicIdHex}. \n\n${noFundsMessage}`,
                                 );
                                 return EMPTY;
                             }
@@ -113,9 +115,7 @@ export class LinkService {
                         }),
                         catchError((e) => {
                             logger.error(
-                                `Node signing account ${account.address.plain()} is not valid. ${
-                                    e.message
-                                }. \n\nDo do you need to assign some founds? Send some tokens to ${account.address.plain()} You can try the latest faucet ${faucetUrl}`,
+                                `Node signing account ${account.address.plain()} is not valid. ${e.message}. \n\n${noFundsMessage}`,
                             );
                             return EMPTY;
                         }),

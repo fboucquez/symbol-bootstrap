@@ -51,6 +51,7 @@ export interface GatewayPreset {
 }
 
 export interface ConfigPreset {
+    faucetUrl?: string;
     nemesis?: NemesisPreset;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
     assemblies?: string;
