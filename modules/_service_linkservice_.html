@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;service/NemgenService&quot; | symbol-bootstrap</title>
+	<title>&quot;service/LinkService&quot; | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_service_nemgenservice_.html">&quot;service/NemgenService&quot;</a>
+					<a href="_service_linkservice_.html">&quot;service/LinkService&quot;</a>
 				</li>
 			</ul>
-			<h1>Module &quot;service/NemgenService&quot;</h1>
+			<h1>Module &quot;service/LinkService&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -73,35 +73,57 @@
 						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_service_nemgenservice_.nemgenservice.html" class="tsd-kind-icon">Nemgen<wbr>Service</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_service_linkservice_.linkservice.html" class="tsd-kind-icon">Link<wbr>Service</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_service_nemgenservice_.html#nemgenparams" class="tsd-kind-icon">Nemgen<wbr>Params</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_service_linkservice_.html#linkparams" class="tsd-kind-icon">Link<wbr>Params</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_service_nemgenservice_.html#logger" class="tsd-kind-icon">logger</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_service_linkservice_.html#logger" class="tsd-kind-icon">logger</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-					<a name="nemgenparams" class="tsd-anchor"></a>
-					<h3>Nemgen<wbr>Params</h3>
-					<div class="tsd-signature tsd-kind-icon">Nemgen<wbr>Params<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_service_configservice_.configparams.html" class="tsd-signature-type">ConfigParams</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="linkparams" class="tsd-anchor"></a>
+					<h3>Link<wbr>Params</h3>
+					<div class="tsd-signature tsd-kind-icon">Link<wbr>Params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>maxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>unlink<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/5219ace/src/service/NemgenService.ts#L10">src/service/NemgenService.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/5219ace/src/service/LinkService.ts#L26">src/service/LinkService.ts:26</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>params necessary to announce link transactions network.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>max<wbr>Fee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>unlink<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
@@ -112,7 +134,7 @@
 					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol"> = LoggerFactory.getLogger(LogType.System)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/5219ace/src/service/NemgenService.ts#L12">src/service/NemgenService.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/5219ace/src/service/LinkService.ts#L28">src/service/LinkService.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,20 +147,20 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="_service_nemgenservice_.html">&quot;service/<wbr>Nemgen<wbr>Service&quot;</a>
+						<a href="_service_linkservice_.html">&quot;service/<wbr>Link<wbr>Service&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_service_nemgenservice_.nemgenservice.html" class="tsd-kind-icon">Nemgen<wbr>Service</a>
+						<a href="../classes/_service_linkservice_.linkservice.html" class="tsd-kind-icon">Link<wbr>Service</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_service_nemgenservice_.html#nemgenparams" class="tsd-kind-icon">Nemgen<wbr>Params</a>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_service_linkservice_.html#linkparams" class="tsd-kind-icon">Link<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_service_nemgenservice_.html#logger" class="tsd-kind-icon">logger</a>
+						<a href="_service_linkservice_.html#logger" class="tsd-kind-icon">logger</a>
 					</li>
 				</ul>
 			</nav>

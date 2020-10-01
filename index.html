@@ -93,7 +93,7 @@
 					<h1>Why this tool?</h1>
 				</a>
 				<p>This tool has been created to address the problems defined in Symbol&#39;s <a href="https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md">NIP11</a>.</p>
-				<p>Ideally, it should replace:</p>
+				<p>It replaces:</p>
 				<ul>
 					<li><a href="https://github.com/nemtech/catapult-service-bootstrap">catapult-service-bootstrap</a></li>
 					<li><a href="https://github.com/nemgrouplimited/symbol-service-bootstrap">symbol-testnet-bootstrap</a></li>
@@ -109,7 +109,7 @@
 					<li>It&#39;s uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
 					<li>Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
 					<li>Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
-					<li>Docker-compose.yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
+					<li>Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
 					<li>The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
 					<li>The used docker images versions can be changed via configuration/preset</li>
 					<li>It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
@@ -136,7 +136,7 @@
 				<ul>
 					<li><code>-p bootstrap</code>: Default <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml">preset</a>. It&#39;s a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.</li>
 					<li><code>-p light</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/light/network.yml">light</a> network. It&#39;s a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.</li>
-					<li><code>-p testnet -a peer</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml">haversting</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a>. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+					<li><code>-p testnet -a peer</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml">harvesting</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a>. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 					<li><code>-p testnet -a api</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml">api</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 					<li><code>-p testnet -a dual</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml">dual</a> haversting peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 				</ul>
@@ -148,21 +148,50 @@
 				<p>The file is a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations.
 				The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).  </p>
 				<p>The best way to validate your configuration is by inspecting the generated configuration and preset.yml files in the target folder</p>
-				<p><strong>Examples:</strong></p>
-				<p>Custom reset image and throttling:</p>
-				<pre><code class="language-yaml"><span class="hljs-attr">symbolRestImage:</span> <span class="hljs-string">symbolplatform/symbol-rest:1.3.1-alpha</span>
+				<p><strong>If you are trying new configurations, remember to reset the previous one by running --reset (-r) or by removing the selected target folder (./target by default)</strong></p>
+				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+					<h4>Examples:</h4>
+				</a>
+				<a href="#custom-rest-image-and-throttling" id="custom-rest-image-and-throttling" style="color: inherit; text-decoration: none;">
+					<h5>Custom Rest image and throttling:</h5>
+				</a>
+				<pre><code class="language-yaml"><span class="hljs-attr">symbolRestImage:</span> <span class="hljs-string">symbolplatform/symbol-rest:2.1.1-alpha</span>
 <span class="hljs-attr">throttlingBurst:</span> <span class="hljs-number">35</span>
 <span class="hljs-attr">throttlingRate:</span> <span class="hljs-number">1000</span></code></pre>
-				<p>Custom number of nemesis accounts:</p>
-				<pre><code class="language-yaml"><span class="hljs-attr">nemesis:</span>
+				<a href="#custom-block-duration-max-namespace-duration-and-number-of-nemesis-accounts" id="custom-block-duration-max-namespace-duration-and-number-of-nemesis-accounts" style="color: inherit; text-decoration: none;">
+					<h5>Custom block duration, max namespace duration and number of nemesis accounts:</h5>
+				</a>
+				<pre><code class="language-yaml"><span class="hljs-attr">blockGenerationTargetTime:</span> <span class="hljs-string">5s</span>
+<span class="hljs-attr">maxNamespaceDuration:</span> <span class="hljs-string">10d</span>
+<span class="hljs-attr">nemesis:</span>
   <span class="hljs-attr">mosaics:</span>
     <span class="hljs-bullet">-</span> <span class="hljs-attr">accounts:</span> <span class="hljs-number">20</span></code></pre>
-				<p>Zero fee nodes:</p>
+				<a href="#zero-fee-nodes" id="zero-fee-nodes" style="color: inherit; text-decoration: none;">
+					<h5>Zero fee nodes:</h5>
+				</a>
 				<pre><code class="language-yaml"><span class="hljs-attr">minFeeMultiplier:</span> <span class="hljs-number">0</span></code></pre>
-				<p>Not exposed rest gateway:</p>
+				<a href="#not-exposed-rest-gateway" id="not-exposed-rest-gateway" style="color: inherit; text-decoration: none;">
+					<h5>Not exposed rest gateway:</h5>
+				</a>
 				<pre><code class="language-yaml"><span class="hljs-attr">gateways:</span>
     <span class="hljs-bullet">-</span> <span class="hljs-attr">openPort:</span> <span class="hljs-literal">false</span></code></pre>
-				<p>Custom generation hash seed, balances and block 1 transactions:</p>
+				<a href="#custom-nodes39-friendly-names-and-hosts" id="custom-nodes39-friendly-names-and-hosts" style="color: inherit; text-decoration: none;">
+					<h5>Custom nodes&#39; friendly names and hosts:</h5>
+				</a>
+				<p>Updating first node (single node presets like <code>testnet</code>):</p>
+				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">My</span> <span class="hljs-string">node</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
+    <span class="hljs-attr">host:</span> <span class="hljs-string">&#x27;myNode.custom.hostname&#x27;</span></code></pre>
+				<p>Updating multiple nodes (multi-node presets like <code>bootstrap</code>)</p>
+				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">Peer</span> <span class="hljs-string">Node</span> <span class="hljs-number">1</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">Peer</span> <span class="hljs-string">Node</span> <span class="hljs-number">2</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
+    <span class="hljs-attr">host:</span> <span class="hljs-string">&#x27;peer2.custom.hostname&#x27;</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">Api</span> <span class="hljs-string">Node</span> <span class="hljs-number">1</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
+    <span class="hljs-attr">host:</span> <span class="hljs-string">&#x27;api1.custom.hostname&#x27;</span></code></pre>
+				<a href="#custom-generation-hash-seed-balances-and-block-1-transactions" id="custom-generation-hash-seed-balances-and-block-1-transactions" style="color: inherit; text-decoration: none;">
+					<h5>Custom generation hash seed, balances and block 1 transactions:</h5>
+				</a>
 				<pre><code class="language-yaml"><span class="hljs-attr">nemesisGenerationHashSeed:</span> <span class="hljs-string">7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA</span>
 <span class="hljs-attr">nemesis:</span>
     <span class="hljs-attr">balances:</span>
@@ -173,6 +202,21 @@
         <span class="hljs-attr">&#x27;16963_581474&#x27;:</span> <span class="hljs-string">A1000000000000...(serialized</span> <span class="hljs-string">hex</span> <span class="hljs-string">transaction)</span>
         <span class="hljs-attr">&#x27;16963_580690&#x27;:</span> <span class="hljs-string">A1000000000000...</span>
         <span class="hljs-attr">&#x27;MyTransaction&#x27;:</span> <span class="hljs-number">01000000000000</span><span class="hljs-string">...</span></code></pre>
+				<a href="#enable-voting-mode-in-a-node" id="enable-voting-mode-in-a-node" style="color: inherit; text-decoration: none;">
+					<h5>Enable voting mode in a node:</h5>
+				</a>
+				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">voting:</span> <span class="hljs-literal">true</span></code></pre>
+				<p>In order to finalize the peer or voting nodes registration to an existing network like Testnet, be sure your nodes&#39; signing addresses have enough funds. For test environments, you can use the network&#39;s faucet.</p>
+				<p>Then run:</p>
+				<pre><code><span class="hljs-attribute">symbol-bootstrap link</span></code></pre>
+				<p><strong>Note:</strong> Full network <code>-p bootstrap</code> nodes are fully configured voting and peer nodes. <code>VotingKeyLinkTransaction</code> and <code>VrfKeyLinkTransaction</code> are added to the nemesis block automatically. </p>
+				<a href="#disable-voting-mode-in-all-bootstrap-nodes" id="disable-voting-mode-in-all-bootstrap-nodes" style="color: inherit; text-decoration: none;">
+					<h5>Disable voting mode in all bootstrap nodes:</h5>
+				</a>
+				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">voting:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">voting:</span> <span class="hljs-literal">false</span></code></pre>
 				<a href="#target" id="target" style="color: inherit; text-decoration: none;">
 					<h2>Target:</h2>
 				</a>
@@ -191,7 +235,7 @@
 					<h1>Requirements</h1>
 				</a>
 				<ul>
-					<li>NPM 10+</li>
+					<li>Node 10+</li>
 					<li>Docker</li>
 					<li>Docker Compose</li>
 				</ul>
@@ -310,6 +354,7 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
 					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
+					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
 					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
@@ -332,6 +377,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_config_.html">&quot;commands/config&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_link_.html">&quot;commands/link&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_run_.html">&quot;commands/run&quot;</a>
@@ -389,6 +437,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_forgecertificateservice_.html">&quot;service/<wbr>Forge<wbr>Certificate<wbr>Service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_service_linkservice_.html">&quot;service/<wbr>Link<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_mongoservice_.html">&quot;service/<wbr>Mongo<wbr>Service&quot;</a>
