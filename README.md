@@ -28,7 +28,7 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 
 This tool has been created to address the problems defined in Symbol's [NIP11](https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md).
 
-Ideally, it should replace:
+It replaces:
 
 -   [catapult-service-bootstrap](https://github.com/nemtech/catapult-service-bootstrap)
 -   [symbol-testnet-bootstrap](https://github.com/nemgrouplimited/symbol-service-bootstrap)
@@ -42,7 +42,7 @@ Ideally, it should replace:
 -   It's uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).
 -   Easier to maintain, the properties files are reused for all nodes, assemblies and network types.
 -   Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.
--   Docker-compose.yaml files are generated based on the network setup/preset instead of being manually created/upgraded.
+-   Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.
 -   The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.
 -   The used docker images versions can be changed via configuration/preset
 -   It uses the [oclif](https://oclif.io) framework. New commands are easy to add and document.
@@ -67,7 +67,7 @@ Properties in each file override the previous values (by object deep merge).
 
 -   `-p bootstrap`: Default [preset](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a full network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
 -   `-p light`: A [light](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/light/network.yml) network. It's a version of bootstrap with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
--   `-p testnet -a peer`: A [haversting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+-   `-p testnet -a peer`: A [harvesting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 
@@ -83,38 +83,62 @@ The attribute can also be defined in a lower level object just affecting one com
 
 The best way to validate your configuration is by inspecting the generated configuration and preset.yml files in the target folder
 
-**Examples:**
+**If you are trying new configurations, remember to reset the previous one by running --reset (-r) or by removing the selected target folder (./target by default)**
 
-Custom reset image and throttling:
+#### Examples:
+
+##### Custom Rest image and throttling:
 
 ````yaml
-symbolRestImage: symbolplatform/symbol-rest:1.3.1-alpha
+symbolRestImage: symbolplatform/symbol-rest:2.1.1-alpha
 throttlingBurst: 35
 throttlingRate: 1000
 ````
 
-Custom number of nemesis accounts:
+##### Custom block duration, max namespace duration and number of nemesis accounts:
 
 ````yaml
+blockGenerationTargetTime: 5s
+maxNamespaceDuration: 10d
 nemesis:
   mosaics:
     - accounts: 20
 ````
 
-Zero fee nodes:
+##### Zero fee nodes:
 
 ````yaml
 minFeeMultiplier: 0
 ````
 
-Not exposed rest gateway:
+##### Not exposed rest gateway:
 
 ````yaml
 gateways:
     - openPort: false
 ````
 
-Custom generation hash seed, balances and block 1 transactions:
+##### Custom nodes' friendly names and hosts:
+
+Updating first node (single node presets like `testnet`):
+
+````yaml
+nodes:
+  - friendlyName: My node custom friendly name
+    host: 'myNode.custom.hostname'
+````
+Updating multiple nodes (multi-node presets like `bootstrap`)
+
+````yaml
+nodes:
+  - friendlyName: Peer Node 1 custom friendly name
+  - friendlyName: Peer Node 2 custom friendly name
+    host: 'peer2.custom.hostname'
+  - friendlyName: Api Node 1 custom friendly name
+    host: 'api1.custom.hostname'
+````
+
+##### Custom generation hash seed, balances and block 1 transactions:
 
 ````yaml
 nemesisGenerationHashSeed: 7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA
@@ -129,6 +153,31 @@ transactions:
         'MyTransaction': 01000000000000...
 ````
 
+##### Enable voting mode in a node:
+
+````yaml
+nodes:
+  - voting: true
+````
+
+In order to finalize the peer or voting nodes registration to an existing network like Testnet, be sure your nodes' signing addresses have enough funds. For test environments, you can use the network's faucet.
+
+Then run:
+
+````
+symbol-bootstrap link
+````
+
+**Note:** Full network `-p bootstrap` nodes are fully configured voting and peer nodes. `VotingKeyLinkTransaction` and `VrfKeyLinkTransaction` are added to the nemesis block automatically. 
+
+
+##### Disable voting mode in all bootstrap nodes:
+
+````yaml
+nodes:
+  - voting: false
+  - voting: false
+````
 
 ## Target:
 
@@ -145,7 +194,7 @@ The folder where the generated config, docker files and data are stored. The fol
 
 # Requirements
 
--   NPM 10+
+-   Node 10+
 -   Docker
 -   Docker Compose
 
@@ -189,7 +238,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.1.0 linux-x64 node-v12.18.4
+symbol-bootstrap/0.1.1 linux-x64 node-v14.8.0
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -318,6 +367,7 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
+* [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
 * [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 * [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
 * [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.

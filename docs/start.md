@@ -46,4 +46,4 @@ EXAMPLES
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.0/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.1/src/commands/start.ts)_

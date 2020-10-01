@@ -43,7 +43,6 @@ maxBondedTransactionLifetime: 48h
 maxTransactionsPerBlock: 6000
 stepDuration: 4m
 minNamespaceDuration: 1m
-enableDispatcherInputAuditing: true
 trustedHosts: 127.0.0.1, 172.20.0.25
 localNetworks: 127.0.0.1, 172.20.0.25
 lockedFundsPerAggregate: 10000000
@@ -96,6 +95,7 @@ blockElementTraceInterval: 1
 transactionDisruptorSize: 16384
 transactionElementTraceInterval: 10
 enableDispatcherAbortWhenFull: false
+enableDispatcherInputAuditing: false
 maxCacheDatabaseWriteBatchSize: 5MB
 maxTrackedNodes: 5'000
 
@@ -121,3 +121,9 @@ maxReadRateMonitoringTotalSize: 100MB
 #Rest
 throttlingBurst: 35
 throttlingRate: 20
+
+
+#voting
+votingKeyDilution: 128
+votingKeyStartEpoch: 1
+votingKeyEndEpoch: 26280

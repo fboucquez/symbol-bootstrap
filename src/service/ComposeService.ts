@@ -20,7 +20,7 @@ export class ComposeService {
 
     constructor(private readonly root: string, protected readonly params: ComposeParams) {}
 
-    public async run(passedPresetData?: ConfigPreset): Promise<void> {
+    public async run(passedPresetData?: ConfigPreset): Promise<DockerCompose> {
         const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
 
         const workingDir = process.cwd();
@@ -29,11 +29,10 @@ export class ComposeService {
         if (this.params.reset) {
             BootstrapUtils.deleteFolder(targetDocker);
         }
-
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (fs.existsSync(dockerFile)) {
             logger.info(dockerFile + ' already exist. Reusing. (run -r to reset)');
-            return;
+            return BootstrapUtils.loadYaml(dockerFile);
         }
 
         await BootstrapUtils.mkdir(join(this.params.target, 'state'));
@@ -70,12 +69,12 @@ export class ComposeService {
         });
 
         (presetData.nodes || []).forEach((n) => {
-            const nodeService = {
+            const nodeService: DockerComposeService = {
                 image: presetData.symbolServerImage,
                 user,
                 command: `bash -c "/bin/bash /userconfig/runServerRecover.sh  ${n.name} && /bin/bash /userconfig/startServer.sh ${n.name}"`,
                 stop_signal: 'SIGINT',
-                depends_on: [] as string[],
+                depends_on: [],
                 restart: 'on-failure:2',
                 ports: n.openBrokerPort ? ['7900:7900'] : [],
                 volumes: [
@@ -87,8 +86,13 @@ export class ComposeService {
                     vol('../state', '/state'),
                 ],
             };
+            if (n.host) {
+                nodeService.hostname = n.host;
+                nodeService.networks = { default: { aliases: [n.host] } };
+            }
+
             if (n.databaseHost) {
-                nodeService.depends_on.push(n.databaseHost + '-init');
+                nodeService.depends_on?.push(n.databaseHost + '-init');
             }
             services[n.name] = nodeService;
             if (n.brokerHost) {
@@ -107,7 +111,7 @@ export class ComposeService {
                         vol('../state', '/state'),
                     ],
                 };
-                nodeService.depends_on.push(n.brokerHost);
+                nodeService.depends_on?.push(n.brokerHost);
             }
         });
 
@@ -152,5 +156,6 @@ export class ComposeService {
 
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
+        return dockerCompose;
     }
 }

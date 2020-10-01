@@ -11,11 +11,15 @@ export interface ConfigAccount extends CertificatePair {
 }
 
 export interface NodeAccount {
-    signing: ConfigAccount;
     ssl: CertificatePair;
     type: NodeType;
-    vrf: ConfigAccount;
-    voting: ConfigAccount;
+    //Signing key is produced if node is peer or voting
+    signing?: ConfigAccount;
+    // VRF key is produced if node is peer
+    vrf?: ConfigAccount;
+    // Voting key is produced if node is voting
+    voting?: ConfigAccount;
+    roles: string;
     name: string;
     friendlyName: string;
 }

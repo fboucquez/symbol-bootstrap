@@ -47,10 +47,16 @@ export class CertificateService {
 
         const command = this.createCertCommands('/data');
         await BootstrapUtils.writeTextFile(target + '/createCertificate.sh', command);
-        const cmd = ['bash', '-c', 'cd /data && bash createCertificate.sh'];
+        const cmd = ['bash', 'createCertificate.sh'];
         const binds = [`${resolve(target)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+            image: symbolServerToolsImage,
+            userId: userId,
+            workdir: '/data',
+            cmds: cmd,
+            binds: binds,
+        });
         const privateKey = this.getKey(stdout, 'priv:', 'pub:');
         const publicKey = this.getKey(stdout, 'pub:', 'Certificate:');
 

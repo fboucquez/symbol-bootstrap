@@ -9,6 +9,7 @@ export interface DockerComposeService {
     image?: string;
     restart?: string;
     user?: string;
+    hostname?: string;
     command: string;
     stop_signal?: string;
     volumes?: string[];
@@ -16,7 +17,8 @@ export interface DockerComposeService {
     depends_on?: string[];
     networks?: {
         default: {
-            ipv4_address: string;
+            ipv4_address?: string;
+            aliases?: string[];
         };
     };
 }

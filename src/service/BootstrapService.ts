@@ -2,7 +2,9 @@ import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { RunParams, RunService } from './RunService';
 import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigPreset } from '../model';
+import { Addresses, ConfigPreset } from '../model';
+import { LinkParams, LinkService } from './LinkService';
+import { DockerCompose } from '../model/DockerCompose';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
 
@@ -27,10 +29,28 @@ export class BootstrapService {
      * The config method/command needs to be called before this method
      *
      * @param config the params of the compose command.
-     * @param passedPresetData the created preset if you know if, otherwise will load the latest one resolved from the target folder.
+     * @param passedPresetData the created preset if you know it, otherwise will load the latest one resolved from the target folder.
      */
-    public async compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<void> {
-        await new ComposeService(this.root, config).run(passedPresetData);
+    public compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<DockerCompose> {
+        return new ComposeService(this.root, config).run(passedPresetData);
+    }
+
+    /**
+     * It calls a running server announcing all the node transactions like VRF and Voting.
+     *
+     * This command is useful to link the nodes keys to an existing running network like testnet.
+     *
+     * @param config the params passed
+     * @param passedPresetData  the created preset if you know it, otherwise will load the latest one resolved from the target folder.
+     * @param passedAddresses  the created addresses if you know it, otherwise will load the latest one resolved from the target folder.
+     */
+
+    public async link(
+        config: LinkParams = LinkService.defaultParams,
+        passedPresetData?: ConfigPreset | undefined,
+        passedAddresses?: Addresses | undefined,
+    ): Promise<void> {
+        await new LinkService(config).run(passedPresetData, passedAddresses);
     }
 
     /**

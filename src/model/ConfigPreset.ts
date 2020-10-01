@@ -31,6 +31,10 @@ export interface NodePreset {
     // At least these properties.
     databaseHost: string;
     openBrokerPort: boolean;
+    harvesting: boolean;
+    api: boolean;
+    voting: boolean;
+    host?: string;
     name: string;
     type: NodeType;
     roles: string;
@@ -47,6 +51,7 @@ export interface GatewayPreset {
 }
 
 export interface ConfigPreset {
+    faucetUrl?: string;
     nemesis?: NemesisPreset;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
     assemblies?: string;
@@ -66,4 +71,7 @@ export interface ConfigPreset {
     symbolServerToolsImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
+    votingKeyDilution: number;
+    votingKeyStartEpoch: number;
+    votingKeyEndEpoch: number;
 }
