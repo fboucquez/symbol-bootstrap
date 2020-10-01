@@ -20,7 +20,7 @@ export class ComposeService {
 
     constructor(private readonly root: string, protected readonly params: ComposeParams) {}
 
-    public async run(passedPresetData?: ConfigPreset): Promise<void> {
+    public async run(passedPresetData?: ConfigPreset): Promise<DockerCompose> {
         const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
 
         const workingDir = process.cwd();
@@ -29,11 +29,10 @@ export class ComposeService {
         if (this.params.reset) {
             BootstrapUtils.deleteFolder(targetDocker);
         }
-
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (fs.existsSync(dockerFile)) {
             logger.info(dockerFile + ' already exist. Reusing. (run -r to reset)');
-            return;
+            return BootstrapUtils.loadYaml(dockerFile);
         }
 
         await BootstrapUtils.mkdir(join(this.params.target, 'state'));
@@ -157,5 +156,6 @@ export class ComposeService {
 
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
+        return dockerCompose;
     }
 }

@@ -51,48 +51,7 @@ export class LinkService {
             );
         }
 
-        const transactionNodes: { node: NodeAccount; transactions: Transaction[] }[] = _.flatMap(addresses.nodes || [])
-            .filter((node) => node.signing)
-            .map((node) => {
-                const transactions = [];
-                if (!node.signing) {
-                    throw new Error('Signing is required!');
-                }
-                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
-                const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
-                if (node.voting) {
-                    const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
-                    logger.info(
-                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, voting public key: ${votingPublicKey}`,
-                    );
-                    transactions.push(
-                        VotingKeyLinkTransaction.create(
-                            Deadline.create(),
-                            votingPublicKey,
-                            presetData.votingKeyStartEpoch,
-                            presetData.votingKeyEndEpoch,
-                            action,
-                            presetData.networkType,
-                            UInt64.fromUint(this.params.maxFee),
-                        ),
-                    );
-                }
-                if (node.vrf) {
-                    logger.info(
-                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, vrf key: ${node.vrf.publicKey}`,
-                    );
-                    transactions.push(
-                        VrfKeyLinkTransaction.create(
-                            Deadline.create(),
-                            node.vrf.publicKey,
-                            action,
-                            presetData.networkType,
-                            UInt64.fromUint(this.params.maxFee),
-                        ),
-                    );
-                }
-                return { node, transactions };
-            });
+        const transactionNodes = this.createTransactionsToAnnounce(addresses, presetData);
 
         if (!transactionNodes.length) {
             logger.info(`There are no transactions to announce...`);
@@ -163,7 +122,55 @@ export class LinkService {
         );
 
         await announceCalls.pipe(toArray()).toPromise();
-
         listener.close();
+    }
+
+    public createTransactionsToAnnounce(
+        addresses: Addresses,
+        presetData: ConfigPreset,
+    ): { node: NodeAccount; transactions: Transaction[] }[] {
+        return _.flatMap(addresses.nodes || [])
+            .filter((node) => node.signing)
+            .map((node) => {
+                const transactions = [];
+                if (!node.signing) {
+                    throw new Error('Signing is required!');
+                }
+                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
+
+                if (node.vrf) {
+                    logger.info(
+                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, vrf key: ${node.vrf.publicKey}`,
+                    );
+                    transactions.push(
+                        VrfKeyLinkTransaction.create(
+                            Deadline.create(),
+                            node.vrf.publicKey,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                }
+                if (node.voting) {
+                    const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
+                    logger.info(
+                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, voting public key: ${votingPublicKey}`,
+                    );
+                    transactions.push(
+                        VotingKeyLinkTransaction.create(
+                            Deadline.create(),
+                            votingPublicKey,
+                            presetData.votingKeyStartEpoch,
+                            presetData.votingKeyEndEpoch,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                }
+                return { node, transactions };
+            });
     }
 }

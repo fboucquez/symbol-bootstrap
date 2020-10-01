@@ -4,6 +4,7 @@ import { RunParams, RunService } from './RunService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { Addresses, ConfigPreset } from '../model';
 import { LinkParams, LinkService } from './LinkService';
+import { DockerCompose } from '../model/DockerCompose';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
 
@@ -30,8 +31,8 @@ export class BootstrapService {
      * @param config the params of the compose command.
      * @param passedPresetData the created preset if you know it, otherwise will load the latest one resolved from the target folder.
      */
-    public async compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<void> {
-        await new ComposeService(this.root, config).run(passedPresetData);
+    public compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<DockerCompose> {
+        return new ComposeService(this.root, config).run(passedPresetData);
     }
 
     /**
