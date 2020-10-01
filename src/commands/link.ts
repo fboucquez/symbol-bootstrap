@@ -1,9 +1,9 @@
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils } from '../service';
+import { BootstrapService, BootstrapUtils, ComposeService } from '../service';
 import { LinkService } from '../service/LinkService';
 
 export default class Link extends Command {
-    static description = `It calls a running server announcing all the node transactions like VRF and Voting. This command is useful to link the nodes keys to an existing running network like testnet.`;
+    static description = `It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.`;
 
     static examples = [`$ symbol-bootstrap link`];
 
@@ -18,6 +18,10 @@ export default class Link extends Command {
             char: 'u',
             description: 'the network url',
             default: LinkService.defaultParams.url,
+        }),
+        unlink: flags.boolean({
+            description: 'Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account',
+            default: ComposeService.defaultParams.reset,
         }),
         maxFee: flags.integer({
             description: 'the max fee used when announcing',

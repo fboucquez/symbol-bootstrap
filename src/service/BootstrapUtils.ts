@@ -83,16 +83,26 @@ export class BootstrapUtils {
         }
     }
 
-    public static async runImageUsingExec(
-        image: string,
-        userId: string | undefined,
-        cmds: string[],
-        binds: string[],
-    ): Promise<{ stdout: string; stderr: string }> {
+    public static async runImageUsingExec({
+        image,
+        userId,
+        workdir,
+        cmds,
+        binds,
+    }: {
+        image: string;
+        userId?: string | undefined;
+        workdir?: string | undefined;
+        cmds: string[];
+        binds: string[];
+    }): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
+        const workdirParam = workdir ? `--workdir=${workdir}` : '';
         const environmentParam = '--env LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps';
-        const runCommand = `docker run --rm ${userParam} ${environmentParam} ${volumes} ${image} ${cmds.map((a) => `"${a}"`).join(' ')}`;
+        const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${cmds
+            .map((a) => `"${a}"`)
+            .join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
         const { stdout, stderr } = await exec(runCommand);
         return { stdout, stderr };
@@ -159,7 +169,7 @@ export class BootstrapUtils {
     }
 
     public static createVotingKey(votingPublicKey: string): string {
-        return votingPublicKey + '00000000000000000000000000000000';
+        return votingPublicKey.padEnd(96, '0');
     }
 
     public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {

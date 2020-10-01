@@ -121,3 +121,9 @@ maxReadRateMonitoringTotalSize: 100MB
 #Rest
 throttlingBurst: 35
 throttlingRate: 20
+
+
+#voting
+votingKeyDilution: 128
+votingKeyStartEpoch: 1
+votingKeyEndEpoch: 26280

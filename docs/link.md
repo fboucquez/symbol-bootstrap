@@ -1,13 +1,13 @@
 `symbol-bootstrap link`
 =======================
 
-It calls a running server announcing all the node transactions like VRF and Voting. This command is useful to link the nodes keys to an existing running network like testnet.
+It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
 
 * [`symbol-bootstrap link`](#symbol-bootstrap-link)
 
 ## `symbol-bootstrap link`
 
-It calls a running server announcing all the node transactions like VRF and Voting. This command is useful to link the nodes keys to an existing running network like testnet.
+It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
 
 ```
 USAGE
@@ -18,6 +18,7 @@ OPTIONS
   -t, --target=target  [default: target] the target folder
   -u, --url=url        [default: http://localhost:3000] the network url
   --maxFee=maxFee      [default: 100000] the max fee used when announcing
+  --unlink             Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account
 
 EXAMPLE
   $ symbol-bootstrap link

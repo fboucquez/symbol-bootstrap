@@ -23,9 +23,9 @@ export class NemgenService {
         await promises.copyFile(`${this.root}/config/hashes.dat`, `${nemesisSeedFolder}/hashes.dat`);
 
         const cmd = [
-            'bash',
-            '-c',
-            'cd /data && /usr/catapult/bin/catapult.tools.nemgen  -r /userconfig --nemesisProperties /nemesis/block-properties-file.properties',
+            '/usr/catapult/bin/catapult.tools.nemgen',
+            '--resources=/userconfig',
+            '--nemesisProperties=/nemesis/block-properties-file.properties',
         ];
 
         if (!presetData.nodes) {
@@ -41,7 +41,13 @@ export class NemgenService {
         ];
 
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+            image: symbolServerToolsImage,
+            userId: userId,
+            workdir: '/data',
+            cmds: cmd,
+            binds: binds,
+        });
 
         if (stdout.indexOf('<error> ') > -1) {
             logger.info(stdout);

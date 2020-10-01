@@ -2,6 +2,7 @@ import 'mocha';
 import { BootstrapUtils, Preset } from '../../src/service';
 import assert = require('assert');
 import { expect } from '@oclif/test';
+import { Convert, Crypto } from 'symbol-sdk';
 
 describe('BootstrapUtils', () => {
     it('BootstrapUtils dockerUserId', async () => {
@@ -50,5 +51,13 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toHex("0x5E62'990D'CAC5'BE8A")).to.be.eq("0x5E62'990D'CAC5'BE8A");
         expect(BootstrapUtils.toHex('0x5E62990DCAC5BE8A')).to.be.eq("0x5E62'990D'CAC5'BE8A");
         expect(BootstrapUtils.toHex("5E62'990D'CAC5'BE8A")).to.be.eq("0x5E62'990D'CAC5'BE8A");
+    });
+
+    it('createVotingKey', async () => {
+        expect(BootstrapUtils.createVotingKey('ABC')).to.be.eq(
+            'ABC000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+        );
+        const votingKey = Convert.uint8ToHex(Crypto.randomBytes(48));
+        expect(BootstrapUtils.createVotingKey(votingKey)).to.be.eq(votingKey);
     });
 });

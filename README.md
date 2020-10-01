@@ -160,11 +160,15 @@ nodes:
   - voting: true
 ````
 
-In order to activate the voting node, you will need to announce a `VotingKeyLinkTransaction` signed using the node's signing private, and the voting public key (suffixed with `00000000000000000000000000000000`).
+In order to finalize the peer or voting nodes registration to an existing network like Testnet, be sure your nodes' signing addresses have enough funds. For test environments, you can use the network's faucet.
 
-The node signing and voting keys are stored in the `./target/config/generated-addresses/addresses.yml`. Keep this file private!
+Then run:
 
-**Note:** Full network `-p bootstrap` nodes are fully configured voting nodes. `VotingKeyLinkTransaction` are added to the nemesis block automatically. 
+````
+symbol-bootstrap link
+````
+
+**Note:** Full network `-p bootstrap` nodes are fully configured voting and peer nodes. `VotingKeyLinkTransaction` and `VrfKeyLinkTransaction` are added to the nemesis block automatically. 
 
 
 ##### Disable voting mode in all bootstrap nodes:
@@ -363,7 +367,7 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
-* [`symbol-bootstrap link`](docs/link.md) - It calls a running server announcing all the node transactions like VRF and Voting. This command is useful to link the nodes keys to an existing running network like testnet.
+* [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
 * [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 * [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
 * [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.

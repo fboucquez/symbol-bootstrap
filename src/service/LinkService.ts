@@ -5,6 +5,7 @@ import {
     Account,
     Deadline,
     LinkAction,
+    NetworkCurrencyPublic,
     RepositoryFactoryHttp,
     Transaction,
     TransactionService,
@@ -22,12 +23,12 @@ import { EMPTY, Observable, of } from 'rxjs';
 /**
  * params necessary to announce link transactions network.
  */
-export type LinkParams = { target: string; url: string; maxFee: number };
+export type LinkParams = { target: string; url: string; maxFee: number; unlink: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class LinkService {
-    public static readonly defaultParams: LinkParams = { target: 'target', url: 'http://localhost:3000', maxFee: 100000 };
+    public static readonly defaultParams: LinkParams = { target: 'target', url: 'http://localhost:3000', maxFee: 100000, unlink: false };
 
     constructor(protected readonly params: LinkParams) {}
 
@@ -36,7 +37,11 @@ export class LinkService {
         const addresses = passedAddresses ?? BootstrapUtils.loadExistingAddresses(this.params.target);
 
         const url = this.params.url.replace(/\/$/, '');
-        logger.info(`Linking nodes using network url ${url}. Max Fee ${this.params.maxFee}`);
+        logger.info(
+            `${this.params.unlink ? 'Unlinking' : 'Linking'} nodes using network url ${url}. Max Fee ${
+                this.params.maxFee / Math.pow(10, NetworkCurrencyPublic.DIVISIBILITY)
+            }`,
+        );
         const repositoryFactory = new RepositoryFactoryHttp(url);
 
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
@@ -46,43 +51,52 @@ export class LinkService {
             );
         }
 
-        const transactionNodes: { node: NodeAccount; transactions: Transaction[] }[] = _.flatMap(addresses.nodes || []).map((node) => {
-            const transactions = [];
-            const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
-            if (node.voting) {
-                const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
-                logger.info(
-                    `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, voting public key: ${votingPublicKey}`,
-                );
-                transactions.push(
-                    VotingKeyLinkTransaction.create(
-                        Deadline.create(),
-                        votingPublicKey,
-                        1,
-                        26280,
-                        LinkAction.Link,
-                        presetData.networkType,
-                        UInt64.fromUint(100000),
-                    ),
-                );
-            }
-            logger.info(
-                `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, vrf key: ${node.vrf.publicKey}`,
-            );
-            transactions.push(
-                VrfKeyLinkTransaction.create(
-                    Deadline.create(),
-                    node.vrf.publicKey,
-                    LinkAction.Link,
-                    presetData.networkType,
-                    UInt64.fromUint(100000),
-                ),
-            );
-            return { node, transactions };
-        });
+        const transactionNodes: { node: NodeAccount; transactions: Transaction[] }[] = _.flatMap(addresses.nodes || [])
+            .filter((node) => node.signing)
+            .map((node) => {
+                const transactions = [];
+                if (!node.signing) {
+                    throw new Error('Signing is required!');
+                }
+                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
+                if (node.voting) {
+                    const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
+                    logger.info(
+                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, voting public key: ${votingPublicKey}`,
+                    );
+                    transactions.push(
+                        VotingKeyLinkTransaction.create(
+                            Deadline.create(),
+                            votingPublicKey,
+                            presetData.votingKeyStartEpoch,
+                            presetData.votingKeyEndEpoch,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                }
+                if (node.vrf) {
+                    logger.info(
+                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, vrf key: ${node.vrf.publicKey}`,
+                    );
+                    transactions.push(
+                        VrfKeyLinkTransaction.create(
+                            Deadline.create(),
+                            node.vrf.publicKey,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                }
+                return { node, transactions };
+            });
 
         if (!transactionNodes.length) {
-            logger.info(`There are no transactions no announce`);
+            logger.info(`There are no transactions to announce...`);
+            return;
         }
 
         const transactionRepository = repositoryFactory.createTransactionRepository();
@@ -94,10 +108,13 @@ export class LinkService {
 
         const signedTransactionObservable = fromArray(transactionNodes).pipe(
             mergeMap(({ node, transactions }) => {
+                if (!node.signing) {
+                    throw new Error('Signing is required!');
+                }
                 const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
                 const noFundsMessage = faucetUrl
-                    ? `Does node signing signing have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
-                    : `Does node signing signing have any network coin? Send some tokens to ${account.address.plain()} .`;
+                    ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
+                    : `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} .`;
                 return repositoryFactory
                     .createAccountRepository()
                     .getAccountInfo(account.address)
@@ -107,7 +124,7 @@ export class LinkService {
                             const mosaic = a.mosaics.find((m) => BootstrapUtils.toHex(m.id.toHex()) === currencyMosaicIdHex);
                             if (!mosaic || mosaic.amount.compare(UInt64.fromUint(0)) < 1) {
                                 logger.error(
-                                    `Node signing account ${account.address.plain()} doesn't not have enough currency. Mosaic id: ${currencyMosaicIdHex}. \n\n${noFundsMessage}`,
+                                    `Node signing account ${account.address.plain()} does not have enough currency. Mosaic id: ${currencyMosaicIdHex}. \n\n${noFundsMessage}`,
                                 );
                                 return EMPTY;
                             }

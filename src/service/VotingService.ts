@@ -22,9 +22,12 @@ export class VotingService {
             const dir = `${process.cwd()}/${this.params.target}`;
             const votingKeysFolder = `${dir}/data/${nodeAccount.name}/votingkeys`;
             const cmd = [
-                'bash',
-                '-c',
-                `/usr/catapult/bin/catapult.tools.votingkey --secret ${nodeAccount.voting.privateKey} --output /votingKeys/${privateKeyTreeFileName}`,
+                '/usr/catapult/bin/catapult.tools.votingkey',
+                `--secret=${nodeAccount.voting.privateKey}`,
+                `--dilution=${presetData.votingKeyDilution}`,
+                `--startEpoch=${presetData.votingKeyStartEpoch}`,
+                `--endEpoch=${presetData.votingKeyEndEpoch}`,
+                `--output=/votingKeys/${privateKeyTreeFileName}`,
             ];
 
             await BootstrapUtils.mkdir(votingKeysFolder);
@@ -32,7 +35,12 @@ export class VotingService {
             const binds = [`${votingKeysFolder}:/votingKeys:rw`];
 
             const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(symbolServerToolsImage, userId, cmd, binds);
+            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+                image: symbolServerToolsImage,
+                userId: userId,
+                cmds: cmd,
+                binds: binds,
+            });
 
             if (stdout.indexOf('<error> ') > -1) {
                 logger.info(stdout);

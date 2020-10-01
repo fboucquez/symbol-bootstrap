@@ -102,13 +102,13 @@ export class ConfigService {
     public async generateNodeAccount(index: number, node: NodePreset, networkType: NetworkType): Promise<NodeAccount> {
         const type = node.type;
         const name = node.name || `${type}-${index}`;
-        const signing = this.toConfig(Account.generateNewAccount(networkType));
-        const vrf = this.toConfig(Account.generateNewAccount(networkType));
         const ssl = await new CertificateService(this.root, this.params).run(name);
         const friendlyName = node.friendlyName || ssl.publicKey.substr(0, 7);
         const roles = this.resolveRoles(node);
-        const nodeAccount: NodeAccount = { type, name, friendlyName, roles: roles, signing, vrf, ssl };
+        const nodeAccount: NodeAccount = { type, name, friendlyName, roles: roles, ssl };
+        if (node.harvesting || node.voting) nodeAccount.signing = this.toConfig(Account.generateNewAccount(networkType));
         if (node.voting) nodeAccount.voting = this.toConfig(Account.generateNewAccount(networkType));
+        if (node.harvesting) nodeAccount.vrf = this.toConfig(Account.generateNewAccount(networkType));
         return nodeAccount;
     }
 
@@ -225,12 +225,12 @@ export class ConfigService {
                 presetData.nemesis.mosaics.forEach((m) => {
                     const accounts = mosaics[m.name];
                     if (!m.currencyDistributions) {
-                        const nodes = addresses.nodes || [];
-                        const totalAccounts = (m.accounts || 0) + nodes.length;
+                        const signingNodes = (addresses.nodes || []).filter((node) => node.signing);
+                        const totalAccounts = (m.accounts || 0) + signingNodes.length;
                         const amountPerAccount = Math.floor(m.supply / totalAccounts);
                         m.currencyDistributions = [
                             ...accounts.map((a) => ({ address: a.address, amount: amountPerAccount })),
-                            ...nodes.map((n) => ({ address: n.signing.address, amount: amountPerAccount })),
+                            ...signingNodes.map((n) => ({ address: n.signing!.address, amount: amountPerAccount })),
                         ];
                         if (m.currencyDistributions.length)
                             m.currencyDistributions[0].amount += m.supply - totalAccounts * amountPerAccount;
@@ -267,8 +267,8 @@ export class ConfigService {
         const generatedContext = {
             name: name,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
-            harvesterSigningPrivateKey: account.signing.privateKey,
-            harvesterVrfPrivateKey: account.vrf.privateKey,
+            harvesterSigningPrivateKey: account.signing?.privateKey || '',
+            harvesterVrfPrivateKey: account.vrf?.privateKey || '',
         };
         const templateContext = { ...presetData, ...generatedContext, ...nodePreset };
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder);
@@ -337,7 +337,7 @@ export class ConfigService {
         const copyFrom = `${this.root}/config/nemesis`;
         const moveTo = `${this.params.target}/config/nemesis`;
         const templateContext = { ...(presetData as any), addresses };
-        await Promise.all((addresses.nodes || []).map((n) => this.createVrfTransaction(presetData, n)));
+        await Promise.all((addresses.nodes || []).filter((n) => n.vrf).map((n) => this.createVrfTransaction(presetData, n)));
         await Promise.all((addresses.nodes || []).filter((n) => n.voting).map((n) => this.createVotingKeyTransaction(presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
@@ -412,6 +412,12 @@ export class ConfigService {
     }
 
     private async createVrfTransaction(presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
+        if (!node.vrf) {
+            throw new Error('VRF keys should have been generated!!');
+        }
+        if (!node.signing) {
+            throw new Error('Signing keys should have been generated!!');
+        }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
         const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
@@ -423,13 +429,17 @@ export class ConfigService {
         if (!node.voting) {
             throw new Error('Voting keys should have been generated!!');
         }
+
+        if (!node.signing) {
+            throw new Error('Signing keys should have been generated!!');
+        }
         const deadline = Deadline.createFromDTO('1');
         const votingKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
         const voting = VotingKeyLinkTransaction.create(
             deadline,
             votingKey,
-            1,
-            26280,
+            presetData.votingKeyStartEpoch,
+            presetData.votingKeyEndEpoch,
             LinkAction.Link,
             presetData.networkType,
             UInt64.fromUint(0),
