@@ -4,6 +4,7 @@ import { LinkService } from '../../src/service/LinkService';
 import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { DockerCompose } from '../../src/model/DockerCompose';
 
 describe('ComposeService', () => {
     it('Compose testnet', async () => {
@@ -21,7 +22,17 @@ describe('ComposeService', () => {
         const dockerCompose = await service.compose(params, configResult.presetData);
         const targetDocker = join(params.target, `docker`, 'docker-compose.yml');
         expect(existsSync(targetDocker)).to.be.true;
-        const expectedDockerCompose = BootstrapUtils.loadYaml('./test/expected-testnet-dual-compose.yml');
+        const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml('./test/expected-testnet-dual-compose.yml');
+
+        const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
+            const user = await BootstrapUtils.getDockerUserGroup();
+            if (user) {
+                service.user = user;
+            } else {
+                delete service.user;
+            }
+        });
+        await Promise.all(promises);
         expect(dockerCompose).to.be.deep.eq(expectedDockerCompose);
     });
 });
