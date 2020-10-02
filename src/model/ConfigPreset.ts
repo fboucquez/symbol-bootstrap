@@ -40,6 +40,10 @@ export interface NodePreset {
     roles: string;
     friendlyName?: string;
     brokerHost?: string;
+    // Optional private keys. If not provided, bootstrap will generate random ones.
+    signingPrivateKey?: string;
+    vrfPrivateKey?: string;
+    votingPrivateKey?: string;
 }
 
 export interface GatewayPreset {

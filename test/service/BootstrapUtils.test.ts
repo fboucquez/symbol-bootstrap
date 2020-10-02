@@ -15,7 +15,7 @@ describe('BootstrapUtils', () => {
 
     it('BootstrapUtils loadPresetData testnet no assembly', async () => {
         try {
-            await BootstrapUtils.loadPresetData('.', Preset.testnet, undefined, undefined);
+            await BootstrapUtils.loadPresetData('.', Preset.testnet, undefined, undefined, undefined);
         } catch (e) {
             expect(e.message).to.equal('Preset testnet requires assembly (-a, --assembly option). Possible values are: api, dual, peer');
             return;
@@ -24,12 +24,18 @@ describe('BootstrapUtils', () => {
     });
 
     it('BootstrapUtils loadPresetData testnet assembly', async () => {
-        const presetData = await BootstrapUtils.loadPresetData('.', Preset.testnet, 'dual', undefined);
+        const presetData = await BootstrapUtils.loadPresetData('.', Preset.testnet, 'dual', undefined, undefined);
         expect(presetData).to.not.be.undefined;
     });
 
     it('BootstrapUtils loadPresetData bootstrap custom', async () => {
-        const presetData = await BootstrapUtils.loadPresetData('.', Preset.bootstrap, undefined, 'test/override-currency-preset.yml');
+        const presetData = await BootstrapUtils.loadPresetData(
+            '.',
+            Preset.bootstrap,
+            undefined,
+            'test/override-currency-preset.yml',
+            undefined,
+        );
         expect(presetData).to.not.be.undefined;
         expect(presetData?.nemesis?.mosaics?.[0].accounts).to.be.eq(20);
         const yaml = BootstrapUtils.toYaml(presetData);

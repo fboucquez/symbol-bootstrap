@@ -1,0 +1,580 @@
+port:
+    type: unsigned short
+    description: Server port.
+maxIncomingConnectionsPerIdentity:
+    type: uint32_t
+    description: Maximum number of incoming connections per identity over primary port.
+enableAddressReuse:
+    type: bool
+    description: Set to true if the server should reuse ports already in use.
+enableSingleThreadPool:
+    type: bool
+    description: 'Set to true if a single thread pool should be used, Set to false if multiple thread pools should be used.'
+enableCacheDatabaseStorage:
+    type: bool
+    description: Set to true if cache data should be saved in a database.
+enableAutoSyncCleanup:
+    type: bool
+    description: "Set to true if temporary sync files should be automatically cleaned up.\_Note: This should be Set to false if broker process is running."
+enableTransactionSpamThrottling:
+    type: bool
+    description: Set to true if transaction spam throttling should be enabled.
+transactionSpamThrottlingMaxBoostFee:
+    type: Amount
+    description: Maximum fee that will boost a transaction through the spam throttle when spam throttling is enabled.
+maxBlocksPerSyncAttempt:
+    type: uint32_t
+    description: Maximum number of blocks per sync attempt.
+maxChainBytesPerSyncAttempt:
+    type: 'utils::FileSize'
+    description: Maximum chain bytes per sync attempt.
+shortLivedCacheTransactionDuration:
+    type: 'utils::TimeSpan'
+    description: Duration of a transaction in the short lived cache.
+shortLivedCacheBlockDuration:
+    type: 'utils::TimeSpan'
+    description: Duration of a block in the short lived cache.
+shortLivedCachePruneInterval:
+    type: 'utils::TimeSpan'
+    description: Time between short lived cache pruning.
+shortLivedCacheMaxSize:
+    type: uint32_t
+    description: Maximum size of a short lived cache.
+minFeeMultiplier:
+    type: BlockFeeMultiplier
+    description: Minimum fee multiplier of transactions to propagate and include in blocks.
+transactionSelectionStrategy:
+    type: 'model::TransactionSelectionStrategy'
+    description: Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
+unconfirmedTransactionsCacheMaxResponseSize:
+    type: 'utils::FileSize'
+    description: Maximum size of an unconfirmed transactions response.
+unconfirmedTransactionsCacheMaxSize:
+    type: uint32_t
+    description: Maximum size of the unconfirmed transactions cache.
+connectTimeout:
+    type: 'utils::TimeSpan'
+    description: Timeout for connecting to a peer.
+syncTimeout:
+    type: 'utils::TimeSpan'
+    description: Timeout for syncing with a peer.
+socketWorkingBufferSize:
+    type: 'utils::FileSize'
+    description: Initial socket working buffer size (socket reads will attempt to read buffers of roughly this size).
+socketWorkingBufferSensitivity:
+    type: uint32_t
+    description: "Socket working buffer sensitivity (lower values will cause memory to be more aggressively reclaimed).\_Note: Set to 0 will disable memory reclamation."
+maxPacketDataSize:
+    type: 'utils::FileSize'
+    description: Maximum packet data size.
+blockDisruptorSize:
+    type: uint32_t
+    description: Size of the block disruptor circular buffer.
+blockElementTraceInterval:
+    type: uint32_t
+    description: Multiple of elements at which a block element should be traced through queue and completion.
+transactionDisruptorSize:
+    type: uint32_t
+    description: Size of the transaction disruptor circular buffer.
+transactionElementTraceInterval:
+    type: uint32_t
+    description: Multiple of elements at which a transaction element should be traced through queue and completion.
+enableDispatcherAbortWhenFull:
+    type: bool
+    description: Set to true if the process should terminate when any dispatcher is full.
+enableDispatcherInputAuditing:
+    type: bool
+    description: Set to true if all dispatcher inputs should be audited.
+maxCacheDatabaseWriteBatchSize:
+    type: 'utils::FileSize'
+    description: Maximum cache database write batch size.
+maxTrackedNodes:
+    type: uint32_t
+    description: Maximum number of nodes to track in memory.
+batchVerificationRandomSource:
+    type: string
+    description: Source of random numbers used in batch verification.
+trustedHosts:
+    type: unordered_set<string>
+    description: Trusted hosts that are allowed to execute protected API calls on this node.
+localNetworks:
+    type: unordered_set<string>
+    description: Networks that should be treated as local.
+host:
+    type: string
+    description: Node host (leave empty to auto-detect IP).
+friendlyName:
+    type: string
+    description: Node friendly name (leave empty to use address).
+version:
+    type: uint32_t
+    description: Node version.
+roles:
+    type: 'ionet::NodeRoles'
+    description: Node roles.
+maxConnections:
+    type: uint16_t
+    description: Maximum number of active connections.
+maxConnectionAge:
+    type: uint16_t
+    description: Maximum connection age.
+maxConnectionBanAge:
+    type: uint16_t
+    description: Maximum connection ban age.
+numConsecutiveFailuresBeforeBanning:
+    type: uint16_t
+    description: Number of consecutive connection failures before a connection is banned.
+backlogSize:
+    type: uint16_t
+    description: Maximum size of the pending connections queue.
+defaultBanDuration:
+    type: 'utils::TimeSpan'
+    description: Default duration for banning.
+maxBanDuration:
+    type: 'utils::TimeSpan'
+    description: Maximum duration for banning.
+keepAliveDuration:
+    type: 'utils::TimeSpan'
+    description: Duration to keep account in container after the ban expired.
+maxBannedNodes:
+    type: uint32_t
+    description: Maximum number of banned nodes.
+numReadRateMonitoringBuckets:
+    type: uint16_t
+    description: Number of read rate monitoring buckets (Set to 0 to disable read rate monitoring).
+readRateMonitoringBucketDuration:
+    type: 'utils::TimeSpan'
+    description: Duration of each read rate monitoring bucket.
+maxReadRateMonitoringTotalSize:
+    type: 'utils::FileSize'
+    description: Maximum size allowed during full read rate monitoring period.
+config-harvesting.properties: {}
+Property:
+    type: Type
+    description: Description
+harvesterSigningPrivateKey:
+    type: string
+    description: Harvester signing private key.
+    hidden: true
+harvesterVrfPrivateKey:
+    type: string
+    description: Harvester vrf private key.
+    hidden: true
+enableAutoHarvesting:
+    type: bool
+    description: Set to true if auto harvesting is enabled.
+maxUnlockedAccounts:
+    type: uint32_t
+    description: Maximum number of unlocked accounts.
+delegatePrioritizationPolicy:
+    type: 'harvesting::DelegatePrioritizationPolicy'
+    description: Delegate harvester prioritization policy.
+beneficiaryAddress:
+    type: Address
+    description: Address of the account receiving part of the harvested fee.
+identifier:
+    type: NetworkIdentifier
+    description: Network identifier.
+nodeEqualityStrategy:
+    type: NodeIdentityEqualityStrategy
+    description: Node equality strategy.
+nemesisSignerPublicKey:
+    type: Key
+    description: Nemesis public key.
+generationHash:
+    type: 'catapult::GenerationHash'
+    description: Nemesis generation hash.
+epochAdjustment:
+    type: 'utils::TimeSpan'
+    description: Nemesis epoch time adjustment.
+enableVerifiableState:
+    type: bool
+    description: Set to true if block chain should calculate state hashes so that state is fully verifiable at each block.
+enableVerifiableReceipts:
+    type: bool
+    description: Set to true if block chain should calculate receipts so that state changes are fully verifiable at each block.
+currencyMosaicId:
+    type: MosaicId
+    description: Mosaic id used as primary chain currency.
+harvestingMosaicId:
+    type: MosaicId
+    description: Mosaic id used to provide harvesting ability.
+blockGenerationTargetTime:
+    type: 'utils::TimeSpan'
+    description: Targeted time between blocks.
+blockTimeSmoothingFactor:
+    type: uint32_t
+    description: "Note: A higher value makes the network more biased.\_Note: This can lower security because it will increase the influence of time relative to importance."
+blockFinalizationInterval:
+    type: uint32_t
+    description: Number of blocks between successive finalization attempts.
+importanceGrouping:
+    type: uint64_t
+    description: "Number of blocks that should be treated as a group for importance purposes.\_Note: Importances will only be calculated at blocks that are multiples of this grouping number."
+importanceActivityPercentage:
+    type: uint8_t
+    description: Percentage of importance resulting from fee generation and beneficiary usage.
+maxRollbackBlocks:
+    type: uint32_t
+    description: Maximum number of blocks that can be rolled back.
+maxDifficultyBlocks:
+    type: uint32_t
+    description: Maximum number of blocks to use in a difficulty calculation.
+defaultDynamicFeeMultiplier:
+    type: BlockFeeMultiplier
+    description: Default multiplier to use for dynamic fees.
+maxTransactionLifetime:
+    type: 'utils::TimeSpan'
+    description: Maximum lifetime a transaction can have before it expires.
+maxBlockFutureTime:
+    type: 'utils::TimeSpan'
+    description: Maximum future time of a block that can be accepted.
+initialCurrencyAtomicUnits:
+    type: Amount
+    description: Initial currency atomic units available in the network.
+maxMosaicAtomicUnits:
+    type: Amount
+    description: Maximum atomic units (total-supply * 10 ^ divisibility) of a mosaic allowed in the network.
+totalChainImportance:
+    type: Importance
+    description: Total whole importance units available in the network.
+minHarvesterBalance:
+    type: Amount
+    description: Minimum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
+maxHarvesterBalance:
+    type: Amount
+    description: Maximum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
+minVoterBalance:
+    type: Amount
+    description: Minimum number of harvesting mosaic atomic units needed for an account to be eligible for voting.
+maxVotingKeysPerAccount:
+    type: uint8_t
+    description: Maximum number of voting keys that can be registered at once per account.
+minVotingKeyLifetime:
+    type: uint32_t
+    description: Minimum number of finalization rounds for which voting key can be registered.
+maxVotingKeyLifetime:
+    type: uint32_t
+    description: Maximum number of finalization rounds for which voting key can be registered.
+harvestBeneficiaryPercentage:
+    type: uint8_t
+    description: Percentage of the harvested fee that is collected by the beneficiary account.
+harvestNetworkPercentage:
+    type: uint8_t
+    description: Percentage of the harvested fee that is collected by the network.
+harvestNetworkFeeSinkAddress:
+    type: Address
+    description: Address of the harvest network fee sink account.
+blockPruneInterval:
+    type: uint32_t
+    description: Number of blocks between cache pruning.
+maxTransactionsPerBlock:
+    type: uint32_t
+    description: Maximum number of transactions per block.
+maxTransactionsPerAggregate:
+    type: uint32_t
+    description: Maximum number of transactions per aggregate.
+maxCosignaturesPerAggregate:
+    type: uint8_t
+    description: Maximum number of cosignatures per aggregate.
+enableStrictCosignatureCheck:
+    type: bool
+    description: Set to true if cosignatures must exactly match component signers. Set to false if cosignatures should be validated externally.
+enableBondedAggregateSupport:
+    type: bool
+    description: Set to true if bonded aggregates should be allowed. Set to false if bonded aggregates should be rejected.
+maxBondedTransactionLifetime:
+    type: 'utils::TimeSpan'
+    description: Maximum lifetime a bonded transaction can have before it expires.
+lockedFundsPerAggregate:
+    type: Amount
+    description: Amount that has to be locked per aggregate in partial cache.
+maxHashLockDuration:
+    type: 'utils::BlockSpan'
+    description: Maximum number of blocks for which a hash lock can exist.
+maxSecretLockDuration:
+    type: 'utils::BlockSpan'
+    description: Maximum number of blocks for which a secret lock can exist.
+minProofSize:
+    type: uint16_t
+    description: Minimum size of a proof in bytes.
+maxProofSize:
+    type: uint16_t
+    description: Maximum size of a proof in bytes.
+maxValueSize:
+    type: uint16_t
+    description: Maximum metadata value size.
+maxMosaicsPerAccount:
+    type: uint16_t
+    description: Maximum number of mosaics that an account can own.
+maxMosaicDuration:
+    type: 'utils::BlockSpan'
+    description: Maximum mosaic duration.
+maxMosaicDivisibility:
+    type: uint8_t
+    description: Maximum mosaic divisibility.
+mosaicRentalFeeSinkAddress:
+    type: Address
+    description: Address of the mosaic rental fee sink account.
+mosaicRentalFee:
+    type: Amount
+    description: Mosaic rental fee.
+maxMultisigDepth:
+    type: uint8_t
+    description: Maximum number of multisig levels.
+maxCosignatoriesPerAccount:
+    type: uint32_t
+    description: Maximum number of cosignatories per account.
+maxCosignedAccountsPerAccount:
+    type: uint32_t
+    description: Maximum number of accounts a single account can cosign.
+maxNameSize:
+    type: uint8_t
+    description: Maximum namespace name size.
+maxChildNamespaces:
+    type: uint16_t
+    description: Maximum number of children for a root namespace.
+maxNamespaceDepth:
+    type: uint8_t
+    description: Maximum namespace depth.
+minNamespaceDuration:
+    type: 'utils::BlockSpan'
+    description: Minimum namespace duration.
+maxNamespaceDuration:
+    type: 'utils::BlockSpan'
+    description: Maximum namespace duration.
+namespaceGracePeriodDuration:
+    type: 'utils::BlockSpan'
+    description: Grace period during which time only the previous owner can renew an expired namespace.
+reservedRootNamespaceNames:
+    type: unordered_set<string>
+    description: Reserved root namespaces that cannot be claimed.
+namespaceRentalFeeSinkAddress:
+    type: Address
+    description: Address of the namespace rental fee sink account.
+rootNamespaceRentalFeePerBlock:
+    type: Amount
+    description: Root namespace rental fee per block.
+childNamespaceRentalFee:
+    type: Amount
+    description: Child namespace rental fee.
+maxAccountRestrictionValues:
+    type: uint16_t
+    description: Maximum number of account restriction values.
+maxMosaicRestrictionValues:
+    type: uint8_t
+    description: Maximum number of mosaic restriction values.
+maxMessageSize:
+    type: uint16_t
+    description: Maximum transaction message size.
+#    Complete the following:
+databaseUri:
+    type: ''
+    description: ''
+databaseName:
+    type: ''
+    description: ''
+maxWriterThreads:
+    type: ''
+    description: ''
+catapult.mongo.plugins.accountlink:
+    type: ''
+    description: ''
+catapult.mongo.plugins.aggregate:
+    type: ''
+    description: ''
+catapult.mongo.plugins.lockhash:
+    type: ''
+    description: ''
+catapult.mongo.plugins.locksecret:
+    type: ''
+    description: ''
+catapult.mongo.plugins.metadata:
+    type: ''
+    description: ''
+catapult.mongo.plugins.mosaic:
+    type: ''
+    description: ''
+catapult.mongo.plugins.multisig:
+    type: ''
+    description: ''
+catapult.mongo.plugins.namespace:
+    type: ''
+    description: ''
+catapult.mongo.plugins.restrictionaccount:
+    type: ''
+    description: ''
+catapult.mongo.plugins.restrictionmosaic:
+    type: ''
+    description: ''
+catapult.mongo.plugins.transfer:
+    type: ''
+    description: ''
+extension.addressextraction:
+    type: ''
+    description: ''
+extension.mongo:
+    type: ''
+    description: ''
+extension.zeromq:
+    type: ''
+    description: ''
+extension.hashcache:
+    type: ''
+    description: ''
+extension.filespooling:
+    type: ''
+    description: ''
+extension.partialtransaction:
+    type: ''
+    description: ''
+extension.eventsource:
+    type: ''
+    description: ''
+extension.harvesting:
+    type: ''
+    description: ''
+extension.syncsource:
+    type: ''
+    description: ''
+extension.diagnostics:
+    type: ''
+    description: ''
+extension.finalization:
+    type: ''
+    description: ''
+extension.networkheight:
+    type: ''
+    description: ''
+extension.nodediscovery:
+    type: ''
+    description: ''
+extension.packetserver:
+    type: ''
+    description: ''
+extension.pluginhandlers:
+    type: ''
+    description: ''
+extension.sync:
+    type: ''
+    description: ''
+extension.timesync:
+    type: ''
+    description: ''
+extension.transactionsink:
+    type: ''
+    description: ''
+extension.unbondedpruning:
+    type: ''
+    description: ''
+enableVoting:
+    type: ''
+    description: ''
+size:
+    type: ''
+    description: ''
+threshold:
+    type: ''
+    description: ''
+stepDuration:
+    type: ''
+    description: ''
+shortLivedCacheMessageDuration:
+    type: ''
+    description: ''
+messageSynchronizationMaxResponseSize:
+    type: ''
+    description: ''
+maxHashesPerPoint:
+    type: ''
+    description: ''
+prevoteBlocksMultiple:
+    type: ''
+    description: ''
+votingKeyDilution:
+    type: ''
+    description: ''
+sinkType:
+    type: ''
+    description: ''
+level:
+    type: ''
+    description: ''
+colorMode:
+    type: ''
+    description: ''
+directory:
+    type: ''
+    description: ''
+filePattern:
+    type: ''
+    description: ''
+rotationSize:
+    type: ''
+    description: ''
+maxTotalSize:
+    type: ''
+    description: ''
+minFreeSpace:
+    type: ''
+    description: ''
+subscriberPort:
+    type: ''
+    description: ''
+generationHashSeed:
+    type: ''
+    description: ''
+votingSetGrouping:
+    type: ''
+    description: ''
+dummy:
+    type: ''
+    description: ''
+maxNodes:
+    type: ''
+    description: ''
+maxHashesPerSyncAttempt:
+    type: ''
+    description: ''
+cacheMaxResponseSize:
+    type: ''
+    description: ''
+cacheMaxSize:
+    type: ''
+    description: ''
+startDelay:
+    type: ''
+    description: ''
+repeatDelay:
+    type: ''
+    description: ''
+minDelay:
+    type: ''
+    description: ''
+maxDelay:
+    type: ''
+    description: ''
+numPhaseOneRounds:
+    type: ''
+    description: ''
+numTransitionRounds:
+    type: ''
+    description: ''
+minImportance:
+    type: ''
+    description: ''
+enableDelegatedHarvestersAutoDetection:
+    type: ''
+    description: ''
+certificateDirectory:
+    type: ''
+    description: ''
+dataDirectory:
+    type: ''
+    description: ''
+pluginsDirectory:
+    type: ''
+    description: ''
+votingKeysDirectory:
+    type: ''
+    description: ''

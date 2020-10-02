@@ -23,6 +23,7 @@ import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset, NodeTy
 import * as fs from 'fs';
 import { VotingService } from './VotingService';
 import { join } from 'path';
+import { ReportService } from './ReportService';
 
 /**
  * Defined presets.
@@ -34,12 +35,14 @@ export enum Preset {
 }
 
 export interface ConfigParams {
+    report: boolean;
     reset: boolean;
     preset: Preset;
     target: string;
     user: string;
     assembly?: string;
     customPreset?: string;
+    customPresetObject?: any;
 }
 
 export interface ConfigResult {
@@ -52,6 +55,7 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: 'target',
+        report: false,
         preset: Preset.bootstrap,
         reset: false,
         user: BootstrapUtils.CURRENT_USER,
@@ -106,9 +110,13 @@ export class ConfigService {
         const friendlyName = node.friendlyName || ssl.publicKey.substr(0, 7);
         const roles = this.resolveRoles(node);
         const nodeAccount: NodeAccount = { type, name, friendlyName, roles: roles, ssl };
-        if (node.harvesting || node.voting) nodeAccount.signing = this.toConfig(Account.generateNewAccount(networkType));
-        if (node.voting) nodeAccount.voting = this.toConfig(Account.generateNewAccount(networkType));
-        if (node.harvesting) nodeAccount.vrf = this.toConfig(Account.generateNewAccount(networkType));
+
+        const generateAccount = (networkType: NetworkType, privateKey: string | undefined): Account =>
+            privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
+
+        if (node.harvesting || node.voting) nodeAccount.signing = this.toConfig(generateAccount(networkType, node.signingPrivateKey));
+        if (node.voting) nodeAccount.voting = this.toConfig(generateAccount(networkType, node.votingPrivateKey));
+        if (node.harvesting) nodeAccount.vrf = this.toConfig(generateAccount(networkType, node.vrfPrivateKey));
         return nodeAccount;
     }
 
@@ -142,6 +150,7 @@ export class ConfigService {
             this.params.preset,
             this.params.assembly,
             this.params.customPreset,
+            this.params.customPresetObject,
         );
 
         await fs.promises.mkdir(`${this.params.target}/config/generated-addresses`, { recursive: true });
@@ -159,6 +168,10 @@ export class ConfigService {
             const copyFrom = presetData.nemesisSeedFolder || `${this.root}/presets/${this.params.preset}/seed`;
             const copyTo = `${this.params.target}/data/nemesis-data/seed`;
             await BootstrapUtils.generateConfiguration({}, copyFrom, copyTo);
+        }
+
+        if (this.params.report) {
+            await new ReportService(this.root, this.params).run(presetData);
         }
 
         await BootstrapUtils.writeYaml(`${this.params.target}/config/preset.yml`, presetData);

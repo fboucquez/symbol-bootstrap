@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { BootstrapUtils, ConfigService, RunService } from '../service';
+import { BootstrapService, BootstrapUtils, ConfigService, RunService } from '../service';
 
 export default class Run extends Command {
     static description =
@@ -38,6 +38,6 @@ export default class Run extends Command {
     public run(): Promise<void> {
         const { flags } = this.parse(Run);
         BootstrapUtils.showBanner();
-        return new RunService(flags).run();
+        return new BootstrapService(this.config.root).run(flags);
     }
 }

@@ -33,6 +33,12 @@ export default class Config extends Command {
             description: 'It resets the configuration generating a new one',
             default: ConfigService.defaultParams.reset,
         }),
+
+        report: flags.boolean({
+            description: 'It generates reStructuredText (.rst) reports describing the configuration of each node.',
+            default: ConfigService.defaultParams.report,
+        }),
+
         user: flags.string({
             char: 'u',
             description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,

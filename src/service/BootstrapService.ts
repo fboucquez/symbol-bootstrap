@@ -2,6 +2,7 @@ import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { RunParams, RunService } from './RunService';
 import { BootstrapUtils } from './BootstrapUtils';
+import { ReportParams, ReportService } from './ReportService';
 import { Addresses, ConfigPreset } from '../model';
 import { LinkParams, LinkService } from './LinkService';
 import { DockerCompose } from '../model/DockerCompose';
@@ -51,6 +52,19 @@ export class BootstrapService {
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
         await new LinkService(config).run(passedPresetData, passedAddresses);
+    }
+
+    /**
+     * It generates reStructuredText (.rst) reports describing the configuration of each node.
+     *
+     * The config method/command needs to be called before this method
+     *
+     * @param config the params of the report command.
+     * @param passedPresetData the created preset if you know if, otherwise will load the latest one resolved from the target folder.
+     * @return the paths of the created reports.
+     */
+    public async report(config: ReportParams = ReportService.defaultParams, passedPresetData?: ConfigPreset): Promise<string[]> {
+        return await new ReportService(this.root, config).run(passedPresetData);
     }
 
     /**
