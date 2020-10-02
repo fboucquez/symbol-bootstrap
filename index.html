@@ -355,6 +355,7 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
 					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
+					<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
 					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
@@ -380,6 +381,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_link_.html">&quot;commands/link&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_report_.html">&quot;commands/report&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_run_.html">&quot;commands/run&quot;</a>
@@ -446,6 +450,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_nemgenservice_.html">&quot;service/<wbr>Nemgen<wbr>Service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_service_reportservice_.html">&quot;service/<wbr>Report<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_runservice_.html">&quot;service/<wbr>Run<wbr>Service&quot;</a>
