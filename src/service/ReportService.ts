@@ -5,7 +5,7 @@ import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigPreset } from '../model';
 import { join } from 'path';
 import { promises as fsPromises, readFileSync } from 'fs';
-import _ = require('lodash');
+import * as _ from 'lodash';
 
 export type ReportParams = { target: string };
 
