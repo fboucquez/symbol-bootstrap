@@ -15,7 +15,7 @@ Symbol Bootstrap | v0.1.0 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 - **New Command:** `symbol-bootstrap link` links the nodes' VRF and Voting keys to an existing network. This simplifies the node registration process to running networks like `testnet`.
 - **New Command:** `symbol-bootstrap report` generates rst and csv files from the configured server properties for documentation. Added `--report` flag to `config` and `start` commands.
 - Fixed default host names in `api` and `peer` in `testnet` preset.
-- The `voting:`, `harvesting:` and `api:` node preset flags defines the node `roles:` setting. There is no need to provide `roles:` attribute anymore.
+- The `voting:`, `harvesting:` and `api:` node preset flags define the node's `roles:` setting. There is no need to provide `roles:` attribute anymore.
 - Voting, signing and VRF keys, transactions and tree file are generated and announced when required depending on the node role flags.
 - Added `votingKeyDilution`, `votingKeyStartEpoch` `votingKeyEndEpoch` preset params define to voting key link transaction and tree file.
 - The field `enableDispatcherInputAuditing` is disabled by default saving disk space.
