@@ -10,7 +10,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
  Package  | Version  | Link
 ---|---|---
-Symbol Bootstrap | v0.1.0 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+Symbol Bootstrap | v0.1.1 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
 - **New Command:** `symbol-bootstrap link` links the nodes' VRF and Voting keys to an existing network. This simplifies the node registration process to running networks like `testnet`.
 - **New Command:** `symbol-bootstrap report` generates rst and csv files from the configured server properties for documentation. Added `--report` flag to `config` and `start` commands.
