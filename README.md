@@ -204,7 +204,7 @@ This is specially useful for:
 -   Load test many services together to validate how they behave.
 -   Exclude a service via `repeat: 0`.
 
-if repeat is active, each value in the object is [handlebars](https://handlebarsjs.com/guide/expressions.html) template. $index is index of the generated service starting from 0. 
+If repeat is active, each value in the object is a [handlebars](https://handlebarsjs.com/guide/expressions.html) template. `$index` is the index of the generated service starting from 0. 
 
 Given an $index of 10
 - `my-custom-peer-node-{{$index}}` will become `my-custom-peer-node-10`
