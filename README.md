@@ -206,7 +206,7 @@ This is specially useful for:
 
 If repeat is active, each value in the object is a [handlebars](https://handlebarsjs.com/guide/expressions.html) template. `$index` is the index of the generated service starting from 0. 
 
-Given an $index of 10
+Given an `$index` of 10:
 - `my-custom-peer-node-{{$index}}` will become `my-custom-peer-node-10`
 - `172.20.0.{{add $index 20}}` will become `172.20.0.30`
 
