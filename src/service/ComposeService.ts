@@ -7,7 +7,7 @@ import { join } from 'path';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
-export type ComposeParams = { target: string; user?: string; reset?: boolean; aws?: boolean };
+export type ComposeParams = { target: string; user?: string; reset?: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -20,7 +20,6 @@ export class ComposeService {
         target: 'target',
         user: BootstrapUtils.CURRENT_USER,
         reset: false,
-        aws: false,
     };
 
     constructor(private readonly root: string, protected readonly params: ComposeParams) {}
@@ -64,7 +63,7 @@ export class ComposeService {
         };
 
         const resolveService = async (rawService: DockerComposeService): Promise<DockerComposeService> => {
-            if (this.params.aws) {
+            if (false) {
                 // POC about creating custom aws images.
                 const serviceName = rawService.container_name;
                 const volumes = rawService.volumes || [];

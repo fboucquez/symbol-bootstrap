@@ -19,11 +19,6 @@ export default class Compose extends Command {
             description: 'It resets the configuration generating a new one',
             default: ComposeService.defaultParams.reset,
         }),
-        // aws: flags.boolean({
-        //     description:
-        //         'It generates a docker-compose.yml that can be converted to cloudfomration or kubernates. (without including volumes)',
-        //     default: ComposeService.defaultParams.aws,
-        // }),
         user: flags.string({
             char: 'u',
             description: `User used to run the services in the docker-compose.yml file. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
