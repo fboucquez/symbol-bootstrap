@@ -27,6 +27,9 @@ OPTIONS
 
   -t, --timeout=timeout  [default: 60000] If running in detached mode, how long before timing out (in MS)
 
+  --resetData            It reset the database and node data but keeps the generated configuration, keys, voting tree
+                         files and block 1
+
 EXAMPLE
   $ symbol-bootstrap run
 ```

@@ -84,7 +84,7 @@ export class BootstrapService {
      *
      * @param config the params of the clean command.
      */
-    public async resetData(config: RunParams = RunService.defaultParams): Promise<void> {
+    public async resetData(config = { target: RunService.defaultParams.target }): Promise<void> {
         await new RunService(config).resetData();
     }
 

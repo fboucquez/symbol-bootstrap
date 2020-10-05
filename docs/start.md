@@ -43,6 +43,9 @@ OPTIONS
   --report                                It generates reStructuredText (.rst) reports describing the configuration of
                                           each node.
 
+  --resetData                             It reset the database and node data but keeps the generated configuration,
+                                          keys, voting tree files and block 1
+
 EXAMPLES
   $ symbol-bootstrap start
   $ symbol-bootstrap start -p bootstrap
