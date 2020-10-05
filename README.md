@@ -222,7 +222,7 @@ The folder where the generated config, docker files and data are stored. The fol
 -   `./gateways`: it holds the configuration and logs for all the defined node rest gateways.
 -   `./nemesis`: The folder used to hold the nemesis block. Block 1 data is generated via `nemgen` tool for new networks. For existing network, it is copied over.
 -   `./databases`: the location where the mongo data is stored for the different database instances.
--   `./docker`: the generated docker-compose.yml and DockerFile files used when running the network.
+-   `./docker`: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. 
 -   `./reports`: the location of the generated reports.
 
 # Requirements
