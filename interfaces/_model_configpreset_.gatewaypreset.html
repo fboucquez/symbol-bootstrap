@@ -85,9 +85,12 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#apinodehost" class="tsd-kind-icon">api<wbr>Node<wbr>Host</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#apinodename" class="tsd-kind-icon">api<wbr>Node<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#databasehost" class="tsd-kind-icon">database<wbr>Host</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#ipv4_address" class="tsd-kind-icon">ipv4_<wbr>address</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#name" class="tsd-kind-icon">name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#openport" class="tsd-kind-icon">open<wbr>Port</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.gatewaypreset.html#repeat" class="tsd-kind-icon">repeat</a></li>
 							</ul>
 						</section>
 					</div>
@@ -101,7 +104,17 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Node<wbr>Host<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/1aaf270/src/model/ConfigPreset.ts#L51">src/model/ConfigPreset.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L56">src/model/ConfigPreset.ts:56</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="apinodename" class="tsd-anchor"></a>
+					<h3>api<wbr>Node<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">api<wbr>Node<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L55">src/model/ConfigPreset.ts:55</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -111,7 +124,17 @@
 					<div class="tsd-signature tsd-kind-icon">database<wbr>Host<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/1aaf270/src/model/ConfigPreset.ts#L52">src/model/ConfigPreset.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L57">src/model/ConfigPreset.ts:57</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ipv4_address" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> ipv4_<wbr>address</h3>
+					<div class="tsd-signature tsd-kind-icon">ipv4_<wbr>address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L54">src/model/ConfigPreset.ts:54</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -121,17 +144,27 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/1aaf270/src/model/ConfigPreset.ts#L54">src/model/ConfigPreset.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L59">src/model/ConfigPreset.ts:59</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="openport" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> open<wbr>Port</h3>
-					<div class="tsd-signature tsd-kind-icon">open<wbr>Port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<div class="tsd-signature tsd-kind-icon">open<wbr>Port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/1aaf270/src/model/ConfigPreset.ts#L53">src/model/ConfigPreset.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L58">src/model/ConfigPreset.ts:58</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="repeat" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> repeat</h3>
+					<div class="tsd-signature tsd-kind-icon">repeat<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/model/ConfigPreset.ts#L53">src/model/ConfigPreset.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,13 +198,22 @@
 								<a href="_model_configpreset_.gatewaypreset.html#apinodehost" class="tsd-kind-icon">api<wbr>Node<wbr>Host</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.gatewaypreset.html#apinodename" class="tsd-kind-icon">api<wbr>Node<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_model_configpreset_.gatewaypreset.html#databasehost" class="tsd-kind-icon">database<wbr>Host</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.gatewaypreset.html#ipv4_address" class="tsd-kind-icon">ipv4_<wbr>address</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_model_configpreset_.gatewaypreset.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_model_configpreset_.gatewaypreset.html#openport" class="tsd-kind-icon">open<wbr>Port</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.gatewaypreset.html#repeat" class="tsd-kind-icon">repeat</a>
 							</li>
 						</ul>
 					</li>
