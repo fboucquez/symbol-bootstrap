@@ -56,7 +56,7 @@ gateways:
     - repeat: 1
       apiNodeName: 'api-node-{{$index}}'
       apiNodeHost: 'api-node-{{$index}}'
-      apiNodeBrokerHost: 'api-node-broker-{{add $index 5}}'
+      apiNodeBrokerHost: 'api-node-broker-{{$index}}'
       name: 'rest-gateway-{{$index}}'
       description: 'catapult development network'
       maxConnectionAttempts: 7
