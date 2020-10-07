@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.1.2] - NEXT RELEASE!
+
+**Milestone**: Hippopotamus(0.10.0.3)
+
+ Package  | Version  | Link
+---|---|---
+Symbol Bootstrap | v0.1.2 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+
+- **[BREAKING CHANGE]** Target folder structure has been change for scalability. The old target folder would need to be dropped when running this version. Backup the target folder if you need to keep your data!
+- **New Command:** `symbol-bootstrap resetData` it cleans the peer data and database without dropping the generated configuration.
+- Allowing `repeat` a node, a database or a gateway configuration multiple times. This allows you to create large network configuration quickly.
+- Path properties are now relative folder location. This improves reusability of the configuration when running the services outside docker compose.
+- Added node type based default configuration simplifying the configuration of nodes in presets.
+- Configurable `trustedHosts` and `localNetworks` in config.
+- Simplified mounted volumes in compose.
+- Allowed multiple databases in compose.
+- Compose's `openPort` now accepts port number.
+- Allowed custom ip address and subnet configuration in compose.
+- Merged `db` and `db-init` services in compose. Now the mongo service knows how to init itself.
+
+
 ## [0.1.1] - 02-Oct-2020
 
 **Milestone**: Hippopotamus(0.10.0.3)
