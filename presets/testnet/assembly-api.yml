@@ -7,8 +7,8 @@ nodes:
       api: true
       name: 'api-node'
       host: ''
-      brokerHost: 'api-node-broker'
-      openBrokerPort: true
+      brokerName: 'api-node-broker'
+      brokerOpenPort: true
       databaseHost: 'db'
       openPort: true
       trustedHosts: 127.0.0.1, 172.20.0.25

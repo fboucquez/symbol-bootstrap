@@ -5,13 +5,11 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import * as util from 'util';
-import * as Docker from 'dockerode';
 import * as _ from 'lodash';
 import { textSync } from 'figlet';
 import { Addresses, ConfigPreset, NodePreset } from '../model';
 import { Preset } from './ConfigService';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const MemoryStream = require('memorystream');
+import { spawn } from 'child_process';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -68,31 +66,15 @@ export class BootstrapUtils {
         console.log(textSync('symbol-bootstrap', { horizontalLayout: 'full' }));
     }
 
-    public static createDocker(): Docker {
-        return new Docker({ socketPath: '/var/run/docker.sock' });
-        // return new Docker({ host: 'localhost', port: 2375 });
-        // return new Docker({ socketPath: 'tcp://0.0.0.0:2375' });
-    }
-
-    public static async pullImage(docker: Docker, image: string): Promise<void> {
+    public static async pullImage(image: string): Promise<void> {
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
             return;
         }
-        try {
-            await docker.getImage(image).inspect();
-            logger.info(`Image ${image} found`);
-            BootstrapUtils.pulledImages.push(image);
-        } catch (e) {
-            logger.info(`Pulling image ${image}`);
-            //TODO improve how to pull images using dockerone!!!
-            const { stdout, stderr } = await exec('docker pull ' + image);
-            if (stderr) {
-                throw new Error(`Cannot pull image ${image}\n ${stderr}`);
-            }
-            const outputLines = stdout.toString().split('\n');
-            logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
-            BootstrapUtils.pulledImages.push(image);
-        }
+        logger.info(`Pulling image ${image}`);
+        const stdout = await this.spawn('docker', ['pull', image]);
+        const outputLines = stdout.toString().split('\n');
+        logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
+        BootstrapUtils.pulledImages.push(image);
     }
 
     public static async runImageUsingExec({
@@ -110,6 +92,7 @@ export class BootstrapUtils {
         cmds: string[];
         binds: string[];
     }): Promise<{ stdout: string; stderr: string }> {
+        await BootstrapUtils.pullImage(image);
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
@@ -119,21 +102,6 @@ export class BootstrapUtils {
             .join(' ')}`;
         logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
         return await this.exec(runCommand);
-    }
-
-    public static async runImageUsingApi(image: string, userId: string, cmds: string[], binds: string[]): Promise<string> {
-        const createOptions = { User: userId, HostConfig: { Binds: binds } };
-        const startOptions = {};
-        const memStream = new MemoryStream();
-        let stdout = '';
-        memStream.on('data', (data: any) => {
-            stdout += data.toString();
-        });
-        logger.info(`Running image using API: ${image} ${cmds.join(' ')}`);
-        const docker = BootstrapUtils.createDocker();
-        await BootstrapUtils.pullImage(docker, image);
-        await docker.run(image, cmds, memStream, createOptions, startOptions);
-        return stdout;
     }
 
     public static loadPresetData(
@@ -180,7 +148,7 @@ export class BootstrapUtils {
                     openPort: true,
                     sinkType: 'Async',
                     enableSingleThreadPool: false,
-                    openBrokerPort: true,
+                    brokerOpenPort: true,
                     addressextraction: true,
                     enableAutoSyncCleanup: false,
                     mongo: true,
@@ -323,6 +291,7 @@ export class BootstrapUtils {
                 const endTime = new Date().getMilliseconds();
                 const newPollingTime: number = Math.max(totalPollingTime - pollIntervalMs - (endTime - startTime), 0);
                 if (newPollingTime) {
+                    logger.info(`Retrying in ${pollIntervalMs / 1000} seconds...`);
                     await BootstrapUtils.sleep(pollIntervalMs);
                     return this.poll(promiseFunction, newPollingTime, pollIntervalMs);
                 } else {
@@ -349,7 +318,6 @@ export class BootstrapUtils {
                     if (toPath.indexOf('.mustache') > -1) {
                         const destinationFile = toPath.replace('.mustache', '');
                         const template = await BootstrapUtils.readTextFile(fromPath);
-
                         const compiledTemplate = Handlebars.compile(template);
                         const renderedTemplate = compiledTemplate({ ...templateContext });
                         await fsPromises.writeFile(destinationFile, renderedTemplate);
@@ -413,9 +381,56 @@ export class BootstrapUtils {
     }
 
     public static async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
-        logger.debug(`Running command: ${runCommand}`);
+        logger.debug(`Exec command: ${runCommand}`);
         const { stdout, stderr } = await exec(runCommand);
         return { stdout, stderr };
+    }
+
+    public static async spawn(command: string, args: string[], consoleLogger: { (message?: any): any } = console.log): Promise<string> {
+        const cmd = spawn(command, args);
+        return new Promise<string>((resolve, reject) => {
+            logger.info(`Spawn command: ${command} ${args.join(' ')}`);
+            let logbuffer = '';
+            const log = (data: string) => {
+                logbuffer = logbuffer + `${data}\n`.trim();
+                consoleLogger(`${data}`.trim());
+            };
+
+            cmd.stdout.on('data', (data) => {
+                log(`${data}`.trim());
+            });
+
+            cmd.stderr.on('data', (data) => {
+                log(`${data}`.trim());
+            });
+
+            cmd.on('error', (error) => {
+                log(`error: ${error.message}`.trim());
+            });
+
+            cmd.on('exit', (code, signal) => {
+                if (code) {
+                    log(`Process exited with code ${code} and signal ${signal}`);
+                    reject(logbuffer);
+                } else {
+                    resolve(logbuffer);
+                }
+            });
+
+            cmd.on('close', (code) => {
+                if (code) {
+                    log(`Process closed with code ${code}`);
+                    reject(logbuffer);
+                } else {
+                    resolve(logbuffer);
+                }
+            });
+
+            process.on('SIGINT', function () {
+                log('Received SIGINT signal');
+                resolve(logbuffer);
+            });
+        });
     }
 
     public static async getDockerUserGroup(): Promise<string> {

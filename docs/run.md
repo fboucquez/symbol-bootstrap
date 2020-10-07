@@ -14,21 +14,24 @@ USAGE
   $ symbol-bootstrap run
 
 OPTIONS
-  -b, --build            If provided, docker-compose will run with -b (--build)
+  -a, --args=args      Add extra arguments to the docker-compose up command. Check out
+                       https://docs.docker.com/compose/reference/up.
 
-  -d, --detached         If provided, docker-compose will run with -d (--detached) and this command will wait unit
-                         server is running before returning
+  -b, --build          If provided, docker-compose will run with -b (--build)
 
-  -h, --help             It shows the help of this command.
+  -d, --detached       If provided, docker-compose will run with -d (--detached) and this command will wait unit server
+                       is running before returning
 
-  -s, --service=service  To start a particular docker compose service by name, example rest-gateway, db, node-peer-0
+  -h, --help           It shows the help of this command.
 
-  -t, --target=target    [default: target] the target folder
+  -t, --target=target  [default: target] the target folder
 
-  -t, --timeout=timeout  [default: 60000] If running in detached mode, how long before timing out (in MS)
+  --healthCheck        If provided, the tool will review if the docker services are running correctly and report
 
-  --resetData            It reset the database and node data but keeps the generated configuration, keys, voting tree
-                         files and block 1
+  --resetData          It reset the database and node data but keeps the generated configuration, keys, voting tree
+                       files and block 1
+
+  --timeout=timeout    [default: 60000] If running in detached mode, how long before timing out (in MS)
 
 EXAMPLE
   $ symbol-bootstrap run

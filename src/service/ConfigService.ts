@@ -148,6 +148,8 @@ export class ConfigService {
             this.params.customPresetObject,
         );
 
+        await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
+
         const networkType = presetData.networkType;
         const addresses = await this.generateRandomConfiguration(networkType, presetData);
         this.completePresetDataWithRandomConfiguration(presetData, addresses, networkType);

@@ -14,7 +14,11 @@ USAGE
   $ symbol-bootstrap start
 
 OPTIONS
+  -a, --args=args                         Add extra arguments to the docker-compose up command. Check out
+                                          https://docs.docker.com/compose/reference/up.
+
   -a, --assembly=assembly                 An optional assembly type, example "dual" for testnet
+
   -b, --build                             If provided, docker-compose will run with -b (--build)
 
   -c, --customPreset=customPreset         External preset file. Values in this file will override the provided presets
@@ -29,22 +33,22 @@ OPTIONS
 
   -r, --reset                             It resets the configuration generating a new one
 
-  -s, --service=service                   To start a particular docker compose service by name, example rest-gateway,
-                                          db, node-peer-0
-
   -t, --target=target                     [default: target] the target folder
-
-  -t, --timeout=timeout                   [default: 60000] If running in detached mode, how long before timing out (in
-                                          MS)
 
   -u, --user=user                         [default: current] User used to run docker images when creating configuration
                                           files like certificates or nemesis block. "current" means the current user.
+
+  --healthCheck                           If provided, the tool will review if the docker services are running correctly
+                                          and report
 
   --report                                It generates reStructuredText (.rst) reports describing the configuration of
                                           each node.
 
   --resetData                             It reset the database and node data but keeps the generated configuration,
                                           keys, voting tree files and block 1
+
+  --timeout=timeout                       [default: 60000] If running in detached mode, how long before timing out (in
+                                          MS)
 
 EXAMPLES
   $ symbol-bootstrap start

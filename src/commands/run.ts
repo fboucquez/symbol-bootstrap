@@ -20,21 +20,26 @@ export default class Run extends Command {
                 'If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before returning',
         }),
 
+        healthCheck: flags.boolean({
+            description: 'If provided, the tool will review if the docker services are running correctly and report',
+        }),
+
         resetData: flags.boolean({
             description: 'It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1',
         }),
 
-        service: flags.string({
-            char: 's',
-            description: 'To start a particular docker compose service by name, example rest-gateway, db, node-peer-0',
+        args: flags.string({
+            char: 'a',
+            multiple: true,
+            description: 'Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.',
         }),
 
         build: flags.boolean({
             char: 'b',
             description: 'If provided, docker-compose will run with -b (--build)',
         }),
+
         timeout: flags.integer({
-            char: 't',
             description: 'If running in detached mode, how long before timing out (in MS)',
             default: RunService.defaultParams.timeout,
         }),
