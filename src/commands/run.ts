@@ -19,6 +19,11 @@ export default class Run extends Command {
             description:
                 'If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before returning',
         }),
+
+        resetData: flags.boolean({
+            description: 'It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1',
+        }),
+
         service: flags.string({
             char: 's',
             description: 'To start a particular docker compose service by name, example rest-gateway, db, node-peer-0',

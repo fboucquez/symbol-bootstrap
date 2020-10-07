@@ -19,10 +19,11 @@ export class VotingService {
 
         if (nodePreset?.voting && nodeAccount.voting) {
             const privateKeyTreeFileName = 'private_key_tree1.dat';
-            const dir = `${process.cwd()}/${this.params.target}`;
-            const votingKeysFolder = `${dir}/data/${nodeAccount.name}/votingkeys`;
+            const target = this.params.target;
+            const dataFolder = join(BootstrapUtils.getTargetNodesFolder(target, true, nodeAccount.name), 'data');
+            const votingKeysFolder = join(dataFolder, `votingkeys`);
             const cmd = [
-                '/usr/catapult/bin/catapult.tools.votingkey',
+                `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
                 `--secret=${nodeAccount.voting.privateKey}`,
                 `--dilution=${presetData.votingKeyDilution}`,
                 `--startEpoch=${presetData.votingKeyStartEpoch}`,
@@ -36,6 +37,7 @@ export class VotingService {
 
             const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
             const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+                catapultAppFolder: presetData.catapultAppFolder,
                 image: symbolServerToolsImage,
                 userId: userId,
                 cmds: cmd,

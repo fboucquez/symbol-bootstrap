@@ -1,13 +1,13 @@
 `symbol-bootstrap clean`
 ========================
 
-It removes the target folder (It may not work if you need root privileges!!!)
+It removes the target folder deleting the generated configuration and data
 
 * [`symbol-bootstrap clean`](#symbol-bootstrap-clean)
 
 ## `symbol-bootstrap clean`
 
-It removes the target folder (It may not work if you need root privileges!!!)
+It removes the target folder deleting the generated configuration and data
 
 ```
 USAGE
@@ -21,4 +21,4 @@ EXAMPLE
   $ symbol-bootstrap clean
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.1/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.2/src/commands/clean.ts)_

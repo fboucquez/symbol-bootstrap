@@ -39,19 +39,20 @@ export class CertificateService {
         );
         const symbolServerToolsImage = presetData.symbolServerToolsImage;
         const copyFrom = `${this.root}/config/cert`;
-        const target = `${this.params.target}/config/${name}/resources/cert`;
-        await BootstrapUtils.mkdir(target);
-        await BootstrapUtils.mkdir(join(target, 'new_certs'));
+        const certFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig', 'resources', 'cert');
+        await BootstrapUtils.mkdir(certFolder);
+        await BootstrapUtils.mkdir(join(certFolder, 'new_certs'));
         const generatedContext = { name };
         const templateContext: any = { ...presetData, ...generatedContext };
-        await BootstrapUtils.generateConfiguration(templateContext, copyFrom, target);
+        await BootstrapUtils.generateConfiguration(templateContext, copyFrom, certFolder);
 
         const command = this.createCertCommands('/data');
-        await BootstrapUtils.writeTextFile(target + '/createCertificate.sh', command);
+        await BootstrapUtils.writeTextFile(join(certFolder, 'createCertificate.sh'), command);
         const cmd = ['bash', 'createCertificate.sh'];
-        const binds = [`${resolve(target)}:/data:rw`];
+        const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+            catapultAppFolder: presetData.catapultAppFolder,
             image: symbolServerToolsImage,
             userId: userId,
             workdir: '/data',

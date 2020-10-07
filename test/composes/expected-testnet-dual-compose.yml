@@ -1,0 +1,61 @@
+version: '3'
+services:
+    db:
+        container_name: db
+        image: 'mongo:4.2.6-bionic'
+        command: bash -c "/bin/bash /userconfig/mongors.sh db & mongod --dbpath=/dbdata --bind_ip=db"
+        stop_signal: SIGINT
+        ports: []
+        volumes:
+            - './mongo:/userconfig/:ro'
+            - '../databases/db:/dbdata:rw'
+        user: '1000:1000'
+    api-node:
+        container_name: api-node
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node && /bin/bash /symbol-commands/startServer.sh api-node"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        restart: 'on-failure:2'
+        ports:
+            - '7900:7900'
+        volumes:
+            - '../nodes/api-node:/symbol-workdir'
+            - './server:/symbol-commands'
+        user: '1000:1000'
+        depends_on:
+            - api-broker
+    api-broker:
+        container_name: api-broker
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        working_dir: /symbol-workdir
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-broker && /bin/bash /symbol-commands/startBroker.sh api-broker"
+        ports:
+            - '7902:7902'
+        stop_signal: SIGINT
+        restart: 'on-failure:2'
+        volumes:
+            - '../nodes/api-node:/symbol-workdir'
+            - './server:/symbol-commands'
+        user: '1000:1000'
+    rest-gateway:
+        container_name: rest-gateway
+        image: 'symbolplatform/symbol-rest:2.1.0'
+        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '3000:3000'
+        volumes:
+            - '../gateways/rest-gateway:/symbol-workdir'
+        depends_on:
+            - db
+        user: '1000:1000'
+        networks:
+            default:
+                ipv4_address: 172.20.0.25
+networks:
+    default:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/24

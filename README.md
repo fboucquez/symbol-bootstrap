@@ -10,12 +10,12 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![Coverage Status](https://coveralls.io/repos/github/nemtech/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/nemtech/symbol-bootstrap?branch=main)
 [![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://nemtech.github.io/symbol-bootstrap/)
 
-
 <!-- toc -->
 * [symbol-bootstrap](#symbol-bootstrap)
 * [Why this tool?](#why-this-tool)
 * [Key benefits:](#key-benefits)
 * [Concepts](#concepts)
+* [custom repeat preset for bootstrap preset.](#custom-repeat-preset-for-bootstrap-preset)
 * [Requirements](#requirements)
 * [Usage](#usage)
 * [E2E Testing support](#e2e-testing-support)
@@ -71,15 +71,14 @@ Properties in each file override the previous values (by object deep merge).
 -   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 
-
 ### Custom preset:
 
 It's the way you can tune the network without modifying the code. It's a yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
 Most people would use the out-of-box preset or tune a few attributes.
 
-The file is a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations. 
-The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).  
+The file is a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations.
+The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).
 
 The best way to validate your configuration is by inspecting the generated configuration and preset.yml files in the target folder
 
@@ -89,58 +88,59 @@ The best way to validate your configuration is by inspecting the generated confi
 
 ##### Custom Rest image and throttling:
 
-````yaml
+```yaml
 symbolRestImage: symbolplatform/symbol-rest:2.1.1-alpha
 throttlingBurst: 35
 throttlingRate: 1000
-````
+```
 
 ##### Custom block duration, max namespace duration and number of nemesis accounts:
 
-````yaml
+```yaml
 blockGenerationTargetTime: 5s
 maxNamespaceDuration: 10d
 nemesis:
-  mosaics:
-    - accounts: 20
-````
+    mosaics:
+        - accounts: 20
+```
 
 ##### Zero fee nodes:
 
-````yaml
+```yaml
 minFeeMultiplier: 0
-````
+```
 
 ##### Not exposed rest gateway:
 
-````yaml
+```yaml
 gateways:
     - openPort: false
-````
+```
 
 ##### Custom nodes' friendly names and hosts:
 
 Updating first node (single node presets like `testnet`):
 
-````yaml
+```yaml
 nodes:
-  - friendlyName: My node custom friendly name
-    host: 'myNode.custom.hostname'
-````
+    - friendlyName: My node custom friendly name
+      host: 'myNode.custom.hostname'
+```
+
 Updating multiple nodes (multi-node presets like `bootstrap`)
 
-````yaml
+```yaml
 nodes:
-  - friendlyName: Peer Node 1 custom friendly name
-  - friendlyName: Peer Node 2 custom friendly name
-    host: 'peer2.custom.hostname'
-  - friendlyName: Api Node 1 custom friendly name
-    host: 'api1.custom.hostname'
-````
+    - friendlyName: Peer Node 1 custom friendly name
+    - friendlyName: Peer Node 2 custom friendly name
+      host: 'peer2.custom.hostname'
+    - friendlyName: Api Node 1 custom friendly name
+      host: 'api1.custom.hostname'
+```
 
 ##### Custom generation hash seed, balances and block 1 transactions:
 
-````yaml
+```yaml
 nemesisGenerationHashSeed: 7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA
 nemesis:
     balances:
@@ -148,49 +148,82 @@ nemesis:
         TBK7C5SI3NR3ZEZTMNXRISY6FENDK3YDE63HK7Q: 98800000
         TA45K3WZYQQKSFHJ3DSEQTOO6N7RMBQUVE7H6MA: 984750000
 transactions:
-        '16963_581474': A1000000000000...(serialized hex transaction)
-        '16963_580690': A1000000000000...
-        'MyTransaction': 01000000000000...
-````
+    '16963_581474': A1000000000000...(serialized hex transaction)
+    '16963_580690': A1000000000000...
+    'MyTransaction': 01000000000000...
+```
 
 ##### Enable voting mode in a node:
 
-````yaml
+```yaml
 nodes:
-  - voting: true
-````
+    - voting: true
+```
 
 In order to finalize the peer or voting nodes registration to an existing network like Testnet, be sure your nodes' signing addresses have enough funds. For test environments, you can use the network's faucet.
 
 Then run:
 
-````
+```
 symbol-bootstrap link
-````
+```
 
-**Note:** Full network `-p bootstrap` nodes are fully configured voting and peer nodes. `VotingKeyLinkTransaction` and `VrfKeyLinkTransaction` are added to the nemesis block automatically. 
-
+**Note:** Full network `-p bootstrap` nodes are fully configured voting and peer nodes. `VotingKeyLinkTransaction` and `VrfKeyLinkTransaction` are added to the nemesis block automatically.
 
 ##### Disable voting mode in all bootstrap nodes:
 
-````yaml
+```yaml
 nodes:
-  - voting: false
-  - voting: false
-````
+    - voting: false
+    - voting: false
+```
+
+##### Repeat components:
+
+```yaml
+# custom repeat preset for bootstrap preset.
+databases:
+    - repeat: 4
+nodes:
+    - repeat: 3
+      name: 'my-custom-peer-node-{{$index}}'
+    - repeat: 4
+      name: 'my-custom-api-node-{{$index}}'
+      friendlyName: 'my-custom-{{$index}}-friendly-name'
+gateways:
+    - repeat: 4
+      apiNodeName: 'my-custom-api-node-{{$index}}'
+      ipv4_address: '172.20.0.{{add $index 20}}',
+```
+
+`Repeat` is a pretty powerful customization. It tells bootstrap to "repeat" the defined configuration a number of times. This will allow you to generate as many services as you want quickly.
+
+This is specially useful for:
+
+-   Configure a really large network. The generated configuration could be then deployed into different cloud services.
+-   Load test many services together to validate how they behave.
+-   Exclude a service via `repeat: 0`.
+
+If repeat is active, each value in the object is a [handlebars](https://handlebarsjs.com/guide/expressions.html) template. `$index` is the index of the generated service starting from 0. 
+
+Given an `$index` of 10:
+- `my-custom-peer-node-{{$index}}` will become `my-custom-peer-node-10`
+- `172.20.0.{{add $index 20}}` will become `172.20.0.30`
+
+The default preset `bootstrap` uses repeat but with just 1 database, 2 peers, 1 api and 1 rest gateway.
 
 ## Target:
 
 The folder where the generated config, docker files and data are stored. The folder structure is:
 
--   `./config`: node configurations mounted when running the docker services.
--   `./config/generated-addresses`: randomly generated data that wasn't provided in the preset. e.g.: SSL keys, nodes' keys, nemesis accounts, generation hash seed, etc.
--   `./config/nemesis`: the configuration used when running the `nemgen` tool.
--   `./mongo`: mongo database data
--   `./data`
--   `./data/nemesis-data`: nemesis data the nodes will load. The nemesis can be generated (for new networks like `bootstrap`) or copied from an existing network (`testnet`)
--   `./docker`: the generated docker-compose.yml and DockerFile files used when running the network.
--   `./state`: folder used to synchronize the services execution
+-   `./preset.yml`: the final generated preset.yml that it's used to configure bootstrap, the nodes, docker, etc.
+-   `./addresses.yml`: randomly generated data that wasn't provided in the preset. e.g.: SSL keys, nodes' keys, nemesis accounts, generation hash seed, etc.
+-   `./nodes`: it holds the configuration, data and logs for all the defined node instances.
+-   `./gateways`: it holds the configuration and logs for all the defined node rest gateways.
+-   `./nemesis`: The folder used to hold the nemesis block. Block 1 data is generated via `nemgen` tool for new networks. For existing network, it is copied over.
+-   `./databases`: the location where the mongo data is stored for the different database instances.
+-   `./docker`: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. 
+-   `./reports`: the location of the generated reports.
 
 # Requirements
 
@@ -211,6 +244,7 @@ Check your user can run docker without sudo:
 ```
 docker run hello-world
 ```
+
 If you see an error like:
 
 ```
@@ -238,7 +272,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.1.1 linux-x64 node-v12.18.4
+symbol-bootstrap/0.1.2 linux-x64 node-v14.8.0
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -285,7 +319,7 @@ You can also provide your own custom preset (`-c`) if you want your e2e test to 
 The CLI can also be used as npm project (dev) dependency (`npm install --save-dev symbol-bootstrap`). Then you can integrate the network to your npm test cycle.
 Your `package.json` can look like this:
 
-````yaml
+```yaml
 
 "devDependencies": {
     ....
@@ -302,14 +336,13 @@ scripts": {
     "e2e": "npm run clean-network && npm run run-network && npm run integration-test && npm run stop-network",
 ...
 }
-````
+```
 
 Then, you, Jenkins, Travis or your CI tool can run;
 
 ```
 npm run e2e
 ```
-
 
 ## Node client E2E via API:
 
@@ -340,8 +373,7 @@ it('Bootstrap e2e test', async () => {
 });
 ```
 
-It's recommended to reuse the same server for multiple tests by using `beforeAll`, `afterAll` kind of statements. 
-
+It's recommended to reuse the same server for multiple tests by using `beforeAll`, `afterAll` kind of statements.
 
 # Development
 
@@ -351,27 +383,31 @@ If you want to contribute to this tool, clone this repo and run:
 npm install -g
 ```
 
-Then, ``symbol-bootstrap`` runs from the source code. You can now try your features after changing the code.
+Then, `symbol-bootstrap` runs from the source code. You can now try your features after changing the code.
 
 Pull Requests are appreciated! Please follow the contributing [guidelines](CONTRIBUTING.md).
 
-Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request. 
-General users should install this tool like any other node module. 
+Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
+General users should install this tool like any other node module.
 
 # Commands
 
 <!-- commands -->
 # Command Topics
 
-* [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder (It may not work if you need root privileges!!!)
+* [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder deleting the generated configuration and data
 * [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
 * [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
 * [`symbol-bootstrap report`](docs/report.md) - it generates reStructuredText (.rst) reports describing the configuration of each node.
+* [`symbol-bootstrap resetData`](docs/resetData.md) - It removes the data keeping the generated configuration, certificates, keys and block 1.
 * [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 * [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
 * [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
 
 <!-- commandsstop -->
+
+```
+
 ```

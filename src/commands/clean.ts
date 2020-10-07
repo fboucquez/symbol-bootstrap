@@ -2,7 +2,7 @@ import { Command, flags } from '@oclif/command';
 import { BootstrapUtils, ConfigService } from '../service';
 
 export default class Clean extends Command {
-    static description = 'It removes the target folder (It may not work if you need root privileges!!!)';
+    static description = 'It removes the target folder deleting the generated configuration and data';
 
     static examples = [`$ symbol-bootstrap clean`];
 

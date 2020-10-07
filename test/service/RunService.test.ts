@@ -1,6 +1,6 @@
 import 'mocha';
-import { ConfigService } from '../../src/service/ConfigService';
-import { RunService } from '../../src/service/RunService';
+import { ConfigService } from '../../src/service';
+import { RunService } from '../../src/service';
 import { expect } from 'chai';
 
 describe('RunService', () => {

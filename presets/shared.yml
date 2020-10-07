@@ -1,6 +1,5 @@
 nodePort: 7900
 enableCacheDatabaseStorage: true
-enableAutoSyncCleanup: true
 enableVerifiableState: true
 enableVerifiableReceipts: true
 initialCurrencyAtomicUnits: 7831975436000000
@@ -43,8 +42,8 @@ maxBondedTransactionLifetime: 48h
 maxTransactionsPerBlock: 6000
 stepDuration: 4m
 minNamespaceDuration: 1m
-trustedHosts: 127.0.0.1, 172.20.0.25
-localNetworks: 127.0.0.1, 172.20.0.25
+trustedHosts: 127.0.0.1
+localNetworks: 127.0.0.1
 lockedFundsPerAggregate: 10000000
 maxHashLockDuration: 2d
 maxSecretLockDuration: 30d
@@ -69,6 +68,13 @@ logLevel: 'Info'
 # brokerLogLevel: 'Info'
 # recoveryLogLevel: 'Info'
 # serverLogLevel: 'Info'
+transactionsDirectory: './transactions'
+binDirectory: ./seed
+certificateDirectory: ./userconfig/resources/cert
+dataDirectory: ./data
+votingKeysDirectory: ./data/votingkeys
+enableDelegatedHarvestersAutoDetection: true
+catapultAppFolder: /usr/catapult
 
 # node default info
 
@@ -103,7 +109,6 @@ enableAutoHarvesting: true
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
 
-
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20
@@ -126,7 +131,9 @@ maxReadRateMonitoringTotalSize: 100MB
 #Rest
 throttlingBurst: 35
 throttlingRate: 20
-
+restLoggingFilename: /symbol-workdir/logs/catapult-rest.log
+apiNodeConfigPath: /symbol-workdir/api-node-config
+subnet: '172.20.0.0/24'
 
 #voting
 votingKeyDilution: 128

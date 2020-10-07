@@ -7,10 +7,12 @@
 export interface DockerComposeService {
     build?: string;
     image?: string;
+    container_name: string;
     restart?: string;
     user?: string;
+    working_dir?: string;
+    command?: string;
     hostname?: string;
-    command: string;
     stop_signal?: string;
     volumes?: string[];
     ports?: string[];

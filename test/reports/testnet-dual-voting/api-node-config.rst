@@ -738,13 +738,13 @@ config-node.properties
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxCacheDatabaseWriteBatchSize; 5MB; utils::FileSize; Maximum cache database write batch size.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    trustedHosts; ; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
+    trustedHosts; 127.0.0.1, 172.20.0.25; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1, 172.20.0.25; unordered_set<string>; Networks that should be treated as local.
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
     version; 0; uint32_t; Node version.
-    roles; Api,Peer,Voting; ionet::NodeRoles; Node roles.
+    roles; Peer,Api,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
     maxConnectionAge; 200; uint16_t; Maximum connection age.
@@ -867,7 +867,7 @@ config-user.properties
     **account**;
     enableDelegatedHarvestersAutoDetection; true
     **storage**;
-    certificateDirectory; /userconfig/resources/cert
-    dataDirectory; /data
+    certificateDirectory; ./userconfig/resources/cert
+    dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib
-    votingKeysDirectory; /data/votingkeys
+    votingKeysDirectory; ./data/votingkeys

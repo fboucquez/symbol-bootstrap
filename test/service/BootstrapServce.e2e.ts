@@ -1,5 +1,5 @@
 import 'mocha';
-import { BootstrapService, BootstrapUtils, ConfigResult, Preset, StartParams } from '../../src/service';
+import { BootstrapService, BootstrapUtils, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 import { expect } from '@oclif/test';
 import {
     Account,
@@ -65,6 +65,7 @@ describe('BootstrapService', () => {
     it(' bootstrap start', async () => {
         const service = new BootstrapService('.');
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             preset: Preset.bootstrap,
             reset: true,
             timeout: 60000 * 5,
@@ -86,6 +87,7 @@ describe('BootstrapService', () => {
     it(' bootstrap light', async () => {
         const service = new BootstrapService('.');
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             preset: Preset.light,
             reset: true,
             timeout: 60000 * 5,

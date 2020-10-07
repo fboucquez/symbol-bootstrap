@@ -1,5 +1,4 @@
 import { NetworkType } from 'symbol-sdk';
-import { NodeType } from './NodeType';
 
 export interface CertificatePair {
     privateKey: string;
@@ -12,7 +11,6 @@ export interface ConfigAccount extends CertificatePair {
 
 export interface NodeAccount {
     ssl: CertificatePair;
-    type: NodeType;
     //Signing key is produced if node is peer or voting
     signing?: ConfigAccount;
     // VRF key is produced if node is peer
