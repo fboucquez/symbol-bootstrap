@@ -12,10 +12,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ---|---|---
 Symbol Bootstrap | v0.1.2 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
-- **[BREAKING CHANGE]** Target folder structure has been change for scalability. The old target folder would need to be dropped when running this version. Backup the target folder if you need to keep your data!
+- **[BREAKING CHANGE]** Target folder structure has been changed for scalability. The old target folder needs to be dropped when running this version. Backup the target folder if you need to keep your data!
 - **New Command:** `symbol-bootstrap resetData` it cleans the peer data and database without dropping the generated configuration.
-- Allowing `repeat` a node, a database or a gateway configuration multiple times. This allows you to create large network configuration quickly.
-- Path properties are now relative folder location. This improves reusability of the configuration when running the services outside docker compose.
+- Allowed `repeat` on a node, a database or a gateway to instantiate them multiple times. This enables you to create large network configurations quickly.
+- Path properties are now relative folder locations. This improves reusability of the configuration when running the services outside docker compose.
 - Added node type based default configuration simplifying the configuration of nodes in presets.
 - Configurable `trustedHosts` and `localNetworks` in config.
 - Simplified mounted volumes in compose.
