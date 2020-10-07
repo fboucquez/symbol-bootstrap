@@ -57,7 +57,7 @@ export class RunService {
         await Promise.all(promises);
     }
 
-    public async healthCheck(pollIntervalMs = 10000) {
+    public async healthCheck(pollIntervalMs = 10000): Promise<void> {
         const dockerFile = join(this.params.target, `docker`, `docker-compose.yml`);
         if (!existsSync(dockerFile)) {
             logger.info(`Docker compose ${dockerFile} does not exist. Cannot check the status of the service.`);
