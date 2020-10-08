@@ -74,6 +74,8 @@ Properties in each file override the previous values (by object deep merge).
 
 It's the way you can tune the network without modifying the code. It's a yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
+Custom presets gives Symbol Bootstrap its versatility. Checkout the custom preset [guides](docs/presetGuides.md)!
+
 ## Target:
 
 The folder where the generated config, docker files and data are stored. The folder structure is:
@@ -175,8 +177,6 @@ symbol-bootstrap stop
 `--detached` starts the server waiting until it is up (by polling the network http://localhost:3000/node/health). The command will fail if the components are not up in 30 seconds.
 
 You can also provide your own custom preset (`-c`) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)
-
-Custom presets gives Symbol Bootstrap its versatility. Checkout the custom preset [guides](docs/presetGuides.md)!
 
 ## Node client E2E via CLI:
 

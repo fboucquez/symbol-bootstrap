@@ -1,4 +1,4 @@
-# Custom preset:
+# Custom presets
 
 It's the way you can tune the network without modifying the code. It's a yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
