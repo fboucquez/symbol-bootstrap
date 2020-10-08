@@ -54,7 +54,7 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class ConfigService {
     public static defaultParams: ConfigParams = {
-        target: 'target',
+        target: BootstrapUtils.defaultTargetFolder,
         report: false,
         preset: Preset.bootstrap,
         reset: false,

@@ -18,7 +18,7 @@ const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
-        target: 'target',
+        target: BootstrapUtils.defaultTargetFolder,
         user: BootstrapUtils.CURRENT_USER,
         reset: false,
     };

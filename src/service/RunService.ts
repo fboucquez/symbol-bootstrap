@@ -27,7 +27,7 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class RunService {
     public static readonly defaultParams: RunParams = {
-        target: 'target',
+        target: BootstrapUtils.defaultTargetFolder,
         timeout: 60000,
         resetData: false,
     };
@@ -52,6 +52,7 @@ export class RunService {
         const promises: Promise<any>[] = [];
         promises.push(this.basicRun(basicArgs, false));
         if (this.params.healthCheck) {
+            await BootstrapUtils.sleep(5000);
             promises.push(this.healthCheck());
         }
         await Promise.all(promises);
@@ -76,7 +77,7 @@ export class RunService {
     }
 
     private async runOneCheck(services: DockerComposeService[]): Promise<boolean> {
-        const runningContainers = (await BootstrapUtils.exec("docker ps --format '{{.Names}}'")).stdout.split(`\n`);
+        const runningContainers = (await BootstrapUtils.exec('docker ps --format {{.Names}}')).stdout.split(`\n`);
         const allServicesChecks: Promise<boolean>[] = services.map(async (service) => {
             if (runningContainers.indexOf(service.container_name) < 0) {
                 logger.warn(`Container ${service.container_name} is NOT running YET.`);
@@ -112,7 +113,7 @@ export class RunService {
                                     logger.warn(`Rest ${testUrl} is NOT up and running YET: DB is still Down!`);
                                     return false;
                                 }
-                                logger.info(`Rest ${testUrl} IS up and running...`);
+                                logger.info(`Rest ${testUrl} is up and running...`);
                                 return true;
                             } catch (e) {
                                 logger.warn(`Rest ${testUrl} is NOT up and running YET: ${e.message}`);

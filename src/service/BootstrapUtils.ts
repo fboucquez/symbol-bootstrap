@@ -17,14 +17,22 @@ const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class BootstrapUtils {
-    public static targetNodesFolder = 'nodes';
-    public static targetGatewaysFolder = 'gateways';
-    public static targetDatabasesFolder = 'databases';
-    public static targetNemesisFolder = 'nemesis';
+    public static readonly defaultTargetFolder = 'target';
+    public static readonly targetNodesFolder = 'nodes';
+    public static readonly targetGatewaysFolder = 'gateways';
+    public static readonly targetDatabasesFolder = 'databases';
+    public static readonly targetNemesisFolder = 'nemesis';
 
     public static readonly CURRENT_USER = 'current';
     private static presetInfoLogged = false;
+    private static stopProcess = false;
     private static pulledImages: string[] = [];
+
+    private static onProcessListener = (() => {
+        process.on('SIGINT', () => {
+            BootstrapUtils.stopProcess = true;
+        });
+    })();
 
     public static deleteFolder(folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
@@ -288,10 +296,13 @@ export class BootstrapUtils {
             if (result) {
                 return true;
             } else {
+                if (BootstrapUtils.stopProcess) {
+                    return Promise.resolve(false);
+                }
                 const endTime = new Date().getMilliseconds();
                 const newPollingTime: number = Math.max(totalPollingTime - pollIntervalMs - (endTime - startTime), 0);
                 if (newPollingTime) {
-                    logger.info(`Retrying in ${pollIntervalMs / 1000} seconds...`);
+                    logger.info(`Retrying in ${pollIntervalMs / 1000} seconds. Polling will stop in ${newPollingTime / 1000} seconds`);
                     await BootstrapUtils.sleep(pollIntervalMs);
                     return this.poll(promiseFunction, newPollingTime, pollIntervalMs);
                 } else {
@@ -386,49 +397,49 @@ export class BootstrapUtils {
         return { stdout, stderr };
     }
 
-    public static async spawn(command: string, args: string[], consoleLogger: { (message?: any): any } = console.log): Promise<string> {
+    public static async spawn(command: string, args: string[]): Promise<string> {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
-            let logbuffer = '';
-            const log = (data: string) => {
-                logbuffer = logbuffer + `${data}\n`.trim();
-                consoleLogger(`${data}`.trim());
+            let logText = '';
+            const log = (data: string, isError: boolean) => {
+                logText = logText + `${data}\n`;
+                if (isError) logger.warn(data);
+                else logger.info(data);
             };
 
             cmd.stdout.on('data', (data) => {
-                log(`${data}`.trim());
+                log(`${data}`.trim(), false);
             });
 
             cmd.stderr.on('data', (data) => {
-                log(`${data}`.trim());
+                log(`${data}`.trim(), true);
             });
 
             cmd.on('error', (error) => {
-                log(`error: ${error.message}`.trim());
+                log(`${error.message}`.trim(), true);
             });
 
             cmd.on('exit', (code, signal) => {
                 if (code) {
-                    log(`Process exited with code ${code} and signal ${signal}`);
-                    reject(logbuffer);
+                    log(`Process exited with code ${code} and signal ${signal}`, true);
+                    reject(logText);
                 } else {
-                    resolve(logbuffer);
+                    resolve(logText);
                 }
             });
 
             cmd.on('close', (code) => {
                 if (code) {
-                    log(`Process closed with code ${code}`);
-                    reject(logbuffer);
+                    log(`Process closed with code ${code}`, true);
+                    reject(logText);
                 } else {
-                    resolve(logbuffer);
+                    resolve(logText);
                 }
             });
 
-            process.on('SIGINT', function () {
-                log('Received SIGINT signal');
-                resolve(logbuffer);
+            process.on('SIGINT', () => {
+                resolve(logText);
             });
         });
     }
