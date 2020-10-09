@@ -13,3 +13,4 @@ symbol-bootstrap-*.tgz
 /.eslintcache
 coverage
 /ts-docs/
+/oclif.manifest.json

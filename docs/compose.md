@@ -16,7 +16,7 @@ USAGE
 OPTIONS
   -h, --help           It shows the help of this command.
   -r, --reset          It resets the configuration generating a new one
-  -t, --target=target  [default: target] the target folder
+  -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
   -u, --user=user      [default: current] User used to run the services in the docker-compose.yml file. "current" means
                        the current user.

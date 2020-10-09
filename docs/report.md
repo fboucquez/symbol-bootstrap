@@ -15,7 +15,7 @@ USAGE
 
 OPTIONS
   -h, --help           It shows the help of this command.
-  -t, --target=target  [default: target] The target folder where the configuration was generated
+  -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
 EXAMPLE
   $ symbol-bootstrap report

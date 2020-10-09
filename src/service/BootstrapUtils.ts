@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { textSync } from 'figlet';
 import { Addresses, ConfigPreset, NodePreset } from '../model';
 import { Preset } from './ConfigService';
+import { flags } from '@oclif/command';
 import { spawn } from 'child_process';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
@@ -27,6 +28,14 @@ export class BootstrapUtils {
     private static presetInfoLogged = false;
     private static stopProcess = false;
     private static pulledImages: string[] = [];
+
+    public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
+
+    public static targetFlag = flags.string({
+        char: 't',
+        description: 'The target folder where the symbol-bootstrap network is generated',
+        default: BootstrapUtils.defaultTargetFolder,
+    });
 
     private static onProcessListener = (() => {
         process.on('SIGINT', () => {
@@ -79,7 +88,7 @@ export class BootstrapUtils {
             return;
         }
         logger.info(`Pulling image ${image}`);
-        const stdout = await this.spawn('docker', ['pull', image]);
+        const stdout = await this.spawn('docker', ['pull', image], true);
         const outputLines = stdout.toString().split('\n');
         logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
         BootstrapUtils.pulledImages.push(image);
@@ -397,15 +406,19 @@ export class BootstrapUtils {
         return { stdout, stderr };
     }
 
-    public static async spawn(command: string, args: string[]): Promise<string> {
+    public static async spawn(command: string, args: string[], useLogger: boolean): Promise<string> {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
             let logText = '';
             const log = (data: string, isError: boolean) => {
                 logText = logText + `${data}\n`;
-                if (isError) logger.warn(data);
-                else logger.info(data);
+                if (useLogger) {
+                    if (isError) logger.warn(data);
+                    else logger.info(data);
+                } else {
+                    console.log(data);
+                }
             };
 
             cmd.stdout.on('data', (data) => {

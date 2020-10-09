@@ -7,7 +7,8 @@ export default class Config extends Command {
     static examples = [`$ symbol-bootstrap config -p bootstrap`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
         preset: flags.enum({
             char: 'p',
             description: 'the network preset',
@@ -17,11 +18,6 @@ export default class Config extends Command {
         assembly: flags.string({
             char: 'a',
             description: 'An optional assembly type, example "dual" for testnet',
-        }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: ConfigService.defaultParams.target,
         }),
         customPreset: flags.string({
             char: 'c',

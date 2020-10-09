@@ -1,6 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { BootstrapUtils, ComposeService } from '../service';
-import { BootstrapService } from '../service';
+import { BootstrapService, BootstrapUtils, ComposeService } from '../service';
 
 export default class Compose extends Command {
     static description = 'It generates the `docker-compose.yml` file from the configured network.';
@@ -8,12 +7,8 @@ export default class Compose extends Command {
     static examples = [`$ symbol-bootstrap compose`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: ComposeService.defaultParams.target,
-        }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
         reset: flags.boolean({
             char: 'r',
             description: 'It resets the configuration generating a new one',

@@ -1,5 +1,6 @@
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, ConfigService, RunService } from '../service';
+import { BootstrapService, BootstrapUtils, RunService } from '../service';
+import HealthCheck from './healthCheck';
 
 export default class Run extends Command {
     static description =
@@ -8,12 +9,8 @@ export default class Run extends Command {
     static examples = [`$ symbol-bootstrap run`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: ConfigService.defaultParams.target,
-        }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
         detached: flags.boolean({
             char: 'd',
             description:
@@ -21,7 +18,7 @@ export default class Run extends Command {
         }),
 
         healthCheck: flags.boolean({
-            description: 'If provided, the tool will review if the docker services are running correctly and report',
+            description: HealthCheck.description,
         }),
 
         resetData: flags.boolean({
@@ -40,7 +37,7 @@ export default class Run extends Command {
         }),
 
         timeout: flags.integer({
-            description: 'If running in detached mode, how long before timing out (in MS)',
+            description: 'If running in detached mode, how long before timing out (in milliseconds)',
             default: RunService.defaultParams.timeout,
         }),
     };

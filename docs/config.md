@@ -25,7 +25,8 @@ OPTIONS
 
   -r, --reset                             It resets the configuration generating a new one
 
-  -t, --target=target                     [default: target] the target folder
+  -t, --target=target                     [default: target] The target folder where the symbol-bootstrap network is
+                                          generated
 
   -u, --user=user                         [default: current] User used to run docker images when creating configuration
                                           files like certificates or nemesis block. "current" means the current user.

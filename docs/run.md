@@ -14,24 +14,35 @@ USAGE
   $ symbol-bootstrap run
 
 OPTIONS
-  -a, --args=args      Add extra arguments to the docker-compose up command. Check out
-                       https://docs.docker.com/compose/reference/up.
+  -a, --args=args
+      Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
 
-  -b, --build          If provided, docker-compose will run with -b (--build)
+  -b, --build
+      If provided, docker-compose will run with -b (--build)
 
-  -d, --detached       If provided, docker-compose will run with -d (--detached) and this command will wait unit server
-                       is running before returning
+  -d, --detached
+      If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before 
+      returning
 
-  -h, --help           It shows the help of this command.
+  -h, --help
+      It shows the help of this command.
 
-  -t, --target=target  [default: target] the target folder
+  -t, --target=target
+      [default: target] The target folder where the symbol-bootstrap network is generated
 
-  --healthCheck        If provided, the tool will review if the docker services are running correctly and report
+  --healthCheck
+      It checks if the services created with docker compose are up and running:
+      - if the docker containers are running.
+      - if the services' exposed ports are listening.
+      - if the rest gateways' /node/health are OK.
 
-  --resetData          It reset the database and node data but keeps the generated configuration, keys, voting tree
-                       files and block 1
+      The health check process handles 'repeat' and custom 'openPort' services.
 
-  --timeout=timeout    [default: 60000] If running in detached mode, how long before timing out (in MS)
+  --resetData
+      It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1
+
+  --timeout=timeout
+      [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
 
 EXAMPLE
   $ symbol-bootstrap run

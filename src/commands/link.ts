@@ -8,12 +8,8 @@ export default class Link extends Command {
     static examples = [`$ symbol-bootstrap link`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: LinkService.defaultParams.target,
-        }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
         url: flags.string({
             char: 'u',
             description: 'the network url',

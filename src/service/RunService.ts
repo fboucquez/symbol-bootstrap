@@ -178,7 +178,7 @@ export class RunService {
                 if (!existsSync(volumenPath)) await BootstrapUtils.mkdir(volumenPath);
             }),
         );
-        return BootstrapUtils.spawn('docker-compose', args);
+        return BootstrapUtils.spawn('docker-compose', args, false);
     }
 
     private async pullImages(dockerCompose: DockerCompose) {
