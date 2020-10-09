@@ -74,7 +74,7 @@ Properties in each file override the previous values (by object deep merge).
 
 It's the way you can tune the network without modifying the code. It's a yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
-Custom presets gives Symbol Bootstrap its versatility. Checkout the custom preset [guides](docs/presetGuides.md)!
+Custom presets give Symbol Bootstrap its versatility. Check out the custom preset [guides](docs/presetGuides.md)!
 
 ## Target:
 
