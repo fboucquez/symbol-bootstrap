@@ -31,7 +31,8 @@ OPTIONS
       [default: target] The target folder where the symbol-bootstrap network is generated
 
   --healthCheck
-      It checks if the services created with docker compose are up and running:
+      It checks if the services created with docker compose are up and running.
+    
       - if the docker containers are running.
       - if the services' exposed ports are listening.
       - if the rest gateways' /node/health are OK.
