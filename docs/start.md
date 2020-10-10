@@ -48,10 +48,10 @@ OPTIONS
 
   --healthCheck
       It checks if the services created with docker compose are up and running.
-    
-      - if the docker containers are running.
-      - if the services' exposed ports are listening.
-      - if the rest gateways' /node/health are OK.
+
+      - Whether the docker containers are running.
+      - Whether the services' exposed ports are listening.
+      - Whether the rest gateways' /node/health are OK.
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
