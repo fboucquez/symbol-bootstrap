@@ -194,7 +194,7 @@ Your `package.json` can look like this:
 scripts": {
 ...
     "clean-network": "symbol-bootstrap clean",
-    "run-network": "symbol-bootstrap start -c ./output/my_custom_preset.yml --detached",
+    "run-network": "symbol-bootstrap start -c ./output/my_custom_preset.yml --detached --healthCheck",
     "run-stop": "symbol-bootstrap stop",
     "integration-test": "....some mocha/jest/etc tests running against localhost:3000 network....",
     "e2e": "npm run clean-network && npm run run-network && npm run integration-test && npm run stop-network",
@@ -215,11 +215,15 @@ Alternatively, you can use the [BootstrapService](https://github.com/nemtech/sym
 Example:
 
 ```ts
+import {BootstrapService, StartParams, Preset} from 'symbol-bootstrap'; 
+import {expect} from '@oclif/test'; 
+
 it('Bootstrap e2e test', async () => {
     const service = new BootstrapService();
     const config: StartParams = {
         preset: Preset.bootstrap,
         reset: true,
+        healthCheck: true,
         timeout: 60000 * 5,
         target: 'target/bootstrap-test',
         detached: true,
