@@ -97,9 +97,11 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_runservice_.runservice.html#basicrun" class="tsd-kind-icon">basic<wbr>Run</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_runservice_.runservice.html#pollserviceuntilisup" class="tsd-kind-icon">poll<wbr>Service<wbr>Until<wbr>IsUp</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_runservice_.runservice.html#healthcheck" class="tsd-kind-icon">health<wbr>Check</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_runservice_.runservice.html#pullimages" class="tsd-kind-icon">pull<wbr>Images</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_runservice_.runservice.html#resetdata" class="tsd-kind-icon">reset<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_runservice_.runservice.html#run" class="tsd-kind-icon">run</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_service_runservice_.runservice.html#runonecheck" class="tsd-kind-icon">run<wbr>One<wbr>Check</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_runservice_.runservice.html#stop" class="tsd-kind-icon">stop</a></li>
 							</ul>
 						</section>
@@ -124,7 +126,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L21">src/service/RunService.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L33">src/service/RunService.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -146,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <a href="../modules/_service_runservice_.html#runparams" class="tsd-signature-type">RunParams</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L23">src/service/RunService.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L35">src/service/RunService.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -157,13 +159,13 @@
 					<a name="basicrun" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> basic<wbr>Run</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">basic<wbr>Run<span class="tsd-signature-symbol">(</span>extraArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, ignoreIfNotFound<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">basic<wbr>Run<span class="tsd-signature-symbol">(</span>extraArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, ignoreIfNotFound<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L100">src/service/RunService.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L156">src/service/RunService.ts:156</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -175,30 +177,50 @@
 									<h5>ignoreIfNotFound: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="pollserviceuntilisup" class="tsd-anchor"></a>
-					<h3>poll<wbr>Service<wbr>Until<wbr>IsUp</h3>
+					<a name="healthcheck" class="tsd-anchor"></a>
+					<h3>health<wbr>Check</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">poll<wbr>Service<wbr>Until<wbr>IsUp<span class="tsd-signature-symbol">(</span>totalPollingTime<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, pollIntervalMs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">health<wbr>Check<span class="tsd-signature-symbol">(</span>pollIntervalMs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L45">src/service/RunService.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L61">src/service/RunService.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>totalPollingTime: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> pollIntervalMs: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 10000</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="pullimages" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pull<wbr>Images</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">pull<wbr>Images<span class="tsd-signature-symbol">(</span>dockerCompose<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_dockercompose_.dockercompose.html" class="tsd-signature-type">DockerCompose</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L184">src/service/RunService.ts:184</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>dockerCompose: <a href="../interfaces/_model_dockercompose_.dockercompose.html" class="tsd-signature-type">DockerCompose</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -215,7 +237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L75">src/service/RunService.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L131">src/service/RunService.ts:131</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -232,10 +254,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L25">src/service/RunService.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L37">src/service/RunService.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="runonecheck" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> run<wbr>One<wbr>Check</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">run<wbr>One<wbr>Check<span class="tsd-signature-symbol">(</span>services<span class="tsd-signature-symbol">: </span><a href="../interfaces/_model_dockercompose_.dockercomposeservice.html" class="tsd-signature-type">DockerComposeService</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L79">src/service/RunService.ts:79</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>services: <a href="../interfaces/_model_dockercompose_.dockercomposeservice.html" class="tsd-signature-type">DockerComposeService</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -249,7 +294,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L96">src/service/RunService.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L152">src/service/RunService.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -265,7 +310,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L21">src/service/RunService.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L29">src/service/RunService.ts:29</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -274,17 +319,17 @@
 						<div class="tsd-signature tsd-kind-icon">reset<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L21">src/service/RunService.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L32">src/service/RunService.ts:32</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="defaultparams.target" class="tsd-anchor"></a>
 						<h3>target</h3>
-						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;target&quot;</span></div>
+						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = BootstrapUtils.defaultTargetFolder</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L21">src/service/RunService.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L30">src/service/RunService.ts:30</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -294,7 +339,7 @@
 						<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 60000</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/RunService.ts#L21">src/service/RunService.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/RunService.ts#L31">src/service/RunService.ts:31</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -329,13 +374,19 @@
 								<a href="_service_runservice_.runservice.html#basicrun" class="tsd-kind-icon">basic<wbr>Run</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_service_runservice_.runservice.html#pollserviceuntilisup" class="tsd-kind-icon">poll<wbr>Service<wbr>Until<wbr>IsUp</a>
+								<a href="_service_runservice_.runservice.html#healthcheck" class="tsd-kind-icon">health<wbr>Check</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_service_runservice_.runservice.html#pullimages" class="tsd-kind-icon">pull<wbr>Images</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_service_runservice_.runservice.html#resetdata" class="tsd-kind-icon">reset<wbr>Data</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_service_runservice_.runservice.html#run" class="tsd-kind-icon">run</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_service_runservice_.runservice.html#runonecheck" class="tsd-kind-icon">run<wbr>One<wbr>Check</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_service_runservice_.runservice.html#stop" class="tsd-kind-icon">stop</a>

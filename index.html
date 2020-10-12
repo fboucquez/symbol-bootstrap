@@ -81,7 +81,6 @@
 					<li><a href="#why-this-tool">Why this tool?</a></li>
 					<li><a href="#key-benefits">Key benefits:</a></li>
 					<li><a href="#concepts">Concepts</a></li>
-					<li><a href="#custom-repeat-preset-for-bootstrap-preset">custom repeat preset for bootstrap preset.</a></li>
 					<li><a href="#requirements">Requirements</a></li>
 					<li><a href="#usage">Usage</a></li>
 					<li><a href="#e2e-testing-support">E2E Testing support</a></li>
@@ -145,109 +144,7 @@
 					<h3>Custom preset:</h3>
 				</a>
 				<p>It&#39;s the way you can tune the network without modifying the code. It&#39;s a yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</p>
-				<p>Most people would use the out-of-box preset or tune a few attributes.</p>
-				<p>The file is a hierarchical yaml object. If an attribute is defined at root level, it overrides the default value for all the affected configurations.
-				The attribute can also be defined in a lower level object just affecting one component (node, gateway, nemesis, etc).</p>
-				<p>The best way to validate your configuration is by inspecting the generated configuration and preset.yml files in the target folder</p>
-				<p><strong>If you are trying new configurations, remember to reset the previous one by running --reset (-r) or by removing the selected target folder (./target by default)</strong></p>
-				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-					<h4>Examples:</h4>
-				</a>
-				<a href="#custom-rest-image-and-throttling" id="custom-rest-image-and-throttling" style="color: inherit; text-decoration: none;">
-					<h5>Custom Rest image and throttling:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">symbolRestImage:</span> <span class="hljs-string">symbolplatform/symbol-rest:2.1.1-alpha</span>
-<span class="hljs-attr">throttlingBurst:</span> <span class="hljs-number">35</span>
-<span class="hljs-attr">throttlingRate:</span> <span class="hljs-number">1000</span></code></pre>
-				<a href="#custom-block-duration-max-namespace-duration-and-number-of-nemesis-accounts" id="custom-block-duration-max-namespace-duration-and-number-of-nemesis-accounts" style="color: inherit; text-decoration: none;">
-					<h5>Custom block duration, max namespace duration and number of nemesis accounts:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">blockGenerationTargetTime:</span> <span class="hljs-string">5s</span>
-<span class="hljs-attr">maxNamespaceDuration:</span> <span class="hljs-string">10d</span>
-<span class="hljs-attr">nemesis:</span>
-    <span class="hljs-attr">mosaics:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-attr">accounts:</span> <span class="hljs-number">20</span></code></pre>
-				<a href="#zero-fee-nodes" id="zero-fee-nodes" style="color: inherit; text-decoration: none;">
-					<h5>Zero fee nodes:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">minFeeMultiplier:</span> <span class="hljs-number">0</span></code></pre>
-				<a href="#not-exposed-rest-gateway" id="not-exposed-rest-gateway" style="color: inherit; text-decoration: none;">
-					<h5>Not exposed rest gateway:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">gateways:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">openPort:</span> <span class="hljs-literal">false</span></code></pre>
-				<a href="#custom-nodes39-friendly-names-and-hosts" id="custom-nodes39-friendly-names-and-hosts" style="color: inherit; text-decoration: none;">
-					<h5>Custom nodes&#39; friendly names and hosts:</h5>
-				</a>
-				<p>Updating first node (single node presets like <code>testnet</code>):</p>
-				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">My</span> <span class="hljs-string">node</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
-      <span class="hljs-attr">host:</span> <span class="hljs-string">&#x27;myNode.custom.hostname&#x27;</span></code></pre>
-				<p>Updating multiple nodes (multi-node presets like <code>bootstrap</code>)</p>
-				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">Peer</span> <span class="hljs-string">Node</span> <span class="hljs-number">1</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">Peer</span> <span class="hljs-string">Node</span> <span class="hljs-number">2</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
-      <span class="hljs-attr">host:</span> <span class="hljs-string">&#x27;peer2.custom.hostname&#x27;</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">Api</span> <span class="hljs-string">Node</span> <span class="hljs-number">1</span> <span class="hljs-string">custom</span> <span class="hljs-string">friendly</span> <span class="hljs-string">name</span>
-      <span class="hljs-attr">host:</span> <span class="hljs-string">&#x27;api1.custom.hostname&#x27;</span></code></pre>
-				<a href="#custom-generation-hash-seed-balances-and-block-1-transactions" id="custom-generation-hash-seed-balances-and-block-1-transactions" style="color: inherit; text-decoration: none;">
-					<h5>Custom generation hash seed, balances and block 1 transactions:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">nemesisGenerationHashSeed:</span> <span class="hljs-string">7391E2EF993C70D2F52691A54411DA3BD1F77CF6D47B8C8D8832C890069AAAAA</span>
-<span class="hljs-attr">nemesis:</span>
-    <span class="hljs-attr">balances:</span>
-        <span class="hljs-attr">TDN2CNADENSTASFK6SCB7MFQLAYNZB3JBZCBLLA:</span> <span class="hljs-number">898300000</span>
-        <span class="hljs-attr">TBK7C5SI3NR3ZEZTMNXRISY6FENDK3YDE63HK7Q:</span> <span class="hljs-number">98800000</span>
-        <span class="hljs-attr">TA45K3WZYQQKSFHJ3DSEQTOO6N7RMBQUVE7H6MA:</span> <span class="hljs-number">984750000</span>
-<span class="hljs-attr">transactions:</span>
-    <span class="hljs-attr">&#x27;16963_581474&#x27;:</span> <span class="hljs-string">A1000000000000...(serialized</span> <span class="hljs-string">hex</span> <span class="hljs-string">transaction)</span>
-    <span class="hljs-attr">&#x27;16963_580690&#x27;:</span> <span class="hljs-string">A1000000000000...</span>
-    <span class="hljs-attr">&#x27;MyTransaction&#x27;:</span> <span class="hljs-number">01000000000000</span><span class="hljs-string">...</span></code></pre>
-				<a href="#enable-voting-mode-in-a-node" id="enable-voting-mode-in-a-node" style="color: inherit; text-decoration: none;">
-					<h5>Enable voting mode in a node:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">voting:</span> <span class="hljs-literal">true</span></code></pre>
-				<p>In order to finalize the peer or voting nodes registration to an existing network like Testnet, be sure your nodes&#39; signing addresses have enough funds. For test environments, you can use the network&#39;s faucet.</p>
-				<p>Then run:</p>
-				<pre><code><span class="hljs-attribute">symbol-bootstrap link</span></code></pre>
-				<p><strong>Note:</strong> Full network <code>-p bootstrap</code> nodes are fully configured voting and peer nodes. <code>VotingKeyLinkTransaction</code> and <code>VrfKeyLinkTransaction</code> are added to the nemesis block automatically.</p>
-				<a href="#disable-voting-mode-in-all-bootstrap-nodes" id="disable-voting-mode-in-all-bootstrap-nodes" style="color: inherit; text-decoration: none;">
-					<h5>Disable voting mode in all bootstrap nodes:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-attr">nodes:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">voting:</span> <span class="hljs-literal">false</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">voting:</span> <span class="hljs-literal">false</span></code></pre>
-				<a href="#repeat-components" id="repeat-components" style="color: inherit; text-decoration: none;">
-					<h5>Repeat components:</h5>
-				</a>
-				<pre><code class="language-yaml"><span class="hljs-comment"># custom repeat preset for bootstrap preset.</span>
-<span class="hljs-attr">databases:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">repeat:</span> <span class="hljs-number">4</span>
-<span class="hljs-attr">nodes:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">repeat:</span> <span class="hljs-number">3</span>
-      <span class="hljs-attr">name:</span> <span class="hljs-string">&#x27;my-custom-peer-node-<span class="hljs-template-variable">{{$index}}</span>&#x27;</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">repeat:</span> <span class="hljs-number">4</span>
-      <span class="hljs-attr">name:</span> <span class="hljs-string">&#x27;my-custom-api-node-<span class="hljs-template-variable">{{$index}}</span>&#x27;</span>
-      <span class="hljs-attr">friendlyName:</span> <span class="hljs-string">&#x27;my-custom-<span class="hljs-template-variable">{{$index}}</span>-friendly-name&#x27;</span>
-<span class="hljs-attr">gateways:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">repeat:</span> <span class="hljs-number">4</span>
-      <span class="hljs-attr">apiNodeName:</span> <span class="hljs-string">&#x27;my-custom-api-node-<span class="hljs-template-variable">{{$index}}</span>&#x27;</span>
-      <span class="hljs-attr">ipv4_address:</span> <span class="hljs-string">&#x27;172.20.0.<span class="hljs-template-variable">{{add $index 20}}</span>&#x27;</span><span class="hljs-string">,</span></code></pre>
-				<p><code>Repeat</code> is a pretty powerful customization. It tells bootstrap to &quot;repeat&quot; the defined configuration a number of times. This will allow you to generate as many services as you want quickly.</p>
-				<p>This is specially useful for:</p>
-				<ul>
-					<li>Configure a really large network. The generated configuration could be then deployed into different cloud services.</li>
-					<li>Load test many services together to validate how they behave.</li>
-					<li>Exclude a service via <code>repeat: 0</code>.</li>
-				</ul>
-				<p>If repeat is active, each value in the object is a <a href="https://handlebarsjs.com/guide/expressions.html">handlebars</a> template. <code>$index</code> is the index of the generated service starting from 0. </p>
-				<p>Given an <code>$index</code> of 10:</p>
-				<ul>
-					<li><code>my-custom-peer-node-{{$index}}</code> will become <code>my-custom-peer-node-10</code></li>
-					<li><code>172.20.0.{{add $index 20}}</code> will become <code>172.20.0.30</code></li>
-				</ul>
-				<p>The default preset <code>bootstrap</code> uses repeat but with just 1 database, 2 peers, 1 api and 1 rest gateway.</p>
+				<p>Custom presets give Symbol Bootstrap its versatility. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
 				<a href="#target" id="target" style="color: inherit; text-decoration: none;">
 					<h2>Target:</h2>
 				</a>
@@ -330,7 +227,7 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 <span class="hljs-string">scripts&quot;:</span> {
 <span class="hljs-string">...</span>
     <span class="hljs-attr">&quot;clean-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap clean&quot;</span>,
-    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --detached&quot;</span>,
+    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --detached --healthCheck&quot;</span>,
     <span class="hljs-attr">&quot;run-stop&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap stop&quot;</span>,
     <span class="hljs-attr">&quot;integration-test&quot;:</span> <span class="hljs-string">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span>,
     <span class="hljs-attr">&quot;e2e&quot;:</span> <span class="hljs-string">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span>,
@@ -343,11 +240,15 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 				</a>
 				<p>Alternatively, you can use the <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
 				<p>Example:</p>
-				<pre><code class="language-ts">it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; {
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {BootstrapService, StartParams, Preset} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;symbol-bootstrap&#x27;</span>;
+<span class="hljs-keyword">import</span> {expect} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@oclif/test&#x27;</span>; 
+
+it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; {
     <span class="hljs-keyword">const</span> service = <span class="hljs-keyword">new</span> BootstrapService();
     <span class="hljs-keyword">const</span> config: StartParams = {
         preset: Preset.bootstrap,
         reset: <span class="hljs-literal">true</span>,
+        healthCheck: <span class="hljs-literal">true</span>,
         timeout: <span class="hljs-number">60000</span> * <span class="hljs-number">5</span>,
         target: <span class="hljs-string">&#x27;target/bootstrap-test&#x27;</span>,
         detached: <span class="hljs-literal">true</span>,
@@ -384,6 +285,7 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder deleting the generated configuration and data</li>
 					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
 					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
+					<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
 					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
 					<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
@@ -410,6 +312,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_config_.html">&quot;commands/config&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_healthcheck_.html">&quot;commands/health<wbr>Check&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_link_.html">&quot;commands/link&quot;</a>
@@ -479,6 +384,9 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_nemgenservice_.html">&quot;service/<wbr>Nemgen<wbr>Service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_service_portservice_.html">&quot;service/<wbr>Port<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_reportservice_.html">&quot;service/<wbr>Report<wbr>Service&quot;</a>

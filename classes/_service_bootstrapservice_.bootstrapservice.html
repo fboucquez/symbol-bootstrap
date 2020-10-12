@@ -105,6 +105,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#compose" class="tsd-kind-icon">compose</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#config" class="tsd-kind-icon">config</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#healthcheck" class="tsd-kind-icon">health<wbr>Check</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#link" class="tsd-kind-icon">link</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#report" class="tsd-kind-icon">report</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#resetdata" class="tsd-kind-icon">reset<wbr>Data</a></li>
@@ -128,7 +129,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L14">src/service/BootstrapService.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L14">src/service/BootstrapService.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -150,7 +151,7 @@
 					<div class="tsd-signature tsd-kind-icon">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L15">src/service/BootstrapService.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L15">src/service/BootstrapService.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -167,7 +168,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L34">src/service/BootstrapService.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L34">src/service/BootstrapService.ts:34</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -205,7 +206,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L22">src/service/BootstrapService.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L22">src/service/BootstrapService.ts:22</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -227,6 +228,42 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="healthcheck" class="tsd-anchor"></a>
+					<h3>health<wbr>Check</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">health<wbr>Check<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L96">src/service/BootstrapService.ts:96</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It checks if the health of the running services is ok.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <span class="tsd-signature-symbol">{ </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = { target: RunService.defaultParams.target }</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the params of the clean command.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="link" class="tsd-anchor"></a>
 					<h3>link</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -236,7 +273,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L48">src/service/BootstrapService.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L48">src/service/BootstrapService.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -280,7 +317,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L65">src/service/BootstrapService.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L65">src/service/BootstrapService.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -319,7 +356,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L87">src/service/BootstrapService.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L87">src/service/BootstrapService.ts:87</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -355,7 +392,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L78">src/service/BootstrapService.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L78">src/service/BootstrapService.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -388,7 +425,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L96">src/service/BootstrapService.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L105">src/service/BootstrapService.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -419,7 +456,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/cea07d4/src/service/BootstrapService.ts#L110">src/service/BootstrapService.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/af6e87e/src/service/BootstrapService.ts#L119">src/service/BootstrapService.ts:119</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -472,6 +509,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_service_bootstrapservice_.bootstrapservice.html#config" class="tsd-kind-icon">config</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_service_bootstrapservice_.bootstrapservice.html#healthcheck" class="tsd-kind-icon">health<wbr>Check</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_service_bootstrapservice_.bootstrapservice.html#link" class="tsd-kind-icon">link</a>
