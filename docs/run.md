@@ -14,21 +14,36 @@ USAGE
   $ symbol-bootstrap run
 
 OPTIONS
-  -b, --build            If provided, docker-compose will run with -b (--build)
+  -a, --args=args
+      Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
 
-  -d, --detached         If provided, docker-compose will run with -d (--detached) and this command will wait unit
-                         server is running before returning
+  -b, --build
+      If provided, docker-compose will run with -b (--build)
 
-  -h, --help             It shows the help of this command.
+  -d, --detached
+      If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before 
+      returning
 
-  -s, --service=service  To start a particular docker compose service by name, example rest-gateway, db, node-peer-0
+  -h, --help
+      It shows the help of this command.
 
-  -t, --target=target    [default: target] the target folder
+  -t, --target=target
+      [default: target] The target folder where the symbol-bootstrap network is generated
 
-  -t, --timeout=timeout  [default: 60000] If running in detached mode, how long before timing out (in MS)
+  --healthCheck
+      It checks if the services created with docker compose are up and running.
 
-  --resetData            It reset the database and node data but keeps the generated configuration, keys, voting tree
-                         files and block 1
+      - Whether the docker containers are running.
+      - Whether the services' exposed ports are listening.
+      - Whether the rest gateways' /node/health are OK.
+
+      The health check process handles 'repeat' and custom 'openPort' services.
+
+  --resetData
+      It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1
+
+  --timeout=timeout
+      [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
 
 EXAMPLE
   $ symbol-bootstrap run

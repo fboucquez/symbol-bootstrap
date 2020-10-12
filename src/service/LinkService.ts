@@ -28,7 +28,12 @@ export type LinkParams = { target: string; url: string; maxFee: number; unlink: 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class LinkService {
-    public static readonly defaultParams: LinkParams = { target: 'target', url: 'http://localhost:3000', maxFee: 100000, unlink: false };
+    public static readonly defaultParams: LinkParams = {
+        target: BootstrapUtils.defaultTargetFolder,
+        url: 'http://localhost:3000',
+        maxFee: 100000,
+        unlink: false,
+    };
 
     constructor(protected readonly params: LinkParams) {}
 

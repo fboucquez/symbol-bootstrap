@@ -32,7 +32,7 @@ export default class LoggerFactory {
     }
 
     private static logFormatTemplate(i: { level: string; message: string; [key: string]: any }): string {
-        return `${i.timestamp} ${i.level} [${i.label}] ${i.message}`;
+        return `${i.timestamp} ${i.level} ${i.message}`;
     }
 
     private static getLogFileName(id: LogType): string {

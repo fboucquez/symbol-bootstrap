@@ -1,5 +1,5 @@
-import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, ConfigService } from '../service';
+import { Command } from '@oclif/command';
+import { BootstrapService, BootstrapUtils } from '../service';
 
 export default class ResetData extends Command {
     static description = 'It removes the data keeping the generated configuration, certificates, keys and block 1.';
@@ -7,12 +7,8 @@ export default class ResetData extends Command {
     static examples = [`$ symbol-bootstrap resetData`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: ConfigService.defaultParams.target,
-        }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
     };
 
     public async run(): Promise<void> {

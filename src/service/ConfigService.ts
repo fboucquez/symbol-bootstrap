@@ -54,7 +54,7 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class ConfigService {
     public static defaultParams: ConfigParams = {
-        target: 'target',
+        target: BootstrapUtils.defaultTargetFolder,
         report: false,
         preset: Preset.bootstrap,
         reset: false,
@@ -147,6 +147,8 @@ export class ConfigService {
             this.params.customPreset,
             this.params.customPresetObject,
         );
+
+        await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
 
         const networkType = presetData.networkType;
         const addresses = await this.generateRandomConfiguration(networkType, presetData);

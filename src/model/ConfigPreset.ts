@@ -1,6 +1,13 @@
 import { NetworkType } from 'symbol-sdk';
 import { NodeType } from './NodeType';
 
+export interface DockerServicePreset {
+    ipv4_address?: string;
+    openPort?: boolean | number | string;
+    host?: string;
+    excludeDockerService?: boolean;
+}
+
 export interface MosaicPreset {
     name: string;
     divisibility: number;
@@ -13,10 +20,9 @@ export interface MosaicPreset {
     currencyDistributions: { address: string; amount: number }[];
 }
 
-export interface DatabasePreset {
+export interface DatabasePreset extends DockerServicePreset {
     repeat?: number;
     name: string;
-    openPort?: boolean | number | string;
 }
 
 export interface NemesisPreset {
@@ -28,34 +34,36 @@ export interface NemesisPreset {
     transactionsDirectory: string;
 }
 
-export interface NodePreset {
+export interface NodePreset extends DockerServicePreset {
     // At least these properties.
     repeat?: number;
     harvesting: boolean;
     api: boolean;
     voting: boolean;
     databaseHost: string;
-    openBrokerPort?: boolean | number | string;
-    openPort?: boolean | number | string;
     host?: string;
     name: string;
     roles: string;
     friendlyName?: string;
-    brokerHost?: string;
     // Optional private keys. If not provided, bootstrap will generate random ones.
     signingPrivateKey?: string;
     vrfPrivateKey?: string;
     votingPrivateKey?: string;
+
+    //Broker specific
+    brokerName?: string;
+    brokerHost?: string;
+    brokerIpv4_address?: string;
+    brokerOpenPort?: boolean | number | string;
+    brokerExcludeDockerService?: boolean;
 }
 
-export interface GatewayPreset {
+export interface GatewayPreset extends DockerServicePreset {
     // At least these properties.
     repeat?: number;
-    ipv4_address?: string;
     apiNodeName: string;
     apiNodeHost: string;
     databaseHost: string;
-    openPort?: boolean | number | string;
     name: string;
 }
 

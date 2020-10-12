@@ -1,5 +1,5 @@
-import { Command, flags } from '@oclif/command';
-import { BootstrapUtils, ConfigService } from '../service';
+import { Command } from '@oclif/command';
+import { BootstrapUtils } from '../service';
 
 export default class Clean extends Command {
     static description = 'It removes the target folder deleting the generated configuration and data';
@@ -7,12 +7,8 @@ export default class Clean extends Command {
     static examples = [`$ symbol-bootstrap clean`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: ConfigService.defaultParams.target,
-        }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
     };
 
     public async run(): Promise<void> {

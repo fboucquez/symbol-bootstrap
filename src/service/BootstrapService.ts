@@ -89,6 +89,15 @@ export class BootstrapService {
     }
 
     /**
+     * It checks if the health of the running services is ok.
+     *
+     * @param config the params of the clean command.
+     */
+    public async healthCheck(config = { target: RunService.defaultParams.target }): Promise<void> {
+        await new RunService(config).healthCheck();
+    }
+
+    /**
      * This method aggregates config, compose and run all in one.
      *
      * @param config the aggregated params in order to run all the sub commands.

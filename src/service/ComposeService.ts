@@ -2,7 +2,8 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigPreset } from '../model';
+import { ConfigPreset, DockerServicePreset } from '../model';
+import * as _ from 'lodash';
 import { join } from 'path';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -17,7 +18,7 @@ const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
-        target: 'target',
+        target: BootstrapUtils.defaultTargetFolder,
         user: BootstrapUtils.CURRENT_USER,
         reset: false,
     };
@@ -50,7 +51,7 @@ export class ComposeService {
 
         logger.info(`creating docker-compose.yml from last used profile.`);
 
-        const services: Record<string, DockerComposeService> = {};
+        const services: (DockerComposeService | undefined)[] = [];
 
         const resolvePorts = (internalPort: number, openPort: number | undefined | boolean | string): string[] => {
             if (!openPort) {
@@ -62,7 +63,13 @@ export class ComposeService {
             return [`${openPort}:${internalPort}`];
         };
 
-        const resolveService = async (rawService: DockerComposeService): Promise<DockerComposeService> => {
+        const resolveService = async (
+            servicePreset: DockerServicePreset,
+            rawService: DockerComposeService,
+        ): Promise<DockerComposeService | undefined> => {
+            if (servicePreset.excludeDockerService) {
+                return undefined;
+            }
             if (false) {
                 // POC about creating custom aws images.
                 const serviceName = rawService.container_name;
@@ -93,20 +100,33 @@ export class ComposeService {
 
                 return { ...rawService, image: generatedImageName, volumes: undefined };
             } else {
-                return { ...rawService, user };
+                const service = { ...rawService, user };
+                if (servicePreset.host || servicePreset.ipv4_address) {
+                    service.networks = { default: {} };
+                }
+                if (servicePreset.host) {
+                    service.hostname = servicePreset.host;
+                    service.networks!.default.aliases = [servicePreset.host];
+                }
+                if (servicePreset.ipv4_address) {
+                    service.networks!.default.ipv4_address = servicePreset.ipv4_address;
+                }
+                return service;
             }
         };
 
         await Promise.all(
             (presetData.databases || []).map(async (n) => {
-                services[n.name] = await resolveService({
-                    container_name: n.name,
-                    image: presetData.mongoImage,
-                    command: `bash -c "/bin/bash /userconfig/mongors.sh ${n.name} & mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
-                    stop_signal: 'SIGINT',
-                    ports: resolvePorts(27017, n.openPort),
-                    volumes: [vol(`./mongo`, `/userconfig/:ro`), vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw')],
-                });
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.mongoImage,
+                        command: `bash -c "/bin/bash /userconfig/mongors.sh ${n.name} & mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
+                        stop_signal: 'SIGINT',
+                        ports: resolvePorts(27017, n.openPort),
+                        volumes: [vol(`./mongo`, `/userconfig/:ro`), vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw')],
+                    }),
+                );
             }),
         );
 
@@ -114,7 +134,7 @@ export class ComposeService {
         const nodeCommandsDirectory = '/symbol-commands';
         await Promise.all(
             (presetData.nodes || []).map(async (n) => {
-                const nodeService = await resolveService({
+                const nodeService = await resolveService(n, {
                     container_name: n.name,
                     image: presetData.symbolServerImage,
                     command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh  ${n.name} && /bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}"`,
@@ -123,57 +143,57 @@ export class ComposeService {
                     restart: 'on-failure:2',
                     ports: resolvePorts(7900, n.openPort),
                     volumes: [vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory), vol(`./server`, nodeCommandsDirectory)],
+                    depends_on: n.brokerName ? [n.brokerName] : [],
                 });
 
-                nodeService.depends_on = [];
-                if (n.host) {
-                    nodeService.hostname = n.host;
-                    nodeService.networks = { default: { aliases: [n.host] } };
-                }
-
-                services[n.name] = nodeService;
-                if (n.brokerHost) {
-                    services[n.brokerHost] = await resolveService({
-                        container_name: n.brokerHost,
-                        image: nodeService.image,
-                        working_dir: nodeWorkingDirectory,
-                        command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerHost} && /bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerHost}"`,
-                        ports: resolvePorts(7902, n.openBrokerPort),
-                        stop_signal: 'SIGINT',
-                        restart: 'on-failure:2',
-                        volumes: nodeService.volumes,
-                    });
-                    nodeService.depends_on.push(n.brokerHost);
+                services.push(nodeService);
+                if (n.brokerName && nodeService) {
+                    services.push(
+                        await resolveService(
+                            {
+                                ipv4_address: n.brokerIpv4_address,
+                                openPort: n.brokerOpenPort,
+                                excludeDockerService: n.brokerExcludeDockerService,
+                                host: n.brokerHost,
+                            },
+                            {
+                                container_name: n.brokerName,
+                                image: nodeService.image,
+                                working_dir: nodeWorkingDirectory,
+                                command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName} && /bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName}"`,
+                                ports: resolvePorts(7902, n.brokerOpenPort),
+                                stop_signal: 'SIGINT',
+                                restart: 'on-failure:2',
+                                volumes: nodeService.volumes,
+                            },
+                        ),
+                    );
                 }
             }),
         );
 
         await Promise.all(
             (presetData.gateways || []).map(async (n) => {
-                const gatewayService = await resolveService({
-                    container_name: n.name,
-                    image: presetData.symbolRestImage,
-                    command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
-                    stop_signal: 'SIGINT',
-                    working_dir: nodeWorkingDirectory,
-                    ports: resolvePorts(3000, n.openPort),
-                    volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
-                    depends_on: [n.databaseHost],
-                });
-                if (n.ipv4_address) {
-                    gatewayService.networks = {
-                        default: {
-                            ipv4_address: n.ipv4_address,
-                        },
-                    };
-                }
-                services[n.name] = gatewayService;
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolRestImage,
+                        command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
+                        stop_signal: 'SIGINT',
+                        working_dir: nodeWorkingDirectory,
+                        ports: resolvePorts(3000, n.openPort),
+                        volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
+                        depends_on: [n.databaseHost],
+                    }),
+                );
             }),
         );
 
+        const validServices: DockerComposeService[] = services.filter((s) => s).map((s) => s as DockerComposeService);
+        const servicesMap: Record<string, DockerComposeService> = _.keyBy(validServices, 'container_name');
         const dockerCompose: DockerCompose = {
             version: '3',
-            services: services,
+            services: servicesMap,
         };
 
         if (presetData.subnet)

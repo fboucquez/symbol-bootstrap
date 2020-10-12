@@ -1,5 +1,5 @@
-import { Command, flags } from '@oclif/command';
-import { BootstrapUtils, ConfigService, RunService } from '../service';
+import { Command } from '@oclif/command';
+import { BootstrapUtils, RunService } from '../service';
 
 export default class Stop extends Command {
     static description =
@@ -7,12 +7,8 @@ export default class Stop extends Command {
     static examples = [`$ symbol-bootstrap stop`];
 
     static flags = {
-        help: flags.help({ char: 'h', description: 'It shows the help of this command.' }),
-        target: flags.string({
-            char: 't',
-            description: 'the target folder',
-            default: ConfigService.defaultParams.target,
-        }),
+        help: BootstrapUtils.helpFlag,
+        target: BootstrapUtils.targetFlag,
     };
 
     public run(): Promise<void> {

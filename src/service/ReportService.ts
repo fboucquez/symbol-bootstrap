@@ -36,7 +36,7 @@ interface ReportNode {
 
 export class ReportService {
     public static defaultParams: ReportParams = {
-        target: 'target',
+        target: BootstrapUtils.defaultTargetFolder,
     };
 
     constructor(private readonly root: string, protected readonly params: ReportParams) {}
