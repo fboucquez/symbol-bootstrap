@@ -14,9 +14,6 @@ USAGE
   $ symbol-bootstrap run
 
 OPTIONS
-  -a, --args=args
-      Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
-
   -b, --build
       If provided, docker-compose will run with -b (--build)
 
@@ -29,6 +26,9 @@ OPTIONS
 
   -t, --target=target
       [default: target] The target folder where the symbol-bootstrap network is generated
+
+  --args=args
+      Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
 
   --healthCheck
       It checks if the services created with docker compose are up and running.

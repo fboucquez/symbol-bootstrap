@@ -26,7 +26,6 @@ export default class Run extends Command {
         }),
 
         args: flags.string({
-            char: 'a',
             multiple: true,
             description: 'Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.',
         }),

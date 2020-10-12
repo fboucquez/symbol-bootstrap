@@ -14,9 +14,6 @@ USAGE
   $ symbol-bootstrap start
 
 OPTIONS
-  -a, --args=args
-      Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
-
   -a, --assembly=assembly
       An optional assembly type, example "dual" for testnet
 
@@ -45,6 +42,9 @@ OPTIONS
   -u, --user=user
       [default: current] User used to run docker images when creating configuration files like certificates or nemesis 
       block. "current" means the current user.
+
+  --args=args
+      Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
 
   --healthCheck
       It checks if the services created with docker compose are up and running.
