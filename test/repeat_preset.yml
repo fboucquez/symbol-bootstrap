@@ -10,3 +10,5 @@ nodes:
 # 4 rests
 gateways:
     - repeat: 4
+explorers:
+  - repeat: 2

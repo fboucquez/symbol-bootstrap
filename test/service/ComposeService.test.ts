@@ -18,7 +18,7 @@ describe('ComposeService', () => {
 
         const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
             const user = await BootstrapUtils.getDockerUserGroup();
-            if (user) {
+            if (user && service.user) {
                 service.user = user;
             } else {
                 delete service.user;

@@ -1,308 +1,320 @@
 version: '3'
 services:
-    db-0:
-        container_name: db-0
-        image: 'mongo:4.2.6-bionic'
-        command: bash -c "/bin/bash /userconfig/mongors.sh db-0 & mongod --dbpath=/dbdata --bind_ip=db-0"
-        stop_signal: SIGINT
-        ports:
-            - '27017:27017'
-        volumes:
-            - './mongo:/userconfig/:ro'
-            - '../databases/db-0:/dbdata:rw'
-        user: '1000:1000'
-    db-1:
-        container_name: db-1
-        image: 'mongo:4.2.6-bionic'
-        command: bash -c "/bin/bash /userconfig/mongors.sh db-1 & mongod --dbpath=/dbdata --bind_ip=db-1"
-        stop_signal: SIGINT
-        ports:
-            - '27018:27017'
-        volumes:
-            - './mongo:/userconfig/:ro'
-            - '../databases/db-1:/dbdata:rw'
-        user: '1000:1000'
-    db-2:
-        container_name: db-2
-        image: 'mongo:4.2.6-bionic'
-        command: bash -c "/bin/bash /userconfig/mongors.sh db-2 & mongod --dbpath=/dbdata --bind_ip=db-2"
-        stop_signal: SIGINT
-        ports:
-            - '27019:27017'
-        volumes:
-            - './mongo:/userconfig/:ro'
-            - '../databases/db-2:/dbdata:rw'
-        user: '1000:1000'
-    db-3:
-        container_name: db-3
-        image: 'mongo:4.2.6-bionic'
-        command: bash -c "/bin/bash /userconfig/mongors.sh db-3 & mongod --dbpath=/dbdata --bind_ip=db-3"
-        stop_signal: SIGINT
-        ports:
-            - '27020:27017'
-        volumes:
-            - './mongo:/userconfig/:ro'
-            - '../databases/db-3:/dbdata:rw'
-        user: '1000:1000'
-    peer-node-0:
-        container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports:
-            - '7900:7900'
-        volumes:
-            - '../nodes/peer-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on: []
-        hostname: peer-node-0
-        networks:
-            default:
-                aliases:
-                    - peer-node-0
-    peer-node-1:
-        container_name: peer-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports:
-            - '7901:7900'
-        volumes:
-            - '../nodes/peer-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on: []
-        hostname: peer-node-1
-        networks:
-            default:
-                aliases:
-                    - peer-node-1
-    peer-node-2:
-        container_name: peer-node-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-2 && /bin/bash /symbol-commands/startServer.sh peer-node-2"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports:
-            - '7902:7900'
-        volumes:
-            - '../nodes/peer-node-2:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on: []
-        hostname: peer-node-2
-        networks:
-            default:
-                aliases:
-                    - peer-node-2
-    api-node-0:
-        container_name: api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports: []
-        volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on:
-            - api-node-broker-0
-        hostname: api-node-0
-        networks:
-            default:
-                aliases:
-                    - api-node-0
-    api-node-1:
-        container_name: api-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-1 && /bin/bash /symbol-commands/startServer.sh api-node-1"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports: []
-        volumes:
-            - '../nodes/api-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on:
-            - api-node-broker-1
-        hostname: api-node-1
-        networks:
-            default:
-                aliases:
-                    - api-node-1
-    api-node-2:
-        container_name: api-node-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-2 && /bin/bash /symbol-commands/startServer.sh api-node-2"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports: []
-        volumes:
-            - '../nodes/api-node-2:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on:
-            - api-node-broker-2
-        hostname: api-node-2
-        networks:
-            default:
-                aliases:
-                    - api-node-2
-    api-node-3:
-        container_name: api-node-3
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-3 && /bin/bash /symbol-commands/startServer.sh api-node-3"
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        restart: 'on-failure:2'
-        ports: []
-        volumes:
-            - '../nodes/api-node-3:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-        depends_on:
-            - api-node-broker-3
-        hostname: api-node-3
-        networks:
-            default:
-                aliases:
-                    - api-node-3
-    api-node-broker-0:
-        container_name: api-node-broker-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-0"
-        ports:
-            - '8002:7902'
-        stop_signal: SIGINT
-        restart: 'on-failure:2'
-        volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-    api-node-broker-1:
-        container_name: api-node-broker-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-1 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-1"
-        ports:
-            - '8003:7902'
-        stop_signal: SIGINT
-        restart: 'on-failure:2'
-        volumes:
-            - '../nodes/api-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-    api-node-broker-2:
-        container_name: api-node-broker-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-2 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-2"
-        ports:
-            - '8004:7902'
-        stop_signal: SIGINT
-        restart: 'on-failure:2'
-        volumes:
-            - '../nodes/api-node-2:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-    api-node-broker-3:
-        container_name: api-node-broker-3
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-3 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-3"
-        ports:
-            - '8005:7902'
-        stop_signal: SIGINT
-        restart: 'on-failure:2'
-        volumes:
-            - '../nodes/api-node-3:/symbol-workdir'
-            - './server:/symbol-commands'
-        user: '1000:1000'
-    rest-gateway-0:
-        container_name: rest-gateway-0
-        image: 'symbolplatform/symbol-rest:2.1.0'
-        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '3000:3000'
-        volumes:
-            - '../gateways/rest-gateway-0:/symbol-workdir'
-        depends_on:
-            - db-0
-        user: '1000:1000'
-        networks:
-            default:
-                ipv4_address: 172.20.0.25
-    rest-gateway-1:
-        container_name: rest-gateway-1
-        image: 'symbolplatform/symbol-rest:2.1.0'
-        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '3001:3000'
-        volumes:
-            - '../gateways/rest-gateway-1:/symbol-workdir'
-        depends_on:
-            - db-1
-        user: '1000:1000'
-        networks:
-            default:
-                ipv4_address: 172.20.0.26
-    rest-gateway-2:
-        container_name: rest-gateway-2
-        image: 'symbolplatform/symbol-rest:2.1.0'
-        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '3002:3000'
-        volumes:
-            - '../gateways/rest-gateway-2:/symbol-workdir'
-        depends_on:
-            - db-2
-        user: '1000:1000'
-        networks:
-            default:
-                ipv4_address: 172.20.0.27
-    rest-gateway-3:
-        container_name: rest-gateway-3
-        image: 'symbolplatform/symbol-rest:2.1.0'
-        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '3003:3000'
-        volumes:
-            - '../gateways/rest-gateway-3:/symbol-workdir'
-        depends_on:
-            - db-3
-        user: '1000:1000'
-        networks:
-            default:
-                ipv4_address: 172.20.0.28
+  db-0:
+    user: '1000:1000'
+    container_name: db-0
+    image: 'mongo:4.2.6-bionic'
+    command: bash -c "/bin/bash /userconfig/mongors.sh db-0 & mongod --dbpath=/dbdata --bind_ip=db-0"
+    stop_signal: SIGINT
+    ports:
+      - '27017:27017'
+    volumes:
+      - './mongo:/userconfig/:ro'
+      - '../databases/db-0:/dbdata:rw'
+  db-1:
+    user: '1000:1000'
+    container_name: db-1
+    image: 'mongo:4.2.6-bionic'
+    command: bash -c "/bin/bash /userconfig/mongors.sh db-1 & mongod --dbpath=/dbdata --bind_ip=db-1"
+    stop_signal: SIGINT
+    ports:
+      - '27018:27017'
+    volumes:
+      - './mongo:/userconfig/:ro'
+      - '../databases/db-1:/dbdata:rw'
+  db-2:
+    user: '1000:1000'
+    container_name: db-2
+    image: 'mongo:4.2.6-bionic'
+    command: bash -c "/bin/bash /userconfig/mongors.sh db-2 & mongod --dbpath=/dbdata --bind_ip=db-2"
+    stop_signal: SIGINT
+    ports:
+      - '27019:27017'
+    volumes:
+      - './mongo:/userconfig/:ro'
+      - '../databases/db-2:/dbdata:rw'
+  db-3:
+    user: '1000:1000'
+    container_name: db-3
+    image: 'mongo:4.2.6-bionic'
+    command: bash -c "/bin/bash /userconfig/mongors.sh db-3 & mongod --dbpath=/dbdata --bind_ip=db-3"
+    stop_signal: SIGINT
+    ports:
+      - '27020:27017'
+    volumes:
+      - './mongo:/userconfig/:ro'
+      - '../databases/db-3:/dbdata:rw'
+  peer-node-0:
+    user: '1000:1000'
+    container_name: peer-node-0
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports:
+      - '7900:7900'
+    volumes:
+      - '../nodes/peer-node-0:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on: []
+    networks:
+      default:
+        aliases:
+          - peer-node-0
+    hostname: peer-node-0
+  peer-node-1:
+    user: '1000:1000'
+    container_name: peer-node-1
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports:
+      - '7901:7900'
+    volumes:
+      - '../nodes/peer-node-1:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on: []
+    networks:
+      default:
+        aliases:
+          - peer-node-1
+    hostname: peer-node-1
+  peer-node-2:
+    user: '1000:1000'
+    container_name: peer-node-2
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-2 && /bin/bash /symbol-commands/startServer.sh peer-node-2"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports:
+      - '7902:7900'
+    volumes:
+      - '../nodes/peer-node-2:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on: []
+    networks:
+      default:
+        aliases:
+          - peer-node-2
+    hostname: peer-node-2
+  api-node-0:
+    user: '1000:1000'
+    container_name: api-node-0
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports: []
+    volumes:
+      - '../nodes/api-node-0:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on:
+      - api-node-broker-0
+    networks:
+      default:
+        aliases:
+          - api-node-0
+    hostname: api-node-0
+  api-node-1:
+    user: '1000:1000'
+    container_name: api-node-1
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-1 && /bin/bash /symbol-commands/startServer.sh api-node-1"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports: []
+    volumes:
+      - '../nodes/api-node-1:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on:
+      - api-node-broker-1
+    networks:
+      default:
+        aliases:
+          - api-node-1
+    hostname: api-node-1
+  api-node-2:
+    user: '1000:1000'
+    container_name: api-node-2
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-2 && /bin/bash /symbol-commands/startServer.sh api-node-2"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports: []
+    volumes:
+      - '../nodes/api-node-2:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on:
+      - api-node-broker-2
+    networks:
+      default:
+        aliases:
+          - api-node-2
+    hostname: api-node-2
+  api-node-3:
+    user: '1000:1000'
+    container_name: api-node-3
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-3 && /bin/bash /symbol-commands/startServer.sh api-node-3"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    restart: 'on-failure:2'
+    ports: []
+    volumes:
+      - '../nodes/api-node-3:/symbol-workdir'
+      - './server:/symbol-commands'
+    depends_on:
+      - api-node-broker-3
+    networks:
+      default:
+        aliases:
+          - api-node-3
+    hostname: api-node-3
+  api-node-broker-0:
+    user: '1000:1000'
+    container_name: api-node-broker-0
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    working_dir: /symbol-workdir
+    command: >-
+      bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
+      api-node-broker-0"
+    ports:
+      - '8002:7902'
+    stop_signal: SIGINT
+    restart: 'on-failure:2'
+    volumes:
+      - '../nodes/api-node-0:/symbol-workdir'
+      - './server:/symbol-commands'
+  api-node-broker-1:
+    user: '1000:1000'
+    container_name: api-node-broker-1
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    working_dir: /symbol-workdir
+    command: >-
+      bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-1 && /bin/bash /symbol-commands/startBroker.sh
+      api-node-broker-1"
+    ports:
+      - '8003:7902'
+    stop_signal: SIGINT
+    restart: 'on-failure:2'
+    volumes:
+      - '../nodes/api-node-1:/symbol-workdir'
+      - './server:/symbol-commands'
+  api-node-broker-2:
+    user: '1000:1000'
+    container_name: api-node-broker-2
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    working_dir: /symbol-workdir
+    command: >-
+      bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-2 && /bin/bash /symbol-commands/startBroker.sh
+      api-node-broker-2"
+    ports:
+      - '8004:7902'
+    stop_signal: SIGINT
+    restart: 'on-failure:2'
+    volumes:
+      - '../nodes/api-node-2:/symbol-workdir'
+      - './server:/symbol-commands'
+  api-node-broker-3:
+    user: '1000:1000'
+    container_name: api-node-broker-3
+    image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+    working_dir: /symbol-workdir
+    command: >-
+      bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-3 && /bin/bash /symbol-commands/startBroker.sh
+      api-node-broker-3"
+    ports:
+      - '8005:7902'
+    stop_signal: SIGINT
+    restart: 'on-failure:2'
+    volumes:
+      - '../nodes/api-node-3:/symbol-workdir'
+      - './server:/symbol-commands'
+  rest-gateway-0:
+    user: '1000:1000'
+    container_name: rest-gateway-0
+    image: 'symbolplatform/symbol-rest:2.1.0'
+    command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    ports:
+      - '3000:3000'
+    volumes:
+      - '../gateways/rest-gateway-0:/symbol-workdir'
+    depends_on:
+      - db-0
+    networks:
+      default:
+        ipv4_address: 172.20.0.25
+  rest-gateway-1:
+    user: '1000:1000'
+    container_name: rest-gateway-1
+    image: 'symbolplatform/symbol-rest:2.1.0'
+    command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    ports:
+      - '3001:3000'
+    volumes:
+      - '../gateways/rest-gateway-1:/symbol-workdir'
+    depends_on:
+      - db-1
+    networks:
+      default:
+        ipv4_address: 172.20.0.26
+  rest-gateway-2:
+    user: '1000:1000'
+    container_name: rest-gateway-2
+    image: 'symbolplatform/symbol-rest:2.1.0'
+    command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    ports:
+      - '3002:3000'
+    volumes:
+      - '../gateways/rest-gateway-2:/symbol-workdir'
+    depends_on:
+      - db-2
+    networks:
+      default:
+        ipv4_address: 172.20.0.27
+  rest-gateway-3:
+    user: '1000:1000'
+    container_name: rest-gateway-3
+    image: 'symbolplatform/symbol-rest:2.1.0'
+    command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    ports:
+      - '3003:3000'
+    volumes:
+      - '../gateways/rest-gateway-3:/symbol-workdir'
+    depends_on:
+      - db-3
+    networks:
+      default:
+        ipv4_address: 172.20.0.28
+  explorer-0:
+    container_name: explorer-0
+    image: fboucquez/symbol-explorer-config
+    command: ash -c "/bin/ash /symbol-commands/run.sh explorer-0"
+    stop_signal: SIGINT
+    working_dir: /symbol-workdir
+    ports:
+      - '80:80'
+    volumes:
+      - '../explorers/explorer-0:/symbol-workdir'
+      - './explorer:/symbol-commands'
 networks:
-    default:
-        ipam:
-            config:
-                - subnet: 172.20.0.0/24
+  default:
+    ipam:
+      config:
+        -
+          subnet: 172.20.0.0/24
