@@ -11,4 +11,4 @@ nodes:
 gateways:
     - repeat: 4
 explorers:
-  - repeat: 2
+    - repeat: 2

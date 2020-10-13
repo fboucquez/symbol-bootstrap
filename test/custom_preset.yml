@@ -2,8 +2,8 @@ baseNamespace: 'jamaica'
 minFeeMultiplier: 0
 defaultDynamicFeeMultiplier: 0
 nemesis:
-  mosaics:
-    - name: 'boj'
-    - name: 'marley'
+    mosaics:
+        - name: 'boj'
+        - name: 'marley'
 explorers:
-  - namespaceName: 'jamaica.boj'
+    - namespaceName: 'jamaica.boj'
