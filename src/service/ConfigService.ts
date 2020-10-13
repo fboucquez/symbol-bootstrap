@@ -159,6 +159,7 @@ export class ConfigService {
         await this.generateNemesis(presetData, addresses);
         await this.generateGateways(presetData, addresses);
         await this.generateExplorers(presetData);
+        await this.generateWallets(presetData);
 
         await BootstrapUtils.writeYaml(presetLocation, presetData);
         logger.info(`Configuration generated.`);
@@ -516,7 +517,19 @@ export class ConfigService {
                 const copyFrom = join(this.root, 'config', 'explorer');
                 const templateContext = { ...presetData, ...explorerPreset };
                 const name = templateContext.name || `explorer-${index}`;
-                const moveTo = BootstrapUtils.getTargetExplorerFolder(this.params.target, false, name);
+                const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetExplorersFolder, name);
+                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+            }),
+        );
+    }
+
+    private generateWallets(presetData: ConfigPreset) {
+        return Promise.all(
+            (presetData.wallets || []).map(async (explorerPreset, index: number) => {
+                const copyFrom = join(this.root, 'config', 'wallet');
+                const templateContext = { ...presetData, ...explorerPreset };
+                const name = templateContext.name || `wallet-${index}`;
+                const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
             }),
         );

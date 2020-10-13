@@ -16,6 +16,7 @@ const targetNodesFolder = BootstrapUtils.targetNodesFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
 const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
 const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
+const targetWalletsFolder = BootstrapUtils.targetWalletsFolder;
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
@@ -196,7 +197,6 @@ export class ComposeService {
                     await resolveService(n, {
                         container_name: n.name,
                         image: presetData.symbolExplorerImage,
-                        // command: `ash -c "ls -la ${nodeCommandsDirectory}"`,
                         command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
                         stop_signal: 'SIGINT',
                         user: undefined,
@@ -206,6 +206,23 @@ export class ComposeService {
                             vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory),
                             vol(`./explorer`, nodeCommandsDirectory),
                         ],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
+            (presetData.wallets || []).map(async (n) => {
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolWalletImage,
+                        command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
+                        stop_signal: 'SIGINT',
+                        user: undefined,
+                        working_dir: nodeWorkingDirectory,
+                        ports: resolvePorts(80, n.openPort),
+                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, nodeWorkingDirectory), vol(`./wallet`, nodeCommandsDirectory)],
                     }),
                 );
             }),

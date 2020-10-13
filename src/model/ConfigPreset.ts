@@ -73,6 +73,12 @@ export interface ExplorerPreset extends DockerServicePreset {
     name: string;
 }
 
+export interface WalletPreset extends DockerServicePreset {
+    // At least these properties.
+    repeat?: number;
+    name: string;
+}
+
 export interface ConfigPreset {
     catapultAppFolder: string;
     subnet?: string;
@@ -86,6 +92,7 @@ export interface ConfigPreset {
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];
+    wallets?: WalletPreset[];
     networkType: NetworkType;
     networkIdentifier: string;
     networkName: string;
@@ -97,6 +104,7 @@ export interface ConfigPreset {
     mongoImage: string;
     symbolServerToolsImage: string;
     symbolExplorerImage: string;
+    symbolWalletImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
     votingKeyDilution: number;

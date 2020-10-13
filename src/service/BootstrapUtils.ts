@@ -11,6 +11,7 @@ import { Addresses, ConfigPreset, NodePreset } from '../model';
 import { Preset } from './ConfigService';
 import { flags } from '@oclif/command';
 import { spawn } from 'child_process';
+import { DtoMapping } from 'symbol-sdk';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -22,6 +23,7 @@ export class BootstrapUtils {
     public static readonly targetNodesFolder = 'nodes';
     public static readonly targetGatewaysFolder = 'gateways';
     public static readonly targetExplorersFolder = 'explorers';
+    public static readonly targetWalletsFolder = 'wallets';
     public static readonly targetDatabasesFolder = 'databases';
     public static readonly targetNemesisFolder = 'nemesis';
 
@@ -236,6 +238,7 @@ export class BootstrapUtils {
             nodes: this.expandServicesRepeat(presetData.nodes),
             gateways: this.expandServicesRepeat(presetData.gateways),
             explorers: this.expandServicesRepeat(presetData.explorers),
+            wallets: this.expandServicesRepeat(presetData.wallets),
         };
     }
 
@@ -508,10 +511,6 @@ export class BootstrapUtils {
         return this.getTargetFolder(target, absolute, this.targetGatewaysFolder, ...paths);
     }
 
-    public static getTargetExplorerFolder(target: string, absolute: boolean, ...paths: string[]): string {
-        return this.getTargetFolder(target, absolute, this.targetExplorersFolder, ...paths);
-    }
-
     public static getTargetNemesisFolder(target: string, absolute: boolean, ...paths: string[]): string {
         return this.getTargetFolder(target, absolute, this.targetNemesisFolder, ...paths);
     }
@@ -525,6 +524,7 @@ export class BootstrapUtils {
         Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
         Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
         Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
+        Handlebars.registerHelper('toSeconds', BootstrapUtils.toSeconds);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
     })();
@@ -563,5 +563,9 @@ export class BootstrapUtils {
     }
     public static toSimpleHex(renderedText: string): string {
         return renderedText.split("'").join('').replace(/^(0x)/, '');
+    }
+
+    public static toSeconds(serverDuration: string): number {
+        return DtoMapping.parseServerDuration(serverDuration).seconds();
     }
 }

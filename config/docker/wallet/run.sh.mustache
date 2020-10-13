@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+echo "Starting wallet $1"
+cp * /usr/share/nginx/html/config
+nginx -g 'daemon off;'

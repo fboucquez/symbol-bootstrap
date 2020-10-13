@@ -56,7 +56,8 @@ export class LinkService {
             );
         }
 
-        const transactionNodes = this.createTransactionsToAnnounce(addresses, presetData);
+        const epochAdjustment = await repositoryFactory.getEpochAdjustment().toPromise();
+        const transactionNodes = this.createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
 
         if (!transactionNodes.length) {
             logger.info(`There are no transactions to announce...`);
@@ -133,6 +134,7 @@ export class LinkService {
     public createTransactionsToAnnounce(
         addresses: Addresses,
         presetData: ConfigPreset,
+        epochAdjustment: number,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
         return _.flatMap(addresses.nodes || [])
             .filter((node) => node.signing)
@@ -150,7 +152,7 @@ export class LinkService {
                     );
                     transactions.push(
                         VrfKeyLinkTransaction.create(
-                            Deadline.create(),
+                            Deadline.create(epochAdjustment),
                             node.vrf.publicKey,
                             action,
                             presetData.networkType,
@@ -165,7 +167,7 @@ export class LinkService {
                     );
                     transactions.push(
                         VotingKeyLinkTransaction.create(
-                            Deadline.create(),
+                            Deadline.create(epochAdjustment),
                             votingPublicKey,
                             presetData.votingKeyStartEpoch,
                             presetData.votingKeyEndEpoch,

@@ -9,6 +9,8 @@ baseNamespace: 'cat'
 harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 namespaceRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
+explorerUrl: http://localhost/
+faucetUrl: http://localhost:100/
 nemesis:
     mosaics:
         - name: 'currency'
@@ -71,6 +73,15 @@ explorers:
     namespaceName: 'CAT.CURRENCY'
     openPort: '{{add $index 80}}'
     restNodes: []
+wallets:
+  - repeat: 1
+    title: 'Symbol Bootstrap Wallet'
+    name: 'wallet-{{$index}}'
+    defaultNodeUrl: 'http://localhost:{{add $index 3000}}'
+    namespaceName: 'CAT.CURRENCY'
+    openPort: '{{add $index 90}}'
+    restNodes: []
+
 networkType: 152
 inflation:
     starting-at-height-1: 0

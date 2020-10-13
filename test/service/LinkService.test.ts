@@ -4,6 +4,8 @@ import { LinkService } from '../../src/service/LinkService';
 import { expect } from '@oclif/test';
 import { TransactionType } from 'symbol-sdk';
 
+const epochAdjustment = 1573430400;
+
 describe('LinkService', () => {
     it('LinkService testnet when down', async () => {
         const params = {
@@ -33,7 +35,7 @@ describe('LinkService', () => {
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
         expect(nodeAndTransactions[0].transactions.length).eq(2);
@@ -51,7 +53,7 @@ describe('LinkService', () => {
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
         expect(nodeAndTransactions[0].transactions.length).eq(1);
@@ -68,7 +70,7 @@ describe('LinkService', () => {
             assembly: 'api',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
         expect(nodeAndTransactions.length).eq(0);
     });
 
@@ -83,7 +85,7 @@ describe('LinkService', () => {
             assembly: 'api',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].transactions.length).eq(1);
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.VOTING_KEY_LINK);

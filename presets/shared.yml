@@ -64,6 +64,7 @@ symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.3
 symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.3
 symbolRestImage: symbolplatform/symbol-rest:2.1.0
 symbolExplorerImage: fboucquez/symbol-explorer-config
+symbolWalletImage: fboucquez/symbol-desktop-wallet
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
