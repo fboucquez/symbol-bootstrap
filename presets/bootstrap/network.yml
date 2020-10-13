@@ -64,6 +64,13 @@ gateways:
       databaseHost: 'db-{{$index}}'
       openPort: '{{add $index 3000}}'
       ipv4_address: '172.20.0.{{add $index 25}}'
+explorers:
+  - repeat: 1
+    name: 'explorer-{{$index}}'
+    defaultNode: 'http://localhost:{{add $index 3000}}'
+    namespaceName: 'CAT.CURRENCY'
+    openPort: '{{add $index 80}}'
+    restNodes: []
 networkType: 152
 inflation:
     starting-at-height-1: 0

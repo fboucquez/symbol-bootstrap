@@ -158,6 +158,7 @@ export class ConfigService {
         await this.generateNodes(presetData, addresses);
         await this.generateNemesis(presetData, addresses);
         await this.generateGateways(presetData, addresses);
+        await this.generateExplorers(presetData);
 
         await BootstrapUtils.writeYaml(presetLocation, presetData);
         logger.info(`Configuration generated.`);
@@ -186,7 +187,6 @@ export class ConfigService {
             }),
         );
         await BootstrapUtils.writeYaml(BootstrapUtils.getGeneratedPresetLocation(target), presetData);
-        logger.info(`Configuration generated.`);
         return { presetData, addresses };
     }
 
@@ -506,6 +506,18 @@ export class ConfigService {
                     'resources',
                 );
                 await BootstrapUtils.generateConfiguration({}, apiNodeConfigFolder, join(moveTo, 'api-node-config'));
+            }),
+        );
+    }
+
+    private generateExplorers(presetData: ConfigPreset) {
+        return Promise.all(
+            (presetData.explorers || []).map(async (explorerPreset, index: number) => {
+                const copyFrom = join(this.root, 'config', 'explorer');
+                const templateContext = { ...presetData, ...explorerPreset };
+                const name = templateContext.name || `explorer-${index}`;
+                const moveTo = BootstrapUtils.getTargetExplorerFolder(this.params.target, false, name);
+                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
             }),
         );
     }

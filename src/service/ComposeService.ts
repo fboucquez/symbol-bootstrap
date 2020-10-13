@@ -15,6 +15,7 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 const targetNodesFolder = BootstrapUtils.targetNodesFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
 const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
+const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
@@ -100,7 +101,7 @@ export class ComposeService {
 
                 return { ...rawService, image: generatedImageName, volumes: undefined };
             } else {
-                const service = { ...rawService, user };
+                const service = { user, ...rawService };
                 if (servicePreset.host || servicePreset.ipv4_address) {
                     service.networks = { default: {} };
                 }
@@ -184,6 +185,27 @@ export class ComposeService {
                         ports: resolvePorts(3000, n.openPort),
                         volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
                         depends_on: [n.databaseHost],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
+            (presetData.explorers || []).map(async (n) => {
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolExplorerImage,
+                        // command: `ash -c "ls -la ${nodeCommandsDirectory}"`,
+                        command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
+                        stop_signal: 'SIGINT',
+                        user: undefined,
+                        working_dir: nodeWorkingDirectory,
+                        ports: resolvePorts(80, n.openPort),
+                        volumes: [
+                            vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory),
+                            vol(`./explorer`, nodeCommandsDirectory),
+                        ],
                     }),
                 );
             }),

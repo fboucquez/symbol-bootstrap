@@ -21,6 +21,7 @@ export class BootstrapUtils {
     public static readonly defaultTargetFolder = 'target';
     public static readonly targetNodesFolder = 'nodes';
     public static readonly targetGatewaysFolder = 'gateways';
+    public static readonly targetExplorersFolder = 'explorers';
     public static readonly targetDatabasesFolder = 'databases';
     public static readonly targetNemesisFolder = 'nemesis';
 
@@ -87,11 +88,15 @@ export class BootstrapUtils {
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
             return;
         }
-        logger.info(`Pulling image ${image}`);
-        const stdout = await this.spawn('docker', ['pull', image], true);
-        const outputLines = stdout.toString().split('\n');
-        logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
-        BootstrapUtils.pulledImages.push(image);
+        try {
+            logger.info(`Pulling image ${image}`);
+            const stdout = await this.spawn('docker', ['pull', image], true);
+            const outputLines = stdout.toString().split('\n');
+            logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
+            BootstrapUtils.pulledImages.push(image);
+        } catch (e) {
+            logger.warn(`Image ${image} could not be pulled!`);
+        }
     }
 
     public static async runImageUsingExec({
@@ -230,6 +235,7 @@ export class BootstrapUtils {
             databases: this.expandServicesRepeat(presetData.databases),
             nodes: this.expandServicesRepeat(presetData.nodes),
             gateways: this.expandServicesRepeat(presetData.gateways),
+            explorers: this.expandServicesRepeat(presetData.explorers),
         };
     }
 
@@ -502,6 +508,10 @@ export class BootstrapUtils {
         return this.getTargetFolder(target, absolute, this.targetGatewaysFolder, ...paths);
     }
 
+    public static getTargetExplorerFolder(target: string, absolute: boolean, ...paths: string[]): string {
+        return this.getTargetFolder(target, absolute, this.targetExplorersFolder, ...paths);
+    }
+
     public static getTargetNemesisFolder(target: string, absolute: boolean, ...paths: string[]): string {
         return this.getTargetFolder(target, absolute, this.targetNemesisFolder, ...paths);
     }
@@ -514,6 +524,7 @@ export class BootstrapUtils {
     private static initialize = (() => {
         Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
         Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
+        Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
     })();
@@ -547,7 +558,10 @@ export class BootstrapUtils {
     }
 
     public static toHex(renderedText: string): string {
-        const numberAsString = renderedText.split("'").join('').replace(/^(0x)/, '');
+        const numberAsString = BootstrapUtils.toSimpleHex(renderedText);
         return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
+    }
+    public static toSimpleHex(renderedText: string): string {
+        return renderedText.split("'").join('').replace(/^(0x)/, '');
     }
 }
