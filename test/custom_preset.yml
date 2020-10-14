@@ -1,5 +1,5 @@
-baseNamespace: 'boj'
 minFeeMultiplier: 0
 defaultDynamicFeeMultiplier: 0
+baseNamespace: 'boj'
 currencyName: 'marley'
 harvestingName: 'reggae'

@@ -72,7 +72,7 @@ explorers:
     - repeat: 1
       name: 'explorer-{{$index}}'
       defaultNode: 'http://localhost:{{add $index 3000}}'
-      namespaceName: 'CAT.CURRENCY'
+      namespaceName: '{{baseNamespace}}.{{currencyName}}'
       openPort: '{{add $index 80}}'
       restNodes: []
 wallets:
