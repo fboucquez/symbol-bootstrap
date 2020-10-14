@@ -17,12 +17,16 @@ describe('ComposeService', () => {
         const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml(expectedFileLocation);
 
         const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
+            if (!service.user) {
+                return service;
+            }
             const user = await BootstrapUtils.getDockerUserGroup();
-            if (user && service.user) {
+            if (user) {
                 service.user = user;
             } else {
                 delete service.user;
             }
+            return service;
         });
         await Promise.all(promises);
         expect(
@@ -51,7 +55,14 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/bootstrap',
+            customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            target: 'target/ConfigService.bootstrap.default',
             reset: false,
             preset: Preset.bootstrap,
         };
@@ -62,6 +73,14 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            reset: true,
             target: 'target/ConfigService.bootstrap.repeat',
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',

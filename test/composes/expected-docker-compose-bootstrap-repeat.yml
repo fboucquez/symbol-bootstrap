@@ -312,6 +312,46 @@ services:
         volumes:
             - '../explorers/explorer-0:/symbol-workdir'
             - './explorer:/symbol-commands'
+    explorer-1:
+        container_name: explorer-1
+        image: fboucquez/symbol-explorer-config
+        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-1"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '81:80'
+        volumes:
+            - '../explorers/explorer-1:/symbol-workdir'
+            - './explorer:/symbol-commands'
+    wallet-0:
+        container_name: wallet-0
+        image: fboucquez/symbol-desktop-wallet
+        command: ash -c "/bin/ash /symbol-commands/run.sh wallet-0"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '90:80'
+        volumes:
+            - '../wallets/wallet-0:/symbol-workdir'
+            - './wallet:/symbol-commands'
+    faucet-0:
+        container_name: faucet-0
+        image: 'symbolplatform/symbol-faucet:v0.3.0'
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: 'http://rest-gateway-0:3000'
+            NATIVE_CURRENCY_NAME: cat.currency
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: '5000000,'
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: '99,'
+            BLACKLIST_MOSAIC_ID: ''
+            EXPLORER_URL: 'http://localhost:80'
+            FAUCET_PRIVATE_KEY: 'MockMe'
+            NATIVE_CURRENCY_ID: 'Mockme2'
+        ports:
+            - '100:4000'
 networks:
     default:
         ipam:

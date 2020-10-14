@@ -6,6 +6,7 @@ export interface DockerServicePreset {
     openPort?: boolean | number | string;
     host?: string;
     excludeDockerService?: boolean;
+    environment?: any;
 }
 
 export interface MosaicPreset {
@@ -79,6 +80,12 @@ export interface WalletPreset extends DockerServicePreset {
     name: string;
 }
 
+export interface FaucetPreset extends DockerServicePreset {
+    // At least these properties.
+    repeat?: number;
+    name: string;
+}
+
 export interface ConfigPreset {
     catapultAppFolder: string;
     subnet?: string;
@@ -93,6 +100,7 @@ export interface ConfigPreset {
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];
     wallets?: WalletPreset[];
+    faucets?: FaucetPreset[];
     networkType: NetworkType;
     networkIdentifier: string;
     networkName: string;
@@ -105,6 +113,7 @@ export interface ConfigPreset {
     symbolServerToolsImage: string;
     symbolExplorerImage: string;
     symbolWalletImage: string;
+    symbolFaucetImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
     votingKeyDilution: number;

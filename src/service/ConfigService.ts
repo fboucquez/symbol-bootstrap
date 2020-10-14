@@ -19,7 +19,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import { NemgenService } from './NemgenService';
-import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset, NodeType } from '../model';
 import * as fs from 'fs';
 import { VotingService } from './VotingService';
 import { join } from 'path';
@@ -31,7 +31,6 @@ import { ReportService } from './ReportService';
 export enum Preset {
     bootstrap = 'bootstrap',
     testnet = 'testnet',
-    light = 'light',
 }
 
 export interface ConfigParams {
@@ -240,13 +239,19 @@ export class ConfigService {
                 presetData.nemesis.nemesisSignerPrivateKey = addresses.nemesisSigner.privateKey;
             }
             if (presetData.nemesis.mosaics) {
-                const mosaics: Record<string, ConfigAccount[]> = {};
-                presetData.nemesis.mosaics.forEach((m) => {
-                    mosaics[m.name] = this.generateAddresses(networkType, m.accounts);
+                const mosaics: MosaicAccounts[] = [];
+                presetData.nemesis.mosaics.forEach((m, index) => {
+                    const accounts = this.generateAddresses(networkType, m.accounts);
+                    mosaics.push({
+                        id: index ? presetData.currencyMosaicId : presetData.harvestingMosaicId,
+                        name: m.name,
+                        type: index ? 'harvest' : 'currency',
+                        accounts,
+                    });
                 });
 
-                presetData.nemesis.mosaics.forEach((m) => {
-                    const accounts = mosaics[m.name];
+                presetData.nemesis.mosaics.forEach((m, index) => {
+                    const accounts = mosaics[index].accounts;
                     if (!m.currencyDistributions) {
                         const signingNodes = (addresses.nodes || []).filter((node) => node.signing);
                         const totalAccounts = (m.accounts || 0) + signingNodes.length;

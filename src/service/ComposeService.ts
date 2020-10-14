@@ -2,7 +2,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigPreset, DockerServicePreset } from '../model';
+import { Addresses, ConfigPreset, DockerServicePreset } from '../model';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
@@ -27,8 +27,9 @@ export class ComposeService {
 
     constructor(private readonly root: string, protected readonly params: ComposeParams) {}
 
-    public async run(passedPresetData?: ConfigPreset): Promise<DockerCompose> {
+    public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
         const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
+        const addresses = passedAddresses ?? BootstrapUtils.loadExistingAddresses(this.params.target);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
@@ -102,13 +103,16 @@ export class ComposeService {
 
                 return { ...rawService, image: generatedImageName, volumes: undefined };
             } else {
-                const service = { user, ...rawService };
+                const service = { ...rawService };
                 if (servicePreset.host || servicePreset.ipv4_address) {
                     service.networks = { default: {} };
                 }
                 if (servicePreset.host) {
                     service.hostname = servicePreset.host;
                     service.networks!.default.aliases = [servicePreset.host];
+                }
+                if (servicePreset.environment) {
+                    service.environment = { ...servicePreset.environment, ...rawService.environment };
                 }
                 if (servicePreset.ipv4_address) {
                     service.networks!.default.ipv4_address = servicePreset.ipv4_address;
@@ -121,6 +125,7 @@ export class ComposeService {
             (presetData.databases || []).map(async (n) => {
                 services.push(
                     await resolveService(n, {
+                        user,
                         container_name: n.name,
                         image: presetData.mongoImage,
                         command: `bash -c "/bin/bash /userconfig/mongors.sh ${n.name} & mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
@@ -137,6 +142,7 @@ export class ComposeService {
         await Promise.all(
             (presetData.nodes || []).map(async (n) => {
                 const nodeService = await resolveService(n, {
+                    user,
                     container_name: n.name,
                     image: presetData.symbolServerImage,
                     command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh  ${n.name} && /bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}"`,
@@ -159,6 +165,7 @@ export class ComposeService {
                                 host: n.brokerHost,
                             },
                             {
+                                user,
                                 container_name: n.brokerName,
                                 image: nodeService.image,
                                 working_dir: nodeWorkingDirectory,
@@ -179,6 +186,7 @@ export class ComposeService {
                 services.push(
                     await resolveService(n, {
                         container_name: n.name,
+                        user,
                         image: presetData.symbolRestImage,
                         command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
                         stop_signal: 'SIGINT',
@@ -199,7 +207,6 @@ export class ComposeService {
                         image: presetData.symbolExplorerImage,
                         command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
                         stop_signal: 'SIGINT',
-                        user: undefined,
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(80, n.openPort),
                         volumes: [
@@ -219,10 +226,29 @@ export class ComposeService {
                         image: presetData.symbolWalletImage,
                         command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
                         stop_signal: 'SIGINT',
-                        user: undefined,
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(80, n.openPort),
                         volumes: [vol(`../${targetWalletsFolder}/${n.name}`, nodeWorkingDirectory), vol(`./wallet`, nodeCommandsDirectory)],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
+            (presetData.faucets || []).map(async (n) => {
+                // const nemesisPrivateKey = addresses?.mosaics?[0]?/;
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolFaucetImage,
+                        stop_signal: 'SIGINT',
+                        environment: {
+                            FAUCET_PRIVATE_KEY: n.environment?.FAUCET_PRIVATE_KEY || addresses?.mosaics?.[0]?.accounts[0].privateKey || '',
+                            NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(
+                                n.environment?.NATIVE_CURRENCY_ID || presetData.currencyMosaicId || '',
+                            ),
+                        },
+                        ports: resolvePorts(4000, n.openPort),
                     }),
                 );
             }),

@@ -5,6 +5,8 @@ minHarvesterBalance: 500
 maxHarvesterBalance: 50000000000000
 minVoterBalance: 50000
 baseNamespace: 'cat'
+currencyName: 'currency'
+harvestingName: 'harvest'
 # should be random addresses?
 harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
@@ -13,7 +15,7 @@ explorerUrl: http://localhost/
 faucetUrl: http://localhost:100/
 nemesis:
     mosaics:
-        - name: 'currency'
+        - name: '{{currencyName}}'
           divisibility: 6
           duration: 0
           supply: 8998999998000000
@@ -21,7 +23,7 @@ nemesis:
           isSupplyMutable: false
           isRestrictable: false
           accounts: 5
-        - name: 'harvest'
+        - name: '{{harvestingName}}'
           divisibility: 3
           duration: 0
           supply: 15000000
@@ -67,20 +69,37 @@ gateways:
       openPort: '{{add $index 3000}}'
       ipv4_address: '172.20.0.{{add $index 25}}'
 explorers:
-  - repeat: 1
-    name: 'explorer-{{$index}}'
-    defaultNode: 'http://localhost:{{add $index 3000}}'
-    namespaceName: 'CAT.CURRENCY'
-    openPort: '{{add $index 80}}'
-    restNodes: []
+    - repeat: 1
+      name: 'explorer-{{$index}}'
+      defaultNode: 'http://localhost:{{add $index 3000}}'
+      namespaceName: 'CAT.CURRENCY'
+      openPort: '{{add $index 80}}'
+      restNodes: []
 wallets:
-  - repeat: 1
-    title: 'Symbol Bootstrap Wallet'
-    name: 'wallet-{{$index}}'
-    defaultNodeUrl: 'http://localhost:{{add $index 3000}}'
-    namespaceName: 'CAT.CURRENCY'
-    openPort: '{{add $index 90}}'
-    restNodes: []
+    - repeat: 1
+      title: 'Symbol Bootstrap Wallet'
+      name: 'wallet-{{$index}}'
+      defaultNodeUrl: 'http://localhost:{{add $index 3000}}'
+      namespaceName: '{{baseNamespace}}.{{currencyName}}'
+      openPort: '{{add $index 90}}'
+      restNodes:
+          - friendlyName: 'Bootstrap Rest $index'
+            url: 'http://localhost:{{add $index 3000}}'
+            roles: 2
+faucets:
+    - repeat: 1
+      name: 'faucet-{{$index}}'
+      environment:
+          DEFAULT_NODE: 'http://rest-gateway-{{$index}}:{{add $index 3000}}'
+          NATIVE_CURRENCY_NAME: '{{baseNamespace}}.{{currencyName}}'
+          NATIVE_CURRENCY_OUT_MAX: 500000000
+          NATIVE_CURRENCY_OUT_MIN: 100000000
+          MAX_FEE: 5000000,
+          ENOUGH_BALANCE: 100000000000
+          MAX_UNCONFIRMED: 99,
+          BLACKLIST_MOSAIC_ID: ''
+          EXPLORER_URL: 'http://localhost:{{add $index 80}}'
+      openPort: '{{add $index 100}}'
 
 networkType: 152
 inflation:

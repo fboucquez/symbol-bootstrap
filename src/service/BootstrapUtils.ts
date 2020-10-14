@@ -28,9 +28,10 @@ export class BootstrapUtils {
     public static readonly targetNemesisFolder = 'nemesis';
 
     public static readonly CURRENT_USER = 'current';
+    private static readonly pulledImages: string[] = [];
+
     private static presetInfoLogged = false;
     private static stopProcess = false;
-    private static pulledImages: string[] = [];
 
     public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
 
@@ -234,26 +235,38 @@ export class BootstrapUtils {
     public static expandRepeat(presetData: ConfigPreset): ConfigPreset {
         return {
             ...presetData,
-            databases: this.expandServicesRepeat(presetData.databases),
-            nodes: this.expandServicesRepeat(presetData.nodes),
-            gateways: this.expandServicesRepeat(presetData.gateways),
-            explorers: this.expandServicesRepeat(presetData.explorers),
-            wallets: this.expandServicesRepeat(presetData.wallets),
+            databases: this.expandServicesRepeat(presetData, presetData.databases || []),
+            nodes: this.expandServicesRepeat(presetData, presetData.nodes || []),
+            gateways: this.expandServicesRepeat(presetData, presetData.gateways || []),
+            explorers: this.expandServicesRepeat(presetData, presetData.explorers || []),
+            wallets: this.expandServicesRepeat(presetData, presetData.wallets || []),
+            faucets: this.expandServicesRepeat(presetData, presetData.faucets || []),
+            nemesis: this.applyValueTemplate(presetData, presetData.nemesis),
         };
     }
 
-    public static applyIndex(index: number, value: boolean | string | number): any {
-        if (!value || !_.isString(value)) {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static applyValueTemplate(context: any, value: any): any {
+        if (!value) {
             return value;
         }
-        if (value.indexOf('$index') < 0) {
+        if (_.isArray(value)) {
+            return (value as []).map((v: any) => this.applyValueTemplate({ ...context, ...value }, v));
+        }
+
+        if (_.isObject(value)) {
+            return _.mapValues(value, (v: any) => this.applyValueTemplate({ ...context, ...value }, v));
+        }
+
+        if (!_.isString(value)) {
             return value;
         }
         const compiledTemplate = Handlebars.compile(value);
-        return compiledTemplate({ $index: index });
+        return compiledTemplate(context);
     }
 
-    public static expandServicesRepeat(services?: any[]): any[] {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static expandServicesRepeat(context: any, services: any[]): any[] {
         return _.flatMap(services || [], (service) => {
             if (service.repeat === 0) {
                 return [];
@@ -264,7 +277,7 @@ export class BootstrapUtils {
 
             return _.range(service.repeat).map((index) => {
                 return _.omit(
-                    _.mapValues(service, (v: any) => this.applyIndex(index, v)),
+                    _.mapValues(service, (v: any) => this.applyValueTemplate({ ...context, ...service, $index: index }, v)),
                     'repeat',
                 );
             });
@@ -525,6 +538,7 @@ export class BootstrapUtils {
         Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
         Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
         Handlebars.registerHelper('toSeconds', BootstrapUtils.toSeconds);
+        Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
     })();
@@ -563,6 +577,11 @@ export class BootstrapUtils {
     }
     public static toSimpleHex(renderedText: string): string {
         return renderedText.split("'").join('').replace(/^(0x)/, '');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static toJson(object: any): string {
+        return JSON.stringify(object, null, 2);
     }
 
     public static toSeconds(serverDuration: string): number {

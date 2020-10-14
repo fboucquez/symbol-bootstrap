@@ -1,0 +1,13 @@
+databases:
+    - repeat: 1
+nodes:
+    - repeat: 0
+    - repeat: 1
+gateways:
+    - repeat: 1
+explorers:
+    - repeat: 0
+wallets:
+    - repeat: 0
+faucets:
+    - repeat: 0

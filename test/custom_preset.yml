@@ -1,9 +1,5 @@
-baseNamespace: 'jamaica'
+baseNamespace: 'boj'
 minFeeMultiplier: 0
 defaultDynamicFeeMultiplier: 0
-nemesis:
-    mosaics:
-        - name: 'boj'
-        - name: 'marley'
-explorers:
-    - namespaceName: 'jamaica.boj'
+currencyName: 'marley'
+harvestingName: 'reggae'

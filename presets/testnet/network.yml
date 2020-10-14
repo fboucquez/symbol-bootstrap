@@ -11,6 +11,9 @@ harvestBeneficiaryPercentage: 25
 batchVerificationRandomSource: /dev/urandom
 currencyMosaicId: 5B66E76BECAD0860
 harvestingMosaicId: 5B66E76BECAD0860
+baseNamespace: symbol
+currencyName: 'xym'
+harvestingName: 'xym'
 votingSetGrouping: 720
 maxSecretLockDuration: 365d
 maxNamespaceDuration: 1825d

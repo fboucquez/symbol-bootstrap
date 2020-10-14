@@ -30,9 +30,14 @@ export class BootstrapService {
      *
      * @param config the params of the compose command.
      * @param passedPresetData the created preset if you know it, otherwise will load the latest one resolved from the target folder.
+     * @param passedAddresses the created addresses if you know if, otherwise will load the latest one resolved form the target folder.
      */
-    public compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<DockerCompose> {
-        return new ComposeService(this.root, config).run(passedPresetData);
+    public compose(
+        config: ComposeParams = ComposeService.defaultParams,
+        passedPresetData?: ConfigPreset,
+        passedAddresses?: Addresses,
+    ): Promise<DockerCompose> {
+        return new ComposeService(this.root, config).run(passedPresetData, passedAddresses);
     }
 
     /**
