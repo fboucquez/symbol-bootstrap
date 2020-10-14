@@ -74,7 +74,8 @@ explorers:
       defaultNode: 'http://localhost:{{add $index 3000}}'
       namespaceName: '{{baseNamespace}}.{{currencyName}}'
       openPort: '{{add $index 80}}'
-      restNodes: []
+      restNodes:
+        - 'http://localhost:{{add $index 3000}}'
 wallets:
     - repeat: 1
       title: 'Symbol Bootstrap Wallet'

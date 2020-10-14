@@ -1,0 +1,33 @@
+minFeeMultiplier: 0
+defaultDynamicFeeMultiplier: 0
+baseNamespace: 'boj'
+currencyName: 'marley'
+harvestingName: 'reggae'
+explorerUrl: http://aws-explorer-url:80
+faucetUrl: http://aws-faucet-url:80
+databases:
+  - repeat: 1
+nodes:
+  - repeat: 2
+  - repeat: 1
+gateways:
+  - repeat: 1
+explorers:
+  - repeat: 1
+    defaultNode: 'http://aws-rest-gateway-{{$index}}:3000'
+    restNodes:
+      - 'http://aws-rest-gateway-{{$index}}:3000'
+wallets:
+  - repeat: 1
+    defaultNodeUrl: 'http://aws-rest-gateway-{{$index}}:3000'
+    restNodes:
+      - friendlyName: 'Bootstrap Rest $index'
+        url: 'http://aws-rest-gateway-{{$index}}:3000'
+        roles: 2
+faucets:
+  - repeat: 1
+    environment:
+      DEFAULT_NODE: 'http://aws-rest-gateway-{{$index}}:3000'
+      EXPLORER_URL: 'http://aws-explorer-url-{{$index}}:80'
+
+
