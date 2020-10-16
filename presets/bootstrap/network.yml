@@ -75,7 +75,26 @@ explorers:
       namespaceName: '{{baseNamespace}}.{{currencyName}}'
       openPort: '{{add $index 80}}'
       restNodes:
-        - 'http://localhost:{{add $index 3000}}'
+          - 'http://localhost:{{add $index 3000}}'
+      link:
+          - href: https://nemflash.io/
+            text: NEM News
+            icon: IconNewspaper
+          - href: https://forum.nem.io/
+            text: Forum
+            icon: IconForum
+          - href: https://t.me/nemred
+            text: Telegram
+            icon: IconTelegram
+          - href: https://www.reddit.com/r/nem/
+            text: Reddit
+            icon: IconReddit
+          - href: https://github.com/nemtech
+            text: Github
+            icon: IconGithub
+          - href: '{{faucetUrl}}'
+            text: Faucet
+            icon: IconHomeCurrencyUsd
 wallets:
     - repeat: 1
       title: 'Symbol Bootstrap Wallet'
