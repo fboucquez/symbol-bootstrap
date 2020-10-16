@@ -1,6 +1,6 @@
 minFeeMultiplier: 0
 defaultDynamicFeeMultiplier: 0
-baseNamespace: 'boj'
+baseNamespace: 'bob'
 currencyName: 'marley'
 harvestingName: 'reggae'
 explorerUrl: http://aws-explorer-url:80
