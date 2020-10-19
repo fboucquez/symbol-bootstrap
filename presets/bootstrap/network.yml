@@ -8,14 +8,12 @@ baseNamespace: 'cat'
 currencyName: 'currency'
 harvestingName: 'harvest'
 # should be random addresses?
-harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
-mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
-namespaceRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q'
 explorerUrl: http://localhost/
 faucetUrl: http://localhost:100/
 nemesis:
     mosaics:
         - name: '{{currencyName}}'
+          repeat: 1
           divisibility: 6
           duration: 0
           supply: 8998999998000000
@@ -24,6 +22,7 @@ nemesis:
           isRestrictable: false
           accounts: 5
         - name: '{{harvestingName}}'
+          repeat: 1
           divisibility: 3
           duration: 0
           supply: 15000000
@@ -76,25 +75,26 @@ explorers:
       openPort: '{{add $index 80}}'
       restNodes:
           - 'http://localhost:{{add $index 3000}}'
-      link:
-          - href: https://nemflash.io/
-            text: NEM News
-            icon: IconNewspaper
-          - href: https://forum.nem.io/
-            text: Forum
-            icon: IconForum
-          - href: https://t.me/nemred
-            text: Telegram
-            icon: IconTelegram
-          - href: https://www.reddit.com/r/nem/
-            text: Reddit
-            icon: IconReddit
-          - href: https://github.com/nemtech
-            text: Github
-            icon: IconGithub
-          - href: '{{faucetUrl}}'
-            text: Faucet
-            icon: IconHomeCurrencyUsd
+      footer:
+          link:
+              - href: https://nemflash.io/
+                text: NEM News
+                icon: IconNewspaper
+              - href: https://forum.nem.io/
+                text: Forum
+                icon: IconForum
+              - href: https://t.me/nemred
+                text: Telegram
+                icon: IconTelegram
+              - href: https://www.reddit.com/r/nem/
+                text: Reddit
+                icon: IconReddit
+              - href: https://github.com/nemtech
+                text: Github
+                icon: IconGithub
+              - href: '{{faucetUrl}}'
+                text: Faucet
+                icon: IconHomeCurrencyUsd
 wallets:
     - repeat: 1
       title: 'Symbol Bootstrap Wallet'
@@ -111,6 +111,7 @@ faucets:
       name: 'faucet-{{$index}}'
       environment:
           DEFAULT_NODE: 'http://rest-gateway-{{$index}}:{{add $index 3000}}'
+          DEFAULT_NODE_CLIENT: 'http://localhost:{{add $index 3000}}'
           NATIVE_CURRENCY_NAME: '{{baseNamespace}}.{{currencyName}}'
           NATIVE_CURRENCY_OUT_MAX: 500000000
           NATIVE_CURRENCY_OUT_MIN: 100000000
@@ -118,7 +119,7 @@ faucets:
           ENOUGH_BALANCE: 100000000000
           MAX_UNCONFIRMED: 99,
           BLACKLIST_MOSAIC_ID: ''
-          EXPLORER_URL: 'http://localhost:{{add $index 80}}'
+          EXPLORER_URL: 'http://localhost:{{add $index 80}}/'
       openPort: '{{add $index 100}}'
 
 networkType: 152

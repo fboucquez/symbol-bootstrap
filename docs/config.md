@@ -37,4 +37,4 @@ EXAMPLE
   $ symbol-bootstrap config -p bootstrap
 ```
 
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.2/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.0/src/commands/config.ts)_

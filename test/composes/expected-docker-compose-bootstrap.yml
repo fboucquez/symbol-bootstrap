@@ -84,8 +84,8 @@ services:
             - '../nodes/api-node-0:/symbol-workdir'
             - './server:/symbol-commands'
     rest-gateway-0:
-        user: '1000:1000'
         container_name: rest-gateway-0
+        user: '1000:1000'
         image: 'symbolplatform/symbol-rest:2.1.0'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
@@ -101,7 +101,7 @@ services:
                 ipv4_address: 172.20.0.25
     explorer-0:
         container_name: explorer-0
-        image: fboucquez/symbol-explorer-config
+        image: 'symbolplatform/symbol-explorer:0.6.2-alpha'
         command: ash -c "/bin/ash /symbol-commands/run.sh explorer-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -113,20 +113,19 @@ services:
     wallet-0:
         container_name: wallet-0
         image: fboucquez/symbol-desktop-wallet
-        command: ash -c "/bin/ash /symbol-commands/run.sh wallet-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
             - '90:80'
         volumes:
-            - '../wallets/wallet-0:/symbol-workdir'
-            - './wallet:/symbol-commands'
+            - '../wallets/wallet-0:/usr/share/nginx/html/config'
     faucet-0:
         container_name: faucet-0
-        image: 'symbolplatform/symbol-faucet:v0.3.0'
+        'image': 'fboucquez/symbol-faucet'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-0:3000'
+            DEFAULT_NODE_CLIENT: 'http://localhost:3000'
             NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
@@ -134,9 +133,9 @@ services:
             ENOUGH_BALANCE: 100000000000
             MAX_UNCONFIRMED: '99,'
             BLACKLIST_MOSAIC_ID: ''
-            EXPLORER_URL: 'http://localhost:80'
-            FAUCET_PRIVATE_KEY: 'MockMe'
-            NATIVE_CURRENCY_ID: 'Mockme2'
+            EXPLORER_URL: 'http://localhost:80/'
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
         ports:
             - '100:4000'
 networks:

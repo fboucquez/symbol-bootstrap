@@ -11,6 +11,9 @@ export interface DockerServicePreset {
 
 export interface MosaicPreset {
     name: string;
+    repeat?: number;
+    main: boolean;
+    harvest: boolean;
     divisibility: number;
     duration: number;
     supply: number;
@@ -96,6 +99,9 @@ export interface ConfigPreset {
     assemblies?: string;
     nemesisSignerPublicKey: string;
     nemesisGenerationHashSeed: string;
+    harvestNetworkFeeSinkAddress?: string;
+    mosaicRentalFeeSinkAddress?: string;
+    namespaceRentalFeeSinkAddress?: string;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];

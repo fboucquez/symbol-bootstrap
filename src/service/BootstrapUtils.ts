@@ -251,7 +251,7 @@ export class BootstrapUtils {
             return value;
         }
         if (_.isArray(value)) {
-            return (value as []).map((v: any) => this.applyValueTemplate({ ...context, ...value }, v));
+            return this.expandServicesRepeat(context, value as []);
         }
 
         if (_.isObject(value)) {

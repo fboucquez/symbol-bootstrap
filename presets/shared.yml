@@ -63,9 +63,9 @@ batchVerificationRandomSource:
 symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.3
 symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.3
 symbolRestImage: symbolplatform/symbol-rest:2.1.0
-symbolFaucetImage: symbolplatform/symbol-faucet:v0.3.0
-symbolExplorerImage: fboucquez/symbol-explorer-config
+symbolExplorerImage: symbolplatform/symbol-explorer:0.6.2-alpha
 symbolWalletImage: fboucquez/symbol-desktop-wallet
+symbolFaucetImage: fboucquez/symbol-faucet
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'

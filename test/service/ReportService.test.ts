@@ -81,6 +81,9 @@ describe('ReportService', () => {
             nemesis: {
                 nemesisSignerPrivateKey: 'AA0863BDB0C2C275EE8CADECC8FAF01CAF632A2D6E1DE9ECB58917F65C89B204',
             },
+            harvestNetworkFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q',
+            mosaicRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q',
+            namespaceRentalFeeSinkAddress: 'TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q',
             nodes: [
                 {
                     voting: true,
@@ -93,7 +96,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            reset: true,
             preset: Preset.bootstrap,
             customPresetObject: customPresetObject,
             target: target,

@@ -25,14 +25,15 @@
         'click',
         function () {
           try {
-            const profile = JSON.parse(document.getElementById('profile').value)
+            var profile = JSON.parse(document.getElementById('profile').value)
             localStorage.setItem('profiles', JSON.stringify(profile.profiles))
             localStorage.setItem('accounts', JSON.stringify(profile.accounts))
-            alert('Profile have been saved')
-            console.log('Profile have been saved')
+            localStorage.setItem('mosaicConfiguration', JSON.stringify(profile.mosaicConfiguration))
+            alert('Profile has been saved')
+            console.log('Profile has been saved')
           } catch (e) {
-            alert('Profile could not be saved been saved ' + e)
-            console.error('Profile could not be saved been saved', e)
+            alert('Profile could not be saved: ' + e)
+            console.error('Profile could not be saved', e)
           }
         },
         false,
@@ -40,11 +41,14 @@
 
       const profiles = JSON.parse(localStorage['profiles'] || '{}')
       const accounts = JSON.parse(localStorage['accounts'] || '{}')
+      const mosaicConfiguration = JSON.parse(localStorage['mosaicConfiguration'] || '{}')
+
 
       document.getElementById('profile').value = JSON.stringify(
         {
           profiles: profiles,
           accounts: accounts,
+          mosaicConfiguration: mosaicConfiguration
         },
         null,
         2,

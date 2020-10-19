@@ -232,6 +232,19 @@ export class ConfigService {
         if (presetData.gateways) {
             addresses.gateways = this.generateAddresses(networkType, presetData.gateways.length);
         }
+
+        const sinkAddress = Account.generateNewAccount(networkType).address.plain();
+
+        if (!presetData.harvestNetworkFeeSinkAddress) {
+            presetData.harvestNetworkFeeSinkAddress = sinkAddress;
+        }
+        if (!presetData.mosaicRentalFeeSinkAddress) {
+            presetData.mosaicRentalFeeSinkAddress = sinkAddress;
+        }
+        if (!presetData.namespaceRentalFeeSinkAddress) {
+            presetData.namespaceRentalFeeSinkAddress = sinkAddress;
+        }
+
         if (presetData.nemesis) {
             addresses.nemesisSigner = this.toConfig(this.generateAccount(networkType, presetData.nemesis.nemesisSignerPrivateKey));
 

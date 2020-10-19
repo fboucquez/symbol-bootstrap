@@ -224,11 +224,10 @@ export class ComposeService {
                     await resolveService(n, {
                         container_name: n.name,
                         image: presetData.symbolWalletImage,
-                        command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(80, n.openPort),
-                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, nodeWorkingDirectory), vol(`./wallet`, nodeCommandsDirectory)],
+                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config')],
                     }),
                 );
             }),
