@@ -17,7 +17,7 @@ Symbol Bootstrap | v0.2.0 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 - **New Command:** `symbol-bootstrap healthCheck` tests if the docker compose network is running locally. `--healthCheck` param is allowed in `start` and `run` commands.
 - **New Service:** `Explorer`. Bootstrap private network starts a Faucet service in [http://localhost:80/](http://localhost:80/) by default. 
 - **New Service:** `Faucet`. Bootstrap private network starts an Explorer service in [http://localhost:100/](http://localhost:100/) by default. 
-- **New Service:** `Walelt`. Bootstrap private network starts a Wallet service in [http://localhost:100/](http://localhost:100/) by default. **Warning:** This wallet service is for demonstration proposes.
+- **New Service:** `Walelt`. Bootstrap private network starts a Wallet service in [http://localhost:90/](http://localhost:90/) by default. **Warning:** This wallet service is for demonstration proposes.
 - Allowed `repeat` on a nemesis mosaic, node, a database, faucet, explorer or a gateway to instantiate them multiple times. This enables you to create large network configurations quickly.
 - Path properties are now relative folder locations. This improves reusability of the configuration when running the services outside docker compose.
 - Added node type based default configuration simplifying the configuration of nodes in presets.

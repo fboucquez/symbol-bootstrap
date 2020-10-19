@@ -7,7 +7,6 @@ minVoterBalance: 50000
 baseNamespace: 'cat'
 currencyName: 'currency'
 harvestingName: 'harvest'
-# should be random addresses?
 explorerUrl: http://localhost/
 faucetUrl: http://localhost:100/
 nemesis:
