@@ -555,10 +555,19 @@ export class ConfigService {
                             throw new Error('Profile`s name must be provided in the wallets preset when creating wallet profiles.');
                         }
                         const profileJsonFileName = `wallet-profile-${profile.name}.json`;
+
+                        const loadProfileData = async (): Promise<string> => {
+                            if (profile.data) {
+                                return JSON.stringify(profile.data, null, 2);
+                            }
+                            if (profile.location) {
+                                return BootstrapUtils.loadFileAsText(profile.location);
+                            }
+                            return BootstrapUtils.loadFileAsText(profileJsonFileName);
+                        };
+
                         try {
-                            const profileData =
-                                (profile.data && JSON.stringify(profile.data, null, 2)) ||
-                                (await BootstrapUtils.loadFileAsText(profileJsonFileName));
+                            const profileData = await loadProfileData();
                             await BootstrapUtils.writeTextFile(join(moveTo, profileJsonFileName), profileData);
                         } catch (e) {
                             const message = `Cannot create Wallet profile with name '${profile.name}'. Do you have the file '${profileJsonFileName}' in the current folder?. ${e}`;

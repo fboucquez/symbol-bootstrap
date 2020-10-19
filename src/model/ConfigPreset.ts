@@ -81,6 +81,7 @@ export interface WalletProfilePreset {
     name: number;
     // if not provided, A file will be copied over from the working dir.
     data?: any;
+    location?: string;
 }
 
 export interface WalletPreset extends DockerServicePreset {
