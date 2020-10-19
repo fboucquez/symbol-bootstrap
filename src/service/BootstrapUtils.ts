@@ -87,7 +87,15 @@ export class BootstrapUtils {
         console.log(textSync('symbol-bootstrap', { horizontalLayout: 'full' }));
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static validateIsDefined(value: any, message: string): void {
+        if (value == undefined || value == null) {
+            throw new Error(message);
+        }
+    }
+
     public static async pullImage(image: string): Promise<void> {
+        this.validateIsDefined(image, 'Image must be provided');
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
             return;
         }
@@ -394,7 +402,11 @@ export class BootstrapUtils {
     }
 
     public static loadYaml(fileLocation: string): any {
-        return this.fromYaml(readFileSync(fileLocation, 'utf8'));
+        return this.fromYaml(this.loadFileAsText(fileLocation));
+    }
+
+    public static loadFileAsText(fileLocation: string): string {
+        return readFileSync(fileLocation, 'utf8');
     }
 
     public static async writeTextFile(path: string, text: string): Promise<void> {

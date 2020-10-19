@@ -77,10 +77,17 @@ export interface ExplorerPreset extends DockerServicePreset {
     name: string;
 }
 
+export interface WalletProfilePreset {
+    name: number;
+    // if not provided, A file will be copied over from the working dir.
+    data?: any;
+}
+
 export interface WalletPreset extends DockerServicePreset {
     // At least these properties.
     repeat?: number;
     name: string;
+    profiles?: WalletProfilePreset[];
 }
 
 export interface FaucetPreset extends DockerServicePreset {

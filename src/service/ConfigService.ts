@@ -549,6 +549,23 @@ export class ConfigService {
                 const name = templateContext.name || `wallet-${index}`;
                 const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+                await Promise.all(
+                    (explorerPreset.profiles || []).map(async (profile) => {
+                        if (!profile.name) {
+                            throw new Error('Profile`s name must be provided in the wallets preset when creating wallet profiles.');
+                        }
+                        const profileJsonFileName = `wallet-profile-${profile.name}.json`;
+                        try {
+                            const profileData =
+                                (profile.data && JSON.stringify(profile.data, null, 2)) ||
+                                (await BootstrapUtils.loadFileAsText(profileJsonFileName));
+                            await BootstrapUtils.writeTextFile(join(moveTo, profileJsonFileName), profileData);
+                        } catch (e) {
+                            const message = `Cannot create Wallet profile with name '${profile.name}'. Do you have the file '${profileJsonFileName}' in the current folder?. ${e}`;
+                            throw new Error(message);
+                        }
+                    }),
+                );
             }),
         );
     }
