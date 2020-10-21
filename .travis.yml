@@ -15,6 +15,7 @@ before_script:
     - . ./travis/travis-functions.sh
     - log_env_variables
 script:
+    - npm pack
     - npm test
     - npm run doc
     - npm run coveralls-report
@@ -25,9 +26,9 @@ jobs:
           script: /bin/bash travis/node-functions.sh node_push_github_pages
           if: branch = env(DEV_BRANCH) AND type != pull_request AND (commit_message != release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
         - name: alpha npm
-          script: /bin/bash travis/node-functions.sh node_publish_alpha
+          script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
           if: branch = env(DEV_BRANCH) AND type != pull_request AND (commit_message != release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
         - stage: release
           name: release npm, tag and upgrade
-          script: /bin/bash travis/node-functions.sh node_release
+          script: npm pack && /bin/bash travis/node-functions.sh node_release
           if: branch = env(RELEASE_BRANCH) AND type != pull_request AND (commit_message = release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
