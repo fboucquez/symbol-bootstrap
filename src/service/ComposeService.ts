@@ -100,13 +100,16 @@ export class ComposeService {
 
                 return { ...rawService, image: generatedImageName, volumes: undefined };
             } else {
-                const service = { ...rawService, user };
+                const service = { ...rawService };
                 if (servicePreset.host || servicePreset.ipv4_address) {
                     service.networks = { default: {} };
                 }
                 if (servicePreset.host) {
                     service.hostname = servicePreset.host;
                     service.networks!.default.aliases = [servicePreset.host];
+                }
+                if (servicePreset.environment) {
+                    service.environment = { ...servicePreset.environment, ...rawService.environment };
                 }
                 if (servicePreset.ipv4_address) {
                     service.networks!.default.ipv4_address = servicePreset.ipv4_address;
@@ -119,6 +122,7 @@ export class ComposeService {
             (presetData.databases || []).map(async (n) => {
                 services.push(
                     await resolveService(n, {
+                        user,
                         container_name: n.name,
                         image: presetData.mongoImage,
                         command: `bash -c "/bin/bash /userconfig/mongors.sh ${n.name} & mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
@@ -135,6 +139,7 @@ export class ComposeService {
         await Promise.all(
             (presetData.nodes || []).map(async (n) => {
                 const nodeService = await resolveService(n, {
+                    user,
                     container_name: n.name,
                     image: presetData.symbolServerImage,
                     command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh  ${n.name} && /bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}"`,
@@ -157,6 +162,7 @@ export class ComposeService {
                                 host: n.brokerHost,
                             },
                             {
+                                user,
                                 container_name: n.brokerName,
                                 image: nodeService.image,
                                 working_dir: nodeWorkingDirectory,
@@ -177,6 +183,7 @@ export class ComposeService {
                 services.push(
                     await resolveService(n, {
                         container_name: n.name,
+                        user,
                         image: presetData.symbolRestImage,
                         command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
                         stop_signal: 'SIGINT',

@@ -33,6 +33,7 @@ OPTIONS
   --healthCheck
       It checks if the services created with docker compose are up and running.
 
+      This command checks:
       - Whether the docker containers are running.
       - Whether the services' exposed ports are listening.
       - Whether the rest gateways' /node/health are OK.
@@ -49,4 +50,4 @@ EXAMPLE
   $ symbol-bootstrap run
 ```
 
-_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.2/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.0/src/commands/run.ts)_

@@ -25,9 +25,10 @@ export class BootstrapUtils {
     public static readonly targetNemesisFolder = 'nemesis';
 
     public static readonly CURRENT_USER = 'current';
+    private static readonly pulledImages: string[] = [];
+
     private static presetInfoLogged = false;
     private static stopProcess = false;
-    private static pulledImages: string[] = [];
 
     public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
 
@@ -83,15 +84,27 @@ export class BootstrapUtils {
         console.log(textSync('symbol-bootstrap', { horizontalLayout: 'full' }));
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static validateIsDefined(value: any, message: string): void {
+        if (value == undefined || value == null) {
+            throw new Error(message);
+        }
+    }
+
     public static async pullImage(image: string): Promise<void> {
+        this.validateIsDefined(image, 'Image must be provided');
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
             return;
         }
-        logger.info(`Pulling image ${image}`);
-        const stdout = await this.spawn('docker', ['pull', image], true);
-        const outputLines = stdout.toString().split('\n');
-        logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
-        BootstrapUtils.pulledImages.push(image);
+        try {
+            logger.info(`Pulling image ${image}`);
+            const stdout = await this.spawn('docker', ['pull', image], true);
+            const outputLines = stdout.toString().split('\n');
+            logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
+            BootstrapUtils.pulledImages.push(image);
+        } catch (e) {
+            logger.warn(`Image ${image} could not be pulled!`);
+        }
     }
 
     public static async runImageUsingExec({
@@ -227,24 +240,35 @@ export class BootstrapUtils {
     public static expandRepeat(presetData: ConfigPreset): ConfigPreset {
         return {
             ...presetData,
-            databases: this.expandServicesRepeat(presetData.databases),
-            nodes: this.expandServicesRepeat(presetData.nodes),
-            gateways: this.expandServicesRepeat(presetData.gateways),
+            databases: this.expandServicesRepeat(presetData, presetData.databases || []),
+            nodes: this.expandServicesRepeat(presetData, presetData.nodes || []),
+            gateways: this.expandServicesRepeat(presetData, presetData.gateways || []),
+            nemesis: this.applyValueTemplate(presetData, presetData.nemesis),
         };
     }
 
-    public static applyIndex(index: number, value: boolean | string | number): any {
-        if (!value || !_.isString(value)) {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static applyValueTemplate(context: any, value: any): any {
+        if (!value) {
             return value;
         }
-        if (value.indexOf('$index') < 0) {
+        if (_.isArray(value)) {
+            return this.expandServicesRepeat(context, value as []);
+        }
+
+        if (_.isObject(value)) {
+            return _.mapValues(value, (v: any) => this.applyValueTemplate({ ...context, ...value }, v));
+        }
+
+        if (!_.isString(value)) {
             return value;
         }
         const compiledTemplate = Handlebars.compile(value);
-        return compiledTemplate({ $index: index });
+        return compiledTemplate(context);
     }
 
-    public static expandServicesRepeat(services?: any[]): any[] {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static expandServicesRepeat(context: any, services: any[]): any[] {
         return _.flatMap(services || [], (service) => {
             if (service.repeat === 0) {
                 return [];
@@ -255,7 +279,7 @@ export class BootstrapUtils {
 
             return _.range(service.repeat).map((index) => {
                 return _.omit(
-                    _.mapValues(service, (v: any) => this.applyIndex(index, v)),
+                    _.mapValues(service, (v: any) => this.applyValueTemplate({ ...context, ...service, $index: index }, v)),
                     'repeat',
                 );
             });
@@ -372,7 +396,11 @@ export class BootstrapUtils {
     }
 
     public static loadYaml(fileLocation: string): any {
-        return this.fromYaml(readFileSync(fileLocation, 'utf8'));
+        return this.fromYaml(this.loadFileAsText(fileLocation));
+    }
+
+    public static loadFileAsText(fileLocation: string): string {
+        return readFileSync(fileLocation, 'utf8');
     }
 
     public static async writeTextFile(path: string, text: string): Promise<void> {
@@ -514,6 +542,8 @@ export class BootstrapUtils {
     private static initialize = (() => {
         Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
         Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
+        Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
+        Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
     })();
@@ -547,7 +577,15 @@ export class BootstrapUtils {
     }
 
     public static toHex(renderedText: string): string {
-        const numberAsString = renderedText.split("'").join('').replace(/^(0x)/, '');
+        const numberAsString = BootstrapUtils.toSimpleHex(renderedText);
         return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
+    }
+    public static toSimpleHex(renderedText: string): string {
+        return renderedText.split("'").join('').replace(/^(0x)/, '');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static toJson(object: any): string {
+        return JSON.stringify(object, null, 2);
     }
 }

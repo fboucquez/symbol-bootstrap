@@ -22,11 +22,18 @@ export interface NodeAccount {
     friendlyName: string;
 }
 
+export interface MosaicAccounts {
+    name: string;
+    id: string;
+    type: 'currency' | 'harvest';
+    accounts: ConfigAccount[];
+}
+
 export interface Addresses {
     nodes?: NodeAccount[];
     gateways?: ConfigAccount[];
     nemesisGenerationHashSeed: string;
     nemesisSigner?: ConfigAccount;
     networkType: NetworkType;
-    mosaics?: Record<string, ConfigAccount[]>;
+    mosaics?: MosaicAccounts[];
 }

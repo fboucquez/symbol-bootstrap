@@ -68,14 +68,15 @@ describe('BootstrapUtils', () => {
     });
 
     it('applyIndex', async () => {
-        expect(BootstrapUtils.applyIndex(10, 'hello')).to.be.eq('hello');
-        expect(BootstrapUtils.applyIndex(10, 'index')).to.be.eq('index');
-        expect(BootstrapUtils.applyIndex(10, '$index')).to.be.eq('$index');
-        expect(BootstrapUtils.applyIndex(10, '{{index}}')).to.be.eq('{{index}}');
-        expect(BootstrapUtils.applyIndex(10, '{{$index}}')).to.be.eq('10');
-        expect(BootstrapUtils.applyIndex(10, '{{add $index 2}}')).to.be.eq('12');
-        expect(BootstrapUtils.applyIndex(10, '100.100.{{add $index 2}}')).to.be.eq('100.100.12');
-        expect(BootstrapUtils.applyIndex(10, '100.100.{{add $index 5}}')).to.be.eq('100.100.15');
+        const context = { $index: 10 };
+        expect(BootstrapUtils.applyValueTemplate(context, 'hello')).to.be.eq('hello');
+        expect(BootstrapUtils.applyValueTemplate(context, 'index')).to.be.eq('index');
+        expect(BootstrapUtils.applyValueTemplate(context, '$index')).to.be.eq('$index');
+        expect(BootstrapUtils.applyValueTemplate(context, '{{index}}')).to.be.eq('');
+        expect(BootstrapUtils.applyValueTemplate(context, '{{$index}}')).to.be.eq('10');
+        expect(BootstrapUtils.applyValueTemplate(context, '{{add $index 2}}')).to.be.eq('12');
+        expect(BootstrapUtils.applyValueTemplate(context, '100.100.{{add $index 2}}')).to.be.eq('100.100.12');
+        expect(BootstrapUtils.applyValueTemplate(context, '100.100.{{add $index 5}}')).to.be.eq('100.100.15');
     });
 
     it('expandServicesRepeat when repeat 3', async () => {
@@ -95,7 +96,7 @@ describe('BootstrapUtils', () => {
             },
         ];
 
-        const expandedServices = BootstrapUtils.expandServicesRepeat(services);
+        const expandedServices = BootstrapUtils.expandServicesRepeat({}, services);
 
         const expectedExpandedServices = [
             {
@@ -155,7 +156,7 @@ describe('BootstrapUtils', () => {
             },
         ];
 
-        const expandedServices = BootstrapUtils.expandServicesRepeat(services);
+        const expandedServices = BootstrapUtils.expandServicesRepeat({}, services);
 
         expect(expandedServices).to.be.deep.eq([]);
     });
@@ -176,7 +177,7 @@ describe('BootstrapUtils', () => {
             },
         ];
 
-        const expandedServices = BootstrapUtils.expandServicesRepeat(services);
+        const expandedServices = BootstrapUtils.expandServicesRepeat({}, services);
 
         const expectedExpandedServices = [
             {
@@ -193,5 +194,51 @@ describe('BootstrapUtils', () => {
             },
         ];
         expect(expandedServices).to.be.deep.eq(expectedExpandedServices);
+    });
+
+    it('applyValueTemplate when object', async () => {
+        const value = {
+            _info: 'this file contains a list of api-node peers',
+            knownPeers: [
+                {
+                    publicKey: '46902d4a6136d43f8d78e3ab4494aee9b1da17886f6f0a698959714f96900bd6',
+                    endpoint: {
+                        host: 'api-node-0',
+                        port: 7900,
+                    },
+                    metadata: {
+                        name: 'api-node-0',
+                        roles: 'Api',
+                    },
+                },
+            ],
+        };
+
+        expect(BootstrapUtils.applyValueTemplate({}, value)).to.be.deep.eq(value);
+        expect(BootstrapUtils.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
+    });
+
+    it('applyValueTemplate when array', async () => {
+        const value = [
+            {
+                _info: 'this file contains a list of api-node peers',
+                knownPeers: [
+                    {
+                        publicKey: '46902d4a6136d43f8d78e3ab4494aee9b1da17886f6f0a698959714f96900bd6',
+                        endpoint: {
+                            host: 'api-node-0',
+                            port: 7900,
+                        },
+                        metadata: {
+                            name: 'api-node-0',
+                            roles: 'Api',
+                        },
+                    },
+                ],
+            },
+        ];
+
+        expect(BootstrapUtils.applyValueTemplate({}, value)).to.be.deep.eq(value);
+        expect(BootstrapUtils.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
     });
 });

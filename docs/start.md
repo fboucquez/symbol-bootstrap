@@ -30,7 +30,7 @@ OPTIONS
   -h, --help
       It shows the help of this command.
 
-  -p, --preset=(bootstrap|testnet|light)
+  -p, --preset=(bootstrap|testnet)
       [default: bootstrap] the network preset
 
   -r, --reset
@@ -49,6 +49,7 @@ OPTIONS
   --healthCheck
       It checks if the services created with docker compose are up and running.
 
+      This command checks:
       - Whether the docker containers are running.
       - Whether the services' exposed ports are listening.
       - Whether the rest gateways' /node/health are OK.
@@ -70,4 +71,4 @@ EXAMPLES
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.2/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.0/src/commands/start.ts)_

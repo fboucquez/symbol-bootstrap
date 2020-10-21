@@ -13,6 +13,7 @@ export interface DockerComposeService {
     working_dir?: string;
     command?: string;
     hostname?: string;
+    environment?: any;
     stop_signal?: string;
     volumes?: string[];
     ports?: string[];
