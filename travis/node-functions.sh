@@ -9,7 +9,7 @@ node_load_version(){
   echo -e "$VERSION"
 }
 
-npm_publish_alpha(){
+node_publish_alpha(){
   VERSION="$(node_load_version)"
   validate_env_variable "VERSION" "$FUNCNAME"
   validate_env_variable "NPM_TOKEN" "$FUNCNAME"
