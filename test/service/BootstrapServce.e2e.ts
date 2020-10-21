@@ -30,8 +30,10 @@ describe('BootstrapService', () => {
                 repositoryFactory.createTransactionRepository(),
                 repositoryFactory.createReceiptRepository(),
             );
+            const mosaic = NetworkCurrencyLocal.createAbsolute(100);
 
-            const nemesisAccounts = configResult.addresses?.mosaics?.[1].accounts.map((n) => n.privateKey);
+           const nemesisAccounts = configResult.addresses?.mosaics?.[0].accounts.map((n) => n.privateKey);
+
             if (!nemesisAccounts) {
                 throw new Error('Nemesis accounts could not be loaded!');
             }
@@ -45,7 +47,7 @@ describe('BootstrapService', () => {
             const transferTransaction = TransferTransaction.create(
                 Deadline.create(epochAdjustment),
                 recipient.address,
-                [NetworkCurrencyLocal.createAbsolute(100)],
+                [mosaic],
                 PlainMessage.create('test-message'),
                 networkType,
                 maxFee,
@@ -70,6 +72,7 @@ describe('BootstrapService', () => {
             preset: Preset.bootstrap,
             reset: true,
             timeout: 60000 * 5,
+            healthCheck: true,
             target: 'target/bootstrap-test',
             detached: true,
             user: BootstrapUtils.CURRENT_USER,
@@ -93,6 +96,7 @@ describe('BootstrapService', () => {
             assembly: 'light',
             reset: true,
             timeout: 60000 * 5,
+            healthCheck: true,
             target: 'target/light-test',
             detached: true,
             user: BootstrapUtils.CURRENT_USER,

@@ -3,74 +3,37 @@ language: node_js
 node_js:
     - 10
     - 12
-jobs:
-    include:
-        - os: linux
-          dist: bionic
-#        - os: linux
-#          dist: xenial
-        #          Docker is not supported for osx in Travis: https://github.com/travis-ci/travis-ci/issues/7773
-        #        - os: osx
-        #          osx_image: xcode12
-        #        - os: windows
 services:
     - docker
-#before_cache:
-#    # Save tagged docker images
-#    - >
-#        mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
-#        | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
-#before_install:
-#    # Load cached docker images
-#    - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 cache:
     bundler: true
     directories:
         - node_modules
         - .eslintcache
-#        - $HOME/docker
 before_script:
     - if [[ -v "DOCKER_PASSWORD" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
-    - npm pack
+    - . ./travis/travis-functions.sh
+    - log_env_variables
 script:
-  - npm test
-  #    - npm run e2e
-  - npm run doc
-after_script:
-  - npm run coveralls-report
-
-deploy:
-    #    - provider: script
-    #      skip_cleanup: true
-    #      script: /bin/sh travis/github-pages.sh
-    #      on:
-    #          branch: main
-    #          os: linux
-    #          dist: bionic
-    #          node_js: '12'
-    - provider: pages
-      local_dir: ts-docs
-      skip_cleanup: true
-      github_token: $GITHUB_TOKEN
-      keep_history: true
-      on:
-          branch: main
-          os: linux
-          dist: bionic
-          node_js: '12'
-    - provider: script
-      skip_cleanup: true
-      script: /bin/sh travis/uploadArchives.sh
-      on:
-          branch: main
-          os: linux
-          dist: bionic
-          node_js: '12'
-    - provider: script
-      skip_cleanup: true
-      script: /bin/sh travis/release.sh
-      on:
-          branch: $RELEASE_BRANCH
-          os: linux
-          dist: bionic
-          node_js: '12'
+    - npm pack
+    - npm test
+    - npm run coveralls-report
+jobs:
+    include:
+        - stage: test
+          mame: docs
+          script: npm run doc
+        - mame: e2e tests
+          script: npm run e2e
+          if: branch = env(DEV_BRANCH) AND type = cron
+        - stage: publish
+          mame: github alpha pages
+          script: /bin/bash travis/node-functions.sh node_push_github_pages
+          if: branch = env(DEV_BRANCH) AND type != pull_request AND (commit_message != release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
+        - name: alpha npm
+          script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
+          if: branch = env(DEV_BRANCH) AND type != pull_request AND (commit_message != release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
+        - stage: release
+          name: release npm, tag and upgrade
+          script: npm pack && /bin/bash travis/node-functions.sh node_release
+          if: branch = env(RELEASE_BRANCH) AND type != pull_request AND (commit_message = release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))

@@ -151,7 +151,6 @@ export class ConfigService {
 
         const networkType = presetData.networkType;
         const addresses = await this.generateRandomConfiguration(networkType, presetData);
-        this.completePresetDataWithRandomConfiguration(presetData, addresses, networkType);
         await BootstrapUtils.writeYaml(BootstrapUtils.getGeneratedAddressLocation(target), addresses);
 
         await this.generateNodes(presetData, addresses);
@@ -190,34 +189,6 @@ export class ConfigService {
         return { presetData, addresses };
     }
 
-    private completePresetDataWithRandomConfiguration(presetData: ConfigPreset, addresses: Addresses, networkType: NetworkType): void {
-        presetData.networkIdentifier = ConfigService.getNetworkIdentifier(presetData.networkType);
-        presetData.networkName = ConfigService.getNetworkName(presetData.networkType);
-        if (!presetData.nemesisGenerationHashSeed) {
-            presetData.nemesisGenerationHashSeed = addresses.nemesisGenerationHashSeed;
-        }
-
-        //How can it work?
-        const ownerAddress = Address.createFromPublicKey(presetData.nemesisSignerPublicKey, networkType);
-
-        if (!presetData.currencyMosaicId)
-            presetData.currencyMosaicId = BootstrapUtils.toHex(
-                MosaicId.createFromNonce(MosaicNonce.createFromNumber(0), ownerAddress).toHex(),
-            );
-        if (!presetData.harvestingMosaicId) {
-            if (!presetData.nemesis) {
-                throw new Error('nemesis must be defined!');
-            }
-            if (presetData.nemesis.mosaics && presetData.nemesis.mosaics.length > 1) {
-                presetData.harvestingMosaicId = BootstrapUtils.toHex(
-                    MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), ownerAddress).toHex(),
-                );
-            } else {
-                presetData.harvestingMosaicId = presetData.currencyMosaicId;
-            }
-        }
-    }
-
     private async generateRandomConfiguration(networkType: NetworkType, presetData: ConfigPreset): Promise<Addresses> {
         const addresses: Addresses = {
             networkType: networkType,
@@ -245,12 +216,63 @@ export class ConfigService {
             presetData.namespaceRentalFeeSinkAddress = sinkAddress;
         }
 
+        presetData.networkIdentifier = ConfigService.getNetworkIdentifier(presetData.networkType);
+        presetData.networkName = ConfigService.getNetworkName(presetData.networkType);
+        if (!presetData.nemesisGenerationHashSeed) {
+            presetData.nemesisGenerationHashSeed = addresses.nemesisGenerationHashSeed;
+        }
+
         if (presetData.nemesis) {
             addresses.nemesisSigner = this.toConfig(this.generateAccount(networkType, presetData.nemesis.nemesisSignerPrivateKey));
-
             if (!presetData.nemesis.nemesisSignerPrivateKey && addresses.nemesisSigner) {
                 presetData.nemesis.nemesisSignerPrivateKey = addresses.nemesisSigner.privateKey;
             }
+        }
+
+        if (!presetData.nemesisSignerPublicKey && addresses.nemesisSigner) {
+            presetData.nemesisSignerPublicKey = addresses.nemesisSigner.publicKey;
+        }
+
+        const nemesisSignerAddress = Address.createFromPublicKey(presetData.nemesisSignerPublicKey, networkType);
+
+        if (!presetData.currencyMosaicId)
+            presetData.currencyMosaicId = BootstrapUtils.toHex(
+                MosaicId.createFromNonce(MosaicNonce.createFromNumber(0), nemesisSignerAddress).toHex(),
+            );
+        if (!presetData.harvestingMosaicId) {
+            if (!presetData.nemesis) {
+                throw new Error('nemesis must be defined!');
+            }
+            if (presetData.nemesis.mosaics && presetData.nemesis.mosaics.length > 1) {
+                presetData.harvestingMosaicId = BootstrapUtils.toHex(
+                    MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), nemesisSignerAddress).toHex(),
+                );
+            } else {
+                presetData.harvestingMosaicId = presetData.currencyMosaicId;
+            }
+        }
+
+        if (presetData.nodes) {
+            addresses.nodes = await this.generateNodeAccounts(networkType, presetData.nodes);
+        }
+
+        if (presetData.gateways) {
+            addresses.gateways = this.generateAddresses(networkType, presetData.gateways.length);
+        }
+
+        const sinkAddress = Account.generateNewAccount(networkType).address.plain();
+
+        if (!presetData.harvestNetworkFeeSinkAddress) {
+            presetData.harvestNetworkFeeSinkAddress = sinkAddress;
+        }
+        if (!presetData.mosaicRentalFeeSinkAddress) {
+            presetData.mosaicRentalFeeSinkAddress = sinkAddress;
+        }
+        if (!presetData.namespaceRentalFeeSinkAddress) {
+            presetData.namespaceRentalFeeSinkAddress = sinkAddress;
+        }
+
+        if (presetData.nemesis) {
             if (presetData.nemesis.mosaics) {
                 const mosaics: MosaicAccounts[] = [];
                 presetData.nemesis.mosaics.forEach((m, index) => {
@@ -283,10 +305,6 @@ export class ConfigService {
                 });
                 addresses.mosaics = mosaics;
             }
-        }
-
-        if (!presetData.nemesisSignerPublicKey && addresses.nemesisSigner) {
-            presetData.nemesisSignerPublicKey = addresses.nemesisSigner.publicKey;
         }
 
         return addresses;
