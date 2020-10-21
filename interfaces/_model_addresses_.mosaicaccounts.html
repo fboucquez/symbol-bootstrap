@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ConfigResult | symbol-bootstrap</title>
+	<title>MosaicAccounts | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_service_configservice_.html">&quot;service/ConfigService&quot;</a>
+					<a href="../modules/_model_addresses_.html">&quot;model/Addresses&quot;</a>
 				</li>
 				<li>
-					<a href="_service_configservice_.configresult.html">ConfigResult</a>
+					<a href="_model_addresses_.mosaicaccounts.html">MosaicAccounts</a>
 				</li>
 			</ul>
-			<h1>Interface ConfigResult</h1>
+			<h1>Interface MosaicAccounts</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ConfigResult</span>
+						<span class="target">MosaicAccounts</span>
 					</li>
 				</ul>
 			</section>
@@ -84,8 +84,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_configservice_.configresult.html#addresses" class="tsd-kind-icon">addresses</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_configservice_.configresult.html#presetdata" class="tsd-kind-icon">preset<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_addresses_.mosaicaccounts.html#accounts" class="tsd-kind-icon">accounts</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_addresses_.mosaicaccounts.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_addresses_.mosaicaccounts.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_addresses_.mosaicaccounts.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,22 +96,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="addresses" class="tsd-anchor"></a>
-					<h3>addresses</h3>
-					<div class="tsd-signature tsd-kind-icon">addresses<span class="tsd-signature-symbol">:</span> <a href="_model_addresses_.addresses.html" class="tsd-signature-type">Addresses</a></div>
+					<a name="accounts" class="tsd-anchor"></a>
+					<h3>accounts</h3>
+					<div class="tsd-signature tsd-kind-icon">accounts<span class="tsd-signature-symbol">:</span> <a href="_model_addresses_.configaccount.html" class="tsd-signature-type">ConfigAccount</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/d6d2d34/src/service/ConfigService.ts#L48">src/service/ConfigService.ts:48</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/d6d2d34/src/model/Addresses.ts#L29">src/model/Addresses.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="presetdata" class="tsd-anchor"></a>
-					<h3>preset<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">preset<wbr>Data<span class="tsd-signature-symbol">:</span> <a href="_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a></div>
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/d6d2d34/src/service/ConfigService.ts#L49">src/service/ConfigService.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/d6d2d34/src/model/Addresses.ts#L27">src/model/Addresses.ts:27</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/d6d2d34/src/model/Addresses.ts#L26">src/model/Addresses.ts:26</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"currency"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"harvest"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/d6d2d34/src/model/Addresses.ts#L28">src/model/Addresses.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,38 +144,44 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_service_configservice_.html">&quot;service/<wbr>Config<wbr>Service&quot;</a>
+						<a href="../modules/_model_addresses_.html">&quot;model/<wbr>Addresses&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/_service_configservice_.preset.html" class="tsd-kind-icon">Preset</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_service_configservice_.configservice.html" class="tsd-kind-icon">Config<wbr>Service</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_model_addresses_.addresses.html" class="tsd-kind-icon">Addresses</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_configservice_.configparams.html" class="tsd-kind-icon">Config<wbr>Params</a>
+						<a href="_model_addresses_.certificatepair.html" class="tsd-kind-icon">Certificate<wbr>Pair</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_model_addresses_.configaccount.html" class="tsd-kind-icon">Config<wbr>Account</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_configservice_.configresult.html" class="tsd-kind-icon">Config<wbr>Result</a>
+						<a href="_model_addresses_.mosaicaccounts.html" class="tsd-kind-icon">Mosaic<wbr>Accounts</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_configservice_.configresult.html#addresses" class="tsd-kind-icon">addresses</a>
+								<a href="_model_addresses_.mosaicaccounts.html#accounts" class="tsd-kind-icon">accounts</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_configservice_.configresult.html#presetdata" class="tsd-kind-icon">preset<wbr>Data</a>
+								<a href="_model_addresses_.mosaicaccounts.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_addresses_.mosaicaccounts.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_addresses_.mosaicaccounts.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_service_configservice_.html#logger" class="tsd-kind-icon">logger</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_model_addresses_.nodeaccount.html" class="tsd-kind-icon">Node<wbr>Account</a>
 					</li>
 				</ul>
 			</nav>
