@@ -252,26 +252,6 @@ export class ConfigService {
             }
         }
 
-        if (presetData.nodes) {
-            addresses.nodes = await this.generateNodeAccounts(networkType, presetData.nodes);
-        }
-
-        if (presetData.gateways) {
-            addresses.gateways = this.generateAddresses(networkType, presetData.gateways.length);
-        }
-
-        const sinkAddress = Account.generateNewAccount(networkType).address.plain();
-
-        if (!presetData.harvestNetworkFeeSinkAddress) {
-            presetData.harvestNetworkFeeSinkAddress = sinkAddress;
-        }
-        if (!presetData.mosaicRentalFeeSinkAddress) {
-            presetData.mosaicRentalFeeSinkAddress = sinkAddress;
-        }
-        if (!presetData.namespaceRentalFeeSinkAddress) {
-            presetData.namespaceRentalFeeSinkAddress = sinkAddress;
-        }
-
         if (presetData.nemesis) {
             if (presetData.nemesis.mosaics) {
                 const mosaics: MosaicAccounts[] = [];

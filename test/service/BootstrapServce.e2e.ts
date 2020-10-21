@@ -32,7 +32,7 @@ describe('BootstrapService', () => {
             );
             const mosaic = NetworkCurrencyLocal.createAbsolute(100);
 
-           const nemesisAccounts = configResult.addresses?.mosaics?.[0].accounts.map((n) => n.privateKey);
+            const nemesisAccounts = configResult.addresses?.mosaics?.[0].accounts.map((n) => n.privateKey);
 
             if (!nemesisAccounts) {
                 throw new Error('Nemesis accounts could not be loaded!');
