@@ -98,6 +98,42 @@ symbol-bootstrap link
 
 **Note:** Full network `-p bootstrap` nodes are fully configured voting and peer nodes. `VotingKeyLinkTransaction` and `VrfKeyLinkTransaction` are added to the nemesis block automatically.
 
+### Specify the Nodes' keys.
+
+If you know the private keys of your node, you can provide them in a custom preset:
+
+```yaml
+nodes:
+  - voting: true
+    signingPrivateKey: CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD
+    vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
+    votingPrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
+```
+
+Usage examples:
+- Rebuild one of your Testnet/Main nodes. 
+- Create a new node from migrated opted in accounts (included VRF)
+
+Key your generated `addresses.yml` and `preset.yml` in the target folder privately!
+
+### Specify the Network's keys.
+
+If you want to replicate the nemesis block and generation hash of your private bootstrap network, you can specify the nemesis keys:
+
+```yaml
+nodes:
+  - voting: true
+    signingPrivateKey: CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD
+    vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
+    votingPrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
+```
+
+Usage examples:
+- Rebuild a network with the same configuration
+- Replicate integration tests that may use specific values
+
+Key your generated `addresses.yml` and `preset.yml` in the target folder privately!
+
 ### Disable voting mode in all bootstrap nodes
 
 ```yaml
