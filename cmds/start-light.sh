@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-symbol-bootstrap start -p light -r  -u current -t target/light $1
+symbol-bootstrap start -p bootstrap -a light -r  -t target/light $1

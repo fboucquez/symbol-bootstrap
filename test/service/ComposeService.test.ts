@@ -17,12 +17,16 @@ describe('ComposeService', () => {
         const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml(expectedFileLocation);
 
         const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
+            if (!service.user) {
+                return service;
+            }
             const user = await BootstrapUtils.getDockerUserGroup();
             if (user) {
                 service.user = user;
             } else {
                 delete service.user;
             }
+            return service;
         });
         await Promise.all(promises);
         expect(

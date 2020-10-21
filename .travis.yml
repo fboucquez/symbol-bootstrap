@@ -17,10 +17,15 @@ before_script:
 script:
     - npm pack
     - npm test
-    - npm run doc
     - npm run coveralls-report
 jobs:
     include:
+        - stage: test
+          mame: docs
+          script: npm run doc
+        - mame: e2e tests
+          script: npm run e2e
+          if: branch = env(DEV_BRANCH) AND type = cron
         - stage: publish
           mame: github alpha pages
           script: /bin/bash travis/node-functions.sh node_push_github_pages

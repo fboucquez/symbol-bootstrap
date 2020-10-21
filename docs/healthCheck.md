@@ -3,6 +3,7 @@
 
 It checks if the services created with docker compose are up and running.
 
+This command checks:
 - Whether the docker containers are running.
 - Whether the services' exposed ports are listening.
 - Whether the rest gateways' /node/health are OK.
@@ -24,6 +25,7 @@ OPTIONS
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
 DESCRIPTION
+  This command checks:
   - Whether the docker containers are running.
   - Whether the services' exposed ports are listening.
   - Whether the rest gateways' /node/health are OK.
@@ -34,4 +36,4 @@ EXAMPLE
   $ symbol-bootstrap healthCheck
 ```
 
-_See code: [src/commands/healthCheck.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.1.2/src/commands/healthCheck.ts)_
+_See code: [src/commands/healthCheck.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.0/src/commands/healthCheck.ts)_
