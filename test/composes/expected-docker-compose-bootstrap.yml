@@ -101,7 +101,7 @@ services:
                 ipv4_address: 172.20.0.25
     explorer-0:
         container_name: explorer-0
-        image: 'symbolplatform/symbol-explorer:0.6.2-alpha'
+        image: 'symbolplatform/symbol-explorer:0.6.2-alpha-202010191636'
         command: ash -c "/bin/ash /symbol-commands/run.sh explorer-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -112,7 +112,7 @@ services:
             - './explorer:/symbol-commands'
     wallet-0:
         container_name: wallet-0
-        image: fboucquez/symbol-desktop-wallet
+        image: symbolplatform/symbol-desktop-wallet:0.13.1-alpha-202010210146
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
