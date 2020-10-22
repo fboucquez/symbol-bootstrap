@@ -132,7 +132,7 @@ Usage examples:
 - Rebuild a network with the same previous configuration.
 - Replicate integration tests that may use specific values.
 
-Key your generated `addresses.yml` and `preset.yml` in the target folder privately!
+Keep the generated `addresses.yml` and `preset.yml` in the target folder privately!
 
 ### Disable voting mode in all bootstrap nodes
 
