@@ -112,7 +112,7 @@ nodes:
 
 Usage examples:
 - Rebuild one of your Testnet/Main nodes. 
-- Create a new node from migrated opted in accounts (included VRF)
+- Create a new node from migrated opted in accounts (included VRF).
 
 Keep the generated `addresses.yml` and `preset.yml` in the target folder privately!
 
