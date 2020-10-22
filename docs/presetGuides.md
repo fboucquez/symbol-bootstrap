@@ -121,11 +121,9 @@ Keep the generated `addresses.yml` and `preset.yml` in the target folder private
 If you want to replicate the nemesis block and generation hash of your private bootstrap network, you can specify the nemesis keys:
 
 ```yaml
-nodes:
-  - voting: true
-    signingPrivateKey: CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD
-    vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
-    votingPrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
+nemesisGenerationHashSeed: 6C1B92391CCB41C96478471C2634C111D9E989DECD66130C0430B5B8D20117CD
+nemesis:
+  nemesisSignerPrivateKey: B2AF9675B7AA8CCCBB3C1072256B3DF7354223FB5C490FFBDDB1C60696E25219
 ```
 
 Usage examples:
