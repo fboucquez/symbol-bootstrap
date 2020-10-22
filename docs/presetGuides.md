@@ -114,7 +114,7 @@ Usage examples:
 - Rebuild one of your Testnet/Main nodes. 
 - Create a new node from migrated opted in accounts (included VRF)
 
-Key your generated `addresses.yml` and `preset.yml` in the target folder privately!
+Keep the generated `addresses.yml` and `preset.yml` in the target folder privately!
 
 ### Specify the Network's keys.
 
