@@ -25,6 +25,7 @@ reservedRootNamespaceNames: 'symbol, symbl, xym, xem, nem, user, account, org, c
 defaultDynamicFeeMultiplier: 1000
 minFeeMultiplier: 100
 epochAdjustment: 1573430400s
+nodeEqualityStrategy: host
 maxVotingKeyLifetime: 26280
 minVotingKeyLifetime: 28
 mosaicRentalFee: 500
@@ -76,9 +77,35 @@ votingKeysDirectory: ./data/votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 
-# node default info
+# config database
+databaseName: catapult
+maxWriterThreads: 8
 
+# config finalization
+shortLivedCacheMessageDuration: 10m
+messageSynchronizationMaxResponseSize: 20MB
+finalizationSize: 10000
+finalizationThreshold: 7000
+maxHashesPerPoint: 256
+prevoteBlocksMultiple: 4
+
+# config messages:
+subscriberPort: 7902
+
+# network height
+networkHeightMaxNodes: 5
+
+# partialtransactions
+cacheMaxResponseSize: 20MB
+cacheMaxSize: 1000000
+
+# time synchronization
+timeSynchronizationMaxNodes: 20
+timeSynchronizationMinImportance: 3750
+
+# node default info
 maxIncomingConnectionsPerIdentity: 6
+enableAddressReuse: false
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 610
@@ -134,6 +161,13 @@ throttlingRate: 20
 restLoggingFilename: /symbol-workdir/logs/catapult-rest.log
 apiNodeConfigPath: /symbol-workdir/api-node-config
 subnet: '172.20.0.0/24'
+apiNodePort: 7900
+apiNodeTimeout: 1000
+apiNodeBrokerPort: 7902
+apiNodeBrokerPortMonitorInterval: 500
+apiNodeBrokerConnectTimeout: 10000
+apiNodeBrokerMonitorLoggingThrottle: 60000
+
 
 #voting
 votingKeyDilution: 128
