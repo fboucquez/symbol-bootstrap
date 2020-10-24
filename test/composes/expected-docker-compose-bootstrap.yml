@@ -121,7 +121,7 @@ services:
             - '../wallets/wallet-0:/usr/share/nginx/html/config'
     faucet-0:
         container_name: faucet-0
-        'image': 'fboucquez/symbol-faucet'
+        'image': 'symbolplatform/symbol-faucet:0.3.1-alpha-202010231951'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-0:3000'
