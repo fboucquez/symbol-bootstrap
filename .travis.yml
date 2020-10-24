@@ -5,6 +5,12 @@ node_js:
     - 12
 services:
     - docker
+env:
+  global:
+    - DEV_BRANCH=dev
+    - RELEASE_BRANCH=main
+    - POST_RELEASE_BRANCH=main
+    - RELEASE_MESSAGE=release
 cache:
     bundler: true
     directories:
@@ -12,7 +18,8 @@ cache:
         - .eslintcache
 before_script:
     - if [[ -v "DOCKER_PASSWORD" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
-    - . ./travis/travis-functions.sh
+    - . ./travis/node-functions.sh
+    - VERSION="$(node_load_version)"
     - log_env_variables
 script:
     - npm pack
@@ -25,15 +32,19 @@ jobs:
           script: npm run doc
         - mame: e2e tests
           script: npm run e2e
-          if: branch = env(DEV_BRANCH) AND type = cron
+          if: (branch = env(DEV_BRANCH) AND type = cron) OR (commit_message = e2e)
         - stage: publish
           mame: github alpha pages
           script: /bin/bash travis/node-functions.sh node_push_github_pages
-          if: branch = env(DEV_BRANCH) AND type != pull_request AND (commit_message != release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
+          if: branch = env(DEV_BRANCH) AND type = push
         - name: alpha npm
           script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
-          if: branch = env(DEV_BRANCH) AND type != pull_request AND (commit_message != release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
+          if: branch = env(RELEASE_BRANCH) AND type = api AND commit_message = env(RELEASE_MESSAGE)
         - stage: release
-          name: release npm, tag and upgrade
-          script: npm pack && /bin/bash travis/node-functions.sh node_release
-          if: branch = env(RELEASE_BRANCH) AND type != pull_request AND (commit_message = release OR env(RELEASE_BRANCH) != env(DEV_BRANCH))
+          name: release npm
+          script: npm pack && /bin/bash travis/node-functions.sh node_publish_release
+          if: branch = env(RELEASE_BRANCH) AND type = api AND commit_message = env(RELEASE_MESSAGE)
+        - stage: post release
+          name: tag and version upgrade
+          script: npm pack && /bin/bash travis/node-functions.sh node_post_release
+          if: branch = env(RELEASE_BRANCH) AND type = api AND commit_message = env(RELEASE_MESSAGE)

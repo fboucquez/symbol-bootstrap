@@ -27,25 +27,28 @@ node_push_github_pages(){
   push_github_pages $VERSION 'ts-docs/'
 }
 
-node_release(){
+node_publish_release(){
+  VERSION="$(node_load_version)"
+  validate_env_variable "VERSION" "$FUNCNAME"
+  if [ "$SKIP_RELEASE_PUBLISH" = "true" ]; then
+    echo "Skipping publishing of sdk artifacts"
+    echo ""
+  else
+    validate_env_variable "NPM_TOKEN" "$FUNCNAME"
+    cp travis/.npmrc $HOME/.npmrc
+    echo "Publishing $TRAVIS_REPO_SLUG artifacts"
+    npm publish
+    echo ""
+  fi
+}
+
+node_post_release(){
   VERSION="$(node_load_version)"
   validate_env_variable "VERSION" "$FUNCNAME"
   validate_env_variable "RELEASE_BRANCH" "$FUNCNAME"
   validate_env_variable "REMOTE_NAME" "$FUNCNAME"
   validate_env_variable "POST_RELEASE_BRANCH" "$FUNCNAME"
-  validate_env_variable "NPM_TOKEN" "$FUNCNAME"
   checkout_branch "${RELEASE_BRANCH}"
-
-
-  cp travis/.npmrc $HOME/.npmrc
-  if [ "$SKIP_RELEASE_PUBLISH" = "true" ]; then
-    echo "Skipping publishing of sdk artifacts"
-    echo ""
-  else
-    echo "Publishing $TRAVIS_REPO_SLUG artifacts"
-    npm publish
-    echo ""
-  fi
 
   git tag -fa "v$VERSION" -m "Releasing version $VERSION"
 
@@ -71,8 +74,12 @@ if [ "$1" == "node_publish_alpha" ];then
     node_publish_alpha
 fi
 
-if [ "$1" == "node_release" ];then
-    node_release
+if [ "$1" == "node_publish_release" ];then
+    node_publish_release
+fi
+
+if [ "$1" == "node_post_release" ];then
+    node_post_release
 fi
 
 if [ "$1" == "node_push_github_pages" ];then
