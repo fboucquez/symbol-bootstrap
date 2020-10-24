@@ -96,8 +96,8 @@ subscriberPort: 7902
 networkHeightMaxNodes: 5
 
 # partialtransactions
-cacheMaxResponseSize: 20MB
-cacheMaxSize: 1000000
+partialTransactionsCacheMaxResponseSize: 20MB
+partialTransactionsCacheMaxSize: 1000000
 
 # time synchronization
 timeSynchronizationMaxNodes: 20
