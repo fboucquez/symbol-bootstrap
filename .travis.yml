@@ -17,7 +17,6 @@ cache:
         - node_modules
         - .eslintcache
 before_script:
-    - if [[ -v "DOCKER_PASSWORD" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
     - . ./travis/node-functions.sh
     - VERSION="$(node_load_version)"
     - log_env_variables
@@ -28,13 +27,13 @@ script:
 jobs:
     include:
         - stage: test
-          mame: docs
+          name: docs
           script: npm run doc
-        - mame: e2e tests
+        - name: e2e tests
           script: npm run e2e
           if: (branch = env(DEV_BRANCH) AND type = cron) OR (commit_message = e2e)
         - stage: publish
-          mame: github alpha pages
+          name: github alpha pages
           script: /bin/bash travis/node-functions.sh node_push_github_pages
           if: branch = env(DEV_BRANCH) AND type = push
         - name: alpha npm
