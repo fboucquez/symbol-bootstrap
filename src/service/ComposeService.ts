@@ -125,10 +125,14 @@ export class ComposeService {
                         user,
                         container_name: n.name,
                         image: presetData.mongoImage,
-                        command: `bash -c "/bin/bash /userconfig/mongors.sh ${n.name} & mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
+                        command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
                         stop_signal: 'SIGINT',
+                        working_dir: '/docker-entrypoint-initdb.d',
                         ports: resolvePorts(27017, n.openPort),
-                        volumes: [vol(`./mongo`, `/userconfig/:ro`), vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw')],
+                        volumes: [
+                            vol(`./mongo`, `/docker-entrypoint-initdb.d/:ro`),
+                            vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw'),
+                        ],
                     }),
                 );
             }),
