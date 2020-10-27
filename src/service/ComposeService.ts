@@ -123,6 +123,7 @@ export class ComposeService {
                 services.push(
                     await resolveService(n, {
                         user,
+                        environment: { MONGO_INITDB_DATABASE: n.databaseName || presetData.databaseName },
                         container_name: n.name,
                         image: presetData.mongoImage,
                         command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
