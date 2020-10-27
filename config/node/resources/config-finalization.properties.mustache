@@ -2,13 +2,13 @@
 
 enableVoting = {{voting}}
 
-size = 10'000
-threshold = 7'000
+size = {{{toAmount finalizationSize}}}
+threshold = {{{toAmount finalizationThreshold}}}
 stepDuration = {{{stepDuration}}}
 
-shortLivedCacheMessageDuration = 10m
-messageSynchronizationMaxResponseSize = 20MB
+shortLivedCacheMessageDuration = {{{shortLivedCacheMessageDuration}}}
+messageSynchronizationMaxResponseSize = {{{messageSynchronizationMaxResponseSize}}}
 
-maxHashesPerPoint = 256
-prevoteBlocksMultiple = 4
+maxHashesPerPoint = {{{toAmount maxHashesPerPoint}}}
+prevoteBlocksMultiple = {{{toAmount prevoteBlocksMultiple}}}
 votingKeyDilution = {{{votingKeyDilution}}}
