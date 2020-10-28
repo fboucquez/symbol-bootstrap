@@ -1,17 +1,21 @@
 version: '3'
 services:
     db-0:
+        user: '1000:1000'
+        environment:
+          MONGO_INITDB_DATABASE: catapult
         container_name: db-0
         image: 'mongo:4.2.6-bionic'
-        command: bash -c "/bin/bash /userconfig/mongors.sh db-0 & mongod --dbpath=/dbdata --bind_ip=db-0"
+        command: mongod --dbpath=/dbdata --bind_ip=db-0
+        working_dir: /docker-entrypoint-initdb.d
         stop_signal: SIGINT
         ports:
             - '27017:27017'
         volumes:
-            - './mongo:/userconfig/:ro'
+            - './mongo:/docker-entrypoint-initdb.d/:ro'
             - '../databases/db-0:/dbdata:rw'
-        user: '1000:1000'
     peer-node-0:
+        user: '1000:1000'
         container_name: peer-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
@@ -23,14 +27,14 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir'
             - './server:/symbol-commands'
-        user: '1000:1000'
         depends_on: []
-        hostname: peer-node-0
         networks:
             default:
                 aliases:
                     - peer-node-0
+        hostname: peer-node-0
     peer-node-1:
+        user: '1000:1000'
         container_name: peer-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
@@ -42,14 +46,14 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir'
             - './server:/symbol-commands'
-        user: '1000:1000'
         depends_on: []
-        hostname: peer-node-1
         networks:
             default:
                 aliases:
                     - peer-node-1
+        hostname: peer-node-1
     api-node-0:
+        user: '1000:1000'
         container_name: api-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
@@ -60,15 +64,15 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir'
             - './server:/symbol-commands'
-        user: '1000:1000'
         depends_on:
             - api-node-broker-0
-        hostname: api-node-0
         networks:
             default:
                 aliases:
                     - api-node-0
+        hostname: api-node-0
     api-node-broker-0:
+        user: '1000:1000'
         container_name: api-node-broker-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
         working_dir: /symbol-workdir
@@ -82,9 +86,9 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir'
             - './server:/symbol-commands'
-        user: '1000:1000'
     rest-gateway-0:
         container_name: rest-gateway-0
+        user: '1000:1000'
         image: 'symbolplatform/symbol-rest:2.1.0'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
@@ -95,7 +99,6 @@ services:
             - '../gateways/rest-gateway-0:/symbol-workdir'
         depends_on:
             - db-0
-        user: '1000:1000'
         networks:
             default:
                 ipv4_address: 172.20.0.25

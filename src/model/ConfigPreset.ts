@@ -27,6 +27,7 @@ export interface MosaicPreset {
 export interface DatabasePreset extends DockerServicePreset {
     repeat?: number;
     name: string;
+    databaseName?: string;
 }
 
 export interface NemesisPreset {
@@ -79,6 +80,7 @@ export interface ConfigPreset {
     nemesis?: NemesisPreset;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
     assemblies?: string;
+    databaseName: string;
     nemesisSignerPublicKey: string;
     nemesisGenerationHashSeed: string;
     harvestNetworkFeeSinkAddress?: string;
