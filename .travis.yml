@@ -38,7 +38,7 @@ jobs:
           if: branch = env(DEV_BRANCH) AND type = push
         - name: alpha npm
           script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
-          if: branch = env(RELEASE_BRANCH) AND type = api AND commit_message = env(RELEASE_MESSAGE)
+          if: branch = env(DEV_BRANCH) AND type = push
         - stage: release
           name: release npm
           script: npm pack && /bin/bash travis/node-functions.sh node_publish_release
