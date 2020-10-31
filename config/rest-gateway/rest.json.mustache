@@ -34,20 +34,20 @@
 
   "apiNode": {
     "host": "{{{apiNodeHost}}}",
-    "port": 7900,
+    "port": {{{apiNodePort}}},
     "tlsClientCertificatePath": "{{{apiNodeConfigPath}}}/cert/node.crt.pem",
     "tlsClientKeyPath": "{{{apiNodeConfigPath}}}/cert/node.key.pem",
     "tlsCaCertificatePath": "{{{apiNodeConfigPath}}}/cert/ca.cert.pem",
-    "timeout": 1000
+    "timeout": {{{apiNodeTimeout}}}
   },
 
   "websocket": {
     "mq": {
       "host": "{{{apiNodeBrokerHost}}}",
-      "port": 7902,
-      "monitorInterval": 500,
-      "connectTimeout": 10000,
-      "monitorLoggingThrottle": 60000
+      "port": {{{apiNodeBrokerPort}}},
+      "monitorInterval": {{{apiNodeBrokerPortMonitorInterval}}},
+      "connectTimeout": {{{apiNodeBrokerConnectTimeout}}},
+      "monitorLoggingThrottle": {{{apiNodeBrokerMonitorLoggingThrottle}}}
     },
     "allowOptionalAddress": true
   },

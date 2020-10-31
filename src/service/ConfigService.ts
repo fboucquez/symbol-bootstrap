@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 NEM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { BootstrapUtils } from './BootstrapUtils';
 import {
     Account,
@@ -128,40 +144,46 @@ export class ConfigService {
 
     public async run(): Promise<ConfigResult> {
         const target = this.params.target;
-        if (this.params.reset) {
-            BootstrapUtils.deleteFolder(target);
-        }
-        const presetLocation = BootstrapUtils.getGeneratedPresetLocation(target);
-        if (fs.existsSync(presetLocation)) {
-            logger.info(`The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset)`);
-            const presetData: ConfigPreset = BootstrapUtils.loadExistingPresetData(target);
-            const addresses: Addresses = BootstrapUtils.loadExistingAddresses(target);
+        try {
+            if (this.params.reset) {
+                BootstrapUtils.deleteFolder(target);
+            }
+            const presetLocation = BootstrapUtils.getGeneratedPresetLocation(target);
+            if (fs.existsSync(presetLocation)) {
+                logger.info(`The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset)`);
+                const presetData: ConfigPreset = BootstrapUtils.loadExistingPresetData(target);
+                const addresses: Addresses = BootstrapUtils.loadExistingAddresses(target);
+                return { presetData, addresses };
+            }
+
+            const presetData: ConfigPreset = BootstrapUtils.loadPresetData(
+                this.root,
+                this.params.preset,
+                this.params.assembly,
+                this.params.customPreset,
+                this.params.customPresetObject,
+            );
+
+            await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
+
+            const networkType = presetData.networkType;
+            const addresses = await this.generateRandomConfiguration(networkType, presetData);
+            await BootstrapUtils.writeYaml(BootstrapUtils.getGeneratedAddressLocation(target), addresses);
+
+            await this.generateNodes(presetData, addresses);
+            await this.generateNemesis(presetData, addresses);
+            await this.generateGateways(presetData, addresses);
+            await this.generateExplorers(presetData);
+            await this.generateWallets(presetData);
+
+            await BootstrapUtils.writeYaml(presetLocation, presetData);
+            logger.info(`Configuration generated.`);
             return { presetData, addresses };
+        } catch (e) {
+            logger.error(`Unknown error generating the configuration. ${e.message}`, e);
+            logger.error(`The target folder '${target}' should be deleted!!!`);
+            throw e;
         }
-
-        const presetData: ConfigPreset = BootstrapUtils.loadPresetData(
-            this.root,
-            this.params.preset,
-            this.params.assembly,
-            this.params.customPreset,
-            this.params.customPresetObject,
-        );
-
-        await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
-
-        const networkType = presetData.networkType;
-        const addresses = await this.generateRandomConfiguration(networkType, presetData);
-        await BootstrapUtils.writeYaml(BootstrapUtils.getGeneratedAddressLocation(target), addresses);
-
-        await this.generateNodes(presetData, addresses);
-        await this.generateNemesis(presetData, addresses);
-        await this.generateGateways(presetData, addresses);
-        await this.generateExplorers(presetData);
-        await this.generateWallets(presetData);
-
-        await BootstrapUtils.writeYaml(presetLocation, presetData);
-        logger.info(`Configuration generated.`);
-        return { presetData, addresses };
     }
 
     private async generateNemesis(presetData: ConfigPreset, addresses: Addresses) {

@@ -4,15 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.2.1] - NEXT RELEASE!
+## [0.2.2] - NEXT RELEASE!
+
+ Package  | Version  | Link
+---|---|---
+Symbol Bootstrap | v0.2.2 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+
+- **New Service:** `Explorer`. Bootstrap private network starts a Faucet service in [http://localhost:80/](http://localhost:80/) by default. 
+- **New Service:** `Faucet`. Bootstrap private network starts an Explorer service in [http://localhost:100/](http://localhost:100/) by default. 
+- **New Service:** `Walelt`. Bootstrap private network starts a Wallet service in [http://localhost:90/](http://localhost:90/) by default. **Warning:** This wallet service is for demonstration proposes.
+
+## [0.2.1] - 30-Oct-2020
+
+**Milestone**: Hippopotamus(0.10.0.3)
 
  Package  | Version  | Link
 ---|---|---
 Symbol Bootstrap | v0.2.1 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
-- **New Service:** `Explorer`. Bootstrap private network starts a Faucet service in [http://localhost:80/](http://localhost:80/) by default. 
-- **New Service:** `Faucet`. Bootstrap private network starts an Explorer service in [http://localhost:100/](http://localhost:100/) by default. 
-- **New Service:** `Walelt`. Bootstrap private network starts a Wallet service in [http://localhost:90/](http://localhost:90/) by default. **Warning:** This wallet service is for demonstration proposes.
+- Fixed DB initialization.
+- Added more configurable properties.
 
 ## [0.2.0] - 21-Oct-2020
 

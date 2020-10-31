@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 NEM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
@@ -126,12 +142,17 @@ export class ComposeService {
                 services.push(
                     await resolveService(n, {
                         user,
+                        environment: { MONGO_INITDB_DATABASE: n.databaseName || presetData.databaseName },
                         container_name: n.name,
                         image: presetData.mongoImage,
-                        command: `bash -c "/bin/bash /userconfig/mongors.sh ${n.name} & mongod --dbpath=/dbdata --bind_ip=${n.name}"`,
+                        command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
                         stop_signal: 'SIGINT',
+                        working_dir: '/docker-entrypoint-initdb.d',
                         ports: resolvePorts(27017, n.openPort),
-                        volumes: [vol(`./mongo`, `/userconfig/:ro`), vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw')],
+                        volumes: [
+                            vol(`./mongo`, `/docker-entrypoint-initdb.d/:ro`),
+                            vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw'),
+                        ],
                     }),
                 );
             }),
