@@ -18,7 +18,7 @@ import { ConfigParams } from './ConfigService';
 import { BootstrapUtils } from './BootstrapUtils';
 import LoggerFactory from '../logger/LoggerFactory';
 import Logger from '../logger/Logger';
-import { LogType } from '../logger/LogType';
+import { LogType } from '../logger';
 import { join, resolve } from 'path';
 import { CertificatePair, ConfigPreset } from '../model';
 
@@ -26,23 +26,48 @@ type CertificateParams = ConfigParams;
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
+interface NodeCertificates {
+    ssl: CertificatePair;
+    node: CertificatePair;
+}
+
 export class CertificateService {
     constructor(private readonly root: string, protected readonly params: CertificateParams) {}
 
-    private getKey(stdout: string, from: string, to: string): string {
-        const key = stdout
-            .substring(stdout.indexOf(from) + from.length, stdout.indexOf(to))
-            .trim()
-            .split(':')
-            .map((m) => m.trim())
-            .join('');
-        if (!key || key.length !== 64) {
-            throw Error(`SSL Certificate key '${from}' cannot be loaded from the openssl script. Output: \n${stdout}`);
-        }
-        return key;
+    public static getCertificates(stdout: string): CertificatePair[] {
+        const locations = (string: string, substring: string): number[] => {
+            const indexes = [];
+            let i = -1;
+            while ((i = string.indexOf(substring, i + 1)) >= 0) indexes.push(i);
+            return indexes;
+        };
+
+        const extractKey = (subtext: string): string => {
+            const key = subtext
+                .trim()
+                .split(':')
+                .map((m) => m.trim())
+                .join('');
+            if (!key || key.length !== 64) {
+                throw Error(`SSL Certificate key cannot be loaded from the openssl script. Output: \n${subtext}`);
+            }
+            return key.toUpperCase();
+        };
+
+        const from = 'priv:';
+        const middle = 'pub:';
+        const to = 'Certificate';
+
+        const indexes = locations(stdout, from);
+
+        return indexes.map((index) => {
+            const privateKey = extractKey(stdout.substring(index + from.length, stdout.indexOf(middle, index)));
+            const publicKey = extractKey(stdout.substring(stdout.indexOf(middle, index) + middle.length, stdout.indexOf(to, index)));
+            return { privateKey: privateKey, publicKey: publicKey };
+        });
     }
 
-    public async run(name: string): Promise<CertificatePair> {
+    public async run(name: string): Promise<NodeCertificates> {
         // Currently the SSL certifcates are created via a docker image. Migrate this to a native forge!
         // https://www.npmjs.com/package/node-forge
 
@@ -75,17 +100,18 @@ export class CertificateService {
             cmds: cmd,
             binds: binds,
         });
-        const privateKey = this.getKey(stdout, 'priv:', 'pub:');
-        const publicKey = this.getKey(stdout, 'pub:', 'Certificate:');
-
-        logger.info(`Certificate for node ${name} created`);
         if (stdout.indexOf('Certificate Created') < 0) {
             logger.info(stdout);
             logger.error(stderr);
             throw new Error('Certificate creation failed. Check the logs!');
         }
 
-        return { privateKey, publicKey };
+        const certificates = CertificateService.getCertificates(stdout);
+        if (certificates.length != 2) {
+            throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
+        }
+        logger.info(`Certificate for node ${name} created`);
+        return { ssl: certificates[0], node: certificates[1] };
     }
 
     private createCertCommands(target: string): string {
