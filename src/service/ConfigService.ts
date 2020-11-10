@@ -122,15 +122,16 @@ export class ConfigService {
         return privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
     }
 
-    public async generateNodeAccount(index: number, node: NodePreset, networkType: NetworkType): Promise<NodeAccount> {
-        const name = node.name || `node-${index}`;
-        const ssl = await new CertificateService(this.root, this.params).run(name);
-        const friendlyName = node.friendlyName || ssl.publicKey.substr(0, 7);
-        const nodeAccount: NodeAccount = { name, friendlyName, roles: node.roles, ssl };
+    public async generateNodeAccount(index: number, nodePreset: NodePreset, networkType: NetworkType): Promise<NodeAccount> {
+        const name = nodePreset.name || `node-${index}`;
+        const { ssl, node } = await new CertificateService(this.root, this.params).run(name);
+        const friendlyName = nodePreset.friendlyName || ssl.publicKey.substr(0, 7);
+        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, ssl, node };
 
-        if (node.harvesting || node.voting) nodeAccount.signing = this.toConfig(this.generateAccount(networkType, node.signingPrivateKey));
-        if (node.voting) nodeAccount.voting = this.toConfig(this.generateAccount(networkType, node.votingPrivateKey));
-        if (node.harvesting) nodeAccount.vrf = this.toConfig(this.generateAccount(networkType, node.vrfPrivateKey));
+        if (nodePreset.harvesting || nodePreset.voting)
+            nodeAccount.signing = this.toConfig(this.generateAccount(networkType, nodePreset.signingPrivateKey));
+        if (nodePreset.voting) nodeAccount.voting = this.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
+        if (nodePreset.harvesting) nodeAccount.vrf = this.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
         return nodeAccount;
     }
 
