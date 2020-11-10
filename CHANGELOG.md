@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.2] - NEXT
+
+**Milestone**: Hippopotamus(0.10.0.3)
+
+ Package  | Version  | Link
+---|---|---
+Symbol Bootstrap | v0.2.2 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+
+- Fixed api broker name in testnet's api assembly.
+
 ## [0.2.1] - 30-Oct-2020
 
 **Milestone**: Hippopotamus(0.10.0.3)
