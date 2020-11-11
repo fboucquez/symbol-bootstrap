@@ -26,7 +26,10 @@ export interface ConfigAccount extends CertificatePair {
 }
 
 export interface NodeAccount {
+    // keys from ca.cert.pem file
     ssl: CertificatePair;
+    // keys from the node.key.pem file (required for delegate harvesting)
+    node: CertificatePair;
     //Signing key is produced if node is peer or voting
     signing?: ConfigAccount;
     // VRF key is produced if node is peer
