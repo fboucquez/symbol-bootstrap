@@ -90,6 +90,29 @@ describe('ReportService', () => {
         await assertReport(params, 'testnet-peer');
     });
 
+    it('ReportService testnet api', async () => {
+        const target = 'target/ReportService.testnet.api.report';
+        const customPresetObject = {
+            nodes: [
+                {
+                    voting: false,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.testnet,
+            customPresetObject: customPresetObject,
+            assembly: 'api',
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'testnet-api');
+    });
+
     it('ReportService bootstrap report', async () => {
         const target = 'target/ReportService.bootstrap.voting.report';
         const customPresetObject = {
