@@ -21,6 +21,7 @@ nemesisSignerPublicKey: 78F0F6FFDE5C130777506FE2A597ADC5E98BD46041ABF775908299FE
 harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
+enableRevoteOnBoot: false
 faucetUrl: 'http://faucet-0.10.0.x-01.symboldev.network'
 trustedHosts:
 inflation:

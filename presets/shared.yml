@@ -61,9 +61,9 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.3
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.3
-symbolRestImage: symbolplatform/symbol-rest:2.1.0
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.4
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.4
+symbolRestImage: symbolplatform/symbol-rest:2.1.1-alpha
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -136,6 +136,9 @@ enableAutoHarvesting: true
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
 
+minPartnerNodeVersion: 0.10.0.4
+maxPartnerNodeVersion: 0.10.0.4
+
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20
@@ -156,8 +159,8 @@ readRateMonitoringBucketDuration: 15s
 maxReadRateMonitoringTotalSize: 100MB
 
 #Rest
-throttlingBurst: 35
-throttlingRate: 20
+throttlingBurst: 80
+throttlingRate: 60
 restLoggingFilename: /symbol-workdir/logs/catapult-rest.log
 apiNodeConfigPath: /symbol-workdir/api-node-config
 subnet: '172.20.0.0/24'
@@ -170,6 +173,6 @@ apiNodeBrokerMonitorLoggingThrottle: 60000
 
 
 #voting
-votingKeyDilution: 128
 votingKeyStartEpoch: 1
 votingKeyEndEpoch: 26280
+enableRevoteOnBoot: true

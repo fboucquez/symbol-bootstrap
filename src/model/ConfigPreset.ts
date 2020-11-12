@@ -116,7 +116,6 @@ export interface ConfigPreset {
     symbolServerToolsImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
-    votingKeyDilution: number;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
 }
