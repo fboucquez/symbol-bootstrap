@@ -17,6 +17,7 @@
 import { BootstrapUtils } from './BootstrapUtils';
 import {
     Account,
+    AccountKeyLinkTransaction,
     Address,
     Convert,
     Deadline,
@@ -122,21 +123,39 @@ export class ConfigService {
         return privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
     }
 
-    public async generateNodeAccount(index: number, nodePreset: NodePreset, networkType: NetworkType): Promise<NodeAccount> {
+    public async generateNodeAccount(
+        presetData: ConfigPreset,
+        index: number,
+        nodePreset: NodePreset,
+        networkType: NetworkType,
+    ): Promise<NodeAccount> {
         const name = nodePreset.name || `node-${index}`;
-        const { ssl, node } = await new CertificateService(this.root, this.params).run(name);
-        const friendlyName = nodePreset.friendlyName || ssl.publicKey.substr(0, 7);
-        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, ssl, node };
+        const ca = this.toConfig(this.generateAccount(networkType, nodePreset.caPrivateKey));
+        const node = this.toConfig(this.generateAccount(networkType, nodePreset.nodePrivateKey));
 
-        if (nodePreset.harvesting || nodePreset.voting)
-            nodeAccount.signing = this.toConfig(this.generateAccount(networkType, nodePreset.signingPrivateKey));
+        const friendlyName = nodePreset.friendlyName || ca.publicKey.substr(0, 7);
+        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, ca, node };
+
+        const useRemoteAccount = nodePreset.nodeUseRemoteAccount || presetData.nodeUseRemoteAccount;
+
+        if (useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
+            nodeAccount.harvesterSigning = this.toConfig(this.generateAccount(networkType, nodePreset.harvesterSigningPrivateKey));
+
+        if (!useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
+            nodeAccount.harvesterSigning = this.toConfig(
+                this.generateAccount(networkType, nodePreset.harvesterSigningPrivateKey || ca.privateKey),
+            );
+
         if (nodePreset.voting) nodeAccount.voting = this.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
         if (nodePreset.harvesting) nodeAccount.vrf = this.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
+
+        await new CertificateService(this.root, this.params).run(presetData, name, { ca, node });
+
         return nodeAccount;
     }
 
-    public async generateNodeAccounts(networkType: NetworkType, nodes: NodePreset[]): Promise<NodeAccount[]> {
-        return Promise.all(nodes.map((node, index) => this.generateNodeAccount(index, node, networkType)));
+    public async generateNodeAccounts(presetData: ConfigPreset, networkType: NetworkType): Promise<NodeAccount[]> {
+        return Promise.all(presetData.nodes!.map((node, index) => this.generateNodeAccount(presetData, index, node, networkType)));
     }
 
     private static getArray(size: number): number[] {
@@ -218,7 +237,7 @@ export class ConfigService {
         };
 
         if (presetData.nodes) {
-            addresses.nodes = await this.generateNodeAccounts(networkType, presetData.nodes);
+            addresses.nodes = await this.generateNodeAccounts(presetData, networkType);
         }
 
         if (presetData.gateways) {
@@ -289,12 +308,12 @@ export class ConfigService {
                 presetData.nemesis.mosaics.forEach((m, index) => {
                     const accounts = mosaics[index].accounts;
                     if (!m.currencyDistributions) {
-                        const signingNodes = (addresses.nodes || []).filter((node) => node.signing);
-                        const totalAccounts = (m.accounts || 0) + signingNodes.length;
+                        const caNodes = (addresses.nodes || []).filter((node) => node.ca);
+                        const totalAccounts = (m.accounts || 0) + caNodes.length;
                         const amountPerAccount = Math.floor(m.supply / totalAccounts);
                         m.currencyDistributions = [
                             ...accounts.map((a) => ({ address: a.address, amount: amountPerAccount })),
-                            ...signingNodes.map((n) => ({ address: n.signing!.address, amount: amountPerAccount })),
+                            ...caNodes.map((n) => ({ address: n.ca!.address, amount: amountPerAccount })),
                         ];
                         if (m.currencyDistributions.length)
                             m.currencyDistributions[0].amount += m.supply - totalAccounts * amountPerAccount;
@@ -328,7 +347,7 @@ export class ConfigService {
         const generatedContext = {
             name: name,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
-            harvesterSigningPrivateKey: account.signing?.privateKey || '',
+            harvesterSigningPrivateKey: account.harvesterSigning?.privateKey || '',
             harvesterVrfPrivateKey: account.vrf?.privateKey || '',
         };
         const templateContext = { ...presetData, ...generatedContext, ...nodePreset };
@@ -367,7 +386,7 @@ export class ConfigService {
                 }
                 const node = (addresses.nodes || [])[index];
                 return {
-                    publicKey: node.ssl.publicKey,
+                    publicKey: node.ca.publicKey,
                     endpoint: {
                         host: nodePresetData.host,
                         port: 7900,
@@ -400,6 +419,12 @@ export class ConfigService {
         const templateContext = { ...(presetData as any), addresses };
         await Promise.all(
             (addresses.nodes || []).filter((n) => n.vrf).map((n) => this.createVrfTransaction(transactionsDirectory, presetData, n)),
+        );
+
+        await Promise.all(
+            (addresses.nodes || [])
+                .filter((n) => n.harvesterSigning && n.harvesterSigning.privateKey.toUpperCase() !== n.ca.privateKey.toUpperCase())
+                .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
         await Promise.all(
             (addresses.nodes || [])
@@ -479,14 +504,38 @@ export class ConfigService {
         if (!node.vrf) {
             throw new Error('VRF keys should have been generated!!');
         }
-        if (!node.signing) {
+        if (!node.ca) {
             throw new Error('Signing keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
-        const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+        const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
+    }
+
+    private async createAccountKeyLinkTransaction(
+        transactionsDirectory: string,
+        presetData: ConfigPreset,
+        node: NodeAccount,
+    ): Promise<Transaction> {
+        if (!node.harvesterSigning) {
+            throw new Error('Harvester Signing keys should have been generated!!');
+        }
+        if (!node.ca) {
+            throw new Error('Signing keys should have been generated!!');
+        }
+        const deadline = Deadline.createFromDTO('1');
+        const vrf = AccountKeyLinkTransaction.create(
+            deadline,
+            node.harvesterSigning.publicKey,
+            LinkAction.Link,
+            presetData.networkType,
+            UInt64.fromUint(0),
+        );
+        const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
+        const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
+        return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
 
     private async createVotingKeyTransaction(
@@ -498,7 +547,7 @@ export class ConfigService {
             throw new Error('Voting keys should have been generated!!');
         }
 
-        if (!node.signing) {
+        if (!node.ca) {
             throw new Error('Signing keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
@@ -512,7 +561,7 @@ export class ConfigService {
             presetData.networkType,
             UInt64.fromUint(0),
         );
-        const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+        const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
         const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
     }

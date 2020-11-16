@@ -88,10 +88,10 @@ export class LinkService {
 
         const signedTransactionObservable = fromArray(transactionNodes).pipe(
             mergeMap(({ node, transactions }) => {
-                if (!node.signing) {
-                    throw new Error('Signing is required!');
+                if (!node.ca) {
+                    throw new Error('CA account is required!');
                 }
-                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
                 const noFundsMessage = faucetUrl
                     ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
                     : `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} .`;
@@ -151,13 +151,13 @@ export class LinkService {
         presetData: ConfigPreset,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
         return _.flatMap(addresses.nodes || [])
-            .filter((node) => node.signing)
+            .filter((node) => node.ca)
             .map((node) => {
                 const transactions = [];
-                if (!node.signing) {
-                    throw new Error('Signing is required!');
+                if (!node.ca) {
+                    throw new Error('CA private key is required!');
                 }
-                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
                 const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
 
                 if (node.vrf) {

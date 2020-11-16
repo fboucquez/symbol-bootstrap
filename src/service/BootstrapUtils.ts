@@ -107,6 +107,12 @@ export class BootstrapUtils {
         }
     }
 
+    public static validateIsTrue(value: boolean, message: string): void {
+        if (!value) {
+            throw new Error(message);
+        }
+    }
+
     public static async pullImage(image: string): Promise<void> {
         this.validateIsDefined(image, 'Image must be provided');
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
@@ -502,7 +508,7 @@ export class BootstrapUtils {
     }
 
     public static async getDockerUserGroup(): Promise<string> {
-        const isWin = process.platform === 'win32';
+        const isWin = this.isWindows();
         if (isWin) {
             return '';
         }
@@ -519,6 +525,10 @@ export class BootstrapUtils {
             logger.info(`User for docker could not be resolved: ${e}`);
             return '';
         }
+    }
+
+    public static isWindows() {
+        return process.platform === 'win32';
     }
 
     public static validateFolder(workingDirFullPath: string): void {
