@@ -19,6 +19,7 @@ import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
 import {
     Account,
+    AccountKeyLinkTransaction,
     Deadline,
     LinkAction,
     NetworkCurrencyPublic,
@@ -151,7 +152,7 @@ export class LinkService {
         presetData: ConfigPreset,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
         return _.flatMap(addresses.nodes || [])
-            .filter((node) => node.ca)
+            .filter((node) => node.ca && (node.harvesterSigning || node.voting || node.vrf))
             .map((node) => {
                 const transactions = [];
                 if (!node.ca) {
@@ -160,9 +161,26 @@ export class LinkService {
                 const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
                 const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
 
+                logger.info(`Creating transactions for node: ${node.name}, ca/main account: ${account.address.plain()}`);
+
+                if (node.harvesterSigning && node.harvesterSigning.privateKey.toUpperCase() != account.privateKey.toUpperCase()) {
+                    logger.info(
+                        `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account key: ${node.harvesterSigning.publicKey}`,
+                    );
+                    transactions.push(
+                        AccountKeyLinkTransaction.create(
+                            Deadline.create(),
+                            node.harvesterSigning.publicKey,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                }
+
                 if (node.vrf) {
                     logger.info(
-                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, vrf key: ${node.vrf.publicKey}`,
+                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, VRF key: ${node.vrf.publicKey}`,
                     );
                     transactions.push(
                         VrfKeyLinkTransaction.create(
@@ -177,7 +195,7 @@ export class LinkService {
                 if (node.voting) {
                     const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
                     logger.info(
-                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, voting public key: ${votingPublicKey}`,
+                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Voting public key: ${votingPublicKey}`,
                     );
                     transactions.push(
                         VotingKeyLinkTransaction.create(
