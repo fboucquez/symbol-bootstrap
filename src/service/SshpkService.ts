@@ -24,7 +24,6 @@ import { CertificatePair, ConfigPreset, NodeAccount, NodePreset } from '../model
 
 import { Convert, Crypto } from 'symbol-sdk';
 
-import * as fs from 'fs';
 import { Key } from 'sshpk';
 import * as sshpk from 'sshpk';
 const anySshpk = sshpk as any;
