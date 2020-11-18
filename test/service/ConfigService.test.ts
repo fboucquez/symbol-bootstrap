@@ -50,7 +50,7 @@ describe('ConfigService', () => {
     it('ConfigService bootstrap default', async () => {
         await new ConfigService('.', {
             ...ConfigService.defaultParams,
-            reset: true,
+            upgrade: true,
             target: 'target/bootstrap',
             preset: Preset.bootstrap,
         }).run();

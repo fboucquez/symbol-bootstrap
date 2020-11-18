@@ -16,6 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { NetworkType } from 'symbol-sdk';
 import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
 
 describe('ConfigLoader', () => {
@@ -223,5 +224,18 @@ describe('ConfigLoader', () => {
 
         expect(configLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
         expect(configLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
+    });
+
+    it('should migrated old addresses', () => {
+        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml');
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml');
+        const addresses = configLoader.migrateAddresses(oldAddresses, NetworkType.TEST_NET);
+        expect(addresses).to.be.deep.eq(newAddresses);
+    });
+
+    it('should migrated not migrate new addresses', () => {
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml');
+        const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET);
+        expect(addresses).to.be.deep.eq(newAddresses);
     });
 });

@@ -347,12 +347,12 @@ export class ConfigLoader {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public migrateAddresses(addresses: any, networkType: NetworkType | undefined): Addresses {
+    public migrateAddresses(addresses: any, networkType: NetworkType): Addresses {
         const migrations = this.getAddressesMigration(networkType);
         return BootstrapUtils.migrate('addresses.yml', addresses, migrations);
     }
 
-    public getAddressesMigration(networkType: NetworkType | undefined): Migration[] {
+    public getAddressesMigration(networkType: NetworkType): Migration[] {
         return [
             {
                 description: 'Key names migration',
@@ -361,15 +361,20 @@ export class ConfigLoader {
                     (from.nodes || []).forEach((nodeAddresses: any): any => {
                         if (nodeAddresses.signing) {
                             nodeAddresses.main = nodeAddresses.signing;
-                            delete nodeAddresses.signing;
+                        } else {
+                            if (nodeAddresses.ssl) {
+                                const main = ConfigLoader.toConfig(Account.createFromPrivateKey(nodeAddresses.ssl.privateKey, networkType));
+                                nodeAddresses.main = main;
+                            }
                         }
-                        if (nodeAddresses.node && nodeAddresses.node.address && networkType) {
+                        if (nodeAddresses.node) {
                             const transport = ConfigLoader.toConfig(
                                 Account.createFromPrivateKey(nodeAddresses.node.privateKey, networkType),
                             );
                             nodeAddresses.transport = transport;
                             delete nodeAddresses.node;
                         }
+                        delete nodeAddresses.signing;
                         delete nodeAddresses.ssl;
                     });
                     return from;
