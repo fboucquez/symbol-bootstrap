@@ -68,7 +68,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual',
-            reset: false,
+            reset: true,
             preset: Preset.testnet,
             customPresetObject: {
                 nodeUseRemoteAccount: true,

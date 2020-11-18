@@ -27,12 +27,12 @@ export interface ConfigAccount extends CertificatePair {
 
 export interface NodeAccount {
     // keys from ca.cert.pem file
-    ca: ConfigAccount;
+    main: ConfigAccount;
     // keys from the node.key.pem file (required for delegate harvesting)
-    node: ConfigAccount;
+    transport: ConfigAccount;
     // Harvester signing key is produced if node is peer or voting.
     // It could be the ca/main account or a linked remote account. The later is recommended.
-    harvesterSigning?: ConfigAccount;
+    remote?: ConfigAccount;
     // VRF key is produced if node is peer
     vrf?: ConfigAccount;
     // Voting key is produced if node is voting

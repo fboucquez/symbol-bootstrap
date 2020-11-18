@@ -89,20 +89,6 @@ config-finalization.properties
     prevoteBlocksMultiple; 4
     votingKeyDilution; 128
 
-config-harvesting.properties
-============================
-.. csv-table::
-    :header: "Property", "Value", "Type", "Description"
-    :delim: ;
-
-    **harvesting**; ; ;
-    harvesterSigningPrivateKey; ; string; Harvester signing private key.
-    harvesterVrfPrivateKey; ; string; Harvester vrf private key.
-    enableAutoHarvesting; true; bool; Set to true if auto harvesting is enabled.
-    maxUnlockedAccounts; 5; uint32_t; Maximum number of unlocked accounts.
-    delegatePrioritizationPolicy; Importance; harvesting::DelegatePrioritizationPolicy; Delegate harvester prioritization policy.
-    beneficiaryAddress; ; Address; Address of the account receiving part of the harvested fee.
-
 config-inflation.properties
 ===========================
 .. csv-table::
@@ -689,15 +675,6 @@ config-network.properties
     maxMosaicRestrictionValues; 20; uint8_t; Maximum number of mosaic restriction values.
     **plugin:catapult.plugins.transfer**; ; ;
     maxMessageSize; 1024; uint16_t; Maximum transaction message size.
-
-config-networkheight.properties
-===============================
-.. csv-table::
-    :header: "Property", "Value"
-    :delim: ;
-
-    **networkheight**;
-    maxNodes; 5
 
 config-node.properties
 ======================

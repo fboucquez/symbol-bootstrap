@@ -664,11 +664,6 @@ plugin:catapult.plugins.transfer
 maxMessageSize; 1024; uint16_t; Maximum transaction message size.
 
 
-config-networkheight.properties
-networkheight
-maxNodes; 5
-
-
 config-node.properties
 node
 port; 7900; unsigned short; Server port.

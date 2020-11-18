@@ -20,7 +20,7 @@ import { textSync } from 'figlet';
 import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { NetworkType } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
@@ -198,8 +198,13 @@ export class BootstrapUtils {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async generateConfiguration(templateContext: any, copyFrom: string, copyTo: string): Promise<void> {
+    public static async generateConfiguration(
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+        templateContext: any,
+        copyFrom: string,
+        copyTo: string,
+        excludeFiles: string[] = [],
+    ): Promise<void> {
         // Loop through all the files in the config folder
         await fsPromises.mkdir(copyTo, { recursive: true });
         const files = await fsPromises.readdir(copyFrom);
@@ -210,19 +215,22 @@ export class BootstrapUtils {
 
                 // Stat the file to see if we have a file or dir
                 const stat = await fsPromises.stat(fromPath);
-
                 if (stat.isFile()) {
-                    if (toPath.indexOf('.mustache') > -1) {
-                        const destinationFile = toPath.replace('.mustache', '');
-                        const template = await BootstrapUtils.readTextFile(fromPath);
-                        const renderedTemplate = this.runTemplate(template, templateContext);
-                        await fsPromises.writeFile(destinationFile, renderedTemplate);
-                    } else {
-                        await fsPromises.copyFile(fromPath, toPath);
+                    const isMustache = file.indexOf('.mustache') > -1;
+                    const destinationFile = toPath.replace('.mustache', '');
+                    const fileName = basename(destinationFile);
+                    if (excludeFiles.indexOf(fileName) === -1) {
+                        if (isMustache) {
+                            const template = await BootstrapUtils.readTextFile(fromPath);
+                            const renderedTemplate = this.runTemplate(template, templateContext);
+                            await fsPromises.writeFile(destinationFile, renderedTemplate);
+                        } else {
+                            await fsPromises.copyFile(fromPath, destinationFile);
+                        }
                     }
                 } else if (stat.isDirectory()) {
                     await fsPromises.mkdir(toPath, { recursive: true });
-                    await this.generateConfiguration(templateContext, fromPath, toPath);
+                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles);
                 }
             }),
         );

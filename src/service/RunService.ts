@@ -161,7 +161,7 @@ export class RunService {
                 BootstrapUtils.deleteFolder(join(componentConfigFolder, 'data'), ['private_key_tree1.dat']);
                 BootstrapUtils.deleteFolder(join(componentConfigFolder, 'logs'));
                 logger.info(`Copying block 1 seed to ${dataFolder}`);
-                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder);
+                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder, []);
             }),
         );
         (preset.gateways || []).forEach((node) => {

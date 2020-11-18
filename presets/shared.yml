@@ -1,4 +1,4 @@
-nodeUseRemoteAccount: true
+nodeUseRemoteAccount: false
 nodePort: 7900
 enableCacheDatabaseStorage: true
 enableVerifiableState: true
@@ -94,6 +94,7 @@ prevoteBlocksMultiple: 4
 subscriberPort: 7902
 
 # network height
+networkheight: false
 networkHeightMaxNodes: 5
 
 # partialtransactions

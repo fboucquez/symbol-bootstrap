@@ -94,10 +94,10 @@ export class LinkService {
 
         const signedTransactionObservable = fromArray(transactionNodes).pipe(
             mergeMap(({ node, transactions }) => {
-                if (!node.ca) {
+                if (!node.main) {
                     throw new Error('CA account is required!');
                 }
-                const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
+                const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
                 const noFundsMessage = faucetUrl
                     ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
                     : `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} .`;
@@ -157,25 +157,25 @@ export class LinkService {
         presetData: ConfigPreset,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
         return _.flatMap(addresses.nodes || [])
-            .filter((node) => node.ca && (node.harvesterSigning || node.voting || node.vrf))
+            .filter((node) => node.main && (node.remote || node.voting || node.vrf))
             .map((node) => {
                 const transactions = [];
-                if (!node.ca) {
+                if (!node.main) {
                     throw new Error('CA private key is required!');
                 }
-                const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
+                const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
                 const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
 
                 logger.info(`Creating transactions for node: ${node.name}, ca/main account: ${account.address.plain()}`);
 
-                if (node.harvesterSigning && node.harvesterSigning.privateKey.toUpperCase() != account.privateKey.toUpperCase()) {
+                if (node.remote) {
                     logger.info(
-                        `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account key: ${node.harvesterSigning.publicKey}`,
+                        `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account key: ${node.remote.publicKey}`,
                     );
                     transactions.push(
                         AccountKeyLinkTransaction.create(
                             Deadline.create(),
-                            node.harvesterSigning.publicKey,
+                            node.remote.publicKey,
                             action,
                             presetData.networkType,
                             UInt64.fromUint(this.params.maxFee),

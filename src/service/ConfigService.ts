@@ -89,6 +89,7 @@ export class ConfigService {
                 BootstrapUtils.deleteFolder(target);
             }
             const presetLocation = this.configLoader.getGeneratedPresetLocation(target);
+            const addressesLocation = this.configLoader.getGeneratedAddressLocation(target);
             if (fs.existsSync(presetLocation) && !this.params.upgrade) {
                 logger.info(
                     `The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset or --upgrade to upgrade)`,
@@ -102,12 +103,21 @@ export class ConfigService {
                 await BootstrapUtils.writeYaml(presetLocation, presetData);
                 return { presetData, addresses };
             }
-            if (this.params.upgrade) {
-                logger.info('Upgrading configuration...');
-            }
 
             const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target);
             const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target);
+
+            if (oldAddresses && !oldPresetData) {
+                throw new Error(`Configuration cannot be upgraded without a previous ${presetLocation} file. (run -r to reset)`);
+            }
+
+            if (!oldAddresses && oldPresetData) {
+                throw new Error(`Configuration cannot be upgraded without a previous ${addressesLocation} file. (run -r to reset)`);
+            }
+
+            if (oldAddresses && oldPresetData) {
+                logger.info('Upgrading configuration...');
+            }
 
             const presetData: ConfigPreset = _.merge(
                 oldPresetData || {},
@@ -121,7 +131,7 @@ export class ConfigService {
             );
 
             await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
-            const addresses = _.merge(await this.configLoader.generateRandomConfiguration(presetData), oldAddresses || {});
+            const addresses = oldAddresses || (await this.configLoader.generateRandomConfiguration(presetData));
 
             await BootstrapUtils.mkdir(target);
 
@@ -185,8 +195,8 @@ export class ConfigService {
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
                 return await new CertificateService(this.root, this.params).run(presetData, account.name, {
-                    ca: account.ca,
-                    node: account.node,
+                    main: account.main,
+                    transport: account.transport,
                 });
             }),
         );
@@ -198,16 +208,27 @@ export class ConfigService {
 
         const outputFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig');
         const nodePreset = (presetData.nodes || [])[index];
-        const beneficiaryAddress = this.resolveBeneficiaryAddress(account, presetData);
+        const beneficiaryAddress =
+            account.beneficiaryAddress || presetData.beneficiaryAddress || (account.remote && account.main?.address) || '';
         const generatedContext = {
             name: name,
             beneficiaryAddress,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
-            harvesterSigningPrivateKey: account.harvesterSigning?.privateKey || '',
+            harvesterSigningPrivateKey: (account.remote || account.main)?.privateKey || '',
             harvesterVrfPrivateKey: account.vrf?.privateKey || '',
         };
         const templateContext = { ...presetData, ...generatedContext, ...nodePreset };
-        await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder);
+        const excludeFiles: string[] = [];
+
+        // Exclude files depending on the enabled extensions. To complete...
+        if (!templateContext.harvesting) {
+            excludeFiles.push('config-harvesting.properties');
+        }
+        if (!templateContext.networkheight) {
+            excludeFiles.push('config-networkheight.properties');
+        }
+
+        await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder, excludeFiles);
         await this.generateP2PFile(
             presetData,
             addresses,
@@ -227,18 +248,6 @@ export class ConfigService {
         await new VotingService(this.params).run(presetData, account, nodePreset);
     }
 
-    private resolveBeneficiaryAddress(account: NodeAccount, presetData: ConfigPreset) {
-        let beneficiaryAddress = account.beneficiaryAddress || presetData.beneficiaryAddress || '';
-        if (
-            beneficiaryAddress === '' &&
-            account.harvesterSigning &&
-            account.harvesterSigning.privateKey.toUpperCase() != account.ca.privateKey.toUpperCase()
-        ) {
-            beneficiaryAddress = account.ca.address;
-        }
-        return beneficiaryAddress;
-    }
-
     private async generateP2PFile(
         presetData: ConfigPreset,
         addresses: Addresses,
@@ -254,7 +263,7 @@ export class ConfigService {
                 }
                 const node = (addresses.nodes || [])[index];
                 return {
-                    publicKey: node.ca.publicKey,
+                    publicKey: node.main.publicKey,
                     endpoint: {
                         host: nodePresetData.host,
                         port: 7900,
@@ -291,7 +300,7 @@ export class ConfigService {
 
         await Promise.all(
             (addresses.nodes || [])
-                .filter((n) => n.harvesterSigning && n.harvesterSigning.privateKey.toUpperCase() !== n.ca.privateKey.toUpperCase())
+                .filter((n) => n.remote)
                 .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
         await Promise.all(
@@ -372,12 +381,12 @@ export class ConfigService {
         if (!node.vrf) {
             throw new Error('VRF keys should have been generated!!');
         }
-        if (!node.ca) {
+        if (!node.main) {
             throw new Error('Signing keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
-        const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
+        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
     }
@@ -387,21 +396,21 @@ export class ConfigService {
         presetData: ConfigPreset,
         node: NodeAccount,
     ): Promise<Transaction> {
-        if (!node.harvesterSigning) {
-            throw new Error('Harvester Signing keys should have been generated!!');
+        if (!node.remote) {
+            throw new Error('Remote keys should have been generated!!');
         }
-        if (!node.ca) {
+        if (!node.main) {
             throw new Error('Signing keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = AccountKeyLinkTransaction.create(
             deadline,
-            node.harvesterSigning.publicKey,
+            node.remote.publicKey,
             LinkAction.Link,
             presetData.networkType,
             UInt64.fromUint(0),
         );
-        const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
+        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
@@ -415,7 +424,7 @@ export class ConfigService {
             throw new Error('Voting keys should have been generated!!');
         }
 
-        if (!node.ca) {
+        if (!node.main) {
             throw new Error('Signing keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
@@ -429,7 +438,7 @@ export class ConfigService {
             presetData.networkType,
             UInt64.fromUint(0),
         );
-        const account = Account.createFromPrivateKey(node.ca.privateKey, presetData.networkType);
+        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
         const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
     }

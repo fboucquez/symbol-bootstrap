@@ -29,8 +29,8 @@ type CertificateParams = ConfigParams;
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 interface NodeCertificates {
-    ca: CertificatePair;
-    node: CertificatePair;
+    main: CertificatePair;
+    transport: CertificatePair;
 }
 
 export class CertificateService {
@@ -74,14 +74,14 @@ export class CertificateService {
         });
     }
 
-    public async run(presetData: ConfigPreset, name: string, providedCertificates: NodeCertificates): Promise<NodeCertificates> {
+    public async run(presetData: ConfigPreset, name: string, providedCertificates: NodeCertificates): Promise<void> {
         const copyFrom = `${this.root}/config/cert`;
         const certFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig', 'resources', 'cert');
         await BootstrapUtils.mkdir(certFolder);
         const newCertsFolder = join(certFolder, 'new_certs');
         await BootstrapUtils.mkdir(newCertsFolder);
         const generatedContext = { name };
-        await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder);
+        await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
         // if (!BootstrapUtils.isWindows()) {
         //     // chmodSync(newCertsFolder, 700);
@@ -90,8 +90,11 @@ export class CertificateService {
         // await BootstrapUtils.writeTextFile(join(certFolder, 'index.txt.attr'), '');
         // await BootstrapUtils.writeTextFile(join(certFolder, 'serial.dat'), Convert.uint8ToHex(Crypto.randomBytes(19)).toUpperCase());
 
-        writeFileSync(join(certFolder, 'ca.der'), Convert.hexToUint8(CertificateService.toAns1(providedCertificates.ca.privateKey)));
-        writeFileSync(join(certFolder, 'node.der'), Convert.hexToUint8(CertificateService.toAns1(providedCertificates.node.privateKey)));
+        writeFileSync(join(certFolder, 'ca.der'), Convert.hexToUint8(CertificateService.toAns1(providedCertificates.main.privateKey)));
+        writeFileSync(
+            join(certFolder, 'node.der'),
+            Convert.hexToUint8(CertificateService.toAns1(providedCertificates.transport.privateKey)),
+        );
 
         // TODO. Migrate this process to forge, sshpk or any node native implementation.
         const command = this.createCertCommands('/data');
@@ -119,21 +122,15 @@ export class CertificateService {
             throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
         }
         logger.info(`Certificate for node ${name} created`);
-        const parsedCertificates = { ca: certificates[0], node: certificates[1] };
+        const caCertificate = certificates[0];
+        const nodeCertificate = certificates[1];
 
-        BootstrapUtils.validateIsTrue(parsedCertificates.ca.privateKey === providedCertificates.ca.privateKey, 'Invalid ca private key');
-        BootstrapUtils.validateIsTrue(parsedCertificates.ca.publicKey === providedCertificates.ca.publicKey, 'Invalid ca public key');
+        BootstrapUtils.validateIsTrue(caCertificate.privateKey === providedCertificates.main.privateKey, 'Invalid ca private key');
+        BootstrapUtils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
 
-        BootstrapUtils.validateIsTrue(
-            parsedCertificates.node.privateKey === providedCertificates.node.privateKey,
-            'Invalid Node private key',
-        );
+        BootstrapUtils.validateIsTrue(nodeCertificate.privateKey === providedCertificates.transport.privateKey, 'Invalid Node private key');
 
-        BootstrapUtils.validateIsTrue(parsedCertificates.node.publicKey === providedCertificates.node.publicKey, 'Invalid Node public key');
-
-        // delete der and pem files
-
-        return parsedCertificates;
+        BootstrapUtils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
     }
 
     private createCertCommands(target: string): string {

@@ -106,12 +106,12 @@ export class ConfigLoader {
                 presetData.nemesis.mosaics.forEach((m, index) => {
                     const accounts = mosaics[index].accounts;
                     if (!m.currencyDistributions) {
-                        const caNodes = (addresses.nodes || []).filter((node) => node.ca);
+                        const caNodes = (addresses.nodes || []).filter((node) => node.main);
                         const totalAccounts = (m.accounts || 0) + caNodes.length;
                         const amountPerAccount = Math.floor(m.supply / totalAccounts);
                         m.currencyDistributions = [
                             ...accounts.map((a) => ({ address: a.address, amount: amountPerAccount })),
-                            ...caNodes.map((n) => ({ address: n.ca!.address, amount: amountPerAccount })),
+                            ...caNodes.map((n) => ({ address: n.main!.address, amount: amountPerAccount })),
                         ];
                         if (m.currencyDistributions.length)
                             m.currencyDistributions[0].amount += m.supply - totalAccounts * amountPerAccount;
@@ -138,22 +138,16 @@ export class ConfigLoader {
 
     public generateNodeAccount(presetData: ConfigPreset, index: number, nodePreset: NodePreset, networkType: NetworkType): NodeAccount {
         const name = nodePreset.name || `node-${index}`;
-        const ca = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.caPrivateKey));
-        const node = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.nodePrivateKey));
+        const ca = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.mainPrivateKey));
+        const node = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.transportPrivateKey));
 
         const friendlyName = nodePreset.friendlyName || ca.publicKey.substr(0, 7);
-        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, ca, node };
+        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, main: ca, transport: node };
 
         const useRemoteAccount = nodePreset.nodeUseRemoteAccount || presetData.nodeUseRemoteAccount;
 
         if (useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
-            nodeAccount.harvesterSigning = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.harvesterSigningPrivateKey));
-
-        if (!useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
-            nodeAccount.harvesterSigning = ConfigLoader.toConfig(
-                this.generateAccount(networkType, nodePreset.harvesterSigningPrivateKey || ca.privateKey),
-            );
-
+            nodeAccount.remote = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.remotePrivateKey));
         if (nodePreset.voting) nodeAccount.voting = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
         if (nodePreset.harvesting) nodeAccount.vrf = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
 
@@ -366,14 +360,15 @@ export class ConfigLoader {
                 migrate(from: any): any {
                     (from.nodes || []).forEach((nodeAddresses: any): any => {
                         if (nodeAddresses.signing) {
-                            nodeAddresses.ca = nodeAddresses.signing;
-                            nodeAddresses.harvesterSigning = nodeAddresses.signing;
+                            nodeAddresses.main = nodeAddresses.signing;
                             delete nodeAddresses.signing;
                         }
                         if (nodeAddresses.node && nodeAddresses.node.address && networkType) {
-                            nodeAddresses.node = ConfigLoader.toConfig(
+                            const transport = ConfigLoader.toConfig(
                                 Account.createFromPrivateKey(nodeAddresses.node.privateKey, networkType),
                             );
+                            nodeAddresses.transport = transport;
+                            delete nodeAddresses.node;
                         }
                         delete nodeAddresses.ssl;
                     });
