@@ -24,6 +24,7 @@ import {
     Deadline,
     LinkAction,
     NetworkCurrencyPublic,
+    NodeKeyLinkTransaction,
     RepositoryFactoryHttp,
     Transaction,
     TransactionService,
@@ -176,6 +177,18 @@ export class LinkService {
                         AccountKeyLinkTransaction.create(
                             Deadline.create(),
                             node.remote.publicKey,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                    logger.info(
+                        `Creating NodeKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account key: ${node.transport.publicKey}`,
+                    );
+                    transactions.push(
+                        NodeKeyLinkTransaction.create(
+                            Deadline.create(),
+                            node.transport.publicKey,
                             action,
                             presetData.networkType,
                             UInt64.fromUint(this.params.maxFee),

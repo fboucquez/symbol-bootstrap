@@ -57,10 +57,11 @@ describe('LinkService', () => {
         const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
-        expect(nodeAndTransactions[0].transactions.length).eq(3);
+        expect(nodeAndTransactions[0].transactions.length).eq(4);
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.VRF_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VOTING_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VRF_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[3].type).eq(TransactionType.VOTING_KEY_LINK);
     });
 
     it('LinkService create transactions when dual', async () => {
@@ -79,9 +80,10 @@ describe('LinkService', () => {
         const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
-        expect(nodeAndTransactions[0].transactions.length).eq(2);
+        expect(nodeAndTransactions[0].transactions.length).eq(3);
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.VRF_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VRF_KEY_LINK);
     });
 
     it('LinkService create transactions when dual not using remote account', async () => {
@@ -137,8 +139,9 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
-        expect(nodeAndTransactions[0].transactions.length).eq(2);
+        expect(nodeAndTransactions[0].transactions.length).eq(3);
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.VOTING_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VOTING_KEY_LINK);
     });
 });

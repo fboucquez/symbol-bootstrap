@@ -23,6 +23,7 @@ import {
     Convert,
     Deadline,
     LinkAction,
+    NodeKeyLinkTransaction,
     Transaction,
     TransactionMapping,
     UInt64,
@@ -303,6 +304,14 @@ export class ConfigService {
                 .filter((n) => n.remote)
                 .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
+
+        //Node links to main is only required when remote harvesting is on!
+        await Promise.all(
+            (addresses.nodes || [])
+                .filter((n) => n.remote && n.transport)
+                .map((n) => this.createNodeKeyLinkTransaction(transactionsDirectory, presetData, n)),
+        );
+
         await Promise.all(
             (addresses.nodes || [])
                 .filter((n) => n.voting)
@@ -382,7 +391,7 @@ export class ConfigService {
             throw new Error('VRF keys should have been generated!!');
         }
         if (!node.main) {
-            throw new Error('Signing keys should have been generated!!');
+            throw new Error('Main keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
@@ -400,7 +409,7 @@ export class ConfigService {
             throw new Error('Remote keys should have been generated!!');
         }
         if (!node.main) {
-            throw new Error('Signing keys should have been generated!!');
+            throw new Error('Main keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = AccountKeyLinkTransaction.create(
@@ -415,6 +424,30 @@ export class ConfigService {
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
 
+    private async createNodeKeyLinkTransaction(
+        transactionsDirectory: string,
+        presetData: ConfigPreset,
+        node: NodeAccount,
+    ): Promise<Transaction> {
+        if (!node.transport) {
+            throw new Error('Transport keys should have been generated!!');
+        }
+        if (!node.main) {
+            throw new Error('Main keys should have been generated!!');
+        }
+        const deadline = Deadline.createFromDTO('1');
+        const vrf = NodeKeyLinkTransaction.create(
+            deadline,
+            node.transport.publicKey,
+            LinkAction.Link,
+            presetData.networkType,
+            UInt64.fromUint(0),
+        );
+        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
+        const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
+        return await this.storeTransaction(transactionsDirectory, `node_${node.name}`, signedTransaction.payload);
+    }
+
     private async createVotingKeyTransaction(
         transactionsDirectory: string,
         presetData: ConfigPreset,
@@ -425,7 +458,7 @@ export class ConfigService {
         }
 
         if (!node.main) {
-            throw new Error('Signing keys should have been generated!!');
+            throw new Error('Main keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
         const votingKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
