@@ -81,6 +81,20 @@ transactions:
     'MyTransaction': 01000000000000...
 ```
 
+### Use main account as the harvester account.
+
+For security reasons, Bootstrap doesn't use the main account as the harvester account by default. Instead, Bootstrap generates a remote account that would need to be linked to the main account. 
+Like with VRF and Voting keys, the linking (`AccountKeyLinkTransaction`) process is included in the nemesis block for new networks or in via `link` command for nodes connected to existing networks. 
+
+Both main and remote accounts will be reported in the `addresses.yml` file
+
+If you want to use your main account as the harvesting account, you can disable this feature with the following preset:
+
+```yaml
+nodeUseRemoteAccount: true
+```
+**Warning:** Disabling the remote account is not recommended!
+
 ### Enable voting mode in a node
 
 ```yaml

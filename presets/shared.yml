@@ -1,4 +1,4 @@
-nodeUseRemoteAccount: false
+nodeUseRemoteAccount: true
 nodePort: 7900
 enableCacheDatabaseStorage: true
 enableVerifiableState: true
@@ -133,7 +133,7 @@ enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
 maxCacheDatabaseWriteBatchSize: 5MB
 maxTrackedNodes: 5'000
-beneficiaryAddress:
+beneficiaryAddress: ''
 enableAutoHarvesting: true
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
