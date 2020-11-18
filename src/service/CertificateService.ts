@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { ConfigParams } from './ConfigService';
-import { BootstrapUtils } from './BootstrapUtils';
-import LoggerFactory from '../logger/LoggerFactory';
-import Logger from '../logger/Logger';
-import { LogType } from '../logger';
-import { join, resolve } from 'path';
-import { CertificatePair, ConfigPreset } from '../model';
-import { Convert } from 'symbol-sdk';
 import { writeFileSync } from 'fs';
+import { join, resolve } from 'path';
+import { Convert } from 'symbol-sdk';
+import { LogType } from '../logger';
+import Logger from '../logger/Logger';
+import LoggerFactory from '../logger/LoggerFactory';
+import { CertificatePair, ConfigPreset } from '../model';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigParams } from './ConfigService';
 
 type CertificateParams = ConfigParams;
 

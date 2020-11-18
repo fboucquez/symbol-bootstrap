@@ -35,6 +35,7 @@ export default class Config extends Command {
             char: 'a',
             description: 'An optional assembly type, example "dual" for testnet',
         }),
+
         customPreset: flags.string({
             char: 'c',
             description: 'External preset file. Values in this file will override the provided presets (optional)',
@@ -43,6 +44,11 @@ export default class Config extends Command {
         reset: flags.boolean({
             char: 'r',
             description: 'It resets the configuration generating a new one',
+            default: ConfigService.defaultParams.reset,
+        }),
+
+        upgrade: flags.boolean({
+            description: 'It upgrades the configuration without dropping the generate keys or stored databases.',
             default: ConfigService.defaultParams.reset,
         }),
 

@@ -33,8 +33,11 @@ OPTIONS
   --report                          It generates reStructuredText (.rst) reports describing the configuration of each
                                     node.
 
+  --upgrade                         It upgrades the configuration without dropping the generate keys or stored
+                                    databases.
+
 EXAMPLE
   $ symbol-bootstrap config -p bootstrap
 ```
 
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.1/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.2/src/commands/config.ts)_

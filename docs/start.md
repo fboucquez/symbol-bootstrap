@@ -65,10 +65,13 @@ OPTIONS
   --timeout=timeout
       [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
 
+  --upgrade
+      It upgrades the configuration without dropping the generate keys or stored databases.
+
 EXAMPLES
   $ symbol-bootstrap start
   $ symbol-bootstrap start -p bootstrap
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.1/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.2/src/commands/start.ts)_

@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
+import { existsSync } from 'fs';
+import * as _ from 'lodash';
+import { join } from 'path';
+import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
+import { RepositoryFactoryHttp } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
-import { join } from 'path';
-import { RepositoryFactoryHttp } from 'symbol-sdk';
-import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
-import { BootstrapUtils } from './BootstrapUtils';
-import { existsSync } from 'fs';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
-import * as _ from 'lodash';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigLoader } from './ConfigLoader';
 import { PortService } from './PortService';
 
 /**
@@ -147,7 +148,7 @@ export class RunService {
     public async resetData(): Promise<void> {
         logger.info('Resetting data');
         const target = this.params.target;
-        const preset = BootstrapUtils.loadExistingPresetData(target);
+        const preset = ConfigLoader.loadExistingPresetData(target);
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await Promise.all(
             (preset.nodes || []).map(async (node) => {

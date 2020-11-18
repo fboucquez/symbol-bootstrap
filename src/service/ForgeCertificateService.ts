@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { BootstrapUtils } from './BootstrapUtils';
-
-import { join } from 'path';
-import { CertificatePair } from '../model';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-type CertificateParams = { target: string };
-
 import * as forge from 'node-forge';
 import { pki } from 'node-forge';
+import { join } from 'path';
+import { CertificatePair } from '../model';
+import { BootstrapUtils } from './BootstrapUtils';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+type CertificateParams = { target: string };
 
 /**
  * TODO remote if not used!

@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import { ConfigParams } from './ConfigService';
-import { BootstrapUtils } from './BootstrapUtils';
-import LoggerFactory from '../logger/LoggerFactory';
-import Logger from '../logger/Logger';
-import { LogType } from '../logger';
 import { join, resolve } from 'path';
-import { CertificatePair, ConfigPreset, NodeAccount, NodePreset } from '../model';
-
-import { Convert, Crypto } from 'symbol-sdk';
-
-import { Key } from 'sshpk';
 import * as sshpk from 'sshpk';
+import { Key } from 'sshpk';
+import { Convert, Crypto } from 'symbol-sdk';
+import { LogType } from '../logger';
+import Logger from '../logger/Logger';
+import LoggerFactory from '../logger/LoggerFactory';
+import { CertificatePair, ConfigPreset, NodeAccount } from '../model';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigParams } from './ConfigService';
+
 const anySshpk = sshpk as any;
 type CertificateParams = ConfigParams;
 

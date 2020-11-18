@@ -14,24 +14,31 @@
  * limitations under the License.
  */
 
-import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
-import { join } from 'path';
-import * as Handlebars from 'handlebars';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
-import * as util from 'util';
-import * as _ from 'lodash';
-import { textSync } from 'figlet';
-import { Addresses, ConfigPreset, NodePreset } from '../model';
-import { Preset } from './ConfigService';
 import { flags } from '@oclif/command';
 import { spawn } from 'child_process';
+import { textSync } from 'figlet';
+import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
+import * as Handlebars from 'handlebars';
+import * as _ from 'lodash';
+import { join } from 'path';
+import * as util from 'util';
+import { LogType } from '../logger';
+import Logger from '../logger/Logger';
+import LoggerFactory from '../logger/LoggerFactory';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
+
+/**
+ * The operation to migrate the data.
+ */
+export interface Migration {
+    readonly description: string;
+
+    migrate(from: any): any;
+}
 
 export class BootstrapUtils {
     public static readonly defaultTargetFolder = 'target';
@@ -43,7 +50,6 @@ export class BootstrapUtils {
     public static readonly CURRENT_USER = 'current';
     private static readonly pulledImages: string[] = [];
 
-    private static presetInfoLogged = false;
     private static stopProcess = false;
 
     public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
@@ -156,182 +162,6 @@ export class BootstrapUtils {
         return await this.exec(runCommand);
     }
 
-    public static loadPresetData(
-        root: string,
-        preset: Preset,
-        assembly: string | undefined,
-        customPresetFile: string | undefined,
-        customPresetObject: any | undefined,
-    ): ConfigPreset {
-        const sharedPreset = this.loadYaml(join(root, 'presets', 'shared.yml'));
-        const networkPreset = this.loadYaml(`${root}/presets/${preset}/network.yml`);
-        const assemblyPreset = assembly ? this.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`) : {};
-        const customPreset = customPresetFile ? this.loadYaml(customPresetFile) : {};
-        //Deep merge
-        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPreset, customPresetObject, { preset });
-        if (!BootstrapUtils.presetInfoLogged) {
-            logger.info(`Generating config from preset ${preset}`);
-            if (assembly) {
-                logger.info(`Assembly preset ${assembly}`);
-            }
-            if (customPresetFile) {
-                logger.info(`Custom preset file ${customPresetFile}`);
-            }
-        }
-        BootstrapUtils.presetInfoLogged = true;
-        if (presetData.assemblies && !assembly) {
-            throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
-        }
-        const presetDataWithDynamicDefaults = {
-            ...presetData,
-            nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
-        };
-        return this.expandRepeat(presetDataWithDynamicDefaults);
-    }
-
-    public static dynamicDefaultNodeConfiguration(nodes?: NodePreset[]): NodePreset[] {
-        return _.map(nodes || [], (node) => {
-            const roles = this.resolveRoles(node);
-            if (node.harvesting && node.api) {
-                return {
-                    syncsource: true,
-                    filespooling: true,
-                    partialtransaction: true,
-                    openPort: true,
-                    sinkType: 'Async',
-                    enableSingleThreadPool: false,
-                    brokerOpenPort: true,
-                    addressextraction: true,
-                    enableAutoSyncCleanup: false,
-                    mongo: true,
-                    zeromq: true,
-                    ...node,
-                    roles,
-                };
-            }
-            if (node.harvesting) {
-                return {
-                    sinkType: 'Sync',
-                    enableSingleThreadPool: true,
-                    addressextraction: false,
-                    mongo: false,
-                    zeromq: false,
-                    syncsource: true,
-                    filespooling: false,
-                    enableAutoSyncCleanup: true,
-                    partialtransaction: false,
-                    ...node,
-                    roles,
-                };
-            }
-            if (node.api) {
-                return {
-                    sinkType: 'Async',
-                    syncsource: false,
-                    filespooling: true,
-                    partialtransaction: true,
-                    enableSingleThreadPool: false,
-                    addressextraction: true,
-                    mongo: true,
-                    zeromq: true,
-                    enableAutoSyncCleanup: false,
-                    ...node,
-                    roles,
-                };
-            }
-            throw new Error('A node must have at least one harvesting: true or api: true');
-        });
-    }
-    private static resolveRoles(nodePreset: NodePreset): string {
-        if (nodePreset.roles) {
-            return nodePreset.roles;
-        }
-        const roles: string[] = [];
-        if (nodePreset.harvesting) {
-            roles.push('Peer');
-        }
-        if (nodePreset.api) {
-            roles.push('Api');
-        }
-        if (nodePreset.voting) {
-            roles.push('Voting');
-        }
-        return roles.join(',');
-    }
-
-    public static expandRepeat(presetData: ConfigPreset): ConfigPreset {
-        return {
-            ...presetData,
-            databases: this.expandServicesRepeat(presetData, presetData.databases || []),
-            nodes: this.expandServicesRepeat(presetData, presetData.nodes || []),
-            gateways: this.expandServicesRepeat(presetData, presetData.gateways || []),
-            nemesis: this.applyValueTemplate(presetData, presetData.nemesis),
-        };
-    }
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static applyValueTemplate(context: any, value: any): any {
-        if (!value) {
-            return value;
-        }
-        if (_.isArray(value)) {
-            return this.expandServicesRepeat(context, value as []);
-        }
-
-        if (_.isObject(value)) {
-            return _.mapValues(value, (v: any) => this.applyValueTemplate({ ...context, ...value }, v));
-        }
-
-        if (!_.isString(value)) {
-            return value;
-        }
-        const compiledTemplate = Handlebars.compile(value);
-        return compiledTemplate(context);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static expandServicesRepeat(context: any, services: any[]): any[] {
-        return _.flatMap(services || [], (service) => {
-            if (service.repeat === 0) {
-                return [];
-            }
-            if (!service.repeat) {
-                return [service];
-            }
-
-            return _.range(service.repeat).map((index) => {
-                return _.omit(
-                    _.mapValues(service, (v: any) => this.applyValueTemplate({ ...context, ...service, $index: index }, v)),
-                    'repeat',
-                );
-            });
-        });
-    }
-
-    public static loadExistingPresetData(target: string): ConfigPreset {
-        try {
-            return this.loadYaml(this.getGeneratedPresetLocation(target));
-        } catch (e) {
-            throw new Error(`${e.message}. Have you executed the 'config' command?`);
-        }
-    }
-
-    public static getGeneratedPresetLocation(target: string): string {
-        return join(target, 'preset.yml');
-    }
-
-    public static loadExistingAddresses(target: string): Addresses {
-        try {
-            return this.loadYaml(this.getGeneratedAddressLocation(target));
-        } catch (e) {
-            throw new Error(`${e.message}. Have you executed the 'config' command?`);
-        }
-    }
-
-    public static getGeneratedAddressLocation(target: string): string {
-        return join(target, 'addresses.yml');
-    }
-
     public static sleep(ms: number): Promise<any> {
         // Create a promise that rejects in <ms> milliseconds
         return new Promise((resolve) => {
@@ -384,8 +214,7 @@ export class BootstrapUtils {
                     if (toPath.indexOf('.mustache') > -1) {
                         const destinationFile = toPath.replace('.mustache', '');
                         const template = await BootstrapUtils.readTextFile(fromPath);
-                        const compiledTemplate = Handlebars.compile(template);
-                        const renderedTemplate = compiledTemplate({ ...templateContext });
+                        const renderedTemplate = this.runTemplate(template, templateContext);
                         await fsPromises.writeFile(destinationFile, renderedTemplate);
                     } else {
                         await fsPromises.copyFile(fromPath, toPath);
@@ -396,6 +225,12 @@ export class BootstrapUtils {
                 }
             }),
         );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static runTemplate(template: string, templateContext: any): string {
+        const compiledTemplate = Handlebars.compile(template);
+        return compiledTemplate(templateContext);
     }
 
     public static async mkdir(path: string): Promise<void> {
@@ -527,7 +362,7 @@ export class BootstrapUtils {
         }
     }
 
-    public static isWindows() {
+    public static isWindows(): boolean {
         return process.platform === 'win32';
     }
 
@@ -613,5 +448,33 @@ export class BootstrapUtils {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static toJson(object: any): string {
         return JSON.stringify(object, null, 2);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static migrate<T extends { version?: number }>(entityName: string, versioned: T, migrations: Migration[] = []): T {
+        if (!versioned) {
+            return versioned;
+        }
+        const currentVersion = migrations.length + 1;
+        versioned.version = versioned.version || 1;
+
+        if (versioned.version == currentVersion) {
+            return versioned;
+        }
+        logger.info(`Migrating object ${entityName} from version ${versioned.version} to version ${currentVersion}`);
+        if (versioned.version > currentVersion) {
+            throw new Error(`Current data version is ${versioned.version} but higher version is ${currentVersion}`);
+        }
+        const migratedVersioned = migrations.slice(versioned.version - 1).reduce((toMigrateData, migration) => {
+            if (toMigrateData === undefined) {
+                logger.info(`data to migrate is undefined, ignoring migration ${migration.description}`);
+                return undefined;
+            }
+            logger.info(`Applying migration ${migration.description}`);
+            return migration.migrate(toMigrateData);
+        }, versioned);
+        migratedVersioned.version = currentVersion;
+        logger.info(`Object ${entityName} migrated to version ${currentVersion}`);
+        return migratedVersioned;
     }
 }

@@ -25,10 +25,9 @@ export default class Compose extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
-        reset: flags.boolean({
-            char: 'r',
-            description: 'It resets the configuration generating a new one',
-            default: ComposeService.defaultParams.reset,
+        upgrade: flags.boolean({
+            description: 'It drops and upgrades the docker compose configuration generating a new one.',
+            default: ComposeService.defaultParams.upgrade,
         }),
         user: flags.string({
             char: 'u',

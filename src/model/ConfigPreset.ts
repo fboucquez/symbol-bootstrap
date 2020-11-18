@@ -125,4 +125,5 @@ export interface ConfigPreset {
     votingKeyDilution: number;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    beneficiaryAddress: string;
 }

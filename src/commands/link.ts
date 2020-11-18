@@ -15,8 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, ComposeService } from '../service';
-import { LinkService } from '../service/LinkService';
+import { BootstrapService, BootstrapUtils, LinkService } from '../service';
 
 export default class Link extends Command {
     static description = `It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.`;
@@ -33,7 +32,7 @@ export default class Link extends Command {
         }),
         unlink: flags.boolean({
             description: 'Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account',
-            default: ComposeService.defaultParams.reset,
+            default: LinkService.defaultParams.unlink,
         }),
         maxFee: flags.integer({
             description: 'the max fee used when announcing',

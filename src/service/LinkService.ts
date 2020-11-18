@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
+import * as _ from 'lodash';
+import { EMPTY, Observable, of } from 'rxjs';
+import { fromArray } from 'rxjs/internal/observable/fromArray';
+import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
 import {
     Account,
     AccountKeyLinkTransaction,
@@ -30,12 +31,12 @@ import {
     VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
-import { BootstrapUtils } from './BootstrapUtils';
-import * as _ from 'lodash';
+import Logger from '../logger/Logger';
+import LoggerFactory from '../logger/LoggerFactory';
+import { LogType } from '../logger/LogType';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
-import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
-import { fromArray } from 'rxjs/internal/observable/fromArray';
-import { EMPTY, Observable, of } from 'rxjs';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigLoader } from './ConfigLoader';
 
 /**
  * params necessary to announce link transactions network.
@@ -55,8 +56,8 @@ export class LinkService {
     constructor(protected readonly params: LinkParams) {}
 
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
-        const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? BootstrapUtils.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? ConfigLoader.loadExistingPresetData(this.params.target);
+        const addresses = passedAddresses ?? ConfigLoader.loadExistingAddresses(this.params.target);
 
         const url = this.params.url.replace(/\/$/, '');
         logger.info(
