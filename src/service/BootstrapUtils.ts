@@ -21,6 +21,7 @@ import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSyn
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import { join } from 'path';
+import { NetworkType } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
@@ -476,5 +477,33 @@ export class BootstrapUtils {
         migratedVersioned.version = currentVersion;
         logger.info(`Object ${entityName} migrated to version ${currentVersion}`);
         return migratedVersioned;
+    }
+
+    public static getNetworkIdentifier(networkType: NetworkType): string {
+        switch (networkType) {
+            case NetworkType.MAIN_NET:
+                return 'public';
+            case NetworkType.TEST_NET:
+                return 'public-test';
+            case NetworkType.MIJIN:
+                return 'mijin';
+            case NetworkType.MIJIN_TEST:
+                return 'mijin-test';
+        }
+        throw new Error(`Invalid Network Type ${networkType}`);
+    }
+
+    public static getNetworkName(networkType: NetworkType): string {
+        switch (networkType) {
+            case NetworkType.MAIN_NET:
+                return 'public';
+            case NetworkType.TEST_NET:
+                return 'publicTest';
+            case NetworkType.MIJIN:
+                return 'mijin';
+            case NetworkType.MIJIN_TEST:
+                return 'mijinTest';
+        }
+        throw new Error(`Invalid Network Type ${networkType}`);
     }
 }

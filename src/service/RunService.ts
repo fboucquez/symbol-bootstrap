@@ -49,7 +49,11 @@ export class RunService {
         resetData: false,
     };
 
-    constructor(protected readonly params: RunParams) {}
+    private readonly configLoader: ConfigLoader;
+
+    constructor(protected readonly params: RunParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     public async run(): Promise<void> {
         if (this.params.resetData) {
@@ -148,7 +152,7 @@ export class RunService {
     public async resetData(): Promise<void> {
         logger.info('Resetting data');
         const target = this.params.target;
-        const preset = ConfigLoader.loadExistingPresetData(target);
+        const preset = this.configLoader.loadExistingPresetData(target);
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await Promise.all(
             (preset.nodes || []).map(async (node) => {

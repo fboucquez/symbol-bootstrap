@@ -16,13 +16,14 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import { BootstrapUtils, Preset } from '../../src/service';
-import { ConfigLoader } from '../../src/service/ConfigLoader';
+import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
 
 describe('ConfigLoader', () => {
+    const configLoader = new ConfigLoader();
+
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
         try {
-            await ConfigLoader.createPresetData('.', Preset.testnet, undefined, undefined, undefined);
+            await configLoader.createPresetData('.', Preset.testnet, undefined, undefined, undefined);
         } catch (e) {
             expect(e.message).to.equal('Preset testnet requires assembly (-a, --assembly option). Possible values are: api, dual, peer');
             return;
@@ -31,12 +32,12 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData testnet assembly', async () => {
-        const presetData = await ConfigLoader.createPresetData('.', Preset.testnet, 'dual', undefined, undefined);
+        const presetData = await configLoader.createPresetData('.', Preset.testnet, 'dual', undefined, undefined);
         expect(presetData).to.not.be.undefined;
     });
 
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
-        const presetData = await ConfigLoader.createPresetData(
+        const presetData = await configLoader.createPresetData(
             '.',
             Preset.bootstrap,
             undefined,
@@ -51,14 +52,14 @@ describe('ConfigLoader', () => {
 
     it('applyIndex', async () => {
         const context = { $index: 10 };
-        expect(ConfigLoader.applyValueTemplate(context, 'hello')).to.be.eq('hello');
-        expect(ConfigLoader.applyValueTemplate(context, 'index')).to.be.eq('index');
-        expect(ConfigLoader.applyValueTemplate(context, '$index')).to.be.eq('$index');
-        expect(ConfigLoader.applyValueTemplate(context, '{{index}}')).to.be.eq('');
-        expect(ConfigLoader.applyValueTemplate(context, '{{$index}}')).to.be.eq('10');
-        expect(ConfigLoader.applyValueTemplate(context, '{{add $index 2}}')).to.be.eq('12');
-        expect(ConfigLoader.applyValueTemplate(context, '100.100.{{add $index 2}}')).to.be.eq('100.100.12');
-        expect(ConfigLoader.applyValueTemplate(context, '100.100.{{add $index 5}}')).to.be.eq('100.100.15');
+        expect(configLoader.applyValueTemplate(context, 'hello')).to.be.eq('hello');
+        expect(configLoader.applyValueTemplate(context, 'index')).to.be.eq('index');
+        expect(configLoader.applyValueTemplate(context, '$index')).to.be.eq('$index');
+        expect(configLoader.applyValueTemplate(context, '{{index}}')).to.be.eq('');
+        expect(configLoader.applyValueTemplate(context, '{{$index}}')).to.be.eq('10');
+        expect(configLoader.applyValueTemplate(context, '{{add $index 2}}')).to.be.eq('12');
+        expect(configLoader.applyValueTemplate(context, '100.100.{{add $index 2}}')).to.be.eq('100.100.12');
+        expect(configLoader.applyValueTemplate(context, '100.100.{{add $index 5}}')).to.be.eq('100.100.15');
     });
 
     it('expandServicesRepeat when repeat 3', async () => {
@@ -78,7 +79,7 @@ describe('ConfigLoader', () => {
             },
         ];
 
-        const expandedServices = ConfigLoader.expandServicesRepeat({}, services);
+        const expandedServices = configLoader.expandServicesRepeat({}, services);
 
         const expectedExpandedServices = [
             {
@@ -138,7 +139,7 @@ describe('ConfigLoader', () => {
             },
         ];
 
-        const expandedServices = ConfigLoader.expandServicesRepeat({}, services);
+        const expandedServices = configLoader.expandServicesRepeat({}, services);
 
         expect(expandedServices).to.be.deep.eq([]);
     });
@@ -159,7 +160,7 @@ describe('ConfigLoader', () => {
             },
         ];
 
-        const expandedServices = ConfigLoader.expandServicesRepeat({}, services);
+        const expandedServices = configLoader.expandServicesRepeat({}, services);
 
         const expectedExpandedServices = [
             {
@@ -196,8 +197,8 @@ describe('ConfigLoader', () => {
             ],
         };
 
-        expect(ConfigLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
-        expect(ConfigLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
+        expect(configLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
+        expect(configLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
     });
 
     it('applyValueTemplate when array', async () => {
@@ -220,7 +221,7 @@ describe('ConfigLoader', () => {
             },
         ];
 
-        expect(ConfigLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
-        expect(ConfigLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
+        expect(configLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
+        expect(configLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
     });
 });

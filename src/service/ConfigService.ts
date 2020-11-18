@@ -20,23 +20,19 @@ import { join } from 'path';
 import {
     Account,
     AccountKeyLinkTransaction,
-    Address,
     Convert,
     Deadline,
     LinkAction,
-    MosaicId,
-    MosaicNonce,
-    NetworkType,
     Transaction,
     TransactionMapping,
     UInt64,
     VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
+import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
-import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
@@ -80,75 +76,10 @@ export class ConfigService {
         upgrade: false,
         user: BootstrapUtils.CURRENT_USER,
     };
+    private readonly configLoader: ConfigLoader;
 
-    constructor(private readonly root: string, private readonly params: ConfigParams) {}
-
-    public static getNetworkIdentifier(networkType: NetworkType): string {
-        switch (networkType) {
-            case NetworkType.MAIN_NET:
-                return 'public';
-            case NetworkType.TEST_NET:
-                return 'public-test';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijin-test';
-        }
-        throw new Error(`Invalid Network Type ${networkType}`);
-    }
-
-    public static getNetworkName(networkType: NetworkType): string {
-        switch (networkType) {
-            case NetworkType.MAIN_NET:
-                return 'public';
-            case NetworkType.TEST_NET:
-                return 'publicTest';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijinTest';
-        }
-        throw new Error(`Invalid Network Type ${networkType}`);
-    }
-
-    public generateAddresses(networkType: NetworkType, size: number): ConfigAccount[] {
-        return ConfigService.getArray(size).map(() => ConfigLoader.toConfig(Account.generateNewAccount(networkType)));
-    }
-
-    public generateAccount(networkType: NetworkType, privateKey: string | undefined): Account {
-        return privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
-    }
-
-    public generateNodeAccount(presetData: ConfigPreset, index: number, nodePreset: NodePreset, networkType: NetworkType): NodeAccount {
-        const name = nodePreset.name || `node-${index}`;
-        const ca = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.caPrivateKey));
-        const node = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.nodePrivateKey));
-
-        const friendlyName = nodePreset.friendlyName || ca.publicKey.substr(0, 7);
-        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, ca, node };
-
-        const useRemoteAccount = nodePreset.nodeUseRemoteAccount || presetData.nodeUseRemoteAccount;
-
-        if (useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
-            nodeAccount.harvesterSigning = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.harvesterSigningPrivateKey));
-
-        if (!useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
-            nodeAccount.harvesterSigning = ConfigLoader.toConfig(
-                this.generateAccount(networkType, nodePreset.harvesterSigningPrivateKey || ca.privateKey),
-            );
-
-        if (nodePreset.voting) nodeAccount.voting = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
-        if (nodePreset.harvesting) nodeAccount.vrf = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
-
-        return nodeAccount;
-    }
-
-    public async generateNodeAccounts(presetData: ConfigPreset, networkType: NetworkType): Promise<NodeAccount[]> {
-        return Promise.all(presetData.nodes!.map((node, index) => this.generateNodeAccount(presetData, index, node, networkType)));
-    }
-
-    private static getArray(size: number): number[] {
-        return [...Array(size).keys()];
+    constructor(private readonly root: string, private readonly params: ConfigParams) {
+        this.configLoader = new ConfigLoader();
     }
 
     public async run(): Promise<ConfigResult> {
@@ -157,17 +88,17 @@ export class ConfigService {
             if (this.params.reset) {
                 BootstrapUtils.deleteFolder(target);
             }
-            const presetLocation = ConfigLoader.getGeneratedPresetLocation(target);
+            const presetLocation = this.configLoader.getGeneratedPresetLocation(target);
             if (fs.existsSync(presetLocation) && !this.params.upgrade) {
                 logger.info(
                     `The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset or --upgrade to upgrade)`,
                 );
-                const presetData = ConfigLoader.loadExistingPresetData(target);
-                const addresses = ConfigLoader.loadExistingAddresses(target);
+                const presetData = this.configLoader.loadExistingPresetData(target);
+                const addresses = this.configLoader.loadExistingAddresses(target);
                 if (this.params.report) {
                     await new ReportService(this.root, this.params).run(presetData);
                 }
-                await BootstrapUtils.writeYaml(ConfigLoader.getGeneratedAddressLocation(target), addresses);
+                await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses);
                 await BootstrapUtils.writeYaml(presetLocation, presetData);
                 return { presetData, addresses };
             }
@@ -175,12 +106,12 @@ export class ConfigService {
                 logger.info('Upgrading configuration...');
             }
 
-            const oldPresetData = ConfigLoader.loadExistingPresetDataIfPreset(target);
-            const oldAddresses = ConfigLoader.loadExistingAddressesIfPreset(target);
+            const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target);
+            const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target);
 
             const presetData: ConfigPreset = _.merge(
                 oldPresetData || {},
-                ConfigLoader.createPresetData(
+                this.configLoader.createPresetData(
                     this.root,
                     this.params.preset,
                     this.params.assembly,
@@ -190,7 +121,7 @@ export class ConfigService {
             );
 
             await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
-            const addresses = _.merge(await this.generateRandomConfiguration(presetData), oldAddresses || {});
+            const addresses = _.merge(await this.configLoader.generateRandomConfiguration(presetData), oldAddresses || {});
 
             await BootstrapUtils.mkdir(target);
 
@@ -209,7 +140,7 @@ export class ConfigService {
                 await new ReportService(this.root, this.params).run(presetData);
             }
 
-            await BootstrapUtils.writeYaml(ConfigLoader.getGeneratedAddressLocation(target), addresses);
+            await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses);
             await BootstrapUtils.writeYaml(presetLocation, presetData);
             logger.info(`Configuration generated.`);
             return { presetData, addresses };
@@ -241,105 +172,6 @@ export class ConfigService {
             }),
         );
         return { presetData, addresses };
-    }
-
-    private async generateRandomConfiguration(presetData: ConfigPreset): Promise<Addresses> {
-        const networkType = presetData.networkType;
-        const addresses: Addresses = {
-            version: ConfigLoader.getAddressesMigration(presetData.networkType).length + 1,
-            networkType: networkType,
-            nemesisGenerationHashSeed:
-                presetData.nemesisGenerationHashSeed || Account.generateNewAccount(networkType).publicAccount.publicKey,
-        };
-
-        if (presetData.nodes) {
-            addresses.nodes = await this.generateNodeAccounts(presetData, networkType);
-        }
-
-        const sinkAddress = Account.generateNewAccount(networkType).address.plain();
-
-        if (!presetData.harvestNetworkFeeSinkAddress) {
-            presetData.harvestNetworkFeeSinkAddress = sinkAddress;
-        }
-        if (!presetData.mosaicRentalFeeSinkAddress) {
-            presetData.mosaicRentalFeeSinkAddress = sinkAddress;
-        }
-        if (!presetData.namespaceRentalFeeSinkAddress) {
-            presetData.namespaceRentalFeeSinkAddress = sinkAddress;
-        }
-
-        presetData.networkIdentifier = ConfigService.getNetworkIdentifier(presetData.networkType);
-        presetData.networkName = ConfigService.getNetworkName(presetData.networkType);
-        if (!presetData.nemesisGenerationHashSeed) {
-            presetData.nemesisGenerationHashSeed = addresses.nemesisGenerationHashSeed;
-        }
-
-        if (presetData.nemesis) {
-            addresses.nemesisSigner = ConfigLoader.toConfig(this.generateAccount(networkType, presetData.nemesis.nemesisSignerPrivateKey));
-            if (!presetData.nemesis.nemesisSignerPrivateKey && addresses.nemesisSigner) {
-                presetData.nemesis.nemesisSignerPrivateKey = addresses.nemesisSigner.privateKey;
-            }
-        }
-
-        if (!presetData.nemesisSignerPublicKey && addresses.nemesisSigner) {
-            presetData.nemesisSignerPublicKey = addresses.nemesisSigner.publicKey;
-        }
-
-        const nemesisSignerAddress = Address.createFromPublicKey(presetData.nemesisSignerPublicKey, networkType);
-
-        if (!presetData.currencyMosaicId)
-            presetData.currencyMosaicId = BootstrapUtils.toHex(
-                MosaicId.createFromNonce(MosaicNonce.createFromNumber(0), nemesisSignerAddress).toHex(),
-            );
-        if (!presetData.harvestingMosaicId) {
-            if (!presetData.nemesis) {
-                throw new Error('nemesis must be defined!');
-            }
-            if (presetData.nemesis.mosaics && presetData.nemesis.mosaics.length > 1) {
-                presetData.harvestingMosaicId = BootstrapUtils.toHex(
-                    MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), nemesisSignerAddress).toHex(),
-                );
-            } else {
-                presetData.harvestingMosaicId = presetData.currencyMosaicId;
-            }
-        }
-
-        if (presetData.nemesis) {
-            if (presetData.nemesis.mosaics) {
-                const mosaics: MosaicAccounts[] = [];
-                presetData.nemesis.mosaics.forEach((m, index) => {
-                    const accounts = this.generateAddresses(networkType, m.accounts);
-                    mosaics.push({
-                        id: index ? presetData.currencyMosaicId : presetData.harvestingMosaicId,
-                        name: m.name,
-                        type: index ? 'harvest' : 'currency',
-                        accounts,
-                    });
-                });
-
-                presetData.nemesis.mosaics.forEach((m, index) => {
-                    const accounts = mosaics[index].accounts;
-                    if (!m.currencyDistributions) {
-                        const caNodes = (addresses.nodes || []).filter((node) => node.ca);
-                        const totalAccounts = (m.accounts || 0) + caNodes.length;
-                        const amountPerAccount = Math.floor(m.supply / totalAccounts);
-                        m.currencyDistributions = [
-                            ...accounts.map((a) => ({ address: a.address, amount: amountPerAccount })),
-                            ...caNodes.map((n) => ({ address: n.ca!.address, amount: amountPerAccount })),
-                        ];
-                        if (m.currencyDistributions.length)
-                            m.currencyDistributions[0].amount += m.supply - totalAccounts * amountPerAccount;
-                    }
-                    const supplied = m.currencyDistributions.map((d) => d.amount).reduce((a, b) => a + b, 0);
-                    if (m.supply != supplied) {
-                        throw new Error(`Invalid nemgen total supplied value, expected ${m.supply} but total is ${supplied}`);
-                    }
-                });
-                addresses.mosaics = mosaics;
-            }
-        }
-
-        return addresses;
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {

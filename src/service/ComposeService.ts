@@ -40,10 +40,14 @@ export class ComposeService {
         upgrade: false,
     };
 
-    constructor(private readonly root: string, protected readonly params: ComposeParams) {}
+    private readonly configLoader: ConfigLoader;
+
+    constructor(private readonly root: string, protected readonly params: ComposeParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     public async run(passedPresetData?: ConfigPreset): Promise<DockerCompose> {
-        const presetData = passedPresetData ?? ConfigLoader.loadExistingPresetData(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);

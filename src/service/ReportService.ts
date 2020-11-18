@@ -55,8 +55,10 @@ export class ReportService {
     public static defaultParams: ReportParams = {
         target: BootstrapUtils.defaultTargetFolder,
     };
-
-    constructor(private readonly root: string, protected readonly params: ReportParams) {}
+    private readonly configLoader: ConfigLoader;
+    constructor(private readonly root: string, protected readonly params: ReportParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     private createReportFromFile(resourceContent: string, descriptions: any): ReportSection[] {
         const sections: ReportSection[] = [];
@@ -128,7 +130,7 @@ export class ReportService {
      * @param passedPresetData the preset data,
      */
     public async run(passedPresetData?: ConfigPreset): Promise<string[]> {
-        const presetData = passedPresetData ?? ConfigLoader.loadExistingPresetData(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
 
         const reportFolder = join(this.params.target, 'reports');
         BootstrapUtils.deleteFolder(reportFolder);

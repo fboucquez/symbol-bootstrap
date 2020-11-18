@@ -53,11 +53,15 @@ export class LinkService {
         unlink: false,
     };
 
-    constructor(protected readonly params: LinkParams) {}
+    private readonly configLoader: ConfigLoader;
+
+    constructor(protected readonly params: LinkParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
-        const presetData = passedPresetData ?? ConfigLoader.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? ConfigLoader.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
 
         const url = this.params.url.replace(/\/$/, '');
         logger.info(
