@@ -26,7 +26,7 @@ export default class Compose extends Command {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
         upgrade: flags.boolean({
-            description: 'It drops and upgrades the docker compose configuration generating a new one.',
+            description: 'It regenerates the docker compose and utility files from the <target>/docker folder',
             default: ComposeService.defaultParams.upgrade,
         }),
         user: flags.string({

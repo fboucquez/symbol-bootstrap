@@ -66,7 +66,9 @@ OPTIONS
       [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
 
   --upgrade
-      It upgrades the configuration without dropping the generate keys or stored databases.
+      It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to 
+      keep your node up to date without dropping the local data. The original preset (-t), assembly (-a), and custom 
+      preset (-a) must be used. Backup the target folder before upgrading.
 
 EXAMPLES
   $ symbol-bootstrap start
