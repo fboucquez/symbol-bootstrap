@@ -100,7 +100,7 @@ export class LinkService {
                 }
                 const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
                 const noFundsMessage = faucetUrl
-                    ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
+                    ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}/?recipient=${account.address.plain()}`
                     : `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} .`;
                 return repositoryFactory
                     .createAccountRepository()
@@ -171,7 +171,7 @@ export class LinkService {
 
                 if (node.remote) {
                     logger.info(
-                        `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account key: ${node.remote.publicKey}`,
+                        `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account public key: ${node.remote.publicKey}`,
                     );
                     transactions.push(
                         AccountKeyLinkTransaction.create(
@@ -183,7 +183,7 @@ export class LinkService {
                         ),
                     );
                     logger.info(
-                        `Creating NodeKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account key: ${node.transport.publicKey}`,
+                        `Creating NodeKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Transport/Node Account public key: ${node.transport.publicKey}`,
                     );
                     transactions.push(
                         NodeKeyLinkTransaction.create(
@@ -198,7 +198,7 @@ export class LinkService {
 
                 if (node.vrf) {
                     logger.info(
-                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, VRF key: ${node.vrf.publicKey}`,
+                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, VRF public key: ${node.vrf.publicKey}`,
                     );
                     transactions.push(
                         VrfKeyLinkTransaction.create(

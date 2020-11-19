@@ -209,11 +209,8 @@ export class ConfigService {
 
         const outputFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig');
         const nodePreset = (presetData.nodes || [])[index];
-        const beneficiaryAddress =
-            account.beneficiaryAddress || presetData.beneficiaryAddress || (account.remote && account.main?.address) || '';
         const generatedContext = {
             name: name,
-            beneficiaryAddress,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
             harvesterSigningPrivateKey: (account.remote || account.main)?.privateKey || '',
             harvesterVrfPrivateKey: account.vrf?.privateKey || '',

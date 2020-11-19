@@ -40,7 +40,6 @@ export interface NodeAccount {
     roles: string;
     name: string;
     friendlyName: string;
-    beneficiaryAddress?: string;
 }
 
 export interface MosaicAccounts {
