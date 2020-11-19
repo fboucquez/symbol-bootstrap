@@ -93,7 +93,7 @@ If you want to use your main account as the harvesting account, you can disable 
 ```yaml
 nodeUseRemoteAccount: true
 ```
-**Warning:** Disabling the remote account is not recommended!
+**Warning:** Disabling the remote account is not recommended as it exposes your main account's private key in the node's configuration files.
 
 ### Enable voting mode in a node
 
