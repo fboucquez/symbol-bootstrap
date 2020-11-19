@@ -91,7 +91,7 @@ Both main and remote accounts will be reported in the `addresses.yml` file
 If you want to use your main account as the harvesting account, you can disable this feature with the following preset:
 
 ```yaml
-nodeUseRemoteAccount: true
+nodeUseRemoteAccount: false
 ```
 **Warning:** Disabling the remote account is not recommended as it exposes your main account's private key in the node's configuration files.
 
