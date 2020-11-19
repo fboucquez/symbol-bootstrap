@@ -168,11 +168,13 @@ openssl verify -CAfile ca.cert.pem node.crt.pem
 
 # finally create full crt
 cat node.crt.pem ca.cert.pem > node.full.crt.pem
-echo "Certificate Created"
 
-# rm ca.key.pem
-# rm ca.der
-# rm node.der
+rm createCertificate.sh
+rm ca.key.pem
+rm ca.der
+rm node.der
+
+echo "Certificate Created"
 `;
     }
 }
