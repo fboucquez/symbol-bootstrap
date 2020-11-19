@@ -12,6 +12,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ---|---|---
 Symbol Bootstrap | v0.2.2 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
+- Using remote accounts when setting up nodes by default. This improves security by avoiding main account private keys to be exposed in node configuration (like `harvesterSigningPrivateKey`).
+- Removed unnecessary tls related files once certificates are created. 
+- Added addresses.yml migration from old formats.
+- Added --upgrade flag to config, compose and start.
 - Fixed api broker name in testnet's api assembly.
 
 ## [0.2.1] - 30-Oct-2020

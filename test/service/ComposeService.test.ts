@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { BootstrapService, BootstrapUtils, ConfigService, Preset, StartParams } from '../../src/service';
-import { LinkService } from '../../src/service/LinkService';
 import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
+import 'mocha';
 import { join } from 'path';
 import { DockerCompose } from '../../src/model/DockerCompose';
+import { BootstrapService, BootstrapUtils, ConfigService, Preset, StartParams } from '../../src/service';
+import { LinkService } from '../../src/service/LinkService';
 
 describe('ComposeService', () => {
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {

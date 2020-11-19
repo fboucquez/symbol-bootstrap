@@ -691,15 +691,6 @@ config-network.properties
     **plugin:catapult.plugins.transfer**; ; ;
     maxMessageSize; 1024; uint16_t; Maximum transaction message size.
 
-config-networkheight.properties
-===============================
-.. csv-table::
-    :header: "Property", "Value"
-    :delim: ;
-
-    **networkheight**;
-    maxNodes; 5
-
 config-node.properties
 ======================
 .. csv-table::

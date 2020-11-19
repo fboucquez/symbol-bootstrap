@@ -3,7 +3,7 @@ services:
     db:
         user: '1000:1000'
         environment:
-          MONGO_INITDB_DATABASE: catapult
+            MONGO_INITDB_DATABASE: catapult
         container_name: db
         image: 'mongo:4.2.6-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db
@@ -44,7 +44,7 @@ services:
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.1.0'
+        image: 'symbolplatform/symbol-rest:2.1.1-alpha-202011162024'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

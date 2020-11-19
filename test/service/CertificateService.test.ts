@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { ForgeCertificateService } from '../../src/service';
-import { BootstrapUtils, CertificateService } from '../../src/service';
+import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
+import 'mocha';
+import * as sshpk from 'sshpk';
+import { Convert } from 'symbol-sdk';
+import { BootstrapUtils, CertificateService, ForgeCertificateService } from '../../src/service';
 
 describe('CertificateService', () => {
     it('forge create certificate', async () => {
@@ -40,5 +42,17 @@ describe('CertificateService', () => {
                 publicKey: '5F4F8760D675F6836D4C07576F88B179BFE4471EDFBA4ECD2399C8F1EF02EE71',
             },
         ]);
+    });
+
+    it('parse public key', async () => {
+        const nodeCertKey: any = sshpk.parseKey(
+            '-----BEGIN PUBLIC KEY-----\n' +
+                'MCowBQYDK2VwAyEAxpp0FX4tsApDzLYEAH2MNDItqWk2/fnhwAeTj0cT/qk=\n' +
+                '-----END PUBLIC KEY-----\n',
+            'pem',
+        );
+        const publicKey = Convert.uint8ToHex(nodeCertKey.parts[0].data);
+        expect('C69A74157E2DB00A43CCB604007D8C34322DA96936FDF9E1C007938F4713FEA9').be.eq(publicKey);
+        console.log(publicKey);
     });
 });

@@ -70,16 +70,6 @@ prevoteBlocksMultiple; 4
 votingKeyDilution; 128
 
 
-config-harvesting.properties
-harvesting
-harvesterSigningPrivateKey; ; string; Harvester signing private key.
-harvesterVrfPrivateKey; ; string; Harvester vrf private key.
-enableAutoHarvesting; true; bool; Set to true if auto harvesting is enabled.
-maxUnlockedAccounts; 5; uint32_t; Maximum number of unlocked accounts.
-delegatePrioritizationPolicy; Importance; harvesting::DelegatePrioritizationPolicy; Delegate harvester prioritization policy.
-beneficiaryAddress; ; Address; Address of the account receiving part of the harvested fee.
-
-
 config-inflation.properties
 inflation
 starting-at-height-1; 0
@@ -242,11 +232,6 @@ maxMosaicRestrictionValues; 20; uint8_t; Maximum number of mosaic restriction va
 
 plugin:catapult.plugins.transfer
 maxMessageSize; 1024; uint16_t; Maximum transaction message size.
-
-
-config-networkheight.properties
-networkheight
-maxNodes; 5
 
 
 config-node.properties

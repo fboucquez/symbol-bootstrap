@@ -1,3 +1,4 @@
+nodeUseRemoteAccount: true
 nodePort: 7900
 enableCacheDatabaseStorage: true
 enableVerifiableState: true
@@ -63,7 +64,7 @@ maxNamespaceDepth: 3
 batchVerificationRandomSource:
 symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.3
 symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.3
-symbolRestImage: symbolplatform/symbol-rest:2.1.0
+symbolRestImage: symbolplatform/symbol-rest:2.1.1-alpha-202011162024
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -93,6 +94,7 @@ prevoteBlocksMultiple: 4
 subscriberPort: 7902
 
 # network height
+networkheight: false
 networkHeightMaxNodes: 5
 
 # partialtransactions
@@ -131,7 +133,7 @@ enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
 maxCacheDatabaseWriteBatchSize: 5MB
 maxTrackedNodes: 5'000
-beneficiaryAddress:
+beneficiaryAddress: ''
 enableAutoHarvesting: true
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
