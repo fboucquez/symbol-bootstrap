@@ -33,8 +33,13 @@ OPTIONS
   --report                          It generates reStructuredText (.rst) reports describing the configuration of each
                                     node.
 
+  --upgrade                         It regenerates the configuration reusing the previous keys. Use this flag when
+                                    upgrading the version of bootstrap to keep your node up to date without dropping the
+                                    local data. The original preset (-t), assembly (-a), and custom preset (-a) must be
+                                    used. Backup the target folder before upgrading.
+
 EXAMPLE
   $ symbol-bootstrap config -p bootstrap
 ```
 
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.1/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.2/src/commands/config.ts)_

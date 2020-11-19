@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { BootstrapUtils, ConfigParams, ConfigService, Preset } from '../../src/service';
-import { ReportService } from '../../src/service/ReportService';
 import { expect } from '@oclif/test';
 import { readdirSync } from 'fs';
+import 'mocha';
 import { join } from 'path';
+import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } from '../../src/service';
 
 describe('ReportService', () => {
     const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
@@ -102,7 +101,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            reset: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'api',

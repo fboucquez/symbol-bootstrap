@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { expect } from '@oclif/test';
 import 'mocha';
 import { ConfigService, Preset } from '../../src/service';
-import { expect } from '@oclif/test';
 
 describe('ConfigService', () => {
     it('ConfigService default run with optin_preset.yml', async () => {
@@ -44,6 +44,15 @@ describe('ConfigService', () => {
             target: 'target/ConfigService.test.testnet',
             preset: Preset.testnet,
             assembly: 'dual',
+        }).run();
+    });
+
+    it('ConfigService bootstrap default', async () => {
+        await new ConfigService('.', {
+            ...ConfigService.defaultParams,
+            reset: true,
+            target: 'target/bootstrap',
+            preset: Preset.bootstrap,
         }).run();
     });
 

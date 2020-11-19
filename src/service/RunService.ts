@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
+import { existsSync } from 'fs';
+import * as _ from 'lodash';
+import { join } from 'path';
+import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
+import { RepositoryFactoryHttp } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
-import { join } from 'path';
-import { RepositoryFactoryHttp } from 'symbol-sdk';
-import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
-import { BootstrapUtils } from './BootstrapUtils';
-import { existsSync } from 'fs';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
-import * as _ from 'lodash';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigLoader } from './ConfigLoader';
 import { PortService } from './PortService';
 
 /**
@@ -48,7 +49,11 @@ export class RunService {
         resetData: false,
     };
 
-    constructor(protected readonly params: RunParams) {}
+    private readonly configLoader: ConfigLoader;
+
+    constructor(protected readonly params: RunParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     public async run(): Promise<void> {
         if (this.params.resetData) {
@@ -147,7 +152,7 @@ export class RunService {
     public async resetData(): Promise<void> {
         logger.info('Resetting data');
         const target = this.params.target;
-        const preset = BootstrapUtils.loadExistingPresetData(target);
+        const preset = this.configLoader.loadExistingPresetData(target);
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await Promise.all(
             (preset.nodes || []).map(async (node) => {
@@ -156,7 +161,7 @@ export class RunService {
                 BootstrapUtils.deleteFolder(join(componentConfigFolder, 'data'), ['private_key_tree1.dat']);
                 BootstrapUtils.deleteFolder(join(componentConfigFolder, 'logs'));
                 logger.info(`Copying block 1 seed to ${dataFolder}`);
-                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder);
+                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder, []);
             }),
         );
         (preset.gateways || []).forEach((node) => {

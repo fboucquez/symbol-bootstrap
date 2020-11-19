@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { ConfigParams } from './ConfigService';
-import LoggerFactory from '../logger/LoggerFactory';
-import Logger from '../logger/Logger';
-import { LogType } from '../logger/LogType';
 import { promises } from 'fs';
-
-import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigPreset } from '../model';
 import { join } from 'path';
+import Logger from '../logger/Logger';
+import LoggerFactory from '../logger/LoggerFactory';
+import { LogType } from '../logger/LogType';
+import { ConfigPreset } from '../model';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigParams } from './ConfigService';
 
 type NemgenParams = ConfigParams;
 

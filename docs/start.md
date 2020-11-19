@@ -65,10 +65,15 @@ OPTIONS
   --timeout=timeout
       [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
 
+  --upgrade
+      It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to 
+      keep your node up to date without dropping the local data. The original preset (-t), assembly (-a), and custom 
+      preset (-a) must be used. Backup the target folder before upgrading.
+
 EXAMPLES
   $ symbol-bootstrap start
   $ symbol-bootstrap start -p bootstrap
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.1/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.2/src/commands/start.ts)_

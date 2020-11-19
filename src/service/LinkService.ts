@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
+import * as _ from 'lodash';
+import { EMPTY, Observable, of } from 'rxjs';
+import { fromArray } from 'rxjs/internal/observable/fromArray';
+import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
 import {
     Account,
+    AccountKeyLinkTransaction,
     Deadline,
     LinkAction,
     NetworkCurrencyPublic,
+    NodeKeyLinkTransaction,
     RepositoryFactoryHttp,
     Transaction,
     TransactionService,
@@ -29,12 +32,12 @@ import {
     VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
-import { BootstrapUtils } from './BootstrapUtils';
-import * as _ from 'lodash';
+import Logger from '../logger/Logger';
+import LoggerFactory from '../logger/LoggerFactory';
+import { LogType } from '../logger/LogType';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
-import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
-import { fromArray } from 'rxjs/internal/observable/fromArray';
-import { EMPTY, Observable, of } from 'rxjs';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigLoader } from './ConfigLoader';
 
 /**
  * params necessary to announce link transactions network.
@@ -51,11 +54,15 @@ export class LinkService {
         unlink: false,
     };
 
-    constructor(protected readonly params: LinkParams) {}
+    private readonly configLoader: ConfigLoader;
+
+    constructor(protected readonly params: LinkParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
-        const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? BootstrapUtils.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
 
         const url = this.params.url.replace(/\/$/, '');
         logger.info(
@@ -88,12 +95,12 @@ export class LinkService {
 
         const signedTransactionObservable = fromArray(transactionNodes).pipe(
             mergeMap(({ node, transactions }) => {
-                if (!node.signing) {
-                    throw new Error('Signing is required!');
+                if (!node.main) {
+                    throw new Error('CA account is required!');
                 }
-                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
                 const noFundsMessage = faucetUrl
-                    ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}`
+                    ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}/?recipient=${account.address.plain()}`
                     : `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} .`;
                 return repositoryFactory
                     .createAccountRepository()
@@ -151,18 +158,47 @@ export class LinkService {
         presetData: ConfigPreset,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
         return _.flatMap(addresses.nodes || [])
-            .filter((node) => node.signing)
+            .filter((node) => node.main && (node.remote || node.voting || node.vrf))
             .map((node) => {
                 const transactions = [];
-                if (!node.signing) {
-                    throw new Error('Signing is required!');
+                if (!node.main) {
+                    throw new Error('CA private key is required!');
                 }
-                const account = Account.createFromPrivateKey(node.signing.privateKey, presetData.networkType);
+                const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
                 const action = this.params.unlink ? LinkAction.Unlink : LinkAction.Link;
+
+                logger.info(`Creating transactions for node: ${node.name}, ca/main account: ${account.address.plain()}`);
+
+                if (node.remote) {
+                    logger.info(
+                        `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account public key: ${node.remote.publicKey}`,
+                    );
+                    transactions.push(
+                        AccountKeyLinkTransaction.create(
+                            Deadline.create(),
+                            node.remote.publicKey,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                    logger.info(
+                        `Creating NodeKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Transport/Node Account public key: ${node.transport.publicKey}`,
+                    );
+                    transactions.push(
+                        NodeKeyLinkTransaction.create(
+                            Deadline.create(),
+                            node.transport.publicKey,
+                            action,
+                            presetData.networkType,
+                            UInt64.fromUint(this.params.maxFee),
+                        ),
+                    );
+                }
 
                 if (node.vrf) {
                     logger.info(
-                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, vrf key: ${node.vrf.publicKey}`,
+                        `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, VRF public key: ${node.vrf.publicKey}`,
                     );
                     transactions.push(
                         VrfKeyLinkTransaction.create(
@@ -177,7 +213,7 @@ export class LinkService {
                 if (node.voting) {
                     const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
                     logger.info(
-                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, voting public key: ${votingPublicKey}`,
+                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Voting public key: ${votingPublicKey}`,
                     );
                     transactions.push(
                         VotingKeyLinkTransaction.create(
