@@ -30,7 +30,7 @@ nodeEqualityStrategy: host
 maxVotingKeyLifetime: 26280
 minVotingKeyLifetime: 28
 mosaicRentalFee: 500
-votingSetGrouping: 100
+votingSetGrouping: 180
 maxVotingKeysPerAccount: 3
 maxTransactionsPerAggregate: 100
 maxCosignaturesPerAggregate: 25
@@ -89,9 +89,11 @@ finalizationSize: 10000
 finalizationThreshold: 7000
 maxHashesPerPoint: 256
 prevoteBlocksMultiple: 4
+unfinalizedBlocksDuration: 0m
 
 # config messages:
 subscriberPort: 7902
+messagingListenInterface: 0.0.0.0
 
 # network height
 networkheight: false
@@ -108,6 +110,8 @@ timeSynchronizationMinImportance: 3750
 # node default info
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
+nodeListenInterface: 0.0.0.0
+serverVersion: 0.10.0.4
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 610

@@ -218,7 +218,7 @@ config-network.properties
     minHarvesterBalance; 500; Amount; Minimum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
     maxHarvesterBalance; 50'000'000'000'000; Amount; Maximum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
     minVoterBalance; 50'000; Amount; Minimum number of harvesting mosaic atomic units needed for an account to be eligible for voting.
-    votingSetGrouping; 100; ;
+    votingSetGrouping; 180; ;
     maxVotingKeysPerAccount; 3; uint8_t; Maximum number of voting keys that can be registered at once per account.
     minVotingKeyLifetime; 28; uint32_t; Minimum number of finalization rounds for which voting key can be registered.
     maxVotingKeyLifetime; 26280; uint32_t; Maximum number of finalization rounds for which voting key can be registered.

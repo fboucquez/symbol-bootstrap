@@ -102,7 +102,7 @@ export class CertificateService {
         const cmd = ['bash', 'createCertificate.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const symbolServerToolsImage = presetData.symbolServerToolsImage;
+        const symbolServerToolsImage = 'symbolplatform/symbol-server:tools-gcc-0.10.0.3' || presetData.symbolServerToolsImage;
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
             catapultAppFolder: presetData.catapultAppFolder,
             image: symbolServerToolsImage,

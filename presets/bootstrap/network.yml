@@ -34,7 +34,7 @@ databases:
 nodes:
     - repeat: 2
       harvesting: true
-      voting: true
+      voting: false
       api: false
       name: 'peer-node-{{$index}}'
       friendlyName: 'peer-node-{{$index}}'
