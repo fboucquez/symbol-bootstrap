@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;service/NemgenService&quot; | symbol-bootstrap</title>
+	<title>NodeCertificates | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,63 +56,60 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_service_nemgenservice_.html">&quot;service/NemgenService&quot;</a>
+					<a href="../modules/_service_sshpkservice_.html">&quot;service/SshpkService&quot;</a>
+				</li>
+				<li>
+					<a href="_service_sshpkservice_.nodecertificates.html">NodeCertificates</a>
 				</li>
 			</ul>
-			<h1>Module &quot;service/NemgenService&quot;</h1>
+			<h1>Interface NodeCertificates</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">NodeCertificates</span>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Classes</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_service_nemgenservice_.nemgenservice.html" class="tsd-kind-icon">Nemgen<wbr>Service</a></li>
-							</ul>
-						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Type aliases</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_service_nemgenservice_.html#nemgenparams" class="tsd-kind-icon">Nemgen<wbr>Params</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Variables</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_service_nemgenservice_.html#logger" class="tsd-kind-icon">logger</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_service_sshpkservice_.nodecertificates.html#node" class="tsd-kind-icon">node</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_service_sshpkservice_.nodecertificates.html#ssl" class="tsd-kind-icon">ssl</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Type aliases</h2>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-					<a name="nemgenparams" class="tsd-anchor"></a>
-					<h3>Nemgen<wbr>Params</h3>
-					<div class="tsd-signature tsd-kind-icon">Nemgen<wbr>Params<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_service_configservice_.configparams.html" class="tsd-signature-type">ConfigParams</a></div>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="node" class="tsd-anchor"></a>
+					<h3>node</h3>
+					<div class="tsd-signature tsd-kind-icon">node<span class="tsd-signature-symbol">:</span> <a href="_model_addresses_.certificatepair.html" class="tsd-signature-type">CertificatePair</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/NemgenService.ts#L26">src/service/NemgenService.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/SshpkService.ts#L35">src/service/SshpkService.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="logger" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> logger</h3>
-					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol"> = LoggerFactory.getLogger(LogType.System)</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="ssl" class="tsd-anchor"></a>
+					<h3>ssl</h3>
+					<div class="tsd-signature tsd-kind-icon">ssl<span class="tsd-signature-symbol">:</span> <a href="_model_addresses_.certificatepair.html" class="tsd-signature-type">CertificatePair</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/NemgenService.ts#L28">src/service/NemgenService.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/SshpkService.ts#L34">src/service/SshpkService.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,20 +122,41 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="_service_nemgenservice_.html">&quot;service/<wbr>Nemgen<wbr>Service&quot;</a>
+						<a href="../modules/_service_sshpkservice_.html">&quot;service/<wbr>Sshpk<wbr>Service&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_service_nemgenservice_.nemgenservice.html" class="tsd-kind-icon">Nemgen<wbr>Service</a>
+						<a href="../classes/_service_sshpkservice_.sshpkservice.html" class="tsd-kind-icon">Sshpk<wbr>Service</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_service_sshpkservice_.nodecertificates.html" class="tsd-kind-icon">Node<wbr>Certificates</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_service_sshpkservice_.nodecertificates.html#node" class="tsd-kind-icon">node</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_service_sshpkservice_.nodecertificates.html#ssl" class="tsd-kind-icon">ssl</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_service_sshpkservice_.sshpkkey.html" class="tsd-kind-icon">Sshpk<wbr>Key</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_service_nemgenservice_.html#nemgenparams" class="tsd-kind-icon">Nemgen<wbr>Params</a>
+						<a href="../modules/_service_sshpkservice_.html#certificateparams" class="tsd-kind-icon">Certificate<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_service_nemgenservice_.html#logger" class="tsd-kind-icon">logger</a>
+						<a href="../modules/_service_sshpkservice_.html#anysshpk" class="tsd-kind-icon">any<wbr>Sshpk</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_service_sshpkservice_.html#logger" class="tsd-kind-icon">logger</a>
 					</li>
 				</ul>
 			</nav>
@@ -154,10 +172,11 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
