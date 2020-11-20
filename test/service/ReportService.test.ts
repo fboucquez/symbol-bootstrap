@@ -15,7 +15,7 @@
  */
 
 import { expect } from '@oclif/test';
-import { readdirSync } from 'fs';
+import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } from '../../src/service';
@@ -26,12 +26,16 @@ describe('ReportService', () => {
 
         const paths = await new ReportService('.', params).run(configResult.presetData);
         const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
-        expect(paths.length).to.eq(readdirSync(expectedReportFolder).length);
+        await BootstrapUtils.mkdir(expectedReportFolder);
 
         const promises = paths.map(async (reportPath) => {
             expect(reportPath.indexOf(`${params.target}/report`)).to.be.greaterThan(-1);
             const generatedReport = await BootstrapUtils.readTextFile(reportPath);
-            const expectedReport = await BootstrapUtils.readTextFile(join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, '')));
+            const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
+            if (!existsSync(expectedReportPath)) {
+                await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim());
+            }
+            const expectedReport = await BootstrapUtils.readTextFile(expectedReportPath);
             expect(
                 generatedReport.trim(),
                 `Report ${reportPath} doesn't match
@@ -39,7 +43,6 @@ describe('ReportService', () => {
 `,
             ).to.be.eq(expectedReport.trim());
         });
-
         await Promise.all(promises);
     };
 

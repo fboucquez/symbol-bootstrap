@@ -4,7 +4,7 @@ nodes:
     - repeat: 0
     - repeat: 1
       harvesting: true
-      voting: true
+      voting: false
       api: true
 gateways:
     - repeat: 1

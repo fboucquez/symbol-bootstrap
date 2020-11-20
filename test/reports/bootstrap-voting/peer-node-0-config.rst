@@ -1,4 +1,3 @@
-
 config-database.properties
 ==========================
 .. csv-table::
@@ -81,6 +80,7 @@ config-finalization.properties
 
     **finalization**;
     enableVoting; true
+    enableRevoteOnBoot; true
     size; 10'000
     threshold; 7'000
     stepDuration; 4m
@@ -88,7 +88,7 @@ config-finalization.properties
     messageSynchronizationMaxResponseSize; 20MB
     maxHashesPerPoint; 256
     prevoteBlocksMultiple; 4
-    votingKeyDilution; 128
+    unfinalizedBlocksDuration; 0m
 
 config-harvesting.properties
 ============================
@@ -185,6 +185,7 @@ config-messaging.properties
 
     **messaging**;
     subscriberPort; 7902
+    listenInterface; 0.0.0.0
 
 config-network.properties
 =========================
@@ -310,12 +311,15 @@ config-node.properties
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxCacheDatabaseWriteBatchSize; 5MB; utils::FileSize; Maximum cache database write batch size.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
+    minPartnerNodeVersion; 0.10.0.4; ;
+    maxPartnerNodeVersion; 0.10.0.4; ;
     trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
+    listenInterface; 0.0.0.0; ;
     **localnode**; ; ;
     host; peer-node-0; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-peer-node-0; string; Node friendly name (leave empty to use address).
-    version; 0; uint32_t; Node version.
+    version; 0.10.0.4; uint32_t; Node version.
     roles; Peer,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
