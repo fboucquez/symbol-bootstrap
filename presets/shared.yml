@@ -182,3 +182,7 @@ apiNodeBrokerMonitorLoggingThrottle: 60000
 votingKeyStartEpoch: 1
 votingKeyEndEpoch: 26280
 enableRevoteOnBoot: true
+
+#fork height
+votingKeyLinkV2: 0
+importanceBlock: 0
