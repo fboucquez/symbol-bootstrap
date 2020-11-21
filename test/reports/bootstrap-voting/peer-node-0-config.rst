@@ -227,6 +227,9 @@ config-network.properties
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
     harvestNetworkFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
+    **fork_heights**;
+    votingKeyLinkV2; 0
+    importanceBlock; 0
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
