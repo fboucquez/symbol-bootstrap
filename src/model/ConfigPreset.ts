@@ -125,4 +125,5 @@ export interface ConfigPreset {
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    votingKeyLinkV2: number | undefined;
 }

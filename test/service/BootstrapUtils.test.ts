@@ -16,7 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import { Convert, Crypto } from 'symbol-sdk';
+import { Account, Convert, Crypto, Deadline, NetworkType, UInt64, VotingKeyLinkTransaction, VotingKeyLinkV1Transaction } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
 import assert = require('assert');
 
@@ -45,11 +45,123 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toHex("5E62'990D'CAC5'BE8A")).to.be.eq("0x5E62'990D'CAC5'BE8A");
     });
 
-    it('createVotingKey', async () => {
-        expect(BootstrapUtils.createVotingKey('ABC')).to.be.eq(
+    it('createLongVotingKey', async () => {
+        expect(BootstrapUtils.createLongVotingKey('ABC')).to.be.eq(
             'ABC000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
         );
         const votingKey = Convert.uint8ToHex(Crypto.randomBytes(48));
-        expect(BootstrapUtils.createVotingKey(votingKey)).to.be.eq(votingKey);
+        expect(BootstrapUtils.createLongVotingKey(votingKey)).to.be.eq(votingKey);
+    });
+
+    it('createVotingKeyTransaction v1 short key', async () => {
+        const networkType = NetworkType.PRIVATE;
+        const deadline = Deadline.createFromDTO('1');
+        const voting = Account.generateNewAccount(networkType);
+        const currentHeight = UInt64.fromUint(10);
+        const presetData = {
+            networkType,
+            votingKeyStartEpoch: 1,
+            votingKeyEndEpoch: 3,
+            votingKeyLinkV2: undefined,
+        };
+        const maxFee = UInt64.fromUint(20);
+
+        const transaction = BootstrapUtils.createVotingKeyTransaction(
+            voting.publicKey,
+            currentHeight,
+            presetData,
+            deadline,
+            maxFee,
+        ) as VotingKeyLinkTransaction;
+        expect(transaction.version).to.be.eq(1);
+        expect(transaction.linkedPublicKey).to.be.eq(voting.publicKey);
+        expect(transaction.startEpoch).to.be.eq(presetData.votingKeyStartEpoch);
+        expect(transaction.endEpoch).to.be.eq(presetData.votingKeyEndEpoch);
+        expect(transaction.maxFee).to.be.deep.eq(maxFee);
+        expect(transaction.deadline).to.be.deep.eq(deadline);
+    });
+
+    it('createVotingKeyTransaction v1 long key', async () => {
+        const networkType = NetworkType.PRIVATE;
+        const deadline = Deadline.createFromDTO('1');
+        const voting = Account.generateNewAccount(networkType);
+        const currentHeight = UInt64.fromUint(10);
+        const presetData = {
+            networkType,
+            votingKeyStartEpoch: 1,
+            votingKeyEndEpoch: 3,
+            votingKeyLinkV2: 30,
+        };
+        const maxFee = UInt64.fromUint(20);
+
+        const transaction = BootstrapUtils.createVotingKeyTransaction(
+            voting.publicKey,
+            currentHeight,
+            presetData,
+            deadline,
+            maxFee,
+        ) as VotingKeyLinkV1Transaction;
+        expect(transaction.version).to.be.eq(1);
+        expect(transaction.linkedPublicKey).to.be.eq(BootstrapUtils.createLongVotingKey(voting.publicKey));
+        expect(transaction.startEpoch).to.be.eq(presetData.votingKeyStartEpoch);
+        expect(transaction.endEpoch).to.be.eq(presetData.votingKeyEndEpoch);
+        expect(transaction.maxFee).to.be.deep.eq(maxFee);
+        expect(transaction.deadline).to.be.deep.eq(deadline);
+    });
+
+    it('createVotingKeyTransaction v2 short key', async () => {
+        const networkType = NetworkType.PRIVATE;
+        const deadline = Deadline.createFromDTO('1');
+        const voting = Account.generateNewAccount(networkType);
+        const currentHeight = UInt64.fromUint(40);
+        const presetData = {
+            networkType,
+            votingKeyStartEpoch: 1,
+            votingKeyEndEpoch: 3,
+            votingKeyLinkV2: 30,
+        };
+        const maxFee = UInt64.fromUint(20);
+
+        const transaction = BootstrapUtils.createVotingKeyTransaction(
+            voting.publicKey,
+            currentHeight,
+            presetData,
+            deadline,
+            maxFee,
+        ) as VotingKeyLinkTransaction;
+        expect(transaction.version).to.be.eq(2);
+        expect(transaction.linkedPublicKey).to.be.eq(voting.publicKey);
+        expect(transaction.startEpoch).to.be.eq(presetData.votingKeyStartEpoch);
+        expect(transaction.endEpoch).to.be.eq(presetData.votingKeyEndEpoch);
+        expect(transaction.maxFee).to.be.deep.eq(maxFee);
+        expect(transaction.deadline).to.be.deep.eq(deadline);
+    });
+
+    it('createVotingKeyTransaction v2 short key when nemesis', async () => {
+        const networkType = NetworkType.PRIVATE;
+        const deadline = Deadline.createFromDTO('1');
+        const voting = Account.generateNewAccount(networkType);
+        const currentHeight = UInt64.fromUint(0);
+        const presetData = {
+            networkType,
+            votingKeyStartEpoch: 1,
+            votingKeyEndEpoch: 3,
+            votingKeyLinkV2: 0,
+        };
+        const maxFee = UInt64.fromUint(20);
+
+        const transaction = BootstrapUtils.createVotingKeyTransaction(
+            voting.publicKey,
+            currentHeight,
+            presetData,
+            deadline,
+            maxFee,
+        ) as VotingKeyLinkTransaction;
+        expect(transaction.version).to.be.eq(2);
+        expect(transaction.linkedPublicKey).to.be.eq(voting.publicKey);
+        expect(transaction.startEpoch).to.be.eq(presetData.votingKeyStartEpoch);
+        expect(transaction.endEpoch).to.be.eq(presetData.votingKeyEndEpoch);
+        expect(transaction.maxFee).to.be.deep.eq(maxFee);
+        expect(transaction.deadline).to.be.deep.eq(deadline);
     });
 });

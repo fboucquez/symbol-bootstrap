@@ -30,6 +30,9 @@ OPTIONS
   -u, --user=user                   [default: current] User used to run docker images when creating configuration files
                                     like certificates or nemesis block. "current" means the current user.
 
+  --pullImages                      It pulls the utility images from DockerHub when running the configuration. It only
+                                    affects alpha/dev docker images.
+
   --report                          It generates reStructuredText (.rst) reports describing the configuration of each
                                     node.
 

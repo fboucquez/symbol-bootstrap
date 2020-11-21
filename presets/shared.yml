@@ -177,7 +177,6 @@ apiNodeBrokerPortMonitorInterval: 500
 apiNodeBrokerConnectTimeout: 10000
 apiNodeBrokerMonitorLoggingThrottle: 60000
 
-
 #voting
 votingKeyStartEpoch: 1
 votingKeyEndEpoch: 26280

@@ -15,26 +15,23 @@
  */
 
 import * as _ from 'lodash';
-import { EMPTY, Observable, of } from 'rxjs';
-import { fromArray } from 'rxjs/internal/observable/fromArray';
+import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
 import {
     Account,
     AccountKeyLinkTransaction,
     Deadline,
     LinkAction,
-    NetworkCurrencyPublic,
     NodeKeyLinkTransaction,
     RepositoryFactoryHttp,
     Transaction,
     TransactionService,
     UInt64,
-    VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
+import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -63,15 +60,15 @@ export class LinkService {
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
-
         const url = this.params.url.replace(/\/$/, '');
+        const repositoryFactory = new RepositoryFactoryHttp(url);
+        const currency = (await repositoryFactory.getCurrencies().toPromise()).currency;
+
         logger.info(
             `${this.params.unlink ? 'Unlinking' : 'Linking'} nodes using network url ${url}. Max Fee ${
-                this.params.maxFee / Math.pow(10, NetworkCurrencyPublic.DIVISIBILITY)
+                this.params.maxFee / Math.pow(10, currency.divisibility)
             }`,
         );
-        const repositoryFactory = new RepositoryFactoryHttp(url);
-
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
         if (generationHash !== presetData.nemesisGenerationHashSeed) {
             throw new Error(
@@ -79,7 +76,10 @@ export class LinkService {
             );
         }
 
-        const transactionNodes = this.createTransactionsToAnnounce(addresses, presetData);
+        const epochAdjustment = await repositoryFactory.getEpochAdjustment().toPromise();
+        const height = (await repositoryFactory.createChainRepository().getChainInfo().toPromise()).height;
+
+        const transactionNodes = this.createTransactionsToAnnounce(epochAdjustment, height, addresses, presetData);
 
         if (!transactionNodes.length) {
             logger.info(`There are no transactions to announce...`);
@@ -93,7 +93,7 @@ export class LinkService {
 
         const faucetUrl = presetData.faucetUrl;
 
-        const signedTransactionObservable = fromArray(transactionNodes).pipe(
+        const signedTransactionObservable = from(transactionNodes).pipe(
             mergeMap(({ node, transactions }) => {
                 if (!node.main) {
                     throw new Error('CA account is required!');
@@ -115,7 +115,7 @@ export class LinkService {
                                 );
                                 return EMPTY;
                             }
-                            return fromArray(transactions.map((t) => account.sign(t, generationHash)));
+                            return from(transactions.map((t) => account.sign(t, generationHash)));
                         }),
                         catchError((e) => {
                             logger.error(
@@ -154,6 +154,8 @@ export class LinkService {
     }
 
     public createTransactionsToAnnounce(
+        epochAdjustment: number,
+        height: UInt64,
         addresses: Addresses,
         presetData: ConfigPreset,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
@@ -169,30 +171,20 @@ export class LinkService {
 
                 logger.info(`Creating transactions for node: ${node.name}, ca/main account: ${account.address.plain()}`);
 
+                const deadline = Deadline.create(epochAdjustment);
+                const maxFee = UInt64.fromUint(this.params.maxFee);
                 if (node.remote) {
                     logger.info(
                         `Creating AccountKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Remote Account public key: ${node.remote.publicKey}`,
                     );
                     transactions.push(
-                        AccountKeyLinkTransaction.create(
-                            Deadline.create(),
-                            node.remote.publicKey,
-                            action,
-                            presetData.networkType,
-                            UInt64.fromUint(this.params.maxFee),
-                        ),
+                        AccountKeyLinkTransaction.create(deadline, node.remote.publicKey, action, presetData.networkType, maxFee),
                     );
                     logger.info(
                         `Creating NodeKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Transport/Node Account public key: ${node.transport.publicKey}`,
                     );
                     transactions.push(
-                        NodeKeyLinkTransaction.create(
-                            Deadline.create(),
-                            node.transport.publicKey,
-                            action,
-                            presetData.networkType,
-                            UInt64.fromUint(this.params.maxFee),
-                        ),
+                        NodeKeyLinkTransaction.create(deadline, node.transport.publicKey, action, presetData.networkType, maxFee),
                     );
                 }
 
@@ -200,31 +192,14 @@ export class LinkService {
                     logger.info(
                         `Creating VrfKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, VRF public key: ${node.vrf.publicKey}`,
                     );
-                    transactions.push(
-                        VrfKeyLinkTransaction.create(
-                            Deadline.create(),
-                            node.vrf.publicKey,
-                            action,
-                            presetData.networkType,
-                            UInt64.fromUint(this.params.maxFee),
-                        ),
-                    );
+                    transactions.push(VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, action, presetData.networkType, maxFee));
                 }
                 if (node.voting) {
-                    const votingPublicKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
                     logger.info(
-                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Voting public key: ${votingPublicKey}`,
+                        `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Voting public key: ${node.voting.publicKey}`,
                     );
                     transactions.push(
-                        VotingKeyLinkTransaction.create(
-                            Deadline.create(),
-                            votingPublicKey,
-                            presetData.votingKeyStartEpoch,
-                            presetData.votingKeyEndEpoch,
-                            action,
-                            presetData.networkType,
-                            UInt64.fromUint(this.params.maxFee),
-                        ),
+                        BootstrapUtils.createVotingKeyTransaction(node.voting.publicKey, height, presetData, deadline, maxFee),
                     );
                 }
                 return { node, transactions };

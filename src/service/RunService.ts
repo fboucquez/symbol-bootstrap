@@ -35,6 +35,7 @@ export type RunParams = {
     detached?: boolean;
     healthCheck?: boolean;
     build?: boolean;
+    pullImages?: boolean;
     timeout?: number;
     args?: string[];
     resetData?: boolean;
@@ -46,6 +47,7 @@ export class RunService {
     public static readonly defaultParams: RunParams = {
         target: BootstrapUtils.defaultTargetFolder,
         timeout: 60000,
+        pullImages: false,
         resetData: false,
     };
 
@@ -189,7 +191,7 @@ export class RunService {
 
         //Creating folders to avoid being created using sudo. Is there a better way?
         const dockerCompose: DockerCompose = await BootstrapUtils.loadYaml(dockerFile);
-        if (!ignoreIfNotFound) await this.pullImages(dockerCompose);
+        if (!ignoreIfNotFound && this.params.pullImages) await this.pullImages(dockerCompose);
 
         const volumenList = _.flatMap(Object.values(dockerCompose?.services), (s) => s.volumes?.map((v) => v.split(':')[0]) || []) || [];
 
