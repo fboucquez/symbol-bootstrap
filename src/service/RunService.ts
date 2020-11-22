@@ -34,6 +34,7 @@ export type RunParams = {
     target: string;
     detached?: boolean;
     healthCheck?: boolean;
+    removeLocks?: boolean;
     build?: boolean;
     timeout?: number;
     args?: string[];
@@ -59,6 +60,25 @@ export class RunService {
         if (this.params.resetData) {
             await this.resetData();
         }
+
+        if (this.params.removeLocks) {
+            logger.info('Removing server.lock and broker.lock files!');
+            const target = this.params.target;
+            const preset = this.configLoader.loadExistingPresetData(target);
+            preset.nodes?.forEach((node) => {
+                const serverLockFile = BootstrapUtils.getTargetNodesFolder(target, false, node.name, 'data', 'server.lock');
+                if (existsSync(serverLockFile)) {
+                    logger.info(`Removing lock file ${serverLockFile}`);
+                    BootstrapUtils.deleteFile(serverLockFile);
+                }
+                const brokerLockFile = BootstrapUtils.getTargetNodesFolder(target, false, node.name, 'data', 'broker.lock');
+                if (existsSync(brokerLockFile)) {
+                    logger.info(`Removing lock file ${brokerLockFile}`);
+                    BootstrapUtils.deleteFile(brokerLockFile);
+                }
+            });
+        }
+
         const basicArgs = ['up', '--remove-orphans'];
         if (this.params.detached) {
             basicArgs.push('--detach');

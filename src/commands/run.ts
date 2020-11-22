@@ -38,7 +38,11 @@ export default class Run extends Command {
         }),
 
         resetData: flags.boolean({
-            description: 'It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1',
+            description: 'It resets the database and node data but keeps the generated configuration, keys, voting tree files and block 1',
+        }),
+
+        removeLocks: flags.boolean({
+            description: 'It removes the server.lock, broker.lock files from the nodes target folders. Use with caution!!!',
         }),
 
         args: flags.string({

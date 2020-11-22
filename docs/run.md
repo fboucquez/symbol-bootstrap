@@ -40,8 +40,11 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+  --removeLocks
+      It removes the server.lock, broker.lock files from the nodes target folders. Use with caution!!!
+
   --resetData
-      It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1
+      It resets the database and node data but keeps the generated configuration, keys, voting tree files and block 1
 
   --timeout=timeout
       [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
