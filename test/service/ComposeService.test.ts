@@ -47,13 +47,13 @@ describe('ComposeService', () => {
         });
         await Promise.all(promises);
         expect(
-            dockerCompose,
+            BootstrapUtils.toYaml(dockerCompose),
             `Generated Docker Compose:
 
 ${BootstrapUtils.toYaml(dockerCompose)}
 
 `,
-        ).to.be.deep.eq(expectedDockerCompose);
+        ).to.be.eq(BootstrapUtils.toYaml(expectedDockerCompose));
     };
 
     it('Compose testnet dual', async () => {
