@@ -27,9 +27,9 @@ services:
                 aliases:
                     - peer-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
         stop_signal: SIGINT
+        working_dir: /symbol-workdir
         restart: unless-stopped
         ports:
             - '7900:7900'
@@ -46,9 +46,9 @@ services:
                 aliases:
                     - peer-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
         stop_signal: SIGINT
+        working_dir: /symbol-workdir
         restart: unless-stopped
         ports:
             - '7901:7900'
@@ -64,38 +64,21 @@ services:
             default:
                 aliases:
                     - api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        working_dir: /symbol-workdir
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
-        stop_signal: SIGINT
-        restart: unless-stopped
-        ports: []
-        volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
-        depends_on:
-            - db-0
-    api-node-broker-0:
-        user: '1000:1000'
-        container_name: api-node-broker-0
-        hostname: api-node-broker-0
-        networks:
-            default:
-                aliases:
                     - api-node-broker-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        command: >-
+            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0 &&
+            /bin/bash /symbol-commands/startBroker.sh api-node-broker-0"
+        stop_signal: SIGINT
         working_dir: /symbol-workdir
-        command: /bin/bash /symbol-commands/startBroker.sh api-node-broker-0
+        restart: unless-stopped
         ports:
             - '8002:7902'
-        stop_signal: SIGINT
-        restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node-0:/symbol-workdir'
             - './server:/symbol-commands'
         depends_on:
             - db-0
-            - api-node-0
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'

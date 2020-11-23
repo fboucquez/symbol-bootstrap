@@ -34,6 +34,13 @@ export interface DockerComposeService {
     volumes?: string[];
     ports?: string[];
     depends_on?: string[];
+    healthcheck?: {
+        test: string[] | string;
+        interval: string;
+        timeout: string;
+        retries: number;
+        start_period: string;
+    };
     networks?: {
         default: {
             ipv4_address?: string;

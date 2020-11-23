@@ -151,7 +151,6 @@ export class BootstrapUtils {
         cmds: string[];
         binds: string[];
     }): Promise<{ stdout: string; stderr: string }> {
-        await BootstrapUtils.pullImage(image);
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';

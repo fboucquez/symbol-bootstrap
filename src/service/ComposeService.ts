@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
+import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
+import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
-import { ConfigPreset, DockerServicePreset } from '../model';
-import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
+import { ConfigPreset, DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
 export type ComposeParams = { target: string; user?: string; upgrade?: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -32,6 +30,11 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 const targetNodesFolder = BootstrapUtils.targetNodesFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
 const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
+
+export interface PortConfiguration {
+    internalPort: number;
+    openPort: number | undefined | boolean | string;
+}
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
@@ -56,7 +59,7 @@ export class ComposeService {
             BootstrapUtils.deleteFolder(targetDocker);
         }
         const dockerFile = join(targetDocker, 'docker-compose.yml');
-        if (fs.existsSync(dockerFile)) {
+        if (existsSync(dockerFile)) {
             logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
             return BootstrapUtils.loadYaml(dockerFile);
         }
@@ -74,23 +77,18 @@ export class ComposeService {
 
         const services: (DockerComposeService | undefined)[] = [];
 
-        const resolvePorts = (internalPort: number, openPort: number | undefined | boolean | string): string[] => {
-            if (!openPort) {
-                return [];
-            }
-            if (openPort === true || openPort === 'true') {
-                return [`${internalPort}:${internalPort}`];
-            }
-            return [`${openPort}:${internalPort}`];
+        const resolvePorts = (portConfigurations: PortConfiguration[]): string[] => {
+            return portConfigurations
+                .filter((c) => c.openPort)
+                .map(({ openPort, internalPort }) => {
+                    if (openPort === true || openPort === 'true') {
+                        return `${internalPort}:${internalPort}`;
+                    }
+                    return `${openPort}:${internalPort}`;
+                });
         };
 
-        const resolveService = async (
-            servicePreset: DockerServicePreset,
-            rawService: DockerComposeService,
-        ): Promise<DockerComposeService | undefined> => {
-            if (servicePreset.excludeDockerService) {
-                return undefined;
-            }
+        const resolveService = async (rawService: DockerComposeService): Promise<DockerComposeService> => {
             if (false) {
                 // POC about creating custom aws images.
                 const serviceName = rawService.container_name;
@@ -121,105 +119,202 @@ export class ComposeService {
 
                 return { ...rawService, image: generatedImageName, volumes: undefined };
             } else {
-                const service = { ...rawService };
-                if (servicePreset.host || servicePreset.ipv4_address) {
-                    service.networks = { default: {} };
-                }
-                if (servicePreset.host) {
-                    service.hostname = servicePreset.host;
-                    service.networks!.default.aliases = [servicePreset.host];
-                }
-                if (servicePreset.environment) {
-                    service.environment = { ...servicePreset.environment, ...rawService.environment };
-                }
-                if (servicePreset.ipv4_address) {
-                    service.networks!.default.ipv4_address = servicePreset.ipv4_address;
-                }
-                return service;
+                return rawService;
             }
         };
 
+        const restart = 'unless-stopped';
         await Promise.all(
-            (presetData.databases || []).map(async (n) => {
-                services.push(
-                    await resolveService(n, {
-                        user,
-                        environment: { MONGO_INITDB_DATABASE: n.databaseName || presetData.databaseName },
-                        container_name: n.name,
-                        image: presetData.mongoImage,
-                        command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
-                        stop_signal: 'SIGINT',
-                        working_dir: '/docker-entrypoint-initdb.d',
-                        ports: resolvePorts(27017, n.openPort),
-                        volumes: [
-                            vol(`./mongo`, `/docker-entrypoint-initdb.d/:ro`),
-                            vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw'),
-                        ],
-                    }),
-                );
-            }),
+            (presetData.databases || [])
+                .filter((d) => !d.excludeDockerService)
+                .map(async (n) => {
+                    const databaseName = n.databaseName || presetData.databaseName;
+                    const databasePort = 27017;
+                    services.push(
+                        await resolveService({
+                            user,
+                            environment: { MONGO_INITDB_DATABASE: databaseName, ...n.environment },
+                            container_name: n.name,
+                            image: presetData.mongoImage,
+                            hostname: n.host,
+                            networks: {
+                                default: {
+                                    ipv4_address: n.ipv4_address,
+                                    aliases: [n.host].filter((s) => s).map((s) => s as string),
+                                },
+                            },
+                            // healthcheck: {
+                            //     test: `echo 'db.runCommand("ping").ok' | mongo ${n.host || n.name}:${databasePort}/${databaseName} --quiet`,
+                            //     interval: '30s',
+                            //     timeout: '10s',
+                            //     retries: 5,
+                            //     start_period: '40s',
+                            // },
+                            restart: restart,
+                            command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
+                            stop_signal: 'SIGINT',
+                            working_dir: '/docker-entrypoint-initdb.d',
+                            ports: resolvePorts([{ internalPort: databasePort, openPort: n.openPort }]),
+                            volumes: [
+                                vol(`./mongo`, `/docker-entrypoint-initdb.d/:ro`),
+                                vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw'),
+                            ],
+                        }),
+                    );
+                }),
         );
 
         const nodeWorkingDirectory = '/symbol-workdir';
         const nodeCommandsDirectory = '/symbol-commands';
         await Promise.all(
-            (presetData.nodes || []).map(async (n) => {
-                const nodeService = await resolveService(n, {
-                    user,
-                    container_name: n.name,
-                    image: presetData.symbolServerImage,
-                    command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh  ${n.name} && /bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}"`,
-                    stop_signal: 'SIGINT',
-                    working_dir: nodeWorkingDirectory,
-                    restart: 'on-failure:2',
-                    ports: resolvePorts(7900, n.openPort),
-                    volumes: [vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory), vol(`./server`, nodeCommandsDirectory)],
-                    depends_on: n.brokerName ? [n.brokerName] : [],
-                });
+            (presetData.nodes || [])
+                .filter((d) => !d.excludeDockerService)
+                .map(async (n) => {
+                    const nodeVolumes = [
+                        vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory),
+                        vol(`./server`, nodeCommandsDirectory),
+                    ];
+                    const recoverCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
+                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}`;
+                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || ''}`;
 
-                services.push(nodeService);
-                if (n.brokerName && nodeService) {
-                    services.push(
-                        await resolveService(
-                            {
-                                ipv4_address: n.brokerIpv4_address,
-                                openPort: n.brokerOpenPort,
-                                excludeDockerService: n.brokerExcludeDockerService,
-                                host: n.brokerHost,
+                    if (presetData.sharedServerBrokerService) {
+                        const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
+                        if (n.brokerName) {
+                            portConfigurations.push({ internalPort: 7902, openPort: n.brokerOpenPort });
+                        }
+                        const commands = [recoverCommand];
+                        commands.push(serverCommand);
+                        if (n.brokerName) {
+                            commands.push(brokerCommand);
+                        }
+
+                        // const portsToCheck = portConfigurations.filter((p) => p.openPort && p.internalPort).map((p) => p.internalPort);
+                        // const healthChecks = portsToCheck.map((p) => `printf "GET / HTTP/1.1\\n\\n" > /dev/tcp/127.0.0.1/${p}`);
+
+                        const aliases = _.uniq([n.name, n.host, n.brokerName, n.brokerHost].filter((s) => s).map((s) => s as string));
+                        const nodeService = await resolveService({
+                            user,
+                            environment: n.environment,
+                            container_name: n.name,
+                            hostname: n.host || n.name,
+                            networks: {
+                                default: {
+                                    ipv4_address: n.ipv4_address,
+                                    aliases: aliases,
+                                },
                             },
-                            {
-                                user,
-                                container_name: n.brokerName,
-                                image: nodeService.image,
-                                working_dir: nodeWorkingDirectory,
-                                command: `bash -c "/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName} && /bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName}"`,
-                                ports: resolvePorts(7902, n.brokerOpenPort),
-                                stop_signal: 'SIGINT',
-                                restart: 'on-failure:2',
-                                volumes: nodeService.volumes,
+
+                            image: presetData.symbolServerImage,
+                            command: `bash -c "${commands.join(' && ')}"`,
+                            stop_signal: 'SIGINT',
+                            working_dir: nodeWorkingDirectory,
+                            restart: restart,
+                            ports: resolvePorts(portConfigurations),
+                            volumes: nodeVolumes,
+                            depends_on: [n.databaseHost].map((s) => s as string),
+                        });
+                        services.push(nodeService);
+                    } else {
+                        const alises = _.uniq([n.name, n.host].filter((s) => s).map((s) => s as string));
+                        const nodeService = await resolveService({
+                            user,
+                            container_name: n.name,
+                            hostname: n.host || n.name,
+                            networks: {
+                                default: {
+                                    ipv4_address: n.ipv4_address,
+                                    aliases: alises,
+                                },
                             },
-                        ),
-                    );
-                }
-            }),
+                            // healthcheck: healthChecks.length
+                            //     ? {
+                            //           test: healthChecks.join(' & '),
+                            //           interval: '30s',
+                            //           timeout: '10s',
+                            //           retries: 5,
+                            //           start_period: '40s',
+                            //       }
+                            //     : undefined,
+
+                            image: presetData.symbolServerImage,
+                            working_dir: nodeWorkingDirectory,
+                            command: `bash -c "${[recoverCommand, serverCommand].join(' && ')}"`,
+                            stop_signal: 'SIGINT',
+                            restart: restart,
+                            ports: resolvePorts([{ internalPort: 7900, openPort: n.openPort }]),
+                            volumes: [
+                                vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory),
+                                vol(`./server`, nodeCommandsDirectory),
+                            ],
+                            depends_on: [n.databaseHost].map((s) => s as string),
+                        });
+
+                        services.push(nodeService);
+                        if (n.brokerName && nodeService && !n.brokerExcludeDockerService) {
+                            const brokerAliases = _.uniq([n.brokerName, n.brokerHost].filter((s) => s).map((s) => s as string));
+                            services.push(
+                                await resolveService({
+                                    user,
+                                    container_name: n.brokerName,
+                                    hostname: n.brokerHost || n.brokerName,
+                                    networks: {
+                                        default: {
+                                            ipv4_address: n.brokerIpv4_address,
+                                            aliases: brokerAliases,
+                                        },
+                                    },
+                                    image: nodeService.image,
+                                    working_dir: nodeWorkingDirectory,
+                                    command: brokerCommand,
+                                    ports: resolvePorts([{ internalPort: 7902, openPort: n.brokerOpenPort }]),
+                                    stop_signal: 'SIGINT',
+                                    restart: 'on-failure:2',
+                                    volumes: nodeService.volumes,
+                                    depends_on: [n.databaseHost, nodeService.container_name].map((s) => s as string),
+                                }),
+                            );
+                        }
+                    }
+                }),
         );
 
         await Promise.all(
-            (presetData.gateways || []).map(async (n) => {
-                services.push(
-                    await resolveService(n, {
-                        container_name: n.name,
-                        user,
-                        image: presetData.symbolRestImage,
-                        command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
-                        stop_signal: 'SIGINT',
-                        working_dir: nodeWorkingDirectory,
-                        ports: resolvePorts(3000, n.openPort),
-                        volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
-                        depends_on: [n.databaseHost],
-                    }),
-                );
-            }),
+            (presetData.gateways || [])
+                .filter((d) => !d.excludeDockerService)
+                .map(async (n) => {
+                    const internalPort = 3000;
+                    services.push(
+                        await resolveService({
+                            container_name: n.name,
+                            user,
+                            hostname: n.host,
+                            networks: {
+                                default: {
+                                    ipv4_address: n.ipv4_address,
+                                    aliases: [n.host].filter((s) => s).map((s) => s as string),
+                                },
+                            },
+
+                            // healthcheck: {
+                            //     test: `wget --no-verbose --tries=1 --spider http://localhost:${internalPort}/node/health || exit 1`,
+                            //     interval: '30s',
+                            //     timeout: '10s',
+                            //     retries: 5,
+                            //     start_period: '40s',
+                            // },
+                            environment: n.environment,
+                            image: presetData.symbolRestImage,
+                            working_dir: nodeWorkingDirectory,
+                            command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
+                            stop_signal: 'SIGINT',
+                            restart: restart,
+                            ports: resolvePorts([{ internalPort: internalPort, openPort: n.openPort }]),
+                            volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
+                            depends_on: [n.databaseHost, n.apiNodeName],
+                        }),
+                    );
+                }),
         );
 
         const validServices: DockerComposeService[] = services.filter((s) => s).map((s) => s as DockerComposeService);

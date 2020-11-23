@@ -1,4 +1,5 @@
 nodeUseRemoteAccount: true
+sharedServerBrokerService: false
 nodePort: 7900
 enableCacheDatabaseStorage: true
 enableVerifiableState: true

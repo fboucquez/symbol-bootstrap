@@ -6,9 +6,13 @@ services:
             MONGO_INITDB_DATABASE: catapult
         container_name: db
         image: 'mongo:4.2.6-bionic'
+        networks:
+            default:
+                aliases: []
+        restart: unless-stopped
         command: mongod --dbpath=/dbdata --bind_ip=db
-        working_dir: /docker-entrypoint-initdb.d
         stop_signal: SIGINT
+        working_dir: /docker-entrypoint-initdb.d
         ports: []
         volumes:
             - './mongo:/docker-entrypoint-initdb.d/:ro'
@@ -16,24 +20,34 @@ services:
     api-node:
         user: '1000:1000'
         container_name: api-node
+        hostname: api-node
+        networks:
+            default:
+                aliases:
+                    - api-node
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node && /bin/bash /symbol-commands/startServer.sh api-node"
-        stop_signal: SIGINT
         working_dir: /symbol-workdir
-        restart: 'on-failure:2'
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node && /bin/bash /symbol-commands/startServer.sh api-node"
+        stop_signal: SIGINT
+        restart: unless-stopped
         ports:
             - '7900:7900'
         volumes:
             - '../nodes/api-node:/symbol-workdir'
             - './server:/symbol-commands'
         depends_on:
-            - api-broker
+            - db
     api-broker:
         user: '1000:1000'
         container_name: api-broker
+        hostname: api-broker
+        networks:
+            default:
+                aliases:
+                    - api-broker
         image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
         working_dir: /symbol-workdir
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-broker && /bin/bash /symbol-commands/startBroker.sh api-broker"
+        command: /bin/bash /symbol-commands/startBroker.sh api-broker
         ports:
             - '7902:7902'
         stop_signal: SIGINT
@@ -41,24 +55,31 @@ services:
         volumes:
             - '../nodes/api-node:/symbol-workdir'
             - './server:/symbol-commands'
+        depends_on:
+            - db
+            - api-node
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
+        networks:
+            default:
+                ipv4_address: 172.20.0.25
+                aliases: []
         image: 'symbolplatform/symbol-rest:2.1.1-alpha-202011162024'
+        working_dir: /symbol-workdir
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
-        working_dir: /symbol-workdir
+        restart: unless-stopped
         ports:
             - '3000:3000'
         volumes:
             - '../gateways/rest-gateway:/symbol-workdir'
         depends_on:
             - db
-        networks:
-            default:
-                ipv4_address: 172.20.0.25
+            - api-node
 networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24
