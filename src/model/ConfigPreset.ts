@@ -94,6 +94,7 @@ export interface GatewayPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;
     transactionsDirectory: string;
