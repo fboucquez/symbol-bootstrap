@@ -72,8 +72,10 @@ export class RunService {
             basicArgs.push(..._.flatMap(this.params.args, (s) => s.split(' ').map((internal) => internal.trim())));
         }
 
+        await this.beforeRun(basicArgs, false);
+
         const promises: Promise<any>[] = [];
-        promises.push(this.basicRun(basicArgs, false));
+        promises.push(this.basicRun(basicArgs));
         if (this.params.healthCheck) {
             await BootstrapUtils.sleep(5000);
             promises.push(this.healthCheck());
@@ -173,17 +175,18 @@ export class RunService {
     }
 
     public async stop(): Promise<void> {
-        await this.basicRun(['down'], true);
+        const args = ['down'];
+        if (await this.beforeRun(args, true)) await this.basicRun(args);
     }
 
-    private async basicRun(extraArgs: string[], ignoreIfNotFound: boolean): Promise<string> {
+    private async beforeRun(extraArgs: string[], ignoreIfNotFound: boolean): Promise<boolean> {
         const dockerFile = join(this.params.target, `docker`, `docker-compose.yml`);
         const dockerComposeArgs = ['-f', dockerFile];
         const args = [...dockerComposeArgs, ...extraArgs];
         if (!existsSync(dockerFile)) {
             if (ignoreIfNotFound) {
                 logger.info(`Docker compose ${dockerFile} does not exist, ignoring: docker-compose ${args.join(' ')}`);
-                return '';
+                return false;
             } else {
                 throw new Error(`Docker compose ${dockerFile} does not exist. Cannot run: docker-compose ${args.join(' ')}`);
             }
@@ -201,6 +204,13 @@ export class RunService {
                 if (!existsSync(volumenPath)) await BootstrapUtils.mkdir(volumenPath);
             }),
         );
+        return true;
+    }
+
+    private async basicRun(extraArgs: string[]): Promise<string> {
+        const dockerFile = join(this.params.target, `docker`, `docker-compose.yml`);
+        const dockerComposeArgs = ['-f', dockerFile];
+        const args = [...dockerComposeArgs, ...extraArgs];
         return BootstrapUtils.spawn('docker-compose', args, false);
     }
 
