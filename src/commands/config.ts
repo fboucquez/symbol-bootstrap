@@ -57,6 +57,12 @@ export default class Config extends Command {
             default: ConfigService.defaultParams.report,
         }),
 
+        pullImages: flags.boolean({
+            description:
+                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
+            default: ConfigService.defaultParams.pullImages,
+        }),
+
         user: flags.string({
             char: 'u',
             description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,

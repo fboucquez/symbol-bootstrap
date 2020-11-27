@@ -40,7 +40,6 @@ export class VotingService {
             const cmd = [
                 `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
                 `--secret=${nodeAccount.voting.privateKey}`,
-                `--dilution=${presetData.votingKeyDilution}`,
                 `--startEpoch=${presetData.votingKeyStartEpoch}`,
                 `--endEpoch=${presetData.votingKeyEndEpoch}`,
                 `--output=/votingKeys/${privateKeyTreeFileName}`,

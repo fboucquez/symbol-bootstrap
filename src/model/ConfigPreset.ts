@@ -94,6 +94,7 @@ export interface GatewayPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;
     transactionsDirectory: string;
@@ -123,7 +124,7 @@ export interface ConfigPreset {
     symbolServerToolsImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
-    votingKeyDilution: number;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    votingKeyLinkV2: number | undefined;
 }

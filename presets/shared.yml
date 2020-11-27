@@ -30,7 +30,7 @@ nodeEqualityStrategy: host
 maxVotingKeyLifetime: 26280
 minVotingKeyLifetime: 28
 mosaicRentalFee: 500
-votingSetGrouping: 100
+votingSetGrouping: 180
 maxVotingKeysPerAccount: 3
 maxTransactionsPerAggregate: 100
 maxCosignaturesPerAggregate: 25
@@ -62,9 +62,9 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.3
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.3
-symbolRestImage: symbolplatform/symbol-rest:2.1.1-alpha-202011162024
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.4
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.4
+symbolRestImage: symbolplatform/symbol-rest:2.1.1-alpha
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -89,9 +89,11 @@ finalizationSize: 10000
 finalizationThreshold: 7000
 maxHashesPerPoint: 256
 prevoteBlocksMultiple: 4
+unfinalizedBlocksDuration: 0m
 
 # config messages:
 subscriberPort: 7902
+messagingListenInterface: 0.0.0.0
 
 # network height
 networkheight: false
@@ -108,6 +110,8 @@ timeSynchronizationMinImportance: 3750
 # node default info
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
+nodeListenInterface: 0.0.0.0
+serverVersion: 0.10.0.4
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 610
@@ -138,6 +142,9 @@ enableAutoHarvesting: true
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
 
+minPartnerNodeVersion: 0.10.0.4
+maxPartnerNodeVersion: 0.10.0.4
+
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20
@@ -158,8 +165,8 @@ readRateMonitoringBucketDuration: 15s
 maxReadRateMonitoringTotalSize: 100MB
 
 #Rest
-throttlingBurst: 35
-throttlingRate: 20
+throttlingBurst: 80
+throttlingRate: 60
 restLoggingFilename: /symbol-workdir/logs/catapult-rest.log
 apiNodeConfigPath: /symbol-workdir/api-node-config
 subnet: '172.20.0.0/24'
@@ -170,8 +177,11 @@ apiNodeBrokerPortMonitorInterval: 500
 apiNodeBrokerConnectTimeout: 10000
 apiNodeBrokerMonitorLoggingThrottle: 60000
 
-
 #voting
-votingKeyDilution: 128
 votingKeyStartEpoch: 1
 votingKeyEndEpoch: 26280
+enableRevoteOnBoot: true
+
+#fork height
+votingKeyLinkV2: 0
+importanceBlock: 0

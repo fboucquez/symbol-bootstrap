@@ -56,6 +56,9 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+  --pullImages
+      It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.
+
   --report
       It generates reStructuredText (.rst) reports describing the configuration of each node.
 
@@ -76,4 +79,4 @@ EXAMPLES
   $ symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.2/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.0/src/commands/start.ts)_

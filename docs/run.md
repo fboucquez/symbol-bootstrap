@@ -40,6 +40,9 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+  --pullImages
+      It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.
+
   --resetData
       It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1
 
@@ -50,4 +53,4 @@ EXAMPLE
   $ symbol-bootstrap run
 ```
 
-_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.2.2/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.0/src/commands/run.ts)_

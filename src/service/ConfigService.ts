@@ -27,7 +27,6 @@ import {
     Transaction,
     TransactionMapping,
     UInt64,
-    VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
 import { LogType } from '../logger';
@@ -56,6 +55,7 @@ export interface ConfigParams {
     preset: Preset;
     target: string;
     user: string;
+    pullImages?: boolean;
     assembly?: string;
     customPreset?: string;
     customPresetObject?: any;
@@ -75,6 +75,7 @@ export class ConfigService {
         preset: Preset.bootstrap,
         reset: false,
         upgrade: false,
+        pullImages: false,
         user: BootstrapUtils.CURRENT_USER,
     };
     private readonly configLoader: ConfigLoader;
@@ -131,7 +132,7 @@ export class ConfigService {
                 ),
             );
 
-            await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
+            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
             const addresses = oldAddresses || (await this.configLoader.generateRandomConfiguration(presetData));
 
             await BootstrapUtils.mkdir(target);
@@ -457,15 +458,11 @@ export class ConfigService {
         if (!node.main) {
             throw new Error('Main keys should have been generated!!');
         }
-        const deadline = Deadline.createFromDTO('1');
-        const votingKey = BootstrapUtils.createVotingKey(node.voting.publicKey);
-        const voting = VotingKeyLinkTransaction.create(
-            deadline,
-            votingKey,
-            presetData.votingKeyStartEpoch,
-            presetData.votingKeyEndEpoch,
-            LinkAction.Link,
-            presetData.networkType,
+        const voting = BootstrapUtils.createVotingKeyTransaction(
+            node.voting.publicKey,
+            UInt64.fromUint(0),
+            presetData,
+            Deadline.createFromDTO('1'),
             UInt64.fromUint(0),
         );
         const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);

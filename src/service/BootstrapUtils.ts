@@ -21,7 +21,7 @@ import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSyn
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import { basename, join } from 'path';
-import { NetworkType } from 'symbol-sdk';
+import { Deadline, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction, VotingKeyLinkV1Transaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
@@ -109,7 +109,7 @@ export class BootstrapUtils {
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static validateIsDefined(value: any, message: string): void {
-        if (value == undefined || value == null) {
+        if (value === undefined || value === null) {
             throw new Error(message);
         }
     }
@@ -151,7 +151,6 @@ export class BootstrapUtils {
         cmds: string[];
         binds: string[];
     }): Promise<{ stdout: string; stderr: string }> {
-        await BootstrapUtils.pullImage(image);
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
@@ -172,8 +171,59 @@ export class BootstrapUtils {
         });
     }
 
-    public static createVotingKey(votingPublicKey: string): string {
+    public static createLongVotingKey(votingPublicKey: string): string {
         return votingPublicKey.padEnd(96, '0');
+    }
+
+    public static createVotingKeyTransaction(
+        shortPublicKey: string,
+        currentHeight: UInt64,
+        presetData: {
+            networkType: NetworkType;
+            votingKeyStartEpoch: number;
+            votingKeyEndEpoch: number;
+            votingKeyLinkV2: number | undefined;
+        },
+        deadline: Deadline,
+        maxFee: UInt64,
+    ): Transaction {
+        if (presetData.votingKeyLinkV2 === undefined) {
+            // Public net v1 short key (to be defined, this mix messes up catbuffer deserialization).
+            logger.info('Voting Key Link Transaction Short Key V1 resolved');
+            return VotingKeyLinkTransaction.create(
+                deadline,
+                shortPublicKey,
+                presetData.votingKeyStartEpoch,
+                presetData.votingKeyEndEpoch,
+                LinkAction.Link,
+                presetData.networkType,
+                1,
+                maxFee,
+            );
+        }
+        if (currentHeight.compact() < presetData.votingKeyLinkV2) {
+            logger.info('Voting Key Link Transaction Long Key V1 resolved');
+            return VotingKeyLinkV1Transaction.create(
+                deadline,
+                BootstrapUtils.createLongVotingKey(shortPublicKey),
+                presetData.votingKeyStartEpoch,
+                presetData.votingKeyEndEpoch,
+                LinkAction.Link,
+                presetData.networkType,
+                maxFee,
+            );
+        }
+        logger.info('Voting Key Link Transaction Short Key V2 resolved');
+        return VotingKeyLinkTransaction.create(
+            deadline,
+            shortPublicKey,
+            presetData.votingKeyStartEpoch,
+            presetData.votingKeyEndEpoch,
+            LinkAction.Link,
+            presetData.networkType,
+            2,
+            maxFee,
+        );
     }
 
     public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {
@@ -497,6 +547,10 @@ export class BootstrapUtils {
                 return 'mijin';
             case NetworkType.MIJIN_TEST:
                 return 'mijin-test';
+            case NetworkType.PRIVATE:
+                return 'private';
+            case NetworkType.PRIVATE_TEST:
+                return 'private-test';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
     }
@@ -511,6 +565,10 @@ export class BootstrapUtils {
                 return 'mijin';
             case NetworkType.MIJIN_TEST:
                 return 'mijinTest';
+            case NetworkType.PRIVATE:
+                return 'private';
+            case NetworkType.PRIVATE_TEST:
+                return 'privateTest';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
     }
