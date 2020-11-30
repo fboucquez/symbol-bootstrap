@@ -636,6 +636,7 @@ config-network.properties
     **fork_heights**;
     votingKeyLinkV2; 360000
     importanceBlock; 360000
+    accountRestrictionsV2; 360000
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;

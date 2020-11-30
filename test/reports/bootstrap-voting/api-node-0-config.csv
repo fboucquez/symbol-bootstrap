@@ -183,6 +183,7 @@ maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per blo
 fork_heights
 votingKeyLinkV2; 0
 importanceBlock; 0
+accountRestrictionsV2; 0
 
 plugin:catapult.plugins.accountlink
 dummy; to trigger plugin load
