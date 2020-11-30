@@ -7,8 +7,8 @@ services:
         container_name: db
         image: 'mongo:4.2.6-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db
-        working_dir: /docker-entrypoint-initdb.d
         stop_signal: SIGINT
+        working_dir: /docker-entrypoint-initdb.d
         ports: []
         volumes:
             - './mongo:/docker-entrypoint-initdb.d/:ro'
@@ -61,4 +61,5 @@ networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

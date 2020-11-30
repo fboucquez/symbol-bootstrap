@@ -320,6 +320,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '80:80'
+        restart: 'on-failure:2'
         volumes:
             - '../wallets/wallet-0:/usr/share/nginx/html/config'
     wallet-1:
@@ -329,6 +330,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '81:80'
+        restart: 'on-failure:2'
         volumes:
             - '../wallets/wallet-1:/usr/share/nginx/html/config'
     explorer-0:
@@ -339,6 +341,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '90:80'
+        restart: 'on-failure:2'
         volumes:
             - '../explorers/explorer-0:/symbol-workdir'
             - './explorer:/symbol-commands'
@@ -350,6 +353,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '91:80'
+        restart: 'on-failure:2'
         volumes:
             - '../explorers/explorer-1:/symbol-workdir'
             - './explorer:/symbol-commands'
@@ -361,6 +365,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '92:80'
+        restart: 'on-failure:2'
         volumes:
             - '../explorers/explorer-2:/symbol-workdir'
             - './explorer:/symbol-commands'
@@ -374,15 +379,18 @@ services:
             NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
-            MAX_FEE: '5000000,'
+            MAX_FEE: 5000000
             ENOUGH_BALANCE: 100000000000
-            MAX_UNCONFIRMED: '99,'
-            BLACKLIST_MOSAIC_ID: ''
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:90/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
         ports:
             - '100:4000'
+        depends_on:
+            - rest-gateway-0
     faucet-1:
         container_name: faucet-1
         image: 'symbolplatform/symbol-faucet:0.4.0'
@@ -393,15 +401,18 @@ services:
             NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
-            MAX_FEE: '5000000,'
+            MAX_FEE: 5000000
             ENOUGH_BALANCE: 100000000000
-            MAX_UNCONFIRMED: '99,'
-            BLACKLIST_MOSAIC_ID: ''
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:91/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
         ports:
             - '101:4000'
+        depends_on:
+            - rest-gateway-1
     faucet-2:
         container_name: faucet-2
         image: 'symbolplatform/symbol-faucet:0.4.0'
@@ -412,15 +423,18 @@ services:
             NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
-            MAX_FEE: '5000000,'
+            MAX_FEE: 5000000
             ENOUGH_BALANCE: 100000000000
-            MAX_UNCONFIRMED: '99,'
-            BLACKLIST_MOSAIC_ID: ''
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:92/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
         ports:
             - '102:4000'
+        depends_on:
+            - rest-gateway-2
     faucet-3:
         container_name: faucet-3
         image: 'symbolplatform/symbol-faucet:0.4.0'
@@ -431,15 +445,18 @@ services:
             NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
-            MAX_FEE: '5000000,'
+            MAX_FEE: 5000000
             ENOUGH_BALANCE: 100000000000
-            MAX_UNCONFIRMED: '99,'
-            BLACKLIST_MOSAIC_ID: ''
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:93/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
         ports:
             - '103:4000'
+        depends_on:
+            - rest-gateway-3
 networks:
     default:
         ipam:

@@ -88,7 +88,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap.yml');
     });
 
-    it('Compose bootstrap services', async () => {
+    it('Compose bootstrap full', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
@@ -99,12 +99,12 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/ConfigService.bootstrap.services',
+            target: 'target/ConfigService.bootstrap.full',
             reset: false,
-            assembly: 'services',
+            assembly: 'full',
             preset: Preset.bootstrap,
         };
-        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-services.yml');
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-full.yml');
     });
 
     it('Compose bootstrap repeat', async () => {

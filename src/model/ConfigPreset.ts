@@ -115,6 +115,7 @@ export interface WalletPreset extends DockerServicePreset {
 
 export interface FaucetPreset extends DockerServicePreset {
     // At least these properties.
+    gateway: string;
     repeat?: number;
     name: string;
 }

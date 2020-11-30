@@ -234,6 +234,7 @@ export class ComposeService {
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(80, n.openPort),
+                        restart: 'on-failure:2',
                         volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config')],
                     }),
                 );
@@ -250,6 +251,7 @@ export class ComposeService {
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(80, n.openPort),
+                        restart: 'on-failure:2',
                         volumes: [
                             vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory),
                             vol(`./explorer`, nodeCommandsDirectory),
@@ -273,7 +275,9 @@ export class ComposeService {
                                 n.environment?.NATIVE_CURRENCY_ID || presetData.currencyMosaicId || '',
                             ),
                         },
+                        restart: 'on-failure:2',
                         ports: resolvePorts(4000, n.openPort),
+                        depends_on: [n.gateway],
                     }),
                 );
             }),

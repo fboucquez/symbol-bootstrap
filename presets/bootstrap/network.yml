@@ -109,6 +109,7 @@ explorers:
 faucets:
     - repeat: 0
       name: 'faucet-{{$index}}'
+      gateway: 'rest-gateway-{{$index}}'
       environment:
           DEFAULT_NODE: 'http://rest-gateway-{{$index}}:{{add $index 3000}}'
           DEFAULT_NODE_CLIENT: 'http://localhost:{{add $index 3000}}'

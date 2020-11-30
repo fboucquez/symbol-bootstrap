@@ -109,6 +109,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '80:80'
+        restart: 'on-failure:2'
         volumes:
             - '../wallets/wallet-0:/usr/share/nginx/html/config'
     explorer-0:
@@ -119,6 +120,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '90:80'
+        restart: 'on-failure:2'
         volumes:
             - '../explorers/explorer-0:/symbol-workdir'
             - './explorer:/symbol-commands'
@@ -132,15 +134,18 @@ services:
             NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
-            MAX_FEE: '5000000,'
+            MAX_FEE: 5000000
             ENOUGH_BALANCE: 100000000000
-            MAX_UNCONFIRMED: '99,'
-            BLACKLIST_MOSAIC_ID: ''
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:90/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
         ports:
             - '100:4000'
+        depends_on:
+            - rest-gateway-0
 networks:
     default:
         ipam:
