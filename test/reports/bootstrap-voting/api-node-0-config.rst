@@ -180,7 +180,7 @@ config-network.properties
     :delim: ;
 
     **network**; ; ;
-    identifier; private-test; NetworkIdentifier; Network identifier.
+    identifier; public-test; NetworkIdentifier; Network identifier.
     nemesisSignerPublicKey; DA007A7CCA877805DF0DD6250C9806E7B25DC3ED21E506569239D11A7175101A; Key; Nemesis public key.
     nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
     generationHashSeed; 6AF8E35BBC7AC341E7931B39E2C9A591EDBE9F9111996053E6771D48E9C53B31; ;
@@ -188,8 +188,8 @@ config-network.properties
     **chain**; ; ;
     enableVerifiableState; true; bool; Set to true if block chain should calculate state hashes so that state is fully verifiable at each block.
     enableVerifiableReceipts; true; bool; Set to true if block chain should calculate receipts so that state changes are fully verifiable at each block.
-    currencyMosaicId; 0x0A72'F3F2'665E'BBFE; MosaicId; Mosaic id used as primary chain currency.
-    harvestingMosaicId; 0x70F3'1135'42B0'1C0B; MosaicId; Mosaic id used to provide harvesting ability.
+    currencyMosaicId; 0x3A39'4A5A'4739'A3D0; MosaicId; Mosaic id used as primary chain currency.
+    harvestingMosaicId; 0x5D21'03FE'AFEF'E767; MosaicId; Mosaic id used to provide harvesting ability.
     blockGenerationTargetTime; 15s; utils::TimeSpan; Targeted time between blocks.
     blockTimeSmoothingFactor; 3000; uint32_t; Note: A higher value makes the network more biased. Note: This can lower security because it will increase the influence of time relative to importance.
     importanceGrouping; 180; uint64_t; Number of blocks that should be treated as a group for importance purposes. Note: Importances will only be calculated at blocks that are multiples of this grouping number.

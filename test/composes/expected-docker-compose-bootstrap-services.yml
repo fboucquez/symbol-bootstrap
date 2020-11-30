@@ -124,7 +124,7 @@ services:
             - './explorer:/symbol-commands'
     faucet-0:
         container_name: faucet-0
-        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        image: 'symbolplatform/symbol-faucet:0.4.0'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-0:3000'

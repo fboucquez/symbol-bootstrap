@@ -366,7 +366,7 @@ services:
             - './explorer:/symbol-commands'
     faucet-0:
         container_name: faucet-0
-        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        image: 'symbolplatform/symbol-faucet:0.4.0'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-0:3000'
@@ -385,7 +385,7 @@ services:
             - '100:4000'
     faucet-1:
         container_name: faucet-1
-        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        image: 'symbolplatform/symbol-faucet:0.4.0'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-1:3001'
@@ -404,7 +404,7 @@ services:
             - '101:4000'
     faucet-2:
         container_name: faucet-2
-        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        image: 'symbolplatform/symbol-faucet:0.4.0'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-2:3002'
@@ -423,7 +423,7 @@ services:
             - '102:4000'
     faucet-3:
         container_name: faucet-3
-        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        image: 'symbolplatform/symbol-faucet:0.4.0'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-3:3003'

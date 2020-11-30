@@ -115,10 +115,10 @@ faucets:
           NATIVE_CURRENCY_NAME: '{{baseNamespace}}.{{currencyName}}'
           NATIVE_CURRENCY_OUT_MAX: 500000000
           NATIVE_CURRENCY_OUT_MIN: 100000000
-          MAX_FEE: 5000000,
+          MAX_FEE: 5000000
           ENOUGH_BALANCE: 100000000000
-          MAX_UNCONFIRMED: 99,
-          BLACKLIST_MOSAIC_ID: ''
+          MAX_UNCONFIRMED: 99
+          BLACKLIST_MOSAIC_IDS: '[]'
           EXPLORER_URL: 'http://localhost:{{add $index 90}}/'
       openPort: '{{add $index 100}}'
 inflation:
