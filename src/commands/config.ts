@@ -35,6 +35,7 @@ export default class Config extends Command {
             char: 'a',
             description: 'An optional assembly type, example "dual" for testnet',
         }),
+
         customPreset: flags.string({
             char: 'c',
             description: 'External preset file. Values in this file will override the provided presets (optional)',
@@ -46,9 +47,20 @@ export default class Config extends Command {
             default: ConfigService.defaultParams.reset,
         }),
 
+        upgrade: flags.boolean({
+            description: `It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to keep your node up to date without dropping the local data. The original preset (-t), assembly (-a), and custom preset (-a) must be used. Backup the target folder before upgrading.`,
+            default: ConfigService.defaultParams.reset,
+        }),
+
         report: flags.boolean({
             description: 'It generates reStructuredText (.rst) reports describing the configuration of each node.',
             default: ConfigService.defaultParams.report,
+        }),
+
+        pullImages: flags.boolean({
+            description:
+                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
+            default: ConfigService.defaultParams.pullImages,
         }),
 
         user: flags.string({

@@ -3,7 +3,7 @@ services:
     db-0:
         user: '1000:1000'
         environment:
-          MONGO_INITDB_DATABASE: catapult
+            MONGO_INITDB_DATABASE: catapult
         container_name: db-0
         image: 'mongo:4.2.6-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db-0
@@ -17,7 +17,7 @@ services:
     db-1:
         user: '1000:1000'
         environment:
-          MONGO_INITDB_DATABASE: catapult
+            MONGO_INITDB_DATABASE: catapult
         container_name: db-1
         image: 'mongo:4.2.6-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db-1
@@ -31,7 +31,7 @@ services:
     db-2:
         user: '1000:1000'
         environment:
-          MONGO_INITDB_DATABASE: catapult
+            MONGO_INITDB_DATABASE: catapult
         container_name: db-2
         image: 'mongo:4.2.6-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db-2
@@ -45,7 +45,7 @@ services:
     db-3:
         user: '1000:1000'
         environment:
-          MONGO_INITDB_DATABASE: catapult
+            MONGO_INITDB_DATABASE: catapult
         container_name: db-3
         image: 'mongo:4.2.6-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db-3
@@ -59,7 +59,7 @@ services:
     peer-node-0:
         user: '1000:1000'
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -78,7 +78,7 @@ services:
     peer-node-1:
         user: '1000:1000'
         container_name: peer-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -97,7 +97,7 @@ services:
     peer-node-2:
         user: '1000:1000'
         container_name: peer-node-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-2 && /bin/bash /symbol-commands/startServer.sh peer-node-2"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -116,7 +116,7 @@ services:
     api-node-0:
         user: '1000:1000'
         container_name: api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -135,7 +135,7 @@ services:
     api-node-1:
         user: '1000:1000'
         container_name: api-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-1 && /bin/bash /symbol-commands/startServer.sh api-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -154,7 +154,7 @@ services:
     api-node-2:
         user: '1000:1000'
         container_name: api-node-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-2 && /bin/bash /symbol-commands/startServer.sh api-node-2"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -173,7 +173,7 @@ services:
     api-node-3:
         user: '1000:1000'
         container_name: api-node-3
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-3 && /bin/bash /symbol-commands/startServer.sh api-node-3"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -192,7 +192,7 @@ services:
     api-node-broker-0:
         user: '1000:1000'
         container_name: api-node-broker-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
@@ -207,7 +207,7 @@ services:
     api-node-broker-1:
         user: '1000:1000'
         container_name: api-node-broker-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-1 && /bin/bash /symbol-commands/startBroker.sh
@@ -222,7 +222,7 @@ services:
     api-node-broker-2:
         user: '1000:1000'
         container_name: api-node-broker-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-2 && /bin/bash /symbol-commands/startBroker.sh
@@ -237,7 +237,7 @@ services:
     api-node-broker-3:
         user: '1000:1000'
         container_name: api-node-broker-3
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.3'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-3 && /bin/bash /symbol-commands/startBroker.sh
@@ -252,7 +252,7 @@ services:
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.1.0'
+        image: 'symbolplatform/symbol-rest:2.1.1-alpha'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -268,7 +268,7 @@ services:
     rest-gateway-1:
         container_name: rest-gateway-1
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.1.0'
+        image: 'symbolplatform/symbol-rest:2.1.1-alpha'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -284,7 +284,7 @@ services:
     rest-gateway-2:
         container_name: rest-gateway-2
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.1.0'
+        image: 'symbolplatform/symbol-rest:2.1.1-alpha'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -300,7 +300,7 @@ services:
     rest-gateway-3:
         container_name: rest-gateway-3
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.1.0'
+        image: 'symbolplatform/symbol-rest:2.1.1-alpha'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -313,40 +313,60 @@ services:
         networks:
             default:
                 ipv4_address: 172.20.0.28
-    explorer-0:
-        container_name: explorer-0
-        image: 'symbolplatform/symbol-explorer:0.6.2-alpha-202010191636'
-        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-0"
+    wallet-0:
+        container_name: wallet-0
+        image: 'symbolplatform/symbol-desktop-wallet:0.13.5-alpha'
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
             - '80:80'
         volumes:
-            - '../explorers/explorer-0:/symbol-workdir'
-            - './explorer:/symbol-commands'
-    explorer-1:
-        container_name: explorer-1
-        image: 'symbolplatform/symbol-explorer:0.6.2-alpha-202010191636'
-        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-1"
+            - '../wallets/wallet-0:/usr/share/nginx/html/config'
+    wallet-1:
+        container_name: wallet-1
+        image: 'symbolplatform/symbol-desktop-wallet:0.13.5-alpha'
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
             - '81:80'
         volumes:
-            - '../explorers/explorer-1:/symbol-workdir'
-            - './explorer:/symbol-commands'
-    wallet-0:
-        container_name: wallet-0
-        image: symbolplatform/symbol-desktop-wallet:0.13.1-alpha-202010210146
+            - '../wallets/wallet-1:/usr/share/nginx/html/config'
+    explorer-0:
+        container_name: explorer-0
+        image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
+        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
             - '90:80'
         volumes:
-            - '../wallets/wallet-0:/usr/share/nginx/html/config'
+            - '../explorers/explorer-0:/symbol-workdir'
+            - './explorer:/symbol-commands'
+    explorer-1:
+        container_name: explorer-1
+        image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
+        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-1"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '91:80'
+        volumes:
+            - '../explorers/explorer-1:/symbol-workdir'
+            - './explorer:/symbol-commands'
+    explorer-2:
+        container_name: explorer-2
+        image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
+        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-2"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '92:80'
+        volumes:
+            - '../explorers/explorer-2:/symbol-workdir'
+            - './explorer:/symbol-commands'
     faucet-0:
         container_name: faucet-0
-        'image': 'symbolplatform/symbol-faucet:0.3.1-alpha-202010231951'
+        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway-0:3000'
@@ -358,13 +378,71 @@ services:
             ENOUGH_BALANCE: 100000000000
             MAX_UNCONFIRMED: '99,'
             BLACKLIST_MOSAIC_ID: ''
-            EXPLORER_URL: 'http://localhost:80/'
+            EXPLORER_URL: 'http://localhost:90/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
         ports:
             - '100:4000'
+    faucet-1:
+        container_name: faucet-1
+        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: 'http://rest-gateway-1:3001'
+            DEFAULT_NODE_CLIENT: 'http://localhost:3001'
+            NATIVE_CURRENCY_NAME: cat.currency
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: '5000000,'
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: '99,'
+            BLACKLIST_MOSAIC_ID: ''
+            EXPLORER_URL: 'http://localhost:91/'
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
+        ports:
+            - '101:4000'
+    faucet-2:
+        container_name: faucet-2
+        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: 'http://rest-gateway-2:3002'
+            DEFAULT_NODE_CLIENT: 'http://localhost:3002'
+            NATIVE_CURRENCY_NAME: cat.currency
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: '5000000,'
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: '99,'
+            BLACKLIST_MOSAIC_ID: ''
+            EXPLORER_URL: 'http://localhost:92/'
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
+        ports:
+            - '102:4000'
+    faucet-3:
+        container_name: faucet-3
+        image: 'symbolplatform/symbol-faucet:0.3.1-alpha'
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: 'http://rest-gateway-3:3003'
+            DEFAULT_NODE_CLIENT: 'http://localhost:3003'
+            NATIVE_CURRENCY_NAME: cat.currency
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: '5000000,'
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: '99,'
+            BLACKLIST_MOSAIC_ID: ''
+            EXPLORER_URL: 'http://localhost:93/'
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
+        ports:
+            - '103:4000'
 networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

@@ -1,7 +1,7 @@
 {
     "name": "symbol-bootstrap",
     "description": "Symbol tool that allows you creating, configuring and running Symbol's networks",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "author": "Fernando Boucquez <fboucquez@gmail.com>",
     "bin": {
         "symbol-bootstrap": "./bin/run"
@@ -16,8 +16,10 @@
         "js-yaml": "^3.14.0",
         "memorystream": "^0.3.1",
         "node-forge": "^0.10.0",
+        "rxjs": "^6.6.3",
         "shx": "^0.3.2",
-        "symbol-sdk": "^0.21.1-alpha-202010131808",
+        "sshpk": "^1.16.1",
+        "symbol-sdk": "0.21.1-alpha-202011211848",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
@@ -33,6 +35,7 @@
         "@types/mocha": "^5.2.7",
         "@types/node": "^10.17.28",
         "@types/node-forge": "^0.9.4",
+        "@types/sshpk": "^1.10.5",
         "@types/winston": "^2.4.4",
         "@typescript-eslint/eslint-plugin": "^3.7.1",
         "@typescript-eslint/parser": "^3.7.1",
@@ -47,7 +50,7 @@
         "mocha-lcov-reporter": "^1.3.0",
         "nyc": "^14.1.1",
         "prettier": "^2.0.5",
-        "rxjs": "^6.6.3",
+        "prettier-plugin-organize-imports": "^1.1.1",
         "ts-node": "^8.10.2",
         "typedoc": "^0.18.0",
         "typescript": "^3.9.7"

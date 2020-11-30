@@ -57,6 +57,8 @@ export interface NemesisPreset {
 
 export interface NodePreset extends DockerServicePreset {
     // At least these properties.
+    // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
+    nodeUseRemoteAccount?: boolean;
     repeat?: number;
     harvesting: boolean;
     api: boolean;
@@ -66,8 +68,11 @@ export interface NodePreset extends DockerServicePreset {
     name: string;
     roles: string;
     friendlyName?: string;
+
     // Optional private keys. If not provided, bootstrap will generate random ones.
-    signingPrivateKey?: string;
+    mainPrivateKey?: string;
+    transportPrivateKey?: string;
+    remotePrivateKey?: string;
     vrfPrivateKey?: string;
     votingPrivateKey?: string;
 
@@ -115,6 +120,7 @@ export interface FaucetPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;
     transactionsDirectory: string;
@@ -128,6 +134,8 @@ export interface ConfigPreset {
     harvestNetworkFeeSinkAddress?: string;
     mosaicRentalFeeSinkAddress?: string;
     namespaceRentalFeeSinkAddress?: string;
+    nodeUseRemoteAccount: boolean;
+    networkheight: boolean;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];
@@ -148,7 +156,7 @@ export interface ConfigPreset {
     symbolFaucetImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
-    votingKeyDilution: number;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    votingKeyLinkV2: number | undefined;
 }

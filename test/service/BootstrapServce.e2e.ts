@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { BootstrapService, BootstrapUtils, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 import { expect } from '@oclif/test';
+import 'mocha';
 import {
     Account,
     Deadline,
@@ -27,6 +26,7 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
+import { BootstrapService, BootstrapUtils, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 
 describe('BootstrapService', () => {
     async function basicTestNetwork(configResult: ConfigResult): Promise<void> {

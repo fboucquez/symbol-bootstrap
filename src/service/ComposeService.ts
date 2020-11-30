@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+import * as _ from 'lodash';
+import { join } from 'path';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
-import { BootstrapUtils } from './BootstrapUtils';
 import { Addresses, ConfigPreset, DockerServicePreset } from '../model';
-import * as _ from 'lodash';
-import { join } from 'path';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigLoader } from './ConfigLoader';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
-export type ComposeParams = { target: string; user?: string; reset?: boolean };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -38,24 +39,28 @@ export class ComposeService {
     public static defaultParams: ComposeParams = {
         target: BootstrapUtils.defaultTargetFolder,
         user: BootstrapUtils.CURRENT_USER,
-        reset: false,
+        upgrade: false,
     };
 
-    constructor(private readonly root: string, protected readonly params: ComposeParams) {}
+    private readonly configLoader: ConfigLoader;
+
+    constructor(private readonly root: string, protected readonly params: ComposeParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
-        const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? BootstrapUtils.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
         const targetDocker = join(target, `docker`);
-        if (this.params.reset) {
+        if (this.params.upgrade) {
             BootstrapUtils.deleteFolder(targetDocker);
         }
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (fs.existsSync(dockerFile)) {
-            logger.info(dockerFile + ' already exist. Reusing. (run -r to reset)');
+            logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
             return BootstrapUtils.loadYaml(dockerFile);
         }
 
@@ -221,6 +226,21 @@ export class ComposeService {
         );
 
         await Promise.all(
+            (presetData.wallets || []).map(async (n) => {
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolWalletImage,
+                        stop_signal: 'SIGINT',
+                        working_dir: nodeWorkingDirectory,
+                        ports: resolvePorts(80, n.openPort),
+                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config')],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
             (presetData.explorers || []).map(async (n) => {
                 services.push(
                     await resolveService(n, {
@@ -234,21 +254,6 @@ export class ComposeService {
                             vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory),
                             vol(`./explorer`, nodeCommandsDirectory),
                         ],
-                    }),
-                );
-            }),
-        );
-
-        await Promise.all(
-            (presetData.wallets || []).map(async (n) => {
-                services.push(
-                    await resolveService(n, {
-                        container_name: n.name,
-                        image: presetData.symbolWalletImage,
-                        stop_signal: 'SIGINT',
-                        working_dir: nodeWorkingDirectory,
-                        ports: resolvePorts(80, n.openPort),
-                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config')],
                     }),
                 );
             }),

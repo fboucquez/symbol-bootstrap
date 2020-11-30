@@ -1,4 +1,3 @@
-
 config-database.properties
 ==========================
 .. csv-table::
@@ -81,6 +80,7 @@ config-finalization.properties
 
     **finalization**;
     enableVoting; true
+    enableRevoteOnBoot; true
     size; 10'000
     threshold; 7'000
     stepDuration; 4m
@@ -88,7 +88,7 @@ config-finalization.properties
     messageSynchronizationMaxResponseSize; 20MB
     maxHashesPerPoint; 256
     prevoteBlocksMultiple; 4
-    votingKeyDilution; 128
+    unfinalizedBlocksDuration; 0m
 
 config-harvesting.properties
 ============================
@@ -185,6 +185,7 @@ config-messaging.properties
 
     **messaging**;
     subscriberPort; 7902
+    listenInterface; 0.0.0.0
 
 config-network.properties
 =========================
@@ -193,7 +194,7 @@ config-network.properties
     :delim: ;
 
     **network**; ; ;
-    identifier; public-test; NetworkIdentifier; Network identifier.
+    identifier; private-test; NetworkIdentifier; Network identifier.
     nemesisSignerPublicKey; DA007A7CCA877805DF0DD6250C9806E7B25DC3ED21E506569239D11A7175101A; Key; Nemesis public key.
     nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
     generationHashSeed; 6AF8E35BBC7AC341E7931B39E2C9A591EDBE9F9111996053E6771D48E9C53B31; ;
@@ -201,8 +202,8 @@ config-network.properties
     **chain**; ; ;
     enableVerifiableState; true; bool; Set to true if block chain should calculate state hashes so that state is fully verifiable at each block.
     enableVerifiableReceipts; true; bool; Set to true if block chain should calculate receipts so that state changes are fully verifiable at each block.
-    currencyMosaicId; 0x3A39'4A5A'4739'A3D0; MosaicId; Mosaic id used as primary chain currency.
-    harvestingMosaicId; 0x5D21'03FE'AFEF'E767; MosaicId; Mosaic id used to provide harvesting ability.
+    currencyMosaicId; 0x0A72'F3F2'665E'BBFE; MosaicId; Mosaic id used as primary chain currency.
+    harvestingMosaicId; 0x70F3'1135'42B0'1C0B; MosaicId; Mosaic id used to provide harvesting ability.
     blockGenerationTargetTime; 15s; utils::TimeSpan; Targeted time between blocks.
     blockTimeSmoothingFactor; 3000; uint32_t; Note: A higher value makes the network more biased. Note: This can lower security because it will increase the influence of time relative to importance.
     importanceGrouping; 180; uint64_t; Number of blocks that should be treated as a group for importance purposes. Note: Importances will only be calculated at blocks that are multiples of this grouping number.
@@ -218,7 +219,7 @@ config-network.properties
     minHarvesterBalance; 500; Amount; Minimum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
     maxHarvesterBalance; 50'000'000'000'000; Amount; Maximum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
     minVoterBalance; 50'000; Amount; Minimum number of harvesting mosaic atomic units needed for an account to be eligible for voting.
-    votingSetGrouping; 100; ;
+    votingSetGrouping; 180; ;
     maxVotingKeysPerAccount; 3; uint8_t; Maximum number of voting keys that can be registered at once per account.
     minVotingKeyLifetime; 28; uint32_t; Minimum number of finalization rounds for which voting key can be registered.
     maxVotingKeyLifetime; 26280; uint32_t; Maximum number of finalization rounds for which voting key can be registered.
@@ -226,6 +227,9 @@ config-network.properties
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
     harvestNetworkFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
+    **fork_heights**;
+    votingKeyLinkV2; 0
+    importanceBlock; 0
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
@@ -271,15 +275,6 @@ config-network.properties
     **plugin:catapult.plugins.transfer**; ; ;
     maxMessageSize; 1024; uint16_t; Maximum transaction message size.
 
-config-networkheight.properties
-===============================
-.. csv-table::
-    :header: "Property", "Value"
-    :delim: ;
-
-    **networkheight**;
-    maxNodes; 5
-
 config-node.properties
 ======================
 .. csv-table::
@@ -319,12 +314,15 @@ config-node.properties
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxCacheDatabaseWriteBatchSize; 5MB; utils::FileSize; Maximum cache database write batch size.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
+    minPartnerNodeVersion; 0.10.0.4; ;
+    maxPartnerNodeVersion; 0.10.0.4; ;
     trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
+    listenInterface; 0.0.0.0; ;
     **localnode**; ; ;
     host; peer-node-1; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-peer-node-1; string; Node friendly name (leave empty to use address).
-    version; 0; uint32_t; Node version.
+    version; 0.10.0.4; uint32_t; Node version.
     roles; Peer,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.

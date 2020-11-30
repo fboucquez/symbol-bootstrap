@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
-import { ComposeParams, ComposeService } from './ComposeService';
-import { RunParams, RunService } from './RunService';
-import { ReportParams, ReportService } from './ReportService';
 import { Addresses, ConfigPreset } from '../model';
-import { LinkParams, LinkService } from './LinkService';
 import { DockerCompose } from '../model/DockerCompose';
+import { ComposeParams, ComposeService } from './ComposeService';
+import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
+import { LinkParams, LinkService } from './LinkService';
+import { ReportParams, ReportService } from './ReportService';
+import { RunParams, RunService } from './RunService';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
 

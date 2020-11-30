@@ -16,10 +16,10 @@
 
 import { Command } from '@oclif/command';
 import { BootstrapService, BootstrapUtils } from '../service';
-import Config from './config';
-import Compose from './compose';
-import Run from './run';
 import Clean from './clean';
+import Compose from './compose';
+import Config from './config';
+import Run from './run';
 
 export default class Start extends Command {
     static description = 'Single command that aggregates config, compose and run in one line!';

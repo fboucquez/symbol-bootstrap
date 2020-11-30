@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { BootstrapService, ConfigService, Preset } from '../../src/service';
-import { LinkService } from '../../src/service/LinkService';
 import { expect } from '@oclif/test';
-import { TransactionType } from 'symbol-sdk';
-
-const epochAdjustment = 1573430400;
+import 'mocha';
+import { DtoMapping, TransactionType, UInt64 } from 'symbol-sdk';
+import { BootstrapService, ConfigService, LinkService, Preset } from '../../src/service';
 
 describe('LinkService', () => {
     it('LinkService testnet when down', async () => {
@@ -31,6 +28,9 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             assembly: 'dual',
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
         };
         try {
             await new BootstrapService('.').config(params);
@@ -40,7 +40,7 @@ describe('LinkService', () => {
         }
     });
 
-    it('LinkService create transactions when duak + voting', async () => {
+    it('LinkService create transactions when dual + voting', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
@@ -48,15 +48,28 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/voting_preset.yml',
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
+        const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
+        const height = UInt64.fromUint(10);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
+            epochAdjustment,
+            height,
+            addresses,
+            presetData,
+        );
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
-        expect(nodeAndTransactions[0].transactions.length).eq(2);
-        expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.VRF_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.VOTING_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions.length).eq(4);
+        expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VRF_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[3].type).eq(TransactionType.VOTING_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[3].version).eq(1);
     });
 
     it('LinkService create transactions when dual', async () => {
@@ -64,12 +77,51 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual',
-            reset: false,
+            reset: true,
             preset: Preset.testnet,
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
+        const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
+        const height = UInt64.fromUint(10);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
+            epochAdjustment,
+            height,
+            addresses,
+            presetData,
+        );
+        expect(nodeAndTransactions.length).eq(1);
+        expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
+        expect(nodeAndTransactions[0].transactions.length).eq(3);
+        expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VRF_KEY_LINK);
+    });
+
+    it('LinkService create transactions when dual not using remote account', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/testnet-dual-not-remote',
+            reset: false,
+            preset: Preset.testnet,
+            customPresetObject: {
+                nodeUseRemoteAccount: false,
+            },
+            assembly: 'dual',
+        };
+        const { addresses, presetData } = await new BootstrapService('.').config(params);
+        const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
+        const height = UInt64.fromUint(10);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
+            epochAdjustment,
+            height,
+            addresses,
+            presetData,
+        );
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
         expect(nodeAndTransactions[0].transactions.length).eq(1);
@@ -83,10 +135,20 @@ describe('LinkService', () => {
             target: 'target/testnet-api',
             reset: false,
             preset: Preset.testnet,
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
             assembly: 'api',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
+        const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
+        const height = UInt64.fromUint(10);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
+            epochAdjustment,
+            height,
+            addresses,
+            presetData,
+        );
         expect(nodeAndTransactions.length).eq(0);
     });
 
@@ -98,12 +160,25 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/voting_preset.yml',
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
             assembly: 'api',
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(addresses, presetData, epochAdjustment);
+        const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
+        const height = UInt64.fromUint(360000);
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
+            epochAdjustment,
+            height,
+            addresses,
+            presetData,
+        );
         expect(nodeAndTransactions.length).eq(1);
-        expect(nodeAndTransactions[0].transactions.length).eq(1);
-        expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.VOTING_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions.length).eq(3);
+        expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VOTING_KEY_LINK);
+        expect(nodeAndTransactions[0].transactions[2].version).eq(2);
     });
 });

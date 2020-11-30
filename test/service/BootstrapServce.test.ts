@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { expect } from '@oclif/test';
 import 'mocha';
 import { BootstrapService, Preset, StartParams } from '../../src/service';
-import { expect } from '@oclif/test';
 
 describe('BootstrapService', () => {
     it(' bootstrap config compose non aws', async () => {
@@ -25,6 +25,7 @@ describe('BootstrapService', () => {
             report: false,
             preset: Preset.bootstrap,
             reset: true,
+            upgrade: false,
             timeout: 60000 * 5,
             target: 'target/BootstrapService.standard',
             detached: true,

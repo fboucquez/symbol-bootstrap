@@ -26,9 +26,13 @@ export interface ConfigAccount extends CertificatePair {
 }
 
 export interface NodeAccount {
-    ssl: CertificatePair;
-    //Signing key is produced if node is peer or voting
-    signing?: ConfigAccount;
+    // keys from ca.cert.pem file
+    main: ConfigAccount;
+    // keys from the node.key.pem file (required for delegate harvesting)
+    transport: ConfigAccount;
+    // Harvester signing key is produced if node is peer or voting.
+    // It could be the ca/main account or a linked remote account. The later is recommended.
+    remote?: ConfigAccount;
     // VRF key is produced if node is peer
     vrf?: ConfigAccount;
     // Voting key is produced if node is voting
@@ -46,8 +50,8 @@ export interface MosaicAccounts {
 }
 
 export interface Addresses {
+    version: number;
     nodes?: NodeAccount[];
-    gateways?: ConfigAccount[];
     nemesisGenerationHashSeed: string;
     nemesisSigner?: ConfigAccount;
     networkType: NetworkType;
