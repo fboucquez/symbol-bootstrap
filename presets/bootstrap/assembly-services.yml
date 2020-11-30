@@ -1,0 +1,6 @@
+explorers:
+    - repeat: 1
+wallets:
+    - repeat: 1
+faucets:
+    - repeat: 1
