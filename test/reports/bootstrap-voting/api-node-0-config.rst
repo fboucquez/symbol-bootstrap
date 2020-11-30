@@ -216,6 +216,7 @@ config-network.properties
     **fork_heights**;
     votingKeyLinkV2; 0
     importanceBlock; 0
+    accountRestrictionsV2; 0
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;

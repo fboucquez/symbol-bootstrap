@@ -188,3 +188,4 @@ enableRevoteOnBoot: true
 #fork height
 votingKeyLinkV2: 0
 importanceBlock: 0
+accountRestrictionsV2: 0
