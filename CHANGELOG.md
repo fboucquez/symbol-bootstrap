@@ -12,7 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ---|---|---
 Symbol Bootstrap | v0.3.0 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
-- **New Service:** `Wallet`. Bootstrap private network starts a Wallet service in [http://localhost:80/](http://localhost:80/) when using `--assembly full`. . **Warning:** This wallet service is for demonstration proposes.
+- **New Service:** `Wallet`. Bootstrap private network starts a Wallet service in [http://localhost:80/](http://localhost:80/) when using `--assembly full`. . **Warning:** This wallet service is for demonstration proposes only.
 - **New Service:** `Explorer`. Bootstrap private network starts an Explorer service in [http://localhost:90/](http://localhost:90/) when using `--assembly full`. 
 - **New Service:** `Faucet`. Bootstrap private network starts a Faucet service in [http://localhost:100/](http://localhost:100/) when using `--assembly full`. 
 - Using remote accounts when setting up nodes by default. This improves security by avoiding main account private keys to be exposed in node configuration (like `harvesterSigningPrivateKey`).
