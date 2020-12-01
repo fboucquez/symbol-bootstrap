@@ -18,9 +18,8 @@ import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { DockerCompose } from '../../src/model/DockerCompose';
-import { BootstrapService, BootstrapUtils, ConfigService, Preset, StartParams } from '../../src/service';
-import { LinkService } from '../../src/service/LinkService';
+import { DockerCompose } from '../../src/model';
+import { BootstrapService, BootstrapUtils, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 
 describe('ComposeService', () => {
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
@@ -30,6 +29,10 @@ describe('ComposeService', () => {
         const targetDocker = join(params.target, `docker`, 'docker-compose.yml');
         expect(existsSync(targetDocker)).to.be.true;
         const expectedFileLocation = `./test/composes/${expectedComposeFile}`;
+        if (!existsSync(expectedFileLocation)) {
+            await BootstrapUtils.writeYaml(expectedFileLocation, dockerCompose);
+        }
+
         const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml(expectedFileLocation);
 
         const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
@@ -71,17 +74,51 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/bootstrap',
+            customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            target: 'target/ConfigService.bootstrap.default',
             reset: false,
             preset: Preset.bootstrap,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap.yml');
     });
 
+    it('Compose bootstrap full', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            target: 'target/ConfigService.bootstrap.full',
+            reset: false,
+            assembly: 'full',
+            preset: Preset.bootstrap,
+        };
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-full.yml');
+    });
+
     it('Compose bootstrap repeat', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            reset: true,
             target: 'target/ConfigService.bootstrap.repeat',
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',

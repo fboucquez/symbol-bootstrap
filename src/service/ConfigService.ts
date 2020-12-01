@@ -142,6 +142,8 @@ export class ConfigService {
             await this.generateNodeCertificates(presetData, addresses);
             await this.generateNodes(presetData, addresses);
             await this.generateGateways(presetData);
+            await this.generateExplorers(presetData);
+            await this.generateWallets(presetData);
             if (!oldPresetData && !oldAddresses) {
                 await this.generateNemesis(presetData, addresses);
             } else {
@@ -492,6 +494,56 @@ export class ConfigService {
                     'resources',
                 );
                 await BootstrapUtils.generateConfiguration({}, apiNodeConfigFolder, join(moveTo, 'api-node-config'));
+            }),
+        );
+    }
+
+    private generateExplorers(presetData: ConfigPreset) {
+        return Promise.all(
+            (presetData.explorers || []).map(async (explorerPreset, index: number) => {
+                const copyFrom = join(this.root, 'config', 'explorer');
+                const templateContext = { ...presetData, ...explorerPreset };
+                const name = templateContext.name || `explorer-${index}`;
+                const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetExplorersFolder, name);
+                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+            }),
+        );
+    }
+
+    private generateWallets(presetData: ConfigPreset) {
+        return Promise.all(
+            (presetData.wallets || []).map(async (explorerPreset, index: number) => {
+                const copyFrom = join(this.root, 'config', 'wallet');
+                const templateContext = { ...presetData, ...explorerPreset };
+                const name = templateContext.name || `wallet-${index}`;
+                const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
+                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+                await Promise.all(
+                    (explorerPreset.profiles || []).map(async (profile) => {
+                        if (!profile.name) {
+                            throw new Error('Profile`s name must be provided in the wallets preset when creating wallet profiles.');
+                        }
+                        const profileJsonFileName = `wallet-profile-${profile.name}.json`;
+
+                        const loadProfileData = async (): Promise<string> => {
+                            if (profile.data) {
+                                return JSON.stringify(profile.data, null, 2);
+                            }
+                            if (profile.location) {
+                                return BootstrapUtils.loadFileAsText(profile.location);
+                            }
+                            return BootstrapUtils.loadFileAsText(profileJsonFileName);
+                        };
+
+                        try {
+                            const profileData = await loadProfileData();
+                            await BootstrapUtils.writeTextFile(join(moveTo, profileJsonFileName), profileData);
+                        } catch (e) {
+                            const message = `Cannot create Wallet profile with name '${profile.name}'. Do you have the file '${profileJsonFileName}' in the current folder?. ${e}`;
+                            throw new Error(message);
+                        }
+                    }),
+                );
             }),
         );
     }

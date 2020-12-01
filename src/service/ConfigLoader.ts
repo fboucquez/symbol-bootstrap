@@ -279,6 +279,9 @@ export class ConfigLoader {
             databases: this.expandServicesRepeat(presetData, presetData.databases || []),
             nodes: this.expandServicesRepeat(presetData, presetData.nodes || []),
             gateways: this.expandServicesRepeat(presetData, presetData.gateways || []),
+            explorers: this.expandServicesRepeat(presetData, presetData.explorers || []),
+            wallets: this.expandServicesRepeat(presetData, presetData.wallets || []),
+            faucets: this.expandServicesRepeat(presetData, presetData.faucets || []),
             nemesis: this.applyValueTemplate(presetData, presetData.nemesis),
         };
     }

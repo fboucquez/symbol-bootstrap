@@ -19,7 +19,7 @@ import { join } from 'path';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
-import { ConfigPreset, DockerServicePreset } from '../model';
+import { Addresses, ConfigPreset, DockerServicePreset } from '../model';
 import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -32,6 +32,8 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 const targetNodesFolder = BootstrapUtils.targetNodesFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
 const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
+const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
+const targetWalletsFolder = BootstrapUtils.targetWalletsFolder;
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
@@ -46,8 +48,9 @@ export class ComposeService {
         this.configLoader = new ConfigLoader();
     }
 
-    public async run(passedPresetData?: ConfigPreset): Promise<DockerCompose> {
+    public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
@@ -217,6 +220,64 @@ export class ComposeService {
                         ports: resolvePorts(3000, n.openPort),
                         volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
                         depends_on: [n.databaseHost],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
+            (presetData.wallets || []).map(async (n) => {
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolWalletImage,
+                        stop_signal: 'SIGINT',
+                        working_dir: nodeWorkingDirectory,
+                        ports: resolvePorts(80, n.openPort),
+                        restart: 'on-failure:2',
+                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config')],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
+            (presetData.explorers || []).map(async (n) => {
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolExplorerImage,
+                        command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
+                        stop_signal: 'SIGINT',
+                        working_dir: nodeWorkingDirectory,
+                        ports: resolvePorts(80, n.openPort),
+                        restart: 'on-failure:2',
+                        volumes: [
+                            vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory),
+                            vol(`./explorer`, nodeCommandsDirectory),
+                        ],
+                    }),
+                );
+            }),
+        );
+
+        await Promise.all(
+            (presetData.faucets || []).map(async (n) => {
+                // const nemesisPrivateKey = addresses?.mosaics?[0]?/;
+                services.push(
+                    await resolveService(n, {
+                        container_name: n.name,
+                        image: presetData.symbolFaucetImage,
+                        stop_signal: 'SIGINT',
+                        environment: {
+                            FAUCET_PRIVATE_KEY: n.environment?.FAUCET_PRIVATE_KEY || addresses?.mosaics?.[0]?.accounts[0].privateKey || '',
+                            NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(
+                                n.environment?.NATIVE_CURRENCY_ID || presetData.currencyMosaicId || '',
+                            ),
+                        },
+                        restart: 'on-failure:2',
+                        ports: resolvePorts(4000, n.openPort),
+                        depends_on: [n.gateway],
                     }),
                 );
             }),

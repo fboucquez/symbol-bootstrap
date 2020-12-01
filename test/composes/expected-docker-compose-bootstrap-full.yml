@@ -102,6 +102,50 @@ services:
         networks:
             default:
                 ipv4_address: 172.20.0.25
+    wallet-0:
+        container_name: wallet-0
+        image: 'symbolplatform/symbol-desktop-wallet:0.13.5-alpha'
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '80:80'
+        restart: 'on-failure:2'
+        volumes:
+            - '../wallets/wallet-0:/usr/share/nginx/html/config'
+    explorer-0:
+        container_name: explorer-0
+        image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
+        command: ash -c "/bin/ash /symbol-commands/run.sh explorer-0"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '90:80'
+        restart: 'on-failure:2'
+        volumes:
+            - '../explorers/explorer-0:/symbol-workdir'
+            - './explorer:/symbol-commands'
+    faucet-0:
+        container_name: faucet-0
+        image: 'symbolplatform/symbol-faucet:0.4.0'
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: 'http://rest-gateway-0:3000'
+            DEFAULT_NODE_CLIENT: 'http://localhost:3000'
+            NATIVE_CURRENCY_NAME: cat.currency
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: 5000000
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
+            EXPLORER_URL: 'http://localhost:90/'
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
+        ports:
+            - '100:4000'
+        depends_on:
+            - rest-gateway-0
 networks:
     default:
         ipam:

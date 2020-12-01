@@ -1,4 +1,5 @@
 nemesis:
+    mosaics: [{}, { repeat: 0 }]
     balances:
         NDJFMGFMK43ZFFX53VJZPS2ILPU5G3LQWIKWGWQ: 1859
         NBHPH5NTHZ2AGLJQ2TV52MR4FEX2NMNJDMFRKDI: 429

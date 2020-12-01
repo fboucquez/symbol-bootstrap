@@ -1,0 +1,37 @@
+var networkConfig = {
+  "explorerUrl": "{{{explorerUrl}}}",
+  "faucetUrl": "{{{faucetUrl}}}",
+  "defaultNetworkType": {{{networkType}}},
+  "defaultNodeUrl": "{{{defaultNodeUrl}}}",
+  "networkConfigurationDefaults": {
+    "epochAdjustment": {{{toSeconds epochAdjustment}}},
+    "maxMosaicDivisibility": {{{maxMosaicDivisibility}}},
+    "namespaceGracePeriodDuration": {{{toSeconds namespaceGracePeriodDuration}}},
+    "lockedFundsPerAggregate": "{{{lockedFundsPerAggregate}}}",
+    "maxCosignatoriesPerAccount": {{{maxCosignatoriesPerAccount}}},
+    "blockGenerationTargetTime": {{{toSeconds blockGenerationTargetTime}}},
+    "maxNamespaceDepth": {{{maxNamespaceDepth}}},
+    "maxMosaicDuration": {{{toSeconds maxMosaicDuration}}},
+    "minNamespaceDuration": {{{toSeconds minNamespaceDuration}}},
+    "maxNamespaceDuration": {{{toSeconds maxNamespaceDuration}}},
+    "maxTransactionsPerAggregate": {{{maxTransactionsPerAggregate}}},
+    "maxCosignedAccountsPerAccount": {{{maxCosignedAccountsPerAccount}}},
+    "maxMessageSize": {{{maxMessageSize}}},
+    "maxMosaicAtomicUnits":  {{{maxMosaicAtomicUnits}}},
+    "currencyMosaicId": "{{{toSimpleHex currencyMosaicId}}}",
+    "harvestingMosaicId": "{{{toSimpleHex harvestingMosaicId}}}",
+    "defaultDynamicFeeMultiplier": {{{defaultDynamicFeeMultiplier}}},
+    "epochAdjustment": {{{toSeconds epochAdjustment}}}
+  },
+  "nodes": [
+{{#restNodes}}
+    {"friendlyName": "{{{friendlyName}}}", "roles": {{{roles}}}, "url": "{{{url}}}"},
+{{/restNodes}}
+  ]
+}
+window.networkConfig = networkConfig
+console.log('networkConfig loaded!', networkConfig)
+
+
+
+

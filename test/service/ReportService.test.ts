@@ -137,7 +137,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            reset: true,
             preset: Preset.bootstrap,
             customPresetObject: customPresetObject,
             target: target,

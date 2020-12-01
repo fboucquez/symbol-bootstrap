@@ -59,8 +59,9 @@ describe('BootstrapService', () => {
 
             const recipient = Account.generateNewAccount(networkType);
 
+            const epochAdjustment = await repositoryFactory.getEpochAdjustment().toPromise();
             const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
+                Deadline.create(epochAdjustment),
                 recipient.address,
                 [mosaic],
                 PlainMessage.create('test-message'),

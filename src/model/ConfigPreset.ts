@@ -93,6 +93,33 @@ export interface GatewayPreset extends DockerServicePreset {
     name: string;
 }
 
+export interface ExplorerPreset extends DockerServicePreset {
+    // At least these properties.
+    repeat?: number;
+    name: string;
+}
+
+export interface WalletProfilePreset {
+    name: number;
+    // if not provided, A file will be copied over from the working dir.
+    data?: any;
+    location?: string;
+}
+
+export interface WalletPreset extends DockerServicePreset {
+    // At least these properties.
+    repeat?: number;
+    name: string;
+    profiles?: WalletProfilePreset[];
+}
+
+export interface FaucetPreset extends DockerServicePreset {
+    // At least these properties.
+    gateway: string;
+    repeat?: number;
+    name: string;
+}
+
 export interface ConfigPreset {
     epochAdjustment: string;
     catapultAppFolder: string;
@@ -112,6 +139,9 @@ export interface ConfigPreset {
     networkheight: boolean;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
+    explorers?: ExplorerPreset[];
+    wallets?: WalletPreset[];
+    faucets?: FaucetPreset[];
     networkType: NetworkType;
     networkIdentifier: string;
     networkName: string;
@@ -122,6 +152,9 @@ export interface ConfigPreset {
     knownPeers?: Record<NodeType, any[]>;
     mongoImage: string;
     symbolServerToolsImage: string;
+    symbolExplorerImage: string;
+    symbolWalletImage: string;
+    symbolFaucetImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
     votingKeyStartEpoch: number;

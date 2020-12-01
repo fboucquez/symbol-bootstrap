@@ -21,7 +21,16 @@ import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSyn
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import { basename, join } from 'path';
-import { Deadline, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction, VotingKeyLinkV1Transaction } from 'symbol-sdk';
+import {
+    Deadline,
+    DtoMapping,
+    LinkAction,
+    NetworkType,
+    Transaction,
+    UInt64,
+    VotingKeyLinkTransaction,
+    VotingKeyLinkV1Transaction,
+} from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
@@ -45,6 +54,8 @@ export class BootstrapUtils {
     public static readonly defaultTargetFolder = 'target';
     public static readonly targetNodesFolder = 'nodes';
     public static readonly targetGatewaysFolder = 'gateways';
+    public static readonly targetExplorersFolder = 'explorers';
+    public static readonly targetWalletsFolder = 'wallets';
     public static readonly targetDatabasesFolder = 'databases';
     public static readonly targetNemesisFolder = 'nemesis';
 
@@ -463,6 +474,7 @@ export class BootstrapUtils {
         Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
         Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
         Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
+        Handlebars.registerHelper('toSeconds', BootstrapUtils.toSeconds);
         Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
@@ -507,6 +519,10 @@ export class BootstrapUtils {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static toJson(object: any): string {
         return JSON.stringify(object, null, 2);
+    }
+
+    public static toSeconds(serverDuration: string): number {
+        return DtoMapping.parseServerDuration(serverDuration).seconds();
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

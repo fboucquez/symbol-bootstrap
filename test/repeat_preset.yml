@@ -10,3 +10,9 @@ nodes:
 # 4 rests
 gateways:
     - repeat: 4
+wallets:
+    - repeat: 2
+explorers:
+    - repeat: 3
+faucets:
+    - repeat: 4
