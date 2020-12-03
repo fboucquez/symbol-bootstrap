@@ -16,16 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import {
-    Account,
-    Deadline,
-    NetworkCurrencyLocal,
-    PlainMessage,
-    RepositoryFactoryHttp,
-    TransactionService,
-    TransferTransaction,
-    UInt64,
-} from 'symbol-sdk';
+import { Account, Deadline, PlainMessage, RepositoryFactoryHttp, TransactionService, TransferTransaction, UInt64 } from 'symbol-sdk';
 import { BootstrapService, BootstrapUtils, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 
 describe('BootstrapService', () => {
@@ -46,7 +37,8 @@ describe('BootstrapService', () => {
                 repositoryFactory.createTransactionRepository(),
                 repositoryFactory.createReceiptRepository(),
             );
-            const mosaic = NetworkCurrencyLocal.createAbsolute(100);
+            const { currency } = await repositoryFactory.getCurrencies().toPromise();
+            const mosaic = currency.createRelative(10);
 
             const nemesisAccounts = configResult.addresses?.mosaics?.[0].accounts.map((n) => n.privateKey);
 
