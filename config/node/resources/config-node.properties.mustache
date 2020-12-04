@@ -40,7 +40,6 @@ transactionElementTraceInterval = {{{transactionElementTraceInterval}}}
 enableDispatcherAbortWhenFull = {{{enableDispatcherAbortWhenFull}}}
 enableDispatcherInputAuditing = {{{enableDispatcherInputAuditing}}}
 
-maxCacheDatabaseWriteBatchSize = {{{maxCacheDatabaseWriteBatchSize}}}
 maxTrackedNodes = {{{toAmount maxTrackedNodes}}}
 
 minPartnerNodeVersion = {{{minPartnerNodeVersion}}}
@@ -50,6 +49,15 @@ maxPartnerNodeVersion = {{{maxPartnerNodeVersion}}}
 trustedHosts = {{{trustedHosts}}}
 localNetworks = {{{localNetworks}}}
 listenInterface = {{{nodeListenInterface}}}
+
+[cache_database]
+enableStatistics = {{{enableStatistics}}}
+maxOpenFiles = {{{maxOpenFiles}}}
+maxBackgroundThreads = {{{maxBackgroundThreads}}}
+maxSubcompactionThreads = {{{maxSubcompactionThreads}}}
+blockCacheSize = {{{blockCacheSize}}}
+memtableMemoryBudget = {{{memtableMemoryBudget}}}
+maxWriteBatchSize = {{{maxWriteBatchSize}}}
 
 [localnode]
 

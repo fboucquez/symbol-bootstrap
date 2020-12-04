@@ -138,7 +138,6 @@ transactionDisruptorSize: 16384
 transactionElementTraceInterval: 10
 enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
-maxCacheDatabaseWriteBatchSize: 5MB
 maxTrackedNodes: 5'000
 beneficiaryAddress: ''
 enableAutoHarvesting: true
@@ -166,6 +165,15 @@ maxBannedNodes: 5000
 numReadRateMonitoringBuckets: 4
 readRateMonitoringBucketDuration: 15s
 maxReadRateMonitoringTotalSize: 100MB
+
+#Rocksdb
+enableStatistics: false
+maxOpenFiles: 0
+maxBackgroundThreads: 0
+maxSubcompactionThreads: 0
+blockCacheSize: 0MB
+memtableMemoryBudget: 0MB
+maxWriteBatchSize: 5MB
 
 #Rest
 throttlingBurst: 80
