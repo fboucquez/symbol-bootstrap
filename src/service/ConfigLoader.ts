@@ -356,6 +356,7 @@ export class ConfigLoader {
     }
 
     public getAddressesMigration(networkType: NetworkType): Migration[] {
+        const generateAccount = this.generateAccount;
         return [
             {
                 description: 'Key names migration',
@@ -366,17 +367,13 @@ export class ConfigLoader {
                             nodeAddresses.main = nodeAddresses.signing;
                         } else {
                             if (nodeAddresses.ssl) {
-                                const main = ConfigLoader.toConfig(Account.createFromPrivateKey(nodeAddresses.ssl.privateKey, networkType));
-                                nodeAddresses.main = main;
+                                nodeAddresses.main = ConfigLoader.toConfig(
+                                    Account.createFromPrivateKey(nodeAddresses.ssl.privateKey, networkType),
+                                );
                             }
                         }
-                        if (nodeAddresses.node) {
-                            const transport = ConfigLoader.toConfig(
-                                Account.createFromPrivateKey(nodeAddresses.node.privateKey, networkType),
-                            );
-                            nodeAddresses.transport = transport;
-                            delete nodeAddresses.node;
-                        }
+                        nodeAddresses.transport = ConfigLoader.toConfig(generateAccount(networkType, nodeAddresses?.node?.privateKey));
+                        delete nodeAddresses.node;
                         delete nodeAddresses.signing;
                         delete nodeAddresses.ssl;
                     });
