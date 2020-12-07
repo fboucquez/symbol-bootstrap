@@ -69,8 +69,8 @@ export class ComposeService {
 
         const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
 
-        const vol = (hostFolder: string, imageFolder: string): string => {
-            return hostFolder + ':' + imageFolder;
+        const vol = (hostFolder: string, imageFolder: string, readOnly: boolean): string => {
+            return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
         };
 
         logger.info(`creating docker-compose.yml from last used profile.`);
@@ -155,8 +155,8 @@ export class ComposeService {
                         working_dir: '/docker-entrypoint-initdb.d',
                         ports: resolvePorts(27017, n.openPort),
                         volumes: [
-                            vol(`./mongo`, `/docker-entrypoint-initdb.d/:ro`),
-                            vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata:rw'),
+                            vol(`./mongo`, `/docker-entrypoint-initdb.d`, true),
+                            vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata', false),
                         ],
                     }),
                 );
@@ -176,7 +176,10 @@ export class ComposeService {
                     working_dir: nodeWorkingDirectory,
                     restart: 'on-failure:2',
                     ports: resolvePorts(7900, n.openPort),
-                    volumes: [vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory), vol(`./server`, nodeCommandsDirectory)],
+                    volumes: [
+                        vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
+                        vol(`./server`, nodeCommandsDirectory, true),
+                    ],
                     depends_on: n.brokerName ? [n.brokerName] : [],
                 });
 
@@ -218,7 +221,7 @@ export class ComposeService {
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(3000, n.openPort),
-                        volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory)],
+                        volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory, false)],
                         depends_on: [n.databaseHost],
                     }),
                 );
@@ -235,7 +238,7 @@ export class ComposeService {
                         working_dir: nodeWorkingDirectory,
                         ports: resolvePorts(80, n.openPort),
                         restart: 'on-failure:2',
-                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config')],
+                        volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config', true)],
                     }),
                 );
             }),
@@ -253,8 +256,8 @@ export class ComposeService {
                         ports: resolvePorts(80, n.openPort),
                         restart: 'on-failure:2',
                         volumes: [
-                            vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory),
-                            vol(`./explorer`, nodeCommandsDirectory),
+                            vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory, true),
+                            vol(`./explorer`, nodeCommandsDirectory, true),
                         ],
                     }),
                 );
