@@ -12,7 +12,7 @@ services:
         ports:
             - '27017:27017'
         volumes:
-            - './mongo:/docker-entrypoint-initdb.d/:ro'
+            - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-0:/dbdata:rw'
     peer-node-0:
         user: '1000:1000'
@@ -25,8 +25,8 @@ services:
         ports:
             - '7900:7900'
         volumes:
-            - '../nodes/peer-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/peer-node-0:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on: []
         networks:
             default:
@@ -44,8 +44,8 @@ services:
         ports:
             - '7901:7900'
         volumes:
-            - '../nodes/peer-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/peer-node-1:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on: []
         networks:
             default:
@@ -62,8 +62,8 @@ services:
         restart: 'on-failure:2'
         ports: []
         volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-0:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on:
             - api-node-broker-0
         networks:
@@ -84,8 +84,8 @@ services:
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-0:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
@@ -96,7 +96,7 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - '../gateways/rest-gateway-0:/symbol-workdir'
+            - '../gateways/rest-gateway-0:/symbol-workdir:rw'
         depends_on:
             - db-0
         networks:

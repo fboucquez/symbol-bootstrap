@@ -11,7 +11,7 @@ services:
         working_dir: /docker-entrypoint-initdb.d
         ports: []
         volumes:
-            - './mongo:/docker-entrypoint-initdb.d/:ro'
+            - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db:/dbdata:rw'
     api-node:
         user: '1000:1000'
@@ -24,8 +24,8 @@ services:
         ports:
             - '7900:7900'
         volumes:
-            - '../nodes/api-node:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on:
             - api-broker
     api-broker:
@@ -39,8 +39,8 @@ services:
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
@@ -51,7 +51,7 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - '../gateways/rest-gateway:/symbol-workdir'
+            - '../gateways/rest-gateway:/symbol-workdir:rw'
         depends_on:
             - db
         networks:

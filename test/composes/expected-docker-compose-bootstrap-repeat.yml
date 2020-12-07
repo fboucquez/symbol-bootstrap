@@ -12,7 +12,7 @@ services:
         ports:
             - '27017:27017'
         volumes:
-            - './mongo:/docker-entrypoint-initdb.d/:ro'
+            - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-0:/dbdata:rw'
     db-1:
         user: '1000:1000'
@@ -26,7 +26,7 @@ services:
         ports:
             - '27018:27017'
         volumes:
-            - './mongo:/docker-entrypoint-initdb.d/:ro'
+            - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-1:/dbdata:rw'
     db-2:
         user: '1000:1000'
@@ -40,7 +40,7 @@ services:
         ports:
             - '27019:27017'
         volumes:
-            - './mongo:/docker-entrypoint-initdb.d/:ro'
+            - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-2:/dbdata:rw'
     db-3:
         user: '1000:1000'
@@ -54,7 +54,7 @@ services:
         ports:
             - '27020:27017'
         volumes:
-            - './mongo:/docker-entrypoint-initdb.d/:ro'
+            - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-3:/dbdata:rw'
     peer-node-0:
         user: '1000:1000'
@@ -67,8 +67,8 @@ services:
         ports:
             - '7900:7900'
         volumes:
-            - '../nodes/peer-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/peer-node-0:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on: []
         networks:
             default:
@@ -86,8 +86,8 @@ services:
         ports:
             - '7901:7900'
         volumes:
-            - '../nodes/peer-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/peer-node-1:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on: []
         networks:
             default:
@@ -105,8 +105,8 @@ services:
         ports:
             - '7902:7900'
         volumes:
-            - '../nodes/peer-node-2:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/peer-node-2:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on: []
         networks:
             default:
@@ -123,8 +123,8 @@ services:
         restart: 'on-failure:2'
         ports: []
         volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-0:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on:
             - api-node-broker-0
         networks:
@@ -142,8 +142,8 @@ services:
         restart: 'on-failure:2'
         ports: []
         volumes:
-            - '../nodes/api-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-1:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on:
             - api-node-broker-1
         networks:
@@ -161,8 +161,8 @@ services:
         restart: 'on-failure:2'
         ports: []
         volumes:
-            - '../nodes/api-node-2:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-2:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on:
             - api-node-broker-2
         networks:
@@ -180,8 +180,8 @@ services:
         restart: 'on-failure:2'
         ports: []
         volumes:
-            - '../nodes/api-node-3:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-3:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
         depends_on:
             - api-node-broker-3
         networks:
@@ -202,8 +202,8 @@ services:
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node-0:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-0:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
     api-node-broker-1:
         user: '1000:1000'
         container_name: api-node-broker-1
@@ -217,8 +217,8 @@ services:
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node-1:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-1:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
     api-node-broker-2:
         user: '1000:1000'
         container_name: api-node-broker-2
@@ -232,8 +232,8 @@ services:
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node-2:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-2:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
     api-node-broker-3:
         user: '1000:1000'
         container_name: api-node-broker-3
@@ -247,8 +247,8 @@ services:
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node-3:/symbol-workdir'
-            - './server:/symbol-commands'
+            - '../nodes/api-node-3:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
@@ -259,7 +259,7 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - '../gateways/rest-gateway-0:/symbol-workdir'
+            - '../gateways/rest-gateway-0:/symbol-workdir:rw'
         depends_on:
             - db-0
         networks:
@@ -275,7 +275,7 @@ services:
         ports:
             - '3001:3000'
         volumes:
-            - '../gateways/rest-gateway-1:/symbol-workdir'
+            - '../gateways/rest-gateway-1:/symbol-workdir:rw'
         depends_on:
             - db-1
         networks:
@@ -291,7 +291,7 @@ services:
         ports:
             - '3002:3000'
         volumes:
-            - '../gateways/rest-gateway-2:/symbol-workdir'
+            - '../gateways/rest-gateway-2:/symbol-workdir:rw'
         depends_on:
             - db-2
         networks:
@@ -307,7 +307,7 @@ services:
         ports:
             - '3003:3000'
         volumes:
-            - '../gateways/rest-gateway-3:/symbol-workdir'
+            - '../gateways/rest-gateway-3:/symbol-workdir:rw'
         depends_on:
             - db-3
         networks:
@@ -322,7 +322,7 @@ services:
             - '80:80'
         restart: 'on-failure:2'
         volumes:
-            - '../wallets/wallet-0:/usr/share/nginx/html/config'
+            - '../wallets/wallet-0:/usr/share/nginx/html/config:ro'
     wallet-1:
         container_name: wallet-1
         image: 'symbolplatform/symbol-desktop-wallet:0.13.5-alpha'
@@ -332,7 +332,7 @@ services:
             - '81:80'
         restart: 'on-failure:2'
         volumes:
-            - '../wallets/wallet-1:/usr/share/nginx/html/config'
+            - '../wallets/wallet-1:/usr/share/nginx/html/config:ro'
     explorer-0:
         container_name: explorer-0
         image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
@@ -343,8 +343,8 @@ services:
             - '90:80'
         restart: 'on-failure:2'
         volumes:
-            - '../explorers/explorer-0:/symbol-workdir'
-            - './explorer:/symbol-commands'
+            - '../explorers/explorer-0:/symbol-workdir:ro'
+            - './explorer:/symbol-commands:ro'
     explorer-1:
         container_name: explorer-1
         image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
@@ -355,8 +355,8 @@ services:
             - '91:80'
         restart: 'on-failure:2'
         volumes:
-            - '../explorers/explorer-1:/symbol-workdir'
-            - './explorer:/symbol-commands'
+            - '../explorers/explorer-1:/symbol-workdir:ro'
+            - './explorer:/symbol-commands:ro'
     explorer-2:
         container_name: explorer-2
         image: 'symbolplatform/symbol-explorer:0.6.3-alpha'
@@ -367,8 +367,8 @@ services:
             - '92:80'
         restart: 'on-failure:2'
         volumes:
-            - '../explorers/explorer-2:/symbol-workdir'
-            - './explorer:/symbol-commands'
+            - '../explorers/explorer-2:/symbol-workdir:ro'
+            - './explorer:/symbol-commands:ro'
     faucet-0:
         container_name: faucet-0
         image: 'symbolplatform/symbol-faucet:0.4.0'
