@@ -99,7 +99,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/ConfigService.bootstrap.default',
+            target: 'target/ConfigService.bootstrap.compose',
             customPreset: './test/custom_compose_preset.yml',
             reset: false,
             preset: Preset.bootstrap,
