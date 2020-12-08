@@ -158,6 +158,7 @@ export class ComposeService {
                             vol(`./mongo`, `/docker-entrypoint-initdb.d`, true),
                             vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata', false),
                         ],
+                        ...n.compose,
                     }),
                 );
             }),
@@ -181,6 +182,7 @@ export class ComposeService {
                         vol(`./server`, nodeCommandsDirectory, true),
                     ],
                     depends_on: n.brokerName ? [n.brokerName] : [],
+                    ...n.compose,
                 });
 
                 services.push(nodeService);
@@ -203,6 +205,7 @@ export class ComposeService {
                                 stop_signal: 'SIGINT',
                                 restart: 'on-failure:2',
                                 volumes: nodeService.volumes,
+                                ...n.brokerCompose,
                             },
                         ),
                     );
@@ -223,6 +226,7 @@ export class ComposeService {
                         ports: resolvePorts(3000, n.openPort),
                         volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory, false)],
                         depends_on: [n.databaseHost],
+                        ...n.compose,
                     }),
                 );
             }),
@@ -239,6 +243,7 @@ export class ComposeService {
                         ports: resolvePorts(80, n.openPort),
                         restart: 'on-failure:2',
                         volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config', true)],
+                        ...n.compose,
                     }),
                 );
             }),
@@ -259,6 +264,7 @@ export class ComposeService {
                             vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory, true),
                             vol(`./explorer`, nodeCommandsDirectory, true),
                         ],
+                        ...n.compose,
                     }),
                 );
             }),
@@ -281,6 +287,7 @@ export class ComposeService {
                         restart: 'on-failure:2',
                         ports: resolvePorts(4000, n.openPort),
                         depends_on: [n.gateway],
+                        ...n.compose,
                     }),
                 );
             }),

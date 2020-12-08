@@ -88,6 +88,25 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap.yml');
     });
 
+    it('Compose bootstrap custom compose', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            target: 'target/ConfigService.bootstrap.default',
+            customPreset: './test/custom_compose_preset.yml',
+            reset: false,
+            preset: Preset.bootstrap,
+        };
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom-compose.yml');
+    });
+
     it('Compose bootstrap full', async () => {
         const params = {
             ...ConfigService.defaultParams,
@@ -118,7 +137,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            reset: true,
+            reset: false,
             target: 'target/ConfigService.bootstrap.repeat',
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',
