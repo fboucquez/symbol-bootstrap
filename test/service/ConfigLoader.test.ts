@@ -16,11 +16,17 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import { NetworkType } from 'symbol-sdk';
+import { Account, NetworkType } from 'symbol-sdk';
 import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
 
+class ConfigLoaderMocked extends ConfigLoader {
+    public generateAccount(networkType: NetworkType, privateKey: string | undefined): Account {
+        return super.generateAccount(networkType, privateKey || 'a'.repeat(64));
+    }
+}
+
 describe('ConfigLoader', () => {
-    const configLoader = new ConfigLoader();
+    const configLoader = new ConfigLoaderMocked();
 
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
         try {
