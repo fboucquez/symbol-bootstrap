@@ -634,9 +634,9 @@ config-network.properties
     harvestNetworkFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
     **fork_heights**;
-    votingKeyLinkV2; 360000
-    importanceBlock; 360000
-    accountRestrictionsV2; 360000
+    votingKeyLinkV2; 215500
+    importanceBlock; 215500
+    accountRestrictionsV2; 215500
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
