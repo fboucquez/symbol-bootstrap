@@ -22,6 +22,7 @@ Symbol Bootstrap | v0.3.0 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 - Fixed api broker name in testnet's api assembly.
 - Images are not pulled by default speeding up bootstrap and avoiding unexpected alpha server upgrades. To pull new images use `--pullImages`.
 - Testnet Long Voting Key V1 and Short Voting Key V2 support.
+- Added `compose` preset support to inject properties into generated docker-compose services.
 
 ## [0.2.1] - 30-Oct-2020
 

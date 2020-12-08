@@ -137,7 +137,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            reset: false,
+            reset: true,
             target: 'target/ConfigService.bootstrap.repeat',
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',

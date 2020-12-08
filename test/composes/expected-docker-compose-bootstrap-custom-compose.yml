@@ -20,7 +20,7 @@ services:
                     memory: 4G
         cpu_count: 2
         mac_address: '02:42:ac:11:65:43'
-`    peer-node-0:
+    peer-node-0:
         user: '1000:1000'
         container_name: peer-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
@@ -124,5 +124,4 @@ networks:
     default:
         ipam:
             config:
-                -
-                    subnet: 172.20.0.0/24
+                - subnet: 172.20.0.0/24
