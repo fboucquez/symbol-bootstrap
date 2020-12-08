@@ -1,0 +1,16 @@
+databases:
+    - compose:
+          cpu_count: 2
+          mac_address: 02:42:ac:11:65:43
+          deploy:
+              resources:
+                  reservations:
+                      memory: 4G
+nodes:
+    - compose:
+          cpu_count: 4
+          shm_size: 64M
+          deploy:
+              resources:
+                  limits:
+                      memory: 4G

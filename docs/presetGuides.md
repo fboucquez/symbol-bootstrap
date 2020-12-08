@@ -156,6 +156,38 @@ nodes:
     - voting: false
 ```
 
+### Add docker-compose properties to services
+
+Fields added in `compose` object inside the different services like `databases`, `nodes`, etc will be added to the generated docker-compose's services
+
+A custom preset like:
+
+```yaml
+nodes:
+    - compose:
+          cpu_count: 4
+          shm_size: 64M
+          deploy:
+              resources:
+                  limits:
+                      memory: 4G
+```
+
+will generate a docker service like:
+
+```yaml
+  peer-node-0:
+        container_name: peer-node-0
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
+        .......
+        cpu_count: 4
+        shm_size: 64M
+        deploy:
+            resources:
+                limits:
+                    memory: 4G
+```
+
 ### Repeat components
 
 ```yaml
