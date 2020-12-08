@@ -13,10 +13,6 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db:/dbdata:rw'
-        deploy:
-            resources:
-                reservations:
-                    memory: 4G
     api-node:
         user: '1000:1000'
         container_name: api-node
@@ -65,4 +61,5 @@ networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

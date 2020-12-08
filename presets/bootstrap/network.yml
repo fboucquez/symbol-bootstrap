@@ -34,11 +34,6 @@ databases:
     - repeat: 1
       name: 'db-{{$index}}'
       openPort: '{{add $index 27017}}'
-      compose:
-        deploy:
-            resources:
-                reservations:
-                    memory: 4G
 nodes:
     - repeat: 2
       harvesting: true

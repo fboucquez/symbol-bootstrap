@@ -14,10 +14,6 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-0:/dbdata:rw'
-        deploy:
-            resources:
-                reservations:
-                    memory: 4G
     db-1:
         user: '1000:1000'
         environment:
@@ -32,10 +28,6 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-1:/dbdata:rw'
-        deploy:
-            resources:
-                reservations:
-                    memory: 4G
     db-2:
         user: '1000:1000'
         environment:
@@ -50,10 +42,6 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-2:/dbdata:rw'
-        deploy:
-            resources:
-                reservations:
-                    memory: 4G
     db-3:
         user: '1000:1000'
         environment:
@@ -68,10 +56,6 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-3:/dbdata:rw'
-        deploy:
-            resources:
-                reservations:
-                    memory: 4G
     peer-node-0:
         user: '1000:1000'
         container_name: peer-node-0
@@ -477,4 +461,5 @@ networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

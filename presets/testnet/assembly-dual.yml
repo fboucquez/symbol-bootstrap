@@ -1,11 +1,6 @@
 databases:
     - name: 'db'
       openPort: false
-      compose:
-        deploy:
-          resources:
-            reservations:
-              memory: 4G
 nodes:
     - harvesting: true
       voting: false
