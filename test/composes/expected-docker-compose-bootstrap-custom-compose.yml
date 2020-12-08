@@ -35,7 +35,7 @@ services:
             - './server:/symbol-commands:ro'
         depends_on: []
         cpu_count: 4
-        shm_size: 64M`
+        shm_size: 64M
         deploy:
             resources:
                 limits:
