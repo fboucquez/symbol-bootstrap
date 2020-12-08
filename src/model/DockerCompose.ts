@@ -34,6 +34,7 @@ export interface DockerComposeService {
     volumes?: string[];
     ports?: string[];
     depends_on?: string[];
+    // https://docs.docker.com/compose/compose-file/#service-configuration-reference deploy section
     networks?: {
         default: {
             ipv4_address?: string;

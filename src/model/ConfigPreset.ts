@@ -23,6 +23,7 @@ export interface DockerServicePreset {
     host?: string;
     excludeDockerService?: boolean;
     environment?: any;
+    compose?: any;
 }
 
 export interface MosaicPreset {
@@ -82,6 +83,7 @@ export interface NodePreset extends DockerServicePreset {
     brokerIpv4_address?: string;
     brokerOpenPort?: boolean | number | string;
     brokerExcludeDockerService?: boolean;
+    brokerCompose?: any;
 }
 
 export interface GatewayPreset extends DockerServicePreset {
