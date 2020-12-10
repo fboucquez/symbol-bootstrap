@@ -24,7 +24,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -49,7 +49,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
