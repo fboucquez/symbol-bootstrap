@@ -117,7 +117,7 @@ services:
         user: '1000:1000'
         container_name: api-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -136,7 +136,7 @@ services:
         user: '1000:1000'
         container_name: api-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-1 && /bin/bash /symbol-commands/startServer.sh api-node-1"
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-1 && /bin/bash /symbol-commands/startServer.sh api-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -155,7 +155,7 @@ services:
         user: '1000:1000'
         container_name: api-node-2
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-2 && /bin/bash /symbol-commands/startServer.sh api-node-2"
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-2 && /bin/bash /symbol-commands/startServer.sh api-node-2"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -174,7 +174,7 @@ services:
         user: '1000:1000'
         container_name: api-node-3
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node-3 && /bin/bash /symbol-commands/startServer.sh api-node-3"
+        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-3 && /bin/bash /symbol-commands/startServer.sh api-node-3"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
