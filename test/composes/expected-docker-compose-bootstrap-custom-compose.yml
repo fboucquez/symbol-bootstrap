@@ -14,12 +14,12 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-0:/dbdata:rw'
+        cpu_count: 2
+        mac_address: '02:42:ac:11:65:43'
         deploy:
             resources:
                 reservations:
                     memory: 4G
-        cpu_count: 2
-        mac_address: '02:42:ac:11:65:43'
     peer-node-0:
         user: '1000:1000'
         container_name: peer-node-0
@@ -74,7 +74,7 @@ services:
         user: '1000:1000'
         container_name: api-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
+        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -124,4 +124,5 @@ networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

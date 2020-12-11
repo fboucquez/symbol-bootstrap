@@ -170,12 +170,16 @@ export class ComposeService {
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
                     const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
                     const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}`;
                     const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || ''}`;
                     const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
 
-                    const serverServiceCommand = `bash -c "${[recoverServerCommand, serverCommand].join(' && ')}"`;
+                    const serverServiceCommand = n.brokerName
+                        ? `bash -c "${[waitForBroker, serverCommand].join(' && ')}"`
+                        : `bash -c "${[recoverServerCommand, serverCommand].join(' && ')}"`;
+
                     const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
 
                     const serverDependsOn = n.brokerName ? [n.brokerName] : [];

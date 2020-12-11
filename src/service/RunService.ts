@@ -66,7 +66,7 @@ export class RunService {
         const preset = this.configLoader.loadExistingPresetData(target);
         preset.nodes?.forEach((node) => {
             // The lock files that should be removed when starting. If there is a server.lock or a broker.lock, the recovery needs to execute.
-            const lockFiles = ['recovery.lock'];
+            const lockFiles = ['recovery.lock', 'broker.started'];
             lockFiles.forEach((lockFileName) => {
                 const lockFile = BootstrapUtils.getTargetNodesFolder(target, false, node.name, 'data', lockFileName);
                 if (existsSync(lockFile)) {

@@ -56,7 +56,7 @@ services:
         user: '1000:1000'
         container_name: api-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-0 && /bin/bash /symbol-commands/startServer.sh api-node-0"
+        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'

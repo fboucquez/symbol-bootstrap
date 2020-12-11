@@ -4,12 +4,6 @@ set -e
 name=$1
 echo "RUNNING runServerRecover.sh $name"
 
-while [ -f {{{dataDirectory}}}/recovery.lock ]
-do
-echo "Waiting for recovery.lock to be deleted..."
-sleep 1
-done
-
 ulimit -c unlimited
 if [ -e "{{{dataDirectory}}}/broker.lock" ] || [ -e "{{{dataDirectory}}}/server.lock" ]; then
   echo "!!!! Have lock file present, going to run recovery...."
