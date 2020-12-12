@@ -17,7 +17,7 @@ services:
         user: '1000:1000'
         container_name: api-node
         image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh  api-node && /bin/bash /symbol-commands/startServer.sh api-node"
+        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -44,7 +44,7 @@ services:
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.1.1-alpha'
+        image: 'symbolplatform/symbol-rest:2.2.1'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

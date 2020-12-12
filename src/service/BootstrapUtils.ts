@@ -138,7 +138,7 @@ export class BootstrapUtils {
         }
         try {
             logger.info(`Pulling image ${image}`);
-            const stdout = await this.spawn('docker', ['pull', image], true);
+            const stdout = await this.spawn('docker', ['pull', image], true, `${image} `);
             const outputLines = stdout.toString().split('\n');
             logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
             BootstrapUtils.pulledImages.push(image);
@@ -361,7 +361,7 @@ export class BootstrapUtils {
         return { stdout, stderr };
     }
 
-    public static async spawn(command: string, args: string[], useLogger: boolean): Promise<string> {
+    public static async spawn(command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
@@ -369,10 +369,10 @@ export class BootstrapUtils {
             const log = (data: string, isError: boolean) => {
                 logText = logText + `${data}\n`;
                 if (useLogger) {
-                    if (isError) logger.warn(data);
-                    else logger.info(data);
+                    if (isError) logger.warn(logPrefix + data);
+                    else logger.info(logPrefix + data);
                 } else {
-                    console.log(data);
+                    console.log(logPrefix + data);
                 }
             };
 

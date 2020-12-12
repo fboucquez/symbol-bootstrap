@@ -26,9 +26,9 @@ mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 enableRevoteOnBoot: false
 faucetUrl: 'http://faucet-0.10.0.x-01.symboldev.network'
-votingKeyLinkV2: 360000
-importanceBlock: 360000
-accountRestrictionsV2: 360000
+votingKeyLinkV2: 215500
+importanceBlock: 215500
+accountRestrictionsV2: 215500
 trustedHosts:
 inflation:
     starting-at-height-2: 95998521

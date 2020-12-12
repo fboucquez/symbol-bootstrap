@@ -19,10 +19,10 @@ import * as _ from 'lodash';
 import { join } from 'path';
 import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
 import { RepositoryFactoryHttp } from 'symbol-sdk';
+import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
-import { DockerCompose, DockerComposeService } from '../model/DockerCompose';
+import { DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { PortService } from './PortService';
@@ -61,6 +61,21 @@ export class RunService {
         if (this.params.resetData) {
             await this.resetData();
         }
+
+        const target = this.params.target;
+        const preset = this.configLoader.loadExistingPresetData(target);
+        preset.nodes?.forEach((node) => {
+            // The lock files that should be removed when starting. If there is a server.lock or a broker.lock, the recovery needs to execute.
+            const lockFiles = ['recovery.lock', 'broker.started'];
+            lockFiles.forEach((lockFileName) => {
+                const lockFile = BootstrapUtils.getTargetNodesFolder(target, false, node.name, 'data', lockFileName);
+                if (existsSync(lockFile)) {
+                    logger.info(`Removing lock file ${lockFile}`);
+                    BootstrapUtils.deleteFile(lockFile);
+                }
+            });
+        });
+
         const basicArgs = ['up', '--remove-orphans'];
         if (this.params.detached) {
             basicArgs.push('--detach');
