@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.0] - NEXT
+
+**Milestone**: Hippopotamus(0.10.0.4)
+
+ Package  | Version  | Link
+---|---|---
+Symbol Bootstrap | v0.3.0 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+
+- **New Service:** `Wallet`. Bootstrap private network starts a Wallet service in [http://localhost:80/](http://localhost:80/) when using `--assembly full`. . **Warning:** This wallet service is for demonstration purposes only.
+- **New Service:** `Explorer`. Bootstrap private network starts an Explorer service in [http://localhost:90/](http://localhost:90/) when using `--assembly full`. 
+- **New Service:** `Faucet`. Bootstrap private network starts a Faucet service in [http://localhost:100/](http://localhost:100/) when using `--assembly full`. 
+- Using remote accounts when setting up nodes by default. This improves security by avoiding main account private keys to be exposed in node configuration (like `harvesterSigningPrivateKey`).
+- Removed unnecessary tls related files once certificates are created. 
+- Added addresses.yml migration from old formats.
+- Added --upgrade flag to config, compose and start.
+- Fixed api broker name in testnet's api assembly.
+- Images are not pulled by default speeding up bootstrap and avoiding unexpected alpha server upgrades. To pull new images use `--pullImages`.
+- Testnet Long Voting Key V1 and Short Voting Key V2 support.
+- Added `compose` preset support to inject properties into generated docker-compose services.
+
 ## [0.2.1] - 30-Oct-2020
 
 **Milestone**: Hippopotamus(0.10.0.3)

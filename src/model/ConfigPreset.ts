@@ -23,6 +23,7 @@ export interface DockerServicePreset {
     host?: string;
     excludeDockerService?: boolean;
     environment?: any;
+    compose?: any;
 }
 
 export interface MosaicPreset {
@@ -57,6 +58,8 @@ export interface NemesisPreset {
 
 export interface NodePreset extends DockerServicePreset {
     // At least these properties.
+    // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
+    nodeUseRemoteAccount?: boolean;
     repeat?: number;
     harvesting: boolean;
     api: boolean;
@@ -66,8 +69,11 @@ export interface NodePreset extends DockerServicePreset {
     name: string;
     roles: string;
     friendlyName?: string;
+
     // Optional private keys. If not provided, bootstrap will generate random ones.
-    signingPrivateKey?: string;
+    mainPrivateKey?: string;
+    transportPrivateKey?: string;
+    remotePrivateKey?: string;
     vrfPrivateKey?: string;
     votingPrivateKey?: string;
 
@@ -77,6 +83,7 @@ export interface NodePreset extends DockerServicePreset {
     brokerIpv4_address?: string;
     brokerOpenPort?: boolean | number | string;
     brokerExcludeDockerService?: boolean;
+    brokerCompose?: any;
 }
 
 export interface GatewayPreset extends DockerServicePreset {
@@ -88,7 +95,35 @@ export interface GatewayPreset extends DockerServicePreset {
     name: string;
 }
 
+export interface ExplorerPreset extends DockerServicePreset {
+    // At least these properties.
+    repeat?: number;
+    name: string;
+}
+
+export interface WalletProfilePreset {
+    name: number;
+    // if not provided, A file will be copied over from the working dir.
+    data?: any;
+    location?: string;
+}
+
+export interface WalletPreset extends DockerServicePreset {
+    // At least these properties.
+    repeat?: number;
+    name: string;
+    profiles?: WalletProfilePreset[];
+}
+
+export interface FaucetPreset extends DockerServicePreset {
+    // At least these properties.
+    gateway: string;
+    repeat?: number;
+    name: string;
+}
+
 export interface ConfigPreset {
+    epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;
     transactionsDirectory: string;
@@ -102,8 +137,13 @@ export interface ConfigPreset {
     harvestNetworkFeeSinkAddress?: string;
     mosaicRentalFeeSinkAddress?: string;
     namespaceRentalFeeSinkAddress?: string;
+    nodeUseRemoteAccount: boolean;
+    networkheight: boolean;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
+    explorers?: ExplorerPreset[];
+    wallets?: WalletPreset[];
+    faucets?: FaucetPreset[];
     networkType: NetworkType;
     networkIdentifier: string;
     networkName: string;
@@ -114,9 +154,12 @@ export interface ConfigPreset {
     knownPeers?: Record<NodeType, any[]>;
     mongoImage: string;
     symbolServerToolsImage: string;
+    symbolExplorerImage: string;
+    symbolWalletImage: string;
+    symbolFaucetImage: string;
     symbolServerImage: string;
     symbolRestImage: string;
-    votingKeyDilution: number;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    votingKeyLinkV2: number | undefined;
 }

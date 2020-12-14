@@ -1,10 +1,11 @@
 #!/bin/bash
+set -e
+
 name=$1
 echo "RUNNING runServerRecover.sh $name"
 
 ulimit -c unlimited
-
-if [ -e "broker.lock" ] || [ -e "server.lock" ]; then
+if [ -e "{{{dataDirectory}}}/broker.lock" ] || [ -e "{{{dataDirectory}}}/server.lock" ]; then
   echo "!!!! Have lock file present, going to run recovery...."
   exec env LD_LIBRARY_PATH={{{catapultAppFolder}}}/lib:{{{catapultAppFolder}}}/deps {{{catapultAppFolder}}}/bin/catapult.recovery ./userconfig
   echo "!!!! Finished running recovery, should be moving on to start server..."

@@ -40,18 +40,30 @@ transactionElementTraceInterval = {{{transactionElementTraceInterval}}}
 enableDispatcherAbortWhenFull = {{{enableDispatcherAbortWhenFull}}}
 enableDispatcherInputAuditing = {{{enableDispatcherInputAuditing}}}
 
-maxCacheDatabaseWriteBatchSize = {{{maxCacheDatabaseWriteBatchSize}}}
 maxTrackedNodes = {{{toAmount maxTrackedNodes}}}
+
+minPartnerNodeVersion = {{{minPartnerNodeVersion}}}
+maxPartnerNodeVersion = {{{maxPartnerNodeVersion}}}
 
 # all hosts are trusted when list is empty
 trustedHosts = {{{trustedHosts}}}
 localNetworks = {{{localNetworks}}}
+listenInterface = {{{nodeListenInterface}}}
+
+[cache_database]
+enableStatistics = {{{enableStatistics}}}
+maxOpenFiles = {{{maxOpenFiles}}}
+maxBackgroundThreads = {{{maxBackgroundThreads}}}
+maxSubcompactionThreads = {{{maxSubcompactionThreads}}}
+blockCacheSize = {{{blockCacheSize}}}
+memtableMemoryBudget = {{{memtableMemoryBudget}}}
+maxWriteBatchSize = {{{maxWriteBatchSize}}}
 
 [localnode]
 
 host = {{{host}}}
 friendlyName = {{{friendlyName}}}
-version = 0
+version = {{serverVersion}}
 roles = {{roles}}
 
 [outgoing_connections]

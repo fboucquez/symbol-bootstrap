@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
+import { promises as fsPromises, readFileSync } from 'fs';
+import * as _ from 'lodash';
+import { join } from 'path';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { LogType } from '../logger/LogType';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigPreset } from '../model';
-import { join } from 'path';
-import { promises as fsPromises, readFileSync } from 'fs';
-import * as _ from 'lodash';
+import { BootstrapUtils } from './BootstrapUtils';
+import { ConfigLoader } from './ConfigLoader';
 
 export type ReportParams = { target: string };
 
@@ -54,8 +55,10 @@ export class ReportService {
     public static defaultParams: ReportParams = {
         target: BootstrapUtils.defaultTargetFolder,
     };
-
-    constructor(private readonly root: string, protected readonly params: ReportParams) {}
+    private readonly configLoader: ConfigLoader;
+    constructor(private readonly root: string, protected readonly params: ReportParams) {
+        this.configLoader = new ConfigLoader();
+    }
 
     private createReportFromFile(resourceContent: string, descriptions: any): ReportSection[] {
         const sections: ReportSection[] = [];
@@ -127,7 +130,7 @@ export class ReportService {
      * @param passedPresetData the preset data,
      */
     public async run(passedPresetData?: ConfigPreset): Promise<string[]> {
-        const presetData = passedPresetData ?? BootstrapUtils.loadExistingPresetData(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
 
         const reportFolder = join(this.params.target, 'reports');
         BootstrapUtils.deleteFolder(reportFolder);

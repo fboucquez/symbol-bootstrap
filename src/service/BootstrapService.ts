@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
-import { ComposeParams, ComposeService } from './ComposeService';
-import { RunParams, RunService } from './RunService';
-import { ReportParams, ReportService } from './ReportService';
 import { Addresses, ConfigPreset } from '../model';
-import { LinkParams, LinkService } from './LinkService';
 import { DockerCompose } from '../model/DockerCompose';
+import { ComposeParams, ComposeService } from './ComposeService';
+import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
+import { LinkParams, LinkService } from './LinkService';
+import { ReportParams, ReportService } from './ReportService';
+import { RunParams, RunService } from './RunService';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
 
@@ -46,9 +46,14 @@ export class BootstrapService {
      *
      * @param config the params of the compose command.
      * @param passedPresetData the created preset if you know it, otherwise will load the latest one resolved from the target folder.
+     * @param passedAddresses the created addresses if you know if, otherwise will load the latest one resolved form the target folder.
      */
-    public compose(config: ComposeParams = ComposeService.defaultParams, passedPresetData?: ConfigPreset): Promise<DockerCompose> {
-        return new ComposeService(this.root, config).run(passedPresetData);
+    public compose(
+        config: ComposeParams = ComposeService.defaultParams,
+        passedPresetData?: ConfigPreset,
+        passedAddresses?: Addresses,
+    ): Promise<DockerCompose> {
+        return new ComposeService(this.root, config).run(passedPresetData, passedAddresses);
     }
 
     /**

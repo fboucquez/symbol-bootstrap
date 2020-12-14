@@ -85,9 +85,6 @@ enableDispatcherAbortWhenFull:
 enableDispatcherInputAuditing:
     type: bool
     description: Set to true if all dispatcher inputs should be audited.
-maxCacheDatabaseWriteBatchSize:
-    type: 'utils::FileSize'
-    description: Maximum cache database write batch size.
 maxTrackedNodes:
     type: uint32_t
     description: Maximum number of nodes to track in memory.

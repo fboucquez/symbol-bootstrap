@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { BootstrapService, BootstrapUtils, Preset, StartParams } from '../../src/service';
-import { RunService } from '../../src/service';
 import { expect } from 'chai';
 import { existsSync } from 'fs';
+import 'mocha';
 import { join } from 'path';
+import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
 
 describe('RunService', () => {
     const target = 'target/BootstrapService.standard';
@@ -28,6 +27,7 @@ describe('RunService', () => {
         const bootstrapService = new BootstrapService('.');
         const config: StartParams = {
             report: false,
+            upgrade: false,
             preset: Preset.bootstrap,
             reset: false,
             target,
@@ -55,6 +55,7 @@ describe('RunService', () => {
         const bootstrapService = new BootstrapService('.');
         const config: StartParams = {
             report: false,
+            upgrade: false,
             preset: Preset.bootstrap,
             reset: false,
             target,

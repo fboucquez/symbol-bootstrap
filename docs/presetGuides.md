@@ -81,6 +81,20 @@ transactions:
     'MyTransaction': 01000000000000...
 ```
 
+### Use main account as the harvester account.
+
+For security reasons, Bootstrap doesn't use the main account as the harvester account by default. Instead, Bootstrap generates a remote account that would need to be linked to the main account. 
+Like with VRF and Voting keys, the linking (`AccountKeyLinkTransaction`) process is included in the nemesis block for new networks or can be issued via the `link` command for nodes connected to existing networks. 
+
+Both main and remote accounts will be reported in the `addresses.yml` file
+
+If you want to use your main account as the harvesting account, you can disable this feature with the following preset:
+
+```yaml
+nodeUseRemoteAccount: false
+```
+**Warning:** Disabling the remote account is not recommended as it exposes your main account's private key in the node's configuration files.
+
 ### Enable voting mode in a node
 
 ```yaml
@@ -105,7 +119,9 @@ If you know the private keys of your node, you can provide them in a custom pres
 ```yaml
 nodes:
   - voting: true
-    signingPrivateKey: CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD
+    mainPrivateKey: CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD
+    transportPrivateKey: 6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B
+    remotePrivateKey: E27AD508907524E2143EF2A3A272DDBEE7558B92550ABA5B82AD65D66B57BD00
     vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
     votingPrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
 ```
@@ -138,6 +154,38 @@ Keep the generated `addresses.yml` and `preset.yml` in the target folder private
 nodes:
     - voting: false
     - voting: false
+```
+
+### Add docker-compose properties to services
+
+Fields added in `compose` object inside the different services like `databases`, `nodes`, etc will be added to the generated docker-compose's services
+
+A custom preset like:
+
+```yaml
+nodes:
+    - compose:
+          cpu_count: 4
+          shm_size: 64M
+          deploy:
+              resources:
+                  limits:
+                      memory: 4G
+```
+
+will generate a docker service like:
+
+```yaml
+  peer-node-0:
+        container_name: peer-node-0
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
+        .......
+        cpu_count: 4
+        shm_size: 64M
+        deploy:
+            resources:
+                limits:
+                    memory: 4G
 ```
 
 ### Repeat components

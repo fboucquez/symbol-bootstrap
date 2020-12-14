@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-import 'mocha';
-import { BootstrapService, BootstrapUtils, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 import { expect } from '@oclif/test';
-import {
-    Account,
-    Deadline,
-    NetworkCurrencyLocal,
-    PlainMessage,
-    RepositoryFactoryHttp,
-    TransactionService,
-    TransferTransaction,
-    UInt64,
-} from 'symbol-sdk';
+import 'mocha';
+import { Account, Deadline, PlainMessage, RepositoryFactoryHttp, TransactionService, TransferTransaction, UInt64 } from 'symbol-sdk';
+import { BootstrapService, BootstrapUtils, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 
 describe('BootstrapService', () => {
     async function basicTestNetwork(configResult: ConfigResult): Promise<void> {
@@ -46,7 +37,8 @@ describe('BootstrapService', () => {
                 repositoryFactory.createTransactionRepository(),
                 repositoryFactory.createReceiptRepository(),
             );
-            const mosaic = NetworkCurrencyLocal.createAbsolute(100);
+            const { currency } = await repositoryFactory.getCurrencies().toPromise();
+            const mosaic = currency.createRelative(10);
 
             const nemesisAccounts = configResult.addresses?.mosaics?.[0].accounts.map((n) => n.privateKey);
 
@@ -59,8 +51,9 @@ describe('BootstrapService', () => {
 
             const recipient = Account.generateNewAccount(networkType);
 
+            const epochAdjustment = await repositoryFactory.getEpochAdjustment().toPromise();
             const transferTransaction = TransferTransaction.create(
-                Deadline.create(),
+                Deadline.create(epochAdjustment),
                 recipient.address,
                 [mosaic],
                 PlainMessage.create('test-message'),
