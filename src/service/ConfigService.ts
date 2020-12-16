@@ -170,7 +170,7 @@ export class ConfigService {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
 
-        if (presetData.nemesis) {
+        if (!presetData.nemesisSeedFolder && presetData.nemesis) {
             await this.generateNemesisConfig(presetData, addresses);
         } else {
             const copyFrom = presetData.nemesisSeedFolder || join(this.root, 'presets', this.params.preset, 'seed');
@@ -212,6 +212,7 @@ export class ConfigService {
 
         const outputFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig');
         const nodePreset = (presetData.nodes || [])[index];
+
         const generatedContext = {
             name: name,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
@@ -227,6 +228,10 @@ export class ConfigService {
         }
         if (!templateContext.networkheight) {
             excludeFiles.push('config-networkheight.properties');
+        }
+
+        if (!nodePreset.supernode) {
+            excludeFiles.push('agent.properties');
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder, excludeFiles);

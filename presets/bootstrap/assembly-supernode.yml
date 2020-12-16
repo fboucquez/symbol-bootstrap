@@ -1,0 +1,23 @@
+databases:
+  - repeat: 1
+nodes:
+  - repeat: 0
+  - repeat: 1
+    name: 'super-node'
+    brokerName: 'super-node-broker'
+    harvesting: true
+    voting: true
+    supernode: true
+    api: true
+gateways:
+  - repeat: 1
+    name: 'super-node-gateway'
+    apiNodeName: 'super-node'
+    apiNodeHost: 'super-node'
+    apiNodeBrokerHost: 'super-node-broker'
+explorers:
+  - repeat: 0
+wallets:
+  - repeat: 0
+faucets:
+  - repeat: 0

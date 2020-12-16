@@ -1,0 +1,4 @@
+nodes:
+    - voting: true
+      supernode: true
+      host: myHost

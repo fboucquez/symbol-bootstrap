@@ -13,6 +13,7 @@ currencyMosaicId: 5B66E76BECAD0860
 harvestingMosaicId: 5B66E76BECAD0860
 baseNamespace: symbol
 currencyName: 'xym'
+supernodeControllerPublicKey: 7E49E993FCB7D8E1C1D49EBD5F01522B99F1ABA9130049E77B15A4957B4550AC
 harvestingName: 'xym'
 votingSetGrouping: 720
 maxSecretLockDuration: 365d

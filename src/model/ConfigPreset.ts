@@ -84,6 +84,10 @@ export interface NodePreset extends DockerServicePreset {
     brokerOpenPort?: boolean | number | string;
     brokerExcludeDockerService?: boolean;
     brokerCompose?: any;
+
+    //super node
+    supernode?: boolean;
+    supernodeOpenPort?: boolean | number | string;
 }
 
 export interface GatewayPreset extends DockerServicePreset {
@@ -163,5 +167,6 @@ export interface ConfigPreset {
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    supernodeControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
 }
