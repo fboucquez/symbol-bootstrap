@@ -20,7 +20,5 @@ gateways:
       apiNodeBrokerHost: 'api-broker'
       description: 'catapult public test network'
       databaseHost: 'db'
-      maxConnectionAttempts: 5
-      baseRetryDelay: 500
       openPort: true
       ipv4_address: 172.20.0.25

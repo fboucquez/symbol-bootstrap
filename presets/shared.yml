@@ -187,6 +187,8 @@ apiNodeBrokerPort: 7902
 apiNodeBrokerPortMonitorInterval: 500
 apiNodeBrokerConnectTimeout: 10000
 apiNodeBrokerMonitorLoggingThrottle: 60000
+maxConnectionAttempts: 15
+baseRetryDelay: 750
 
 #voting
 votingKeyStartEpoch: 1
