@@ -6,11 +6,11 @@ node_js:
 services:
     - docker
 env:
-  global:
-    - DEV_BRANCH=dev
-    - RELEASE_BRANCH=main
-    - POST_RELEASE_BRANCH=main
-    - RELEASE_MESSAGE=release
+    global:
+        - DEV_BRANCH=dev
+        - RELEASE_BRANCH=main
+        - POST_RELEASE_BRANCH=main
+        - RELEASE_MESSAGE=release
 cache:
     bundler: true
     directories:
@@ -38,7 +38,7 @@ jobs:
           if: branch = env(DEV_BRANCH) AND type = push
         - name: alpha npm
           script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
-          if: branch = env(DEV_BRANCH) AND type = push
+          if: (branch = env(DEV_BRANCH) AND type = push) OR (type = api AND commit_message = alpha)
         - stage: release
           name: release npm
           script: npm pack && /bin/bash travis/node-functions.sh node_publish_release
