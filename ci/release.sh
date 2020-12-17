@@ -1,23 +1,27 @@
 #!/usr/bin/env bash
 set -e
 
+# Init
 . ./travis/node-functions.sh
 VERSION="$(node_load_version)"
-log_env_variables
-#npm test
-#npm pack
-#
-#npm run doc
-#touch ./ts-docs/.nojekyll
-
+DEV_BRANCH=dev
 RELEASE_BRANCH=main
 POST_RELEASE_BRANCH=main
 TRAVIS_REPO_SLUG=nemtech/symbol-bootstrap
-#push_github_pages $VERSION 'ts-docs/'
+log_env_variables
+npm test
+npm pack
 
-#node_push_github_pages
-#npm publish
+# Docs
+npm run doc
+touch ./ts-docs/.nojekyll
 
+push_github_pages $VERSION 'ts-docs/'
+
+# Publish
+npm publish
+
+# Tagging
 git tag -fa "v$VERSION" -m "Releasing version $VERSION"
 echo "Increasing artifact version"
 npm version patch -m "Increasing version to %s" --git-tag-version false
