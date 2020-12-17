@@ -36,8 +36,8 @@ interface NodeCertificates {
 }
 
 interface SshpkKey {
-    publicKey: string;
     privateKey: string;
+    publicKey: string;
     key: Key;
 }
 
