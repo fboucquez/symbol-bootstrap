@@ -66,7 +66,7 @@ symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.4
 symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.4
 symbolRestImage: symbolplatform/symbol-rest:2.2.1
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
-symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.5-alpha
+symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
 mongoImage: mongo:4.2.6-bionic
 logLevel: 'Info'

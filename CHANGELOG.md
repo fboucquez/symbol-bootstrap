@@ -4,7 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.3.0] - NEXT
+## [0.3.1] - Dec-17-2020
+
+**Milestone**: Hippopotamus(0.10.0.4)
+
+ Package  | Version  | Link
+---|---|---
+Symbol Bootstrap | v0.3.1 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+
+- Allowed Bootstrap to run as sudo/root. NOT RECOMMENDED!
+- Added Chmod 777 permission change to the db data folder when running as sudo/root.
+- Increased Rest's DB connection attempts and retries. This avoids Rest shutting down if the DB creation takes longer. 
+- Updated Wallet to latest 0.13.6 release
+
+## [0.3.0] - Dec-15-2020
 
 **Milestone**: Hippopotamus(0.10.0.4)
 

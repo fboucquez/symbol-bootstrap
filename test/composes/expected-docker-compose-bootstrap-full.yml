@@ -104,7 +104,7 @@ services:
                 ipv4_address: 172.20.0.25
     wallet-0:
         container_name: wallet-0
-        image: 'symbolplatform/symbol-desktop-wallet:0.13.5-alpha'
+        image: 'symbolplatform/symbol-desktop-wallet:0.13.6'
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
@@ -150,5 +150,4 @@ networks:
     default:
         ipam:
             config:
-                -
-                    subnet: 172.20.0.0/24
+                - subnet: 172.20.0.0/24

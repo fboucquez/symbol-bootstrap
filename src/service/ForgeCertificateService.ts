@@ -24,7 +24,7 @@ import { BootstrapUtils } from './BootstrapUtils';
 type CertificateParams = { target: string };
 
 /**
- * TODO remote if not used!
+ * TODO remove if not used!
  */
 export class ForgeCertificateService {
     constructor(protected readonly params: CertificateParams) {}
