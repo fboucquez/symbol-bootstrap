@@ -421,15 +421,23 @@ export class BootstrapUtils {
             return BootstrapUtils.dockerUserId;
         }
         try {
-            const { stdout } = await this.exec('echo $(id -u):$(id -g)');
-            logger.info(`User for docker resolved: ${stdout}`);
-            const user = stdout.trim();
+            const userId = process?.getuid();
+            const groupId = process?.getgid();
+            const user = `${userId}:${groupId}`;
+            logger.info(`User for docker resolved: ${user}`);
+            if (userId === 0) {
+                logger.error('YOU ARE RUNNING BOOTSTRAP AS ROOT!!!! THIS IS NOT RECOMMENDED!!!');
+            }
             BootstrapUtils.dockerUserId = user;
             return user;
         } catch (e) {
             logger.info(`User for docker could not be resolved: ${e}`);
             return '';
         }
+    }
+
+    public static isRoot(): boolean {
+        return !this.isWindows() && process?.getuid() === 0;
     }
 
     public static isWindows(): boolean {

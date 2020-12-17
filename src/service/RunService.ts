@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { existsSync } from 'fs';
+import { chmodSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
@@ -217,6 +217,10 @@ export class RunService {
             volumenList.map(async (v) => {
                 const volumenPath = join(this.params.target, `docker`, v);
                 if (!existsSync(volumenPath)) await BootstrapUtils.mkdir(volumenPath);
+                if (v.startsWith('../databases') && BootstrapUtils.isRoot()) {
+                    logger.info(`Chmod 777 folder ${volumenPath}`);
+                    chmodSync(volumenPath, '777');
+                }
             }),
         );
         return true;

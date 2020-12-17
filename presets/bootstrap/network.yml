@@ -62,8 +62,6 @@ gateways:
       apiNodeBrokerHost: 'api-node-broker-{{$index}}'
       name: 'rest-gateway-{{$index}}'
       description: 'catapult development network'
-      maxConnectionAttempts: 7
-      baseRetryDelay: 750
       databaseHost: 'db-{{$index}}'
       openPort: '{{add $index 3000}}'
       ipv4_address: '172.20.0.{{add $index 25}}'
