@@ -112,8 +112,8 @@ export class CertificateService {
             binds: binds,
         });
         if (stdout.indexOf('Certificate Created') < 0) {
-            logger.info(stdout);
-            logger.error(stderr);
+            logger.info(BootstrapUtils.secureString(stdout));
+            logger.error(BootstrapUtils.secureString(stderr));
             throw new Error('Certificate creation failed. Check the logs!');
         }
 

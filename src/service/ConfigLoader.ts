@@ -311,11 +311,7 @@ export class ConfigLoader {
             if (service.repeat === 0) {
                 return [];
             }
-            if (!service.repeat) {
-                return [service];
-            }
-
-            return _.range(service.repeat).map((index) => {
+            return _.range(service.repeat || 1).map((index) => {
                 return _.omit(
                     _.mapValues(service, (v: any) => this.applyValueTemplate({ ...context, ...service, $index: index }, v)),
                     'repeat',
