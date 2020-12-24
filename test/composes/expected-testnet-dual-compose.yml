@@ -13,6 +13,7 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db:/dbdata:rw'
+        mem_limit: 123
     api-node:
         user: '1000:1000'
         container_name: api-node

@@ -271,6 +271,7 @@ export class BootstrapUtils {
         copyFrom: string,
         copyTo: string,
         excludeFiles: string[] = [],
+        includeFiles: string[] = [],
     ): Promise<void> {
         // Loop through all the files in the config folder
         await fsPromises.mkdir(copyTo, { recursive: true });
@@ -286,7 +287,9 @@ export class BootstrapUtils {
                     const isMustache = file.indexOf('.mustache') > -1;
                     const destinationFile = toPath.replace('.mustache', '');
                     const fileName = basename(destinationFile);
-                    if (excludeFiles.indexOf(fileName) === -1) {
+                    const notBlacklisted = excludeFiles.indexOf(fileName) === -1;
+                    const inWhitelistIfAny = includeFiles.length === 0 || includeFiles.indexOf(fileName) > -1;
+                    if (notBlacklisted && inWhitelistIfAny) {
                         if (isMustache) {
                             const template = await BootstrapUtils.readTextFile(fromPath);
                             const renderedTemplate = this.runTemplate(template, templateContext);
@@ -297,7 +300,7 @@ export class BootstrapUtils {
                     }
                 } else if (stat.isDirectory()) {
                     await fsPromises.mkdir(toPath, { recursive: true });
-                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles);
+                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles, includeFiles);
                 }
             }),
         );

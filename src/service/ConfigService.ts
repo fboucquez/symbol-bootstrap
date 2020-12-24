@@ -493,7 +493,13 @@ export class ConfigService {
                     'userconfig',
                     'resources',
                 );
-                await BootstrapUtils.generateConfiguration({}, apiNodeConfigFolder, join(moveTo, 'api-node-config'));
+                await BootstrapUtils.generateConfiguration(
+                    {},
+                    apiNodeConfigFolder,
+                    join(moveTo, 'api-node-config'),
+                    [],
+                    ['node.crt.pem', 'node.key.pem', 'ca.cert.pem', 'config-network.properties'],
+                );
             }),
         );
     }

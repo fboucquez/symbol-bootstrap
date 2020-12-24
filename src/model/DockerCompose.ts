@@ -34,6 +34,7 @@ export interface DockerComposeService {
     volumes?: string[];
     ports?: string[];
     depends_on?: string[];
+    mem_limit?: string | number;
     // https://docs.docker.com/compose/compose-file/#service-configuration-reference deploy section
     networks?: {
         default: {

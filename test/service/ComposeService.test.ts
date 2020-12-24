@@ -26,6 +26,11 @@ describe('ComposeService', () => {
         const service = new BootstrapService('.');
         const configResult = await service.config(params);
         const dockerCompose = await service.compose(params, configResult.presetData);
+        Object.values(dockerCompose.services).forEach((service) => {
+            if (service.mem_limit) {
+                service.mem_limit = 123;
+            }
+        });
         const targetDocker = join(params.target, `docker`, 'docker-compose.yml');
         expect(existsSync(targetDocker)).to.be.true;
         const expectedFileLocation = `./test/composes/${expectedComposeFile}`;
