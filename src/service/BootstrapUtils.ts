@@ -20,6 +20,7 @@ import { textSync } from 'figlet';
 import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
+import { totalmem } from 'os';
 import { basename, join } from 'path';
 import {
     Deadline,
@@ -169,8 +170,13 @@ export class BootstrapUtils {
         const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${cmds
             .map((a) => `"${a}"`)
             .join(' ')}`;
-        logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
+        logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
         return await this.exec(runCommand);
+    }
+
+    public static secureString(text: string): string {
+        const regex = new RegExp('[0-9a-fA-F]{64}', 'g');
+        return text.replace(regex, 'HIDDEN_KEY');
     }
 
     public static sleep(ms: number): Promise<any> {
@@ -265,6 +271,7 @@ export class BootstrapUtils {
         copyFrom: string,
         copyTo: string,
         excludeFiles: string[] = [],
+        includeFiles: string[] = [],
     ): Promise<void> {
         // Loop through all the files in the config folder
         await fsPromises.mkdir(copyTo, { recursive: true });
@@ -280,7 +287,9 @@ export class BootstrapUtils {
                     const isMustache = file.indexOf('.mustache') > -1;
                     const destinationFile = toPath.replace('.mustache', '');
                     const fileName = basename(destinationFile);
-                    if (excludeFiles.indexOf(fileName) === -1) {
+                    const notBlacklisted = excludeFiles.indexOf(fileName) === -1;
+                    const inWhitelistIfAny = includeFiles.length === 0 || includeFiles.indexOf(fileName) > -1;
+                    if (notBlacklisted && inWhitelistIfAny) {
                         if (isMustache) {
                             const template = await BootstrapUtils.readTextFile(fromPath);
                             const renderedTemplate = this.runTemplate(template, templateContext);
@@ -291,7 +300,7 @@ export class BootstrapUtils {
                     }
                 } else if (stat.isDirectory()) {
                     await fsPromises.mkdir(toPath, { recursive: true });
-                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles);
+                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles, includeFiles);
                 }
             }),
         );
@@ -365,12 +374,12 @@ export class BootstrapUtils {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
-            let logText = '';
+            let logText = useLogger ? '' : 'Check console for output....';
             const log = (data: string, isError: boolean) => {
-                logText = logText + `${data}\n`;
                 if (useLogger) {
-                    if (isError) logger.warn(logPrefix + data);
-                    else logger.info(logPrefix + data);
+                    logText = logText + `${data}\n`;
+                    if (isError) logger.warn(BootstrapUtils.secureString(logPrefix + data));
+                    else logger.info(BootstrapUtils.secureString(logPrefix + data));
                 } else {
                     console.log(logPrefix + data);
                 }
@@ -486,6 +495,7 @@ export class BootstrapUtils {
         Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
+        Handlebars.registerHelper('computerMemory', BootstrapUtils.computerMemory);
     })();
 
     private static add(a: any, b: any): string | number {
@@ -506,6 +516,10 @@ export class BootstrapUtils {
             throw new TypeError('expected the second argument to be a number');
         }
         return Number(a) - Number(b);
+    }
+
+    public static computerMemory(percentage: number): number {
+        return (totalmem() * percentage) / 100;
     }
 
     public static toAmount(renderedText: string | number): string {

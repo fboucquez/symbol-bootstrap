@@ -16,6 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { totalmem } from 'os';
 import { Account, Convert, Crypto, Deadline, NetworkType, UInt64, VotingKeyLinkTransaction, VotingKeyLinkV1Transaction } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
 import assert = require('assert');
@@ -36,6 +37,29 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toAmount(12345678)).to.be.eq("12'345'678");
         expect(BootstrapUtils.toAmount('12345678')).to.be.eq("12'345'678");
         expect(BootstrapUtils.toAmount("12'3456'78")).to.be.eq("12'345'678");
+    });
+
+    it('Bootstrap.secureText', function () {
+        expect(
+            BootstrapUtils.secureString(
+                '--secret=9F9D35D4BFA630012F074AAE11CF12191105EBA1435036FEF6AFAD8088918A62 --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n',
+            ),
+        ).to.be.eq('--secret=HIDDEN_KEY --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n');
+
+        expect(
+            BootstrapUtils.secureString(
+                'Running image using Exec: symbolplatform/symbol-server:tools-gcc-0.10.0.4 /usr/catapult/bin/catapult.tools.votingkey --secret=9F9D35D4BFA630012F074AAE11CF12191105EBA1435036FEF6AFAD8088918A62 --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n',
+            ),
+        ).to.be.eq(
+            'Running image using Exec: symbolplatform/symbol-server:tools-gcc-0.10.0.4 /usr/catapult/bin/catapult.tools.votingkey --secret=HIDDEN_KEY --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n',
+        );
+    });
+
+    it('BootstrapUtils.computerMemory', async () => {
+        const totalMemory = totalmem();
+        expect(totalMemory).to.be.gt(1024 * 1024);
+        expect(BootstrapUtils.computerMemory(100)).to.be.eq(totalMemory);
+        expect(BootstrapUtils.computerMemory(50)).to.be.eq(totalMemory / 2);
     });
 
     it('BootstrapUtils.toHex', async () => {

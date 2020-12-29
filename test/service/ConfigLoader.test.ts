@@ -159,14 +159,14 @@ describe('ConfigLoader', () => {
 
         const expectedExpandedServices = [
             {
-                apiNodeName: 'api-node-{{$index}}',
-                apiNodeHost: 'api-node-{{$index}}',
-                apiNodeBrokerHost: 'api-node-broker-{{$index}}',
-                name: 'rest-gateway-{{$index}}',
+                apiNodeBrokerHost: 'api-node-broker-0',
+                apiNodeHost: 'api-node-0',
+                apiNodeName: 'api-node-0',
+                databaseHost: 'db-0',
                 description: 'catapult development network',
-                databaseHost: 'db-{{$index}}',
+                ipv4_address: '172.20.0.5',
+                name: 'rest-gateway-0',
                 openPort: true,
-                ipv4_address: '172.20.0.{{add $index 5}}',
             },
         ];
         expect(expandedServices).to.be.deep.eq(expectedExpandedServices);
