@@ -143,6 +143,8 @@ beneficiaryAddress: ''
 enableAutoHarvesting: true
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
+dockerComposeVersion: '2.4'
+dockerComposeServiceRestart: 'on-failure:2'
 
 minPartnerNodeVersion: 0.10.0.4
 maxPartnerNodeVersion: 0.10.0.4

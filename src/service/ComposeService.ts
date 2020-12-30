@@ -164,8 +164,7 @@ export class ComposeService {
 
         const nodeWorkingDirectory = '/symbol-workdir';
         const nodeCommandsDirectory = '/symbol-commands';
-        // const restart = 'unless-stopped';
-        const restart = 'on-failure:2';
+        const restart = presetData.dockerComposeServiceRestart;
         await Promise.all(
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
@@ -320,7 +319,7 @@ export class ComposeService {
         const validServices: DockerComposeService[] = services.filter((s) => s).map((s) => s as DockerComposeService);
         const servicesMap: Record<string, DockerComposeService> = _.keyBy(validServices, 'container_name');
         const dockerCompose: DockerCompose = {
-            version: '3',
+            version: presetData.dockerComposeVersion,
             services: servicesMap,
         };
 
