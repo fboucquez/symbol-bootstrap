@@ -139,6 +139,8 @@ export interface ConfigPreset {
     namespaceRentalFeeSinkAddress?: string;
     nodeUseRemoteAccount: boolean;
     networkheight: boolean;
+    dockerComposeVersion: number | string;
+    dockerComposeServiceRestart: string;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];

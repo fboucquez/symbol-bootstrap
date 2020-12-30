@@ -45,7 +45,7 @@ export interface DockerComposeService {
 }
 
 export interface DockerCompose {
-    version: string;
+    version: string | number;
     networks?: {
         default?: {
             ipam?: {
