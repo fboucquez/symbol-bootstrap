@@ -323,6 +323,22 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static pruneEmpty(obj: any): any {
+        return (function prune(current: any) {
+            _.forOwn(current, (value, key) => {
+                if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value) || (_.isObject(value) && _.isEmpty(prune(value)))) {
+                    delete current[key];
+                }
+            });
+            // remove any leftover undefined values from the delete
+            // operation on an array
+            if (_.isArray(current)) _.pull(current, undefined);
+
+            return current;
+        })(_.cloneDeep(obj)); // Do not modify the original object, create a clone instead
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static toYaml(object: any): string {
         return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140, noRefs: true });
     }

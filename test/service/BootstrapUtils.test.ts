@@ -16,6 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { it } from 'mocha';
 import { totalmem } from 'os';
 import { Account, Convert, Crypto, Deadline, NetworkType, UInt64, VotingKeyLinkTransaction, VotingKeyLinkV1Transaction } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
@@ -187,5 +188,69 @@ describe('BootstrapUtils', () => {
         expect(transaction.endEpoch).to.be.eq(presetData.votingKeyEndEpoch);
         expect(transaction.maxFee).to.be.deep.eq(maxFee);
         expect(transaction.deadline).to.be.deep.eq(deadline);
+    });
+
+    it('should remove null values', () => {
+        const compose = {
+            version: '2.4',
+            services: {
+                db: {
+                    user: '',
+                    environment: {
+                        MONGO_INITDB_DATABASE: 'null',
+                    },
+                    container_name: 'db',
+                    image: 'mongo:4.2.6-bionic',
+                    command: 'mongod --dbpath=/dbdata --bind_ip=db',
+                    stop_signal: 'SIGINT',
+                    working_dir: '/docker-entrypoint-initdb.d',
+                    ports: [],
+                    volumes: ['./mongo:/docker-entrypoint-initdb.d:ro', '../databases/db:/dbdata:rw'],
+                    mem_limit: null,
+                },
+                networks: {
+                    default: {
+                        ipam: {
+                            config: [
+                                {
+                                    subnet: '172.20.0.0/24',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        };
+
+        const composePruned = {
+            version: '2.4',
+            services: {
+                db: {
+                    user: '',
+                    environment: {
+                        MONGO_INITDB_DATABASE: 'null',
+                    },
+                    container_name: 'db',
+                    image: 'mongo:4.2.6-bionic',
+                    command: 'mongod --dbpath=/dbdata --bind_ip=db',
+                    stop_signal: 'SIGINT',
+                    working_dir: '/docker-entrypoint-initdb.d',
+                    volumes: ['./mongo:/docker-entrypoint-initdb.d:ro', '../databases/db:/dbdata:rw'],
+                },
+                networks: {
+                    default: {
+                        ipam: {
+                            config: [
+                                {
+                                    subnet: '172.20.0.0/24',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        };
+
+        expect(BootstrapUtils.pruneEmpty(compose)).to.deep.eq(composePruned);
     });
 });
