@@ -33,7 +33,7 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        depends_on: []
+
         cpu_count: 4
         shm_size: 64M
         deploy:
@@ -58,7 +58,7 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        depends_on: []
+
         cpu_count: 4
         shm_size: 64M
         deploy:
@@ -78,7 +78,7 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
-        ports: []
+
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'

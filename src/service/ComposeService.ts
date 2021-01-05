@@ -318,7 +318,7 @@ export class ComposeService {
 
         const validServices: DockerComposeService[] = services.filter((s) => s).map((s) => s as DockerComposeService);
         const servicesMap: Record<string, DockerComposeService> = _.keyBy(validServices, 'container_name');
-        const dockerCompose: DockerCompose = {
+        let dockerCompose: DockerCompose = {
             version: presetData.dockerComposeVersion,
             services: servicesMap,
         };
@@ -336,6 +336,7 @@ export class ComposeService {
                 },
             };
 
+        dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;

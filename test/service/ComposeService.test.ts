@@ -75,6 +75,19 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-testnet-dual-compose.yml');
     });
 
+    it('Compose testnet dual voting', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/testnet-voting',
+            reset: false,
+            customPreset: './test/voting_preset.yml',
+            preset: Preset.testnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-testnet-voting-compose.yml');
+    });
+
     it('Compose bootstrap default', async () => {
         const params = {
             ...ConfigService.defaultParams,
@@ -142,7 +155,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            reset: true,
+            reset: false,
             target: 'target/ConfigService.bootstrap.repeat',
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',
