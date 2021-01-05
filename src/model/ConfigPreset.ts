@@ -59,6 +59,7 @@ export interface NemesisPreset {
 export interface NodePreset extends DockerServicePreset {
     // At least these properties.
     // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
+    serverVersion?: string;
     nodeUseRemoteAccount?: boolean;
     repeat?: number;
     harvesting: boolean;
@@ -86,8 +87,10 @@ export interface NodePreset extends DockerServicePreset {
     brokerCompose?: any;
 
     //super node
-    supernode?: boolean;
+    supernode?: boolean | string;
     supernodeOpenPort?: boolean | number | string;
+    agentUrl?: string; //calculated if not provided.
+    restGatewayUrl?: string; // calculated if not provided;
 }
 
 export interface GatewayPreset extends DockerServicePreset {
@@ -127,6 +130,7 @@ export interface FaucetPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    serverVersion: string;
     epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;
@@ -167,6 +171,6 @@ export interface ConfigPreset {
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
-    supernodeControllerPublicKey?: string;
+    supernodeEnrolmentAddress?: string;
     votingKeyLinkV2: number | undefined;
 }

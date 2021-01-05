@@ -15,6 +15,7 @@
  */
 import {
     Account,
+    Address,
     Deadline,
     PlainMessage,
     PublicAccount,
@@ -49,7 +50,7 @@ export class SupernodeService {
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
-        if (!presetData.supernodeControllerPublicKey) {
+        if (!presetData.supernodeEnrolmentAddress) {
             logger.warn('This network does not have a supernode controller public key. Nodes cannot be registered.');
             return;
         }
@@ -58,13 +59,13 @@ export class SupernodeService {
         const currency = (await repositoryFactory.getCurrencies().toPromise()).currency;
 
         const networkType = await repositoryFactory.getNetworkType().toPromise();
-        const supernodeControllerAccount = PublicAccount.createFromPublicKey(presetData.supernodeControllerPublicKey, networkType);
+        const supernodeEnrolmentAddress = Address.createFromRawAddress(presetData.supernodeEnrolmentAddress);
 
         const maxFee = UInt64.fromUint(this.params.maxFee);
         logger.info(
             `Registering super nodes using network url ${url}. Max Fee ${this.params.maxFee / Math.pow(10, currency.divisibility)}`,
         );
-        logger.info(`Registration transfer transaction will be sent to ${supernodeControllerAccount.address.plain()}`);
+        logger.info(`Registration transfer transaction will be sent to ${supernodeEnrolmentAddress.plain()}`);
 
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
         if (generationHash !== presetData.nemesisGenerationHashSeed) {
@@ -87,8 +88,8 @@ export class SupernodeService {
                     logger.warn(`Node ${node.name} 'voting: true' custom preset flag wasn't provided!`);
                     return;
                 }
-                const harvesterSigningPublicKey = (nodeAccount.remote || nodeAccount.main)?.publicKey;
-                if (!harvesterSigningPublicKey) {
+                const agentPublicKey = nodeAccount.transport.publicKey;
+                if (!agentPublicKey) {
                     logger.warn(`Cannot resolve harvester public key of node ${node.name}`);
                     return;
                 }
@@ -99,17 +100,11 @@ export class SupernodeService {
                     return;
                 }
                 const mainAccount = Account.createFromPrivateKey(nodeAccount.main.privateKey, networkType);
-                const plainMessage = `enroll ${node.host} ${node.friendlyName || nodeAccount.friendlyName} ${harvesterSigningPublicKey}`;
+                const agentUrl = node.agentUrl || 'http://' + node.host + ':7880';
+                const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
                 const message = PlainMessage.create(plainMessage);
                 logger.info(`Sending registration with message '${plainMessage}' using signer ${mainAccount.address.plain()}`);
-                const transaction = TransferTransaction.create(
-                    deadline,
-                    supernodeControllerAccount.address,
-                    [],
-                    message,
-                    networkType,
-                    maxFee,
-                );
+                const transaction = TransferTransaction.create(deadline, supernodeEnrolmentAddress, [], message, networkType, maxFee);
 
                 return { singedTransaction: mainAccount.sign(transaction, generationHash), node };
             })

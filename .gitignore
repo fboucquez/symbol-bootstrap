@@ -14,3 +14,4 @@ symbol-bootstrap-*.tgz
 coverage
 /ts-docs/
 /oclif.manifest.json
+/ngrok-testnet.yml

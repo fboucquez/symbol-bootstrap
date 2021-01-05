@@ -189,7 +189,7 @@ export class ComposeService {
                         // Pull from cloud!!!!
                         const supernodeAgentCommand = `${nodeCommandsDirectory}/supernode-agent-linux --config ./userconfig/agent.properties`;
                         copyFileSync(
-                            join(process.cwd(), '../symbol-node-rewards/packages/agent/dist/app-linux'),
+                            join(process.cwd(), '../symbol-node-rewards/packages/agent/dist/agent-linux.bin'),
                             join(targetDocker, 'server', 'supernode-agent-linux'),
                         );
                         portConfigurations.push({ internalPort: 7880, openPort: n.supernodeOpenPort || 7880 });

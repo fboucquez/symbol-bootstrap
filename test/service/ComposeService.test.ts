@@ -75,6 +75,19 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-testnet-dual-compose.yml');
     });
 
+    it('Compose testnet supernode', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/testnet-supernode',
+            customPreset: './test/supernode.yml',
+            reset: false,
+            preset: Preset.testnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-testnet-supernode-compose.yml');
+    });
+
     it('Compose testnet dual voting', async () => {
         const params = {
             ...ConfigService.defaultParams,

@@ -215,11 +215,12 @@ export class ConfigService {
 
         const generatedContext = {
             name: name,
+            agentPrivateKey: account.transport.privateKey,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
             harvesterSigningPrivateKey: (account.remote || account.main)?.privateKey || '',
             harvesterVrfPrivateKey: account.vrf?.privateKey || '',
         };
-        const templateContext = { ...presetData, ...generatedContext, ...nodePreset };
+        const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];
 
         // Exclude files depending on the enabled extensions. To complete...
@@ -230,7 +231,18 @@ export class ConfigService {
             excludeFiles.push('config-networkheight.properties');
         }
 
-        if (!nodePreset.supernode) {
+        if (nodePreset.supernode) {
+            if (!nodePreset.host) {
+                throw new Error(`Cannot create supernode configuration. You need to provide a host field in preset: ${nodePreset.name}`);
+            }
+            const restService = presetData.gateways?.find((g) => g.apiNodeName == nodePreset.name);
+            if (!restService) {
+                throw new Error(`Cannot create supernode configuration. There is not rest gateway for the api node: ${nodePreset.name}`);
+            }
+            templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
+            templateContext.rewardProgram = _.isString(nodePreset.supernode) ? nodePreset.supernode : 'SuperNode';
+            templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
+        } else {
             excludeFiles.push('agent.properties');
         }
 
