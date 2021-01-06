@@ -194,7 +194,10 @@ export class ComposeService {
                         logger.info(`Copying from ${rootDestination} to ${localDestination}`);
                         copyFileSync(rootDestination, localDestination);
 
-                        portConfigurations.push({ internalPort: 7880, openPort: n.supernodeOpenPort || 7880 });
+                        portConfigurations.push({
+                            internalPort: 7880,
+                            openPort: _.isUndefined(n.supernodeOpenPort) ? true : n.supernodeOpenPort,
+                        });
                         serverCommand += ' & ' + supernodeAgentCommand;
                     }
 
