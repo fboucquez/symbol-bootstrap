@@ -21,6 +21,7 @@ import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
 import { ReportParams, ReportService } from './ReportService';
 import { RunParams, RunService } from './RunService';
+import { SupernodeParams, SupernodeService } from './SupernodeService';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
 
@@ -72,6 +73,21 @@ export class BootstrapService {
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
         await new LinkService(config).run(passedPresetData, passedAddresses);
+    }
+
+    /**
+     * It calls a running service announcing the registration of the nodes to the supernode rewards program.
+     *
+     * @param config the params passed
+     * @param passedPresetData  the created preset if you know it, otherwise will load the latest one resolved from the target folder.
+     * @param passedAddresses  the created addresses if you know it, otherwise will load the latest one resolved from the target folder.
+     */
+    public async supernode(
+        config: SupernodeParams = SupernodeService.defaultParams,
+        passedPresetData?: ConfigPreset | undefined,
+        passedAddresses?: Addresses | undefined,
+    ): Promise<void> {
+        await new SupernodeService(config).enroll(passedPresetData, passedAddresses);
     }
 
     /**

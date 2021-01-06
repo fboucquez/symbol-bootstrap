@@ -170,7 +170,7 @@ export class ConfigService {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
 
-        if (presetData.nemesis) {
+        if (!presetData.nemesisSeedFolder && presetData.nemesis) {
             await this.generateNemesisConfig(presetData, addresses);
         } else {
             const copyFrom = presetData.nemesisSeedFolder || join(this.root, 'presets', this.params.preset, 'seed');
@@ -212,13 +212,15 @@ export class ConfigService {
 
         const outputFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig');
         const nodePreset = (presetData.nodes || [])[index];
+
         const generatedContext = {
             name: name,
+            nodePrivateKey: account.transport.privateKey,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
             harvesterSigningPrivateKey: (account.remote || account.main)?.privateKey || '',
             harvesterVrfPrivateKey: account.vrf?.privateKey || '',
         };
-        const templateContext = { ...presetData, ...generatedContext, ...nodePreset };
+        const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];
 
         // Exclude files depending on the enabled extensions. To complete...
@@ -227,6 +229,21 @@ export class ConfigService {
         }
         if (!templateContext.networkheight) {
             excludeFiles.push('config-networkheight.properties');
+        }
+
+        if (nodePreset.supernode) {
+            if (!nodePreset.host) {
+                throw new Error(`Cannot create supernode configuration. You need to provide a host field in preset: ${nodePreset.name}`);
+            }
+            const restService = presetData.gateways?.find((g) => g.apiNodeName == nodePreset.name);
+            if (!restService) {
+                throw new Error(`Cannot create supernode configuration. There is not rest gateway for the api node: ${nodePreset.name}`);
+            }
+            templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
+            templateContext.rewardProgram = _.isString(nodePreset.supernode) ? nodePreset.supernode : 'SuperNode';
+            templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
+        } else {
+            excludeFiles.push('agent.properties');
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder, excludeFiles);

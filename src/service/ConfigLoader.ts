@@ -142,6 +142,7 @@ export class ConfigLoader {
         const node = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.transportPrivateKey));
 
         const friendlyName = nodePreset.friendlyName || ca.publicKey.substr(0, 7);
+
         const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, main: ca, transport: node };
 
         const useRemoteAccount = nodePreset.nodeUseRemoteAccount || presetData.nodeUseRemoteAccount;
@@ -150,7 +151,6 @@ export class ConfigLoader {
             nodeAccount.remote = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.remotePrivateKey));
         if (nodePreset.voting) nodeAccount.voting = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
         if (nodePreset.harvesting) nodeAccount.vrf = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
-
         return nodeAccount;
     }
 

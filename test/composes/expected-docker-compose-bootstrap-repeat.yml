@@ -69,7 +69,6 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-
         networks:
             default:
                 aliases:
@@ -88,7 +87,6 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-
         networks:
             default:
                 aliases:
@@ -107,7 +105,6 @@ services:
         volumes:
             - '../nodes/peer-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-
         networks:
             default:
                 aliases:
@@ -121,7 +118,6 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
-
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
@@ -140,7 +136,6 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
-
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
@@ -159,7 +154,6 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
-
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
@@ -178,7 +172,6 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
-
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
@@ -258,6 +251,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '3000:3000'
+        restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway-0:/symbol-workdir:rw'
         depends_on:
@@ -274,6 +268,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '3001:3000'
+        restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway-1:/symbol-workdir:rw'
         depends_on:
@@ -290,6 +285,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '3002:3000'
+        restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway-2:/symbol-workdir:rw'
         depends_on:
@@ -306,6 +302,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '3003:3000'
+        restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway-3:/symbol-workdir:rw'
         depends_on:

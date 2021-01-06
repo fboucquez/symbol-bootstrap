@@ -15,12 +15,13 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, LinkService } from '../service';
+import { BootstrapService, BootstrapUtils } from '../service';
+import { SupernodeService } from '../service/SupernodeService';
 
-export default class Link extends Command {
-    static description = `It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.`;
+export default class Supernode extends Command {
+    static description = `It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.`;
 
-    static examples = [`$ symbol-bootstrap link`];
+    static examples = [`$ symbol-bootstrap supernode`];
 
     static flags = {
         help: BootstrapUtils.helpFlag,
@@ -28,21 +29,17 @@ export default class Link extends Command {
         url: flags.string({
             char: 'u',
             description: 'the network url',
-            default: LinkService.defaultParams.url,
-        }),
-        unlink: flags.boolean({
-            description: 'Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account',
-            default: LinkService.defaultParams.unlink,
+            default: SupernodeService.defaultParams.url,
         }),
         maxFee: flags.integer({
             description: 'the max fee used when announcing (absolute)',
-            default: LinkService.defaultParams.maxFee,
+            default: SupernodeService.defaultParams.maxFee,
         }),
     };
 
     public async run(): Promise<void> {
-        const { flags } = this.parse(Link);
+        const { flags } = this.parse(Supernode);
         BootstrapUtils.showBanner();
-        return new BootstrapService(this.config.root).link(flags);
+        return new BootstrapService(this.config.root).supernode(flags);
     }
 }
