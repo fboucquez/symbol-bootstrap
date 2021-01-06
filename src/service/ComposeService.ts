@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { copyFileSync, existsSync } from 'fs';
+import { chmodSync, copyFileSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { LogType } from '../logger';
@@ -193,6 +193,7 @@ export class ComposeService {
                         const localDestination = join(targetDocker, 'server', 'agent-linux.bin');
                         logger.info(`Copying from ${rootDestination} to ${localDestination}`);
                         copyFileSync(rootDestination, localDestination);
+                        chmodSync(localDestination, '755');
 
                         portConfigurations.push({
                             internalPort: 7880,
