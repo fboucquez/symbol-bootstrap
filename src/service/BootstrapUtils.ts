@@ -17,10 +17,22 @@
 import { flags } from '@oclif/command';
 import { spawn } from 'child_process';
 import { textSync } from 'figlet';
-import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
+import {
+    createWriteStream,
+    existsSync,
+    lstatSync,
+    promises as fsPromises,
+    readdirSync,
+    readFileSync,
+    rmdirSync,
+    statSync,
+    unlink,
+    unlinkSync,
+} from 'fs';
 import * as Handlebars from 'handlebars';
+import { get } from 'https';
 import * as _ from 'lodash';
-import { totalmem } from 'os';
+import { platform, totalmem } from 'os';
 import { basename, join } from 'path';
 import {
     Deadline,
@@ -78,6 +90,66 @@ export class BootstrapUtils {
             BootstrapUtils.stopProcess = true;
         });
     })();
+
+    public static download(url: string, dest: string): Promise<void> {
+        const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
+        return new Promise((resolve, reject) => {
+            const file = createWriteStream(dest, { flags: 'wx' });
+            function showDownloadingProgress(received: number, total: number) {
+                const percentage = ((received * 100) / total).toFixed(2);
+                process.stdout.write(platform() == 'win32' ? '\\033[0G' : '\r');
+                process.stdout.write(percentage + '% | ' + received + ' bytes downloaded out of ' + total + ' bytes.');
+            }
+            const request = get(url, (response) => {
+                const total = parseInt(response.headers['content-length'] || '0', 10);
+                let received = 0;
+                if (total === destinationSize) {
+                    logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
+                    file.close();
+                    request.abort();
+                    resolve();
+                } else if (response.statusCode === 200) {
+                    logger.info(`Downloading file ${url}`);
+                    response.pipe(file);
+                    response.on('data', function (chunk) {
+                        received += chunk.length;
+                        showDownloadingProgress(received, total);
+                    });
+                } else {
+                    file.close();
+                    unlink(dest, () => {
+                        // nothing
+                    }); // Delete temp file
+                    reject(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
+                }
+            });
+
+            request.on('error', (err) => {
+                file.close();
+                unlink(dest, () => {
+                    //nothing
+                }); // Delete temp file
+                reject(err.message);
+            });
+
+            file.on('finish', () => {
+                resolve();
+            });
+
+            file.on('error', (err) => {
+                file.close();
+
+                if (err.code === 'EEXIST') {
+                    reject('File already exists');
+                } else {
+                    unlink(dest, () => {
+                        //nothing
+                    }); // Delete temp file
+                    reject(err.message);
+                }
+            });
+        });
+    }
 
     public static deleteFolder(folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {

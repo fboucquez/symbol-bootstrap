@@ -187,11 +187,13 @@ export class ComposeService {
                     if (n.supernode) {
                         await BootstrapUtils.mkdir(join(targetDocker, 'server'));
                         // Pull from cloud!!!!
-                        const supernodeAgentCommand = `${nodeCommandsDirectory}/supernode-agent-linux --config ./userconfig/agent.properties`;
-                        copyFileSync(
-                            join(process.cwd(), '../symbol-node-rewards/packages/agent/dist/agent-linux.bin'),
-                            join(targetDocker, 'server', 'supernode-agent-linux'),
-                        );
+                        const supernodeAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent.properties`;
+                        const rootDestination = join(this.root, 'agent-linux.bin');
+                        await BootstrapUtils.download(presetData.agentBinaryLocation, rootDestination);
+                        const localDestination = join(targetDocker, 'server', 'agent-linux.bin');
+                        logger.info(`Copying from ${rootDestination} to ${localDestination}`);
+                        copyFileSync(rootDestination, localDestination);
+
                         portConfigurations.push({ internalPort: 7880, openPort: n.supernodeOpenPort || 7880 });
                         serverCommand += ' & ' + supernodeAgentCommand;
                     }

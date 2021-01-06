@@ -15,6 +15,7 @@
  */
 
 import { expect } from '@oclif/test';
+import { existsSync } from 'fs';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
@@ -38,6 +39,13 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toAmount(12345678)).to.be.eq("12'345'678");
         expect(BootstrapUtils.toAmount('12345678')).to.be.eq("12'345'678");
         expect(BootstrapUtils.toAmount("12'3456'78")).to.be.eq("12'345'678");
+    });
+
+    it('BootstrapUtils.download', async () => {
+        BootstrapUtils.deleteFile('boat.png');
+        await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
+        await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
+        expect(existsSync('boat.png')).eq(true);
     });
 
     it('Bootstrap.secureText', function () {

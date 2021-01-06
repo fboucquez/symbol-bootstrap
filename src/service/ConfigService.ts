@@ -215,7 +215,7 @@ export class ConfigService {
 
         const generatedContext = {
             name: name,
-            agentPrivateKey: account.transport.privateKey,
+            nodePrivateKey: account.transport.privateKey,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
             harvesterSigningPrivateKey: (account.remote || account.main)?.privateKey || '',
             harvesterVrfPrivateKey: account.vrf?.privateKey || '',

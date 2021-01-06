@@ -33,7 +33,6 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-
         cpu_count: 4
         shm_size: 64M
         deploy:
@@ -58,7 +57,6 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-
         cpu_count: 4
         shm_size: 64M
         deploy:
@@ -78,7 +76,6 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
-
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
@@ -113,6 +110,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '3000:3000'
+        restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway-0:/symbol-workdir:rw'
         depends_on:
@@ -124,4 +122,5 @@ networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

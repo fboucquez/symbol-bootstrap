@@ -9,7 +9,6 @@ services:
         command: mongod --dbpath=/dbdata --bind_ip=db
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
-
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db:/dbdata:rw'
@@ -50,6 +49,7 @@ services:
         working_dir: /symbol-workdir
         ports:
             - '3000:3000'
+        restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway:/symbol-workdir:rw'
         depends_on:
@@ -61,4 +61,5 @@ networks:
     default:
         ipam:
             config:
-                - subnet: 172.20.0.0/24
+                -
+                    subnet: 172.20.0.0/24

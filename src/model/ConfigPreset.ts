@@ -130,6 +130,7 @@ export interface FaucetPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    agentBinaryLocation: string;
     serverVersion: string;
     epochAdjustment: string;
     catapultAppFolder: string;
