@@ -19,7 +19,7 @@ import { BootstrapService, BootstrapUtils } from '../service';
 import { SupernodeService } from '../service/SupernodeService';
 
 export default class Supernode extends Command {
-    static description = `It register the nodes in the supernode rewards program.`;
+    static description = `It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.`;
 
     static examples = [`$ symbol-bootstrap supernode`];
 

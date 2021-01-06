@@ -1,13 +1,13 @@
 `symbol-bootstrap supernode`
 ============================
 
-It register the nodes in the supernode rewards program.
+It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.
 
 * [`symbol-bootstrap supernode`](#symbol-bootstrap-supernode)
 
 ## `symbol-bootstrap supernode`
 
-It register the nodes in the supernode rewards program.
+It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.
 
 ```
 USAGE
