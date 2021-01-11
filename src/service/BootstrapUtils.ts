@@ -102,7 +102,6 @@ export class BootstrapUtils {
         logger.info(`Checking remote file ${url}`);
         const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
         return new Promise((resolve, reject) => {
-            const file = createWriteStream(dest, { flags: 'wx' });
             function showDownloadingProgress(received: number, total: number) {
                 const percentage = ((received * 100) / total).toFixed(2);
                 process.stdout.write(platform() == 'win32' ? '\\033[0G' : '\r');
@@ -112,17 +111,34 @@ export class BootstrapUtils {
                 const total = parseInt(response.headers['content-length'] || '0', 10);
                 let received = 0;
                 if (total === destinationSize) {
-                    console.log(`File ${dest} is up to date with url ${url}. No need to download!`);
-                    file.close();
+                    logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
+                    request.abort();
+                    resolve();
                 } else if (response.statusCode === 200) {
-                    console.log(`Downloading file ${url}`);
+                    const file = createWriteStream(dest, { flags: 'wx' });
+                    logger.info(`Downloading file ${url}`);
                     response.pipe(file);
                     response.on('data', function (chunk) {
                         received += chunk.length;
                         showDownloadingProgress(received, total);
                     });
+
+                    file.on('finish', () => {
+                        resolve();
+                    });
+
+                    file.on('error', (err) => {
+                        file.close();
+                        if (err.code === 'EEXIST') {
+                            reject(new Error('File already exists'));
+                        } else {
+                            unlink(dest, () => {
+                                //nothing
+                            }); // Delete temp file
+                            reject(err.message);
+                        }
+                    });
                 } else {
-                    file.close();
                     unlink(dest, () => {
                         // nothing
                     }); // Delete temp file
@@ -131,28 +147,10 @@ export class BootstrapUtils {
             });
 
             request.on('error', (err) => {
-                file.close();
                 unlink(dest, () => {
                     //nothing
                 }); // Delete temp file
                 reject(err.message);
-            });
-
-            file.on('finish', () => {
-                resolve();
-            });
-
-            file.on('error', (err) => {
-                file.close();
-
-                if (err.code === 'EEXIST') {
-                    reject('File already exists');
-                } else {
-                    unlink(dest, () => {
-                        //nothing
-                    }); // Delete temp file
-                    reject(err.message);
-                }
             });
         });
     }

@@ -23,4 +23,4 @@ EXAMPLE
   $ symbol-bootstrap supernode
 ```
 
-_See code: [src/commands/supernode.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2-alpha-202101111534/src/commands/supernode.ts)_
+_See code: [src/commands/supernode.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2-alpha-202101111534-alpha-202101111918/src/commands/supernode.ts)_

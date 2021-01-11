@@ -45,6 +45,7 @@ describe('BootstrapUtils', () => {
         BootstrapUtils.deleteFile('boat.png');
         await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
         await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
+        await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
         expect(existsSync('boat.png')).eq(true);
     });
 
