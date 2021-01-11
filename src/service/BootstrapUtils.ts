@@ -135,14 +135,14 @@ export class BootstrapUtils {
                             unlink(dest, () => {
                                 //nothing
                             }); // Delete temp file
-                            reject(err.message);
+                            reject(err);
                         }
                     });
                 } else {
                     unlink(dest, () => {
                         // nothing
                     }); // Delete temp file
-                    reject(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
+                    reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
                 }
             });
 
