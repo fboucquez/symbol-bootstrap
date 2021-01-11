@@ -33,6 +33,7 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
@@ -123,13 +124,7 @@ export class ConfigService {
 
             const presetData: ConfigPreset = _.merge(
                 oldPresetData || {},
-                this.configLoader.createPresetData(
-                    this.root,
-                    this.params.preset,
-                    this.params.assembly,
-                    this.params.customPreset,
-                    this.params.customPresetObject,
-                ),
+                this.configLoader.createPresetData({ ...this.params, root: this.root }),
             );
 
             if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
@@ -140,6 +135,7 @@ export class ConfigService {
             this.cleanUpConfiguration(presetData);
 
             await this.generateNodeCertificates(presetData, addresses);
+            await this.generateAgentCertificates(presetData);
             await this.generateNodes(presetData, addresses);
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData);
@@ -198,11 +194,21 @@ export class ConfigService {
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
-                return await new CertificateService(this.root, this.params).run(presetData, account.name, {
+                return await new CertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name, {
                     main: account.main,
                     transport: account.transport,
                 });
             }),
+        );
+    }
+
+    private async generateAgentCertificates(presetData: ConfigPreset): Promise<void> {
+        await Promise.all(
+            (presetData.nodes || [])
+                .filter((n) => n.supernode)
+                .map(async (account) => {
+                    return await new AgentCertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name);
+                }),
         );
     }
 

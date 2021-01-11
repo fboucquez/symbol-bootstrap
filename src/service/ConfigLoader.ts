@@ -162,26 +162,32 @@ export class ConfigLoader {
         return [...Array(size).keys()];
     }
 
-    public createPresetData(
-        root: string,
-        preset: Preset,
-        assembly: string | undefined,
-        customPresetFile: string | undefined,
-        customPresetObject: any | undefined,
-    ): ConfigPreset {
+    public createPresetData({
+        root,
+        preset,
+        assembly,
+        customPreset,
+        customPresetObject,
+    }: {
+        root: string;
+        preset: Preset;
+        assembly?: string;
+        customPreset?: string;
+        customPresetObject?: any;
+    }): ConfigPreset {
         const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'));
         const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`);
         const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`) : {};
-        const customPreset = customPresetFile ? BootstrapUtils.loadYaml(customPresetFile) : {};
+        const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset) : {};
         //Deep merge
-        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPreset, customPresetObject, { preset });
+        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
                 logger.info(`Assembly preset ${assembly}`);
             }
-            if (customPresetFile) {
-                logger.info(`Custom preset file ${customPresetFile}`);
+            if (customPreset) {
+                logger.info(`Custom preset file ${customPreset}`);
             }
         }
         ConfigLoader.presetInfoLogged = true;

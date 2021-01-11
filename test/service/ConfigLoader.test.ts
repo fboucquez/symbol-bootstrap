@@ -30,7 +30,13 @@ describe('ConfigLoader', () => {
 
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
         try {
-            await configLoader.createPresetData('.', Preset.testnet, undefined, undefined, undefined);
+            await configLoader.createPresetData({
+                root: '.',
+                preset: Preset.testnet,
+                assembly: undefined,
+                customPreset: undefined,
+                customPresetObject: undefined,
+            });
         } catch (e) {
             expect(e.message).to.equal('Preset testnet requires assembly (-a, --assembly option). Possible values are: api, dual, peer');
             return;
@@ -39,18 +45,24 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData testnet assembly', async () => {
-        const presetData = await configLoader.createPresetData('.', Preset.testnet, 'dual', undefined, undefined);
+        const presetData = await configLoader.createPresetData({
+            root: '.',
+            preset: Preset.testnet,
+            assembly: 'dual',
+            customPreset: undefined,
+            customPresetObject: undefined,
+        });
         expect(presetData).to.not.be.undefined;
     });
 
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
-        const presetData = await configLoader.createPresetData(
-            '.',
-            Preset.bootstrap,
-            undefined,
-            'test/override-currency-preset.yml',
-            undefined,
-        );
+        const presetData = await configLoader.createPresetData({
+            root: '.',
+            preset: Preset.bootstrap,
+            assembly: undefined,
+            customPreset: 'test/override-currency-preset.yml',
+            customPresetObject: undefined,
+        });
         expect(presetData).to.not.be.undefined;
         expect(presetData?.nemesis?.mosaics?.[0].accounts).to.be.eq(20);
         const yaml = BootstrapUtils.toYaml(presetData);

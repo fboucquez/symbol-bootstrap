@@ -187,7 +187,7 @@ export class ComposeService {
                     if (n.supernode) {
                         await BootstrapUtils.mkdir(join(targetDocker, 'server'));
                         // Pull from cloud!!!!
-                        const supernodeAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent.properties`;
+                        const supernodeAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent/agent.properties`;
                         const rootDestination = join(this.root, 'agent-linux.bin');
                         await BootstrapUtils.download(presetData.agentBinaryLocation, rootDestination);
                         const localDestination = join(targetDocker, 'server', 'agent-linux.bin');

@@ -172,6 +172,6 @@ export interface ConfigPreset {
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
-    supernodeEnrolmentAddress?: string;
+    supernodeControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
 }
