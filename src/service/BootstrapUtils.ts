@@ -114,7 +114,6 @@ export class BootstrapUtils {
                 if (total === destinationSize) {
                     console.log(`File ${dest} is up to date with url ${url}. No need to download!`);
                     file.close();
-                    resolve();
                 } else if (response.statusCode === 200) {
                     console.log(`Downloading file ${url}`);
                     response.pipe(file);
