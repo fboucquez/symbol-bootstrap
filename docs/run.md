@@ -53,4 +53,4 @@ EXAMPLE
   $ symbol-bootstrap run
 ```
 
-_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2-alpha-202101111534/src/commands/run.ts)_

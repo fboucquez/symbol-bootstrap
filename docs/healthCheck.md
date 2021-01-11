@@ -36,4 +36,4 @@ EXAMPLE
   $ symbol-bootstrap healthCheck
 ```
 
-_See code: [src/commands/healthCheck.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2/src/commands/healthCheck.ts)_
+_See code: [src/commands/healthCheck.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2-alpha-202101111534/src/commands/healthCheck.ts)_

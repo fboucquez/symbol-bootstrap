@@ -99,6 +99,7 @@ export class BootstrapUtils {
             await fsPromises.copyFile(url, dest);
             return;
         }
+        logger.info(`Checking remote file ${url}`);
         const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
         return new Promise((resolve, reject) => {
             const file = createWriteStream(dest, { flags: 'wx' });
@@ -111,12 +112,11 @@ export class BootstrapUtils {
                 const total = parseInt(response.headers['content-length'] || '0', 10);
                 let received = 0;
                 if (total === destinationSize) {
-                    logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
+                    console.log(`File ${dest} is up to date with url ${url}. No need to download!`);
                     file.close();
-                    request.abort();
                     resolve();
                 } else if (response.statusCode === 200) {
-                    logger.info(`Downloading file ${url}`);
+                    console.log(`Downloading file ${url}`);
                     response.pipe(file);
                     response.on('data', function (chunk) {
                         received += chunk.length;
