@@ -399,7 +399,7 @@ export class BootstrapUtils {
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
-        const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(validatePassword)) : object);
+        const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
         await BootstrapUtils.writeTextFile(path, yamlString);
     }
 
