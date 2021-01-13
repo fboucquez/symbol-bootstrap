@@ -46,10 +46,26 @@ export class ComposeService {
         upgrade: false,
     };
 
+    public static readonly DEBUG_SERVICE_PARAMS = {
+        security_opt: ['seccomp:unconfined'],
+        cap_add: ['ALL'],
+        privileged: true,
+    };
+
     private readonly configLoader: ConfigLoader;
 
     constructor(private readonly root: string, protected readonly params: ComposeParams) {
         this.configLoader = new ConfigLoader();
+    }
+
+    public resolveDebugOptions(dockerComposeDebugMode: boolean, dockerComposeServiceDebugMode: boolean | undefined) {
+        if (dockerComposeServiceDebugMode == false) {
+            return {};
+        }
+        if (dockerComposeServiceDebugMode || dockerComposeDebugMode) {
+            return ComposeService.DEBUG_SERVICE_PARAMS;
+        }
+        return {};
     }
 
     public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
@@ -164,6 +180,7 @@ export class ComposeService {
                                 vol(`./mongo`, `/docker-entrypoint-initdb.d`, true),
                                 vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata', false),
                             ],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -223,6 +240,7 @@ export class ComposeService {
                         ports: resolvePorts(portConfigurations),
                         volumes: volumes,
                         depends_on: serverDependsOn,
+                        ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                         ...n.compose,
                     });
 
@@ -246,6 +264,7 @@ export class ComposeService {
                                     stop_signal: 'SIGINT',
                                     restart: restart,
                                     volumes: nodeService.volumes,
+                                    ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.brokerDockerComposeDebugMode),
                                     ...n.brokerCompose,
                                 },
                             ),
@@ -272,6 +291,7 @@ export class ComposeService {
                             restart: restart,
                             volumes: volumes,
                             depends_on: [n.databaseHost],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -292,6 +312,7 @@ export class ComposeService {
                             ports: resolvePorts([{ internalPort: 80, openPort: n.openPort }]),
                             restart: restart,
                             volumes: volumes,
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -316,6 +337,7 @@ export class ComposeService {
                             ports: resolvePorts([{ internalPort: 80, openPort: n.openPort }]),
                             restart: restart,
                             volumes: volumes,
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -342,6 +364,7 @@ export class ComposeService {
                             restart: restart,
                             ports: resolvePorts([{ internalPort: 4000, openPort: n.openPort }]),
                             depends_on: [n.gateway],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );

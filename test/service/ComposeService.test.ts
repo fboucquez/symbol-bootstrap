@@ -19,7 +19,7 @@ import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { DockerCompose } from '../../src/model';
-import { BootstrapService, BootstrapUtils, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
+import { BootstrapService, BootstrapUtils, ComposeService, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 
 describe('ComposeService', () => {
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
@@ -138,11 +138,31 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom-compose.yml');
     });
 
-    it('Compose bootstrap full', async () => {
+    it('Compose bootstrap custom preset', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             customPresetObject: {
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
+            target: 'target/ConfigService.bootstrap.custom',
+            customPreset: './test/custom_preset.yml',
+            reset: false,
+            preset: Preset.bootstrap,
+        };
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
+    });
+
+    it('Compose bootstrap full with debug on', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            customPresetObject: {
+                dockerComposeDebugMode: true,
                 faucets: [
                     {
                         environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
@@ -174,5 +194,15 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             customPreset: './test/repeat_preset.yml',
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-repeat.yml');
+    });
+
+    it('Compose bootstrap repeat', async () => {
+        const service = new ComposeService('.', ComposeService.defaultParams);
+        expect(service.resolveDebugOptions(true, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
+        expect(service.resolveDebugOptions(true, undefined)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
+        expect(service.resolveDebugOptions(true, false)).deep.equals({});
+        expect(service.resolveDebugOptions(false, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
+        expect(service.resolveDebugOptions(false, undefined)).deep.equals({});
+        expect(service.resolveDebugOptions(false, false)).deep.equals({});
     });
 });
