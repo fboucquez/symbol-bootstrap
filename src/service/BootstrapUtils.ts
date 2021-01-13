@@ -26,7 +26,6 @@ import {
     readFileSync,
     rmdirSync,
     statSync,
-    unlink,
     unlinkSync,
     writeFileSync,
 } from 'fs';
@@ -93,11 +92,11 @@ export class BootstrapUtils {
         });
     })();
 
-    public static async download(url: string, dest: string): Promise<void> {
+    public static async download(url: string, dest: string): Promise<boolean> {
         if (existsSync(url)) {
             logger.info(`Copying ${url} to ${dest}`);
             await fsPromises.copyFile(url, dest);
-            return;
+            return true;
         }
         logger.info(`Checking remote file ${url}`);
         const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
@@ -113,8 +112,9 @@ export class BootstrapUtils {
                 if (total === destinationSize) {
                     logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
                     request.abort();
-                    resolve();
+                    resolve(false);
                 } else if (response.statusCode === 200) {
+                    existsSync(dest) && unlinkSync(dest);
                     const file = createWriteStream(dest, { flags: 'wx' });
                     logger.info(`Downloading file ${url}`);
                     response.pipe(file);
@@ -124,7 +124,7 @@ export class BootstrapUtils {
                     });
 
                     file.on('finish', () => {
-                        resolve();
+                        resolve(true);
                     });
 
                     file.on('error', (err) => {
@@ -132,24 +132,18 @@ export class BootstrapUtils {
                         if (err.code === 'EEXIST') {
                             reject(new Error('File already exists'));
                         } else {
-                            unlink(dest, () => {
-                                //nothing
-                            }); // Delete temp file
+                            unlinkSync(dest); // Delete temp file
                             reject(err);
                         }
                     });
                 } else {
-                    unlink(dest, () => {
-                        // nothing
-                    }); // Delete temp file
+                    unlinkSync(dest); // Delete temp file
                     reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
                 }
             });
 
             request.on('error', (err) => {
-                unlink(dest, () => {
-                    //nothing
-                }); // Delete temp file
+                unlinkSync(dest); // Delete temp file
                 reject(err.message);
             });
         });
