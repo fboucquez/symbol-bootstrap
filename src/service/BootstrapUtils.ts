@@ -137,13 +137,12 @@ export class BootstrapUtils {
                         }
                     });
                 } else {
-                    unlinkSync(dest); // Delete temp file
                     reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
                 }
             });
 
             request.on('error', (err) => {
-                unlinkSync(dest); // Delete temp file
+                existsSync(dest) && unlinkSync(dest); // Delete temp file
                 reject(err.message);
             });
         });

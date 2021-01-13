@@ -163,6 +163,7 @@ export interface ConfigPreset {
     baseNamespace: string;
     databases?: DatabasePreset[];
     knownPeers?: Record<NodeType, any[]>;
+    mongoComposeRunParam: string;
     mongoImage: string;
     symbolServerToolsImage: string;
     symbolExplorerImage: string;
