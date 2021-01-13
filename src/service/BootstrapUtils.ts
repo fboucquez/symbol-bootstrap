@@ -431,8 +431,9 @@ export class BootstrapUtils {
     public static loadYaml(fileLocation: string, password: string | undefined): any {
         const object = this.fromYaml(this.loadFileAsText(fileLocation));
         if (password) {
+            BootstrapUtils.validatePassword(password);
             try {
-                return CryptoUtils.decrypt(object, BootstrapUtils.validatePassword(password));
+                return CryptoUtils.decrypt(object, password);
             } catch (e) {
                 throw Error(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
             }

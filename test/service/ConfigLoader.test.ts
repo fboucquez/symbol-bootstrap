@@ -64,12 +64,27 @@ describe('ConfigLoader', () => {
             assembly: undefined,
             customPreset: 'test/override-currency-preset.yml',
             customPresetObject: undefined,
-            password: 'abc',
+            password: 'abcd',
         });
         expect(presetData).to.not.be.undefined;
         expect(presetData?.nemesis?.mosaics?.[0].accounts).to.be.eq(20);
         const yaml = BootstrapUtils.toYaml(presetData);
         expect(BootstrapUtils.fromYaml(yaml)).to.be.deep.eq(presetData);
+    });
+
+    it('ConfigLoader loadPresetData bootstrap custom too short!', async () => {
+        try {
+            await configLoader.createPresetData({
+                root: '.',
+                preset: Preset.bootstrap,
+                assembly: undefined,
+                customPreset: 'test/override-currency-preset.yml',
+                customPresetObject: undefined,
+                password: 'abc',
+            });
+        } catch (e) {
+            expect(e.message).eq('Password is too short. It should have at least 4 characters!');
+        }
     });
 
     it('applyIndex', async () => {
