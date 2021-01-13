@@ -14,32 +14,27 @@
  * limitations under the License.
  */
 
-import { writeFileSync } from 'fs';
 import { join, resolve } from 'path';
-import { Convert } from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { CertificatePair, ConfigPreset } from '../model';
+import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigParams } from './ConfigService';
 
-type CertificateParams = ConfigParams;
+export interface CertificateParams {
+    readonly target: string;
+    readonly user: string;
+}
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
-interface NodeCertificates {
+export interface NodeCertificates {
     main: CertificatePair;
     transport: CertificatePair;
 }
 
 export class CertificateService {
     constructor(private readonly root: string, protected readonly params: CertificateParams) {}
-
-    public static toAns1(privateKey: string): string {
-        const prefix = '302e020100300506032b657004220420';
-        return `${prefix}${privateKey.toLowerCase()}`;
-    }
 
     public static getCertificates(stdout: string): CertificatePair[] {
         const locations = (string: string, substring: string): number[] => {
@@ -74,27 +69,23 @@ export class CertificateService {
         });
     }
 
-    public async run(presetData: ConfigPreset, name: string, providedCertificates: NodeCertificates): Promise<void> {
+    public async run(
+        symbolServerToolsImage: string,
+        name: string,
+        providedCertificates: NodeCertificates,
+        customCertFolder?: string,
+    ): Promise<void> {
         const copyFrom = `${this.root}/config/cert`;
-        const certFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig', 'resources', 'cert');
+        const certFolder =
+            customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig', 'resources', 'cert');
         await BootstrapUtils.mkdir(certFolder);
         const newCertsFolder = join(certFolder, 'new_certs');
         await BootstrapUtils.mkdir(newCertsFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        // if (!BootstrapUtils.isWindows()) {
-        //     // chmodSync(newCertsFolder, 700);
-        // }
-        // await BootstrapUtils.writeTextFile(join(certFolder, 'index.txt'), '');
-        // await BootstrapUtils.writeTextFile(join(certFolder, 'index.txt.attr'), '');
-        // await BootstrapUtils.writeTextFile(join(certFolder, 'serial.dat'), Convert.uint8ToHex(Crypto.randomBytes(19)).toUpperCase());
-
-        writeFileSync(join(certFolder, 'ca.der'), Convert.hexToUint8(CertificateService.toAns1(providedCertificates.main.privateKey)));
-        writeFileSync(
-            join(certFolder, 'node.der'),
-            Convert.hexToUint8(CertificateService.toAns1(providedCertificates.transport.privateKey)),
-        );
+        BootstrapUtils.createDerFile(providedCertificates.transport.privateKey, join(certFolder, 'node.der'));
+        BootstrapUtils.createDerFile(providedCertificates.main.privateKey, join(certFolder, 'ca.der'));
 
         // TODO. Migrate this process to forge, sshpk or any node native implementation.
         const command = this.createCertCommands('/data');
@@ -102,9 +93,7 @@ export class CertificateService {
         const cmd = ['bash', 'createCertificate.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const symbolServerToolsImage = presetData.symbolServerToolsImage;
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
-            catapultAppFolder: presetData.catapultAppFolder,
             image: symbolServerToolsImage,
             userId: userId,
             workdir: '/data',

@@ -4,7 +4,7 @@
     "version": "0.3.2",
     "author": "Fernando Boucquez <fboucquez@gmail.com>",
     "bin": {
-        "symbol-bootstrap": "./bin/run"
+        "symbol-bootstrap": "bin/run"
     },
     "bugs": "https://github.com/nemtech/symbol-bootstrap/issues",
     "dependencies": {

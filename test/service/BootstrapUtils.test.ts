@@ -15,7 +15,7 @@
  */
 
 import { expect } from '@oclif/test';
-import { existsSync } from 'fs';
+import { statSync } from 'fs';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
@@ -43,9 +43,30 @@ describe('BootstrapUtils', () => {
 
     it('BootstrapUtils.download', async () => {
         BootstrapUtils.deleteFile('boat.png');
-        await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
-        await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
-        expect(existsSync('boat.png')).eq(true);
+
+        const expectedSize = 177762;
+        async function download(): Promise<boolean> {
+            const downloaded = await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
+            expect(statSync('boat.png').size).eq(expectedSize);
+            return downloaded;
+        }
+        expect(await download()).eq(true);
+        expect(await download()).eq(false);
+        expect(await download()).eq(false);
+        await BootstrapUtils.writeTextFile('boat.png', 'abc');
+        expect(statSync('boat.png').size).not.eq(expectedSize);
+        expect(await download()).eq(true);
+        expect(await download()).eq(false);
+    });
+
+    it('BootstrapUtils.download when invalid', async () => {
+        BootstrapUtils.deleteFile('boat.png');
+        try {
+            await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/invalid-boat.png', 'boat.png');
+            expect(false).eq(true);
+        } catch (e) {
+            expect(e.message).eq('Server responded with 404: Not Found');
+        }
     });
 
     it('Bootstrap.secureText', function () {

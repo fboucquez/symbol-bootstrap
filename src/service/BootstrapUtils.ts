@@ -26,8 +26,8 @@ import {
     readFileSync,
     rmdirSync,
     statSync,
-    unlink,
     unlinkSync,
+    writeFileSync,
 } from 'fs';
 import * as Handlebars from 'handlebars';
 import { get } from 'https';
@@ -35,6 +35,7 @@ import * as _ from 'lodash';
 import { platform, totalmem } from 'os';
 import { basename, join } from 'path';
 import {
+    Convert,
     Deadline,
     DtoMapping,
     LinkAction,
@@ -91,10 +92,15 @@ export class BootstrapUtils {
         });
     })();
 
-    public static download(url: string, dest: string): Promise<void> {
+    public static async download(url: string, dest: string): Promise<boolean> {
+        if (existsSync(url)) {
+            logger.info(`Copying ${url} to ${dest}`);
+            await fsPromises.copyFile(url, dest);
+            return true;
+        }
+        logger.info(`Checking remote file ${url}`);
         const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
         return new Promise((resolve, reject) => {
-            const file = createWriteStream(dest, { flags: 'wx' });
             function showDownloadingProgress(received: number, total: number) {
                 const percentage = ((received * 100) / total).toFixed(2);
                 process.stdout.write(platform() == 'win32' ? '\\033[0G' : '\r');
@@ -105,48 +111,40 @@ export class BootstrapUtils {
                 let received = 0;
                 if (total === destinationSize) {
                     logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
-                    file.close();
                     request.abort();
-                    resolve();
+                    resolve(false);
                 } else if (response.statusCode === 200) {
+                    existsSync(dest) && unlinkSync(dest);
+                    const file = createWriteStream(dest, { flags: 'wx' });
                     logger.info(`Downloading file ${url}`);
                     response.pipe(file);
                     response.on('data', function (chunk) {
                         received += chunk.length;
                         showDownloadingProgress(received, total);
                     });
+
+                    file.on('finish', () => {
+                        resolve(true);
+                    });
+
+                    file.on('error', (err) => {
+                        file.close();
+                        if (err.code === 'EEXIST') {
+                            reject(new Error('File already exists'));
+                        } else {
+                            unlinkSync(dest); // Delete temp file
+                            reject(err);
+                        }
+                    });
                 } else {
-                    file.close();
-                    unlink(dest, () => {
-                        // nothing
-                    }); // Delete temp file
-                    reject(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
+                    unlinkSync(dest); // Delete temp file
+                    reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
                 }
             });
 
             request.on('error', (err) => {
-                file.close();
-                unlink(dest, () => {
-                    //nothing
-                }); // Delete temp file
+                unlinkSync(dest); // Delete temp file
                 reject(err.message);
-            });
-
-            file.on('finish', () => {
-                resolve();
-            });
-
-            file.on('error', (err) => {
-                file.close();
-
-                if (err.code === 'EEXIST') {
-                    reject('File already exists');
-                } else {
-                    unlink(dest, () => {
-                        //nothing
-                    }); // Delete temp file
-                    reject(err.message);
-                }
             });
         });
     }
@@ -228,22 +226,27 @@ export class BootstrapUtils {
         cmds,
         binds,
     }: {
-        catapultAppFolder: string;
+        catapultAppFolder?: string;
         image: string;
-        userId?: string | undefined;
-        workdir?: string | undefined;
+        userId?: string;
+        workdir?: string;
         cmds: string[];
         binds: string[];
     }): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
-        const environmentParam = `--env LD_LIBRARY_PATH=${catapultAppFolder}/lib:${catapultAppFolder}/deps`;
+        const environmentParam = catapultAppFolder ? `--env LD_LIBRARY_PATH=${catapultAppFolder}/lib:${catapultAppFolder}/deps` : '';
         const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${cmds
             .map((a) => `"${a}"`)
             .join(' ')}`;
         logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
         return await this.exec(runCommand);
+    }
+
+    public static toAns1(privateKey: string): string {
+        const prefix = '302e020100300506032b657004220420';
+        return `${prefix}${privateKey.toLowerCase()}`;
     }
 
     public static secureString(text: string): string {
@@ -697,5 +700,9 @@ export class BootstrapUtils {
                 return 'privateTest';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
+    }
+
+    static createDerFile(privateKey: string, file: string) {
+        writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
     }
 }

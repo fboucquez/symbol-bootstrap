@@ -15,7 +15,6 @@
  */
 import {
     Account,
-    Address,
     Deadline,
     PlainMessage,
     PublicAccount,
@@ -50,7 +49,7 @@ export class SupernodeService {
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
-        if (!presetData.supernodeEnrolmentAddress) {
+        if (!presetData.supernodeControllerPublicKey) {
             logger.warn('This network does not have a supernode controller public key. Nodes cannot be registered.');
             return;
         }
@@ -59,13 +58,13 @@ export class SupernodeService {
         const currency = (await repositoryFactory.getCurrencies().toPromise()).currency;
 
         const networkType = await repositoryFactory.getNetworkType().toPromise();
-        const supernodeEnrolmentAddress = Address.createFromRawAddress(presetData.supernodeEnrolmentAddress);
+        const supernodeControllerAddress = PublicAccount.createFromPublicKey(presetData.supernodeControllerPublicKey, networkType).address;
 
         const maxFee = UInt64.fromUint(this.params.maxFee);
         logger.info(
             `Registering super nodes using network url ${url}. Max Fee ${this.params.maxFee / Math.pow(10, currency.divisibility)}`,
         );
-        logger.info(`Registration transfer transaction will be sent to ${supernodeEnrolmentAddress.plain()}`);
+        logger.info(`Registration transfer transaction will be sent to ${supernodeControllerAddress.plain()}`);
 
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
         if (generationHash !== presetData.nemesisGenerationHashSeed) {
@@ -100,11 +99,11 @@ export class SupernodeService {
                     return;
                 }
                 const mainAccount = Account.createFromPrivateKey(nodeAccount.main.privateKey, networkType);
-                const agentUrl = node.agentUrl || 'http://' + node.host + ':7880';
+                const agentUrl = node.agentUrl || 'https://' + node.host + ':7880';
                 const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
                 const message = PlainMessage.create(plainMessage);
                 logger.info(`Sending registration with message '${plainMessage}' using signer ${mainAccount.address.plain()}`);
-                const transaction = TransferTransaction.create(deadline, supernodeEnrolmentAddress, [], message, networkType, maxFee);
+                const transaction = TransferTransaction.create(deadline, supernodeControllerAddress, [], message, networkType, maxFee);
 
                 return { singedTransaction: mainAccount.sign(transaction, generationHash), node };
             })
