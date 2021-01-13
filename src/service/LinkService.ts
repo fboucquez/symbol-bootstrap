@@ -39,7 +39,7 @@ import { ConfigLoader } from './ConfigLoader';
 /**
  * params necessary to announce link transactions network.
  */
-export type LinkParams = { target: string; url: string; maxFee: number; unlink: boolean };
+export type LinkParams = { target: string; readonly password?: string; url: string; maxFee: number; unlink: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -58,8 +58,8 @@ export class LinkService {
     }
 
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
-        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         const url = this.params.url.replace(/\/$/, '');
         const repositoryFactory = new RepositoryFactoryHttp(url);
         const currency = (await repositoryFactory.getCurrencies().toPromise()).currency;

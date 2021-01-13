@@ -45,6 +45,7 @@ describe('AgentCertificateService', () => {
         const presetData = new ConfigLoader().createPresetData({
             root: '.',
             preset: Preset.bootstrap,
+            password: 'abc',
         });
 
         await service.run(presetData.symbolServerToolsImage, 'supernode', target);
