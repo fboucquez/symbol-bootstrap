@@ -6,7 +6,7 @@ services:
             MONGO_INITDB_DATABASE: catapult
         container_name: db
         image: 'mongo:4.2.6-bionic'
-        command: mongod --dbpath=/dbdata --bind_ip=db
+        command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
         volumes:
