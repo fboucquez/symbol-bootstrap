@@ -172,7 +172,7 @@ export class ComposeService {
                             environment: { MONGO_INITDB_DATABASE: databaseName },
                             container_name: n.name,
                             image: presetData.mongoImage,
-                            command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
+                            command: `mongod --dbpath=/dbdata --bind_ip=${n.name} ${presetData.mongoComposeRunParam}`,
                             stop_signal: 'SIGINT',
                             working_dir: '/docker-entrypoint-initdb.d',
                             ports: resolvePorts([{ internalPort: databasePort, openPort: n.openPort }]),

@@ -1,8 +1,6 @@
 databases:
     - name: 'db'
       openPort: false
-      compose:
-          mem_limit: '{{computerMemory 50}}'
 nodes:
     - harvesting: false
       voting: false
