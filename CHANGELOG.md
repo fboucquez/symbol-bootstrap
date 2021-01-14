@@ -14,9 +14,9 @@ Symbol Bootstrap | v0.4.0 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 
 - **Re track to catapult-server main branch**
 - Compose file version default to 2.4.
-- Fixed mongo memory usage by adding `--wiredTigerCacheSizeGB` 2 limit.
+- Fixed mongo memory usage by adding `--wiredTigerCacheSizeGB` limit.
 - Allowing users to exclude custom preset data from a compose service.
-- Basic implementation of supernode program. Supernode Agent installation and supernode enrol command.
+- Basic implementation of supernode program monitoring agent. Supernode Agent installation and supernode enrol command, disabled at present, awaiting full programme implementation, preparatory step.
 - Private key in generated addresses.yml and preset.yml can be encrypted and protected by using --password.
 - Masking 64 hex keys HIDDEN_KEY on log lines.
 - Removed unused Server configuration files in the Rest container. This reduces the risk of exposing config files if the Rest machine gets compromised.
