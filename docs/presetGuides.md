@@ -255,3 +255,37 @@ This is done by passing [docker-compose up](https://docs.docker.com/compose/refe
 ```
 symbol-bootstrap start -r --args "--scale rest-gateway-0=0"
 ```
+
+**Enable compose debug mode**
+
+It adds debug attributes to the docker compose services. The attributes are:
+
+```
+security_opt:
+    - 'seccomp:unconfined'
+cap_add:
+    - ALL
+privileged: true 
+```
+
+By default, debug mode is disabled. You can enable debug mode in each service.
+
+````
+gateways:
+    - dockerComposeDebugMode: true # debug mode in gateway
+nodes:
+    - dockerComposeDebugMode: true # debug mode in node
+      brokerDockerComposeDebugMode: true # debug mode in broker
+````
+
+Alternatively, you can enable debug mode for all the services, but then disable them by one by. 
+
+
+````
+dockerComposeDebugMode: true # adds debug mode attributes to all the services
+databases:
+    - dockerComposeDebugMode: false # excluding the database
+nodes:
+    - brokerDockerComposeDebugMode: false # excluding the broker
+````
+

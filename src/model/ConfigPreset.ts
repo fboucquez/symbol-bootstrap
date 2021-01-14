@@ -24,6 +24,7 @@ export interface DockerServicePreset {
     excludeDockerService?: boolean;
     environment?: any;
     compose?: any;
+    dockerComposeDebugMode?: boolean;
 }
 
 export interface MosaicPreset {
@@ -85,7 +86,7 @@ export interface NodePreset extends DockerServicePreset {
     brokerOpenPort?: boolean | number | string;
     brokerExcludeDockerService?: boolean;
     brokerCompose?: any;
-
+    brokerDockerComposeDebugMode?: boolean;
     //super node
     supernode?: boolean | string;
     supernodeOpenPort?: boolean | number | string;
@@ -150,6 +151,7 @@ export interface ConfigPreset {
     networkheight: boolean;
     dockerComposeVersion: number | string;
     dockerComposeServiceRestart: string;
+    dockerComposeDebugMode: boolean;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];

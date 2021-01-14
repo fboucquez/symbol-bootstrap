@@ -42,6 +42,10 @@ export interface DockerComposeService {
             aliases?: string[];
         };
     };
+    // DEBUG MODE
+    privileged?: boolean;
+    cap_add?: string[];
+    security_opt?: string[];
 }
 
 export interface DockerCompose {
