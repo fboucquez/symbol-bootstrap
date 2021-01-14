@@ -326,6 +326,7 @@ maxReadRateMonitoringTotalSize; 100MB; utils::FileSize; Maximum size allowed dur
 minTransactionFailuresCountForBan; 8; ;
 minTransactionFailuresPercentForBan; 10; ;
 
+
 config-pt.properties
 partialtransactions
 cacheMaxResponseSize; 5MB

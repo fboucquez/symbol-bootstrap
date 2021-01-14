@@ -19,7 +19,7 @@ import { statSync } from 'fs';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
-import { Account, Convert, Crypto, Deadline, NetworkType, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
+import { Account, Deadline, NetworkType, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
 import assert = require('assert');
 

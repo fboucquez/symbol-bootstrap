@@ -526,7 +526,7 @@ export class ConfigService {
                     apiNodeConfigFolder,
                     join(moveTo, 'api-node-config'),
                     [],
-                    ['node.crt.pem', 'node.key.pem', 'ca.cert.pem', 'config-network.properties','config-node.properties'],
+                    ['node.crt.pem', 'node.key.pem', 'ca.cert.pem', 'config-network.properties', 'config-node.properties'],
                 );
             }),
         );

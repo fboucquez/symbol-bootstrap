@@ -34,16 +34,7 @@ import { get } from 'https';
 import * as _ from 'lodash';
 import { platform, totalmem } from 'os';
 import { basename, join } from 'path';
-import {
-    Convert,
-    Deadline,
-    DtoMapping,
-    LinkAction,
-    NetworkType,
-    Transaction,
-    UInt64,
-    VotingKeyLinkTransaction,
-} from 'symbol-sdk';
+import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';

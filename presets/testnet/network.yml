@@ -26,7 +26,7 @@ nemesisSignerPublicKey: 071964D3C040D62DE905EAE978E2119BFC8E70489BFDF45A85B3D7ED
 harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
-faucetUrl: 'http://faucet-0.10.0.x-01.symboldev.network'
+faucetUrl: 'http://faucet.testnet.symboldev.network'
 trustedHosts:
 inflation:
     starting-at-height-2: 95998521
