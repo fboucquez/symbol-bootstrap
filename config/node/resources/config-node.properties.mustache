@@ -23,7 +23,7 @@ shortLivedCacheMaxSize = {{{toAmount shortLivedCacheMaxSize}}}
 minFeeMultiplier = {{{toAmount minFeeMultiplier}}}
 transactionSelectionStrategy = {{{transactionSelectionStrategy}}}
 unconfirmedTransactionsCacheMaxResponseSize = {{{unconfirmedTransactionsCacheMaxResponseSize}}}
-unconfirmedTransactionsCacheMaxSize = {{{toAmount unconfirmedTransactionsCacheMaxSize}}}
+unconfirmedTransactionsCacheMaxSize = {{{unconfirmedTransactionsCacheMaxSize}}}
 
 connectTimeout = {{{connectTimeout}}}
 syncTimeout = {{{syncTimeout}}}
@@ -32,10 +32,13 @@ socketWorkingBufferSize = {{{socketWorkingBufferSize}}}
 socketWorkingBufferSensitivity = {{{socketWorkingBufferSensitivity}}}
 maxPacketDataSize = {{{maxPacketDataSize}}}
 
-blockDisruptorSize = {{{blockDisruptorSize}}}
+blockDisruptorSlotCount = {{{blockDisruptorSlotCount}}}
 blockElementTraceInterval = {{{blockElementTraceInterval}}}
-transactionDisruptorSize = {{{transactionDisruptorSize}}}
+blockDisruptorMaxMemorySize = {{{blockDisruptorMaxMemorySize}}}
+
+transactionDisruptorSlotCount = {{{transactionDisruptorSlotCount}}}
 transactionElementTraceInterval = {{{transactionElementTraceInterval}}}
+transactionDisruptorMaxMemorySize = {{{transactionDisruptorMaxMemorySize}}}
 
 enableDispatcherAbortWhenFull = {{{enableDispatcherAbortWhenFull}}}
 enableDispatcherInputAuditing = {{{enableDispatcherInputAuditing}}}
@@ -91,3 +94,6 @@ maxBannedNodes = {{{toAmount maxBannedNodes}}}
 numReadRateMonitoringBuckets = {{{numReadRateMonitoringBuckets}}}
 readRateMonitoringBucketDuration = {{{readRateMonitoringBucketDuration}}}
 maxReadRateMonitoringTotalSize = {{{maxReadRateMonitoringTotalSize}}}
+
+minTransactionFailuresCountForBan = {{{minTransactionFailuresCountForBan}}}
+minTransactionFailuresPercentForBan = {{{minTransactionFailuresPercentForBan}}}

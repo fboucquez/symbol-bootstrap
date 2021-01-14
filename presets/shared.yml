@@ -62,13 +62,13 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.4
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.4
-symbolRestImage: symbolplatform/symbol-rest:2.2.1
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.5
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.5
+symbolRestImage: symbolplatform/symbol-rest:2.3.0
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
-mongoImage: mongo:4.2.6-bionic
+mongoImage: mongo:4.4.3-bionic
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -105,8 +105,8 @@ networkheight: false
 networkHeightMaxNodes: 5
 
 # partialtransactions
-partialTransactionsCacheMaxResponseSize: 20MB
-partialTransactionsCacheMaxSize: 1000000
+partialTransactionsCacheMaxResponseSize: 5MB
+partialTransactionsCacheMaxSize: 20MB
 
 # time synchronization
 timeSynchronizationMaxNodes: 20
@@ -116,27 +116,29 @@ timeSynchronizationMinImportance: 3750
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
 nodeListenInterface: 0.0.0.0
-serverVersion: 0.10.0.4
+serverVersion: 0.10.0.5
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
-maxHashesPerSyncAttempt: 610
-maxBlocksPerSyncAttempt: 602
+maxHashesPerSyncAttempt: 370
+maxBlocksPerSyncAttempt: 360
 maxChainBytesPerSyncAttempt: 100MB
 shortLivedCacheTransactionDuration: 10m
 shortLivedCacheBlockDuration: 100m
 shortLivedCachePruneInterval: 90s
-shortLivedCacheMaxSize: 200000
+shortLivedCacheMaxSize: 10000000
 transactionSelectionStrategy: maximize-fee
-unconfirmedTransactionsCacheMaxResponseSize: 20MB
-unconfirmedTransactionsCacheMaxSize: 50000
+unconfirmedTransactionsCacheMaxResponseSize: 5MB
+unconfirmedTransactionsCacheMaxSize: 20MB
 connectTimeout: 15s
-syncTimeout: 120s
-socketWorkingBufferSize: 512KB
-socketWorkingBufferSensitivity: 100
+syncTimeout: 20m
+socketWorkingBufferSize: 16KB
+socketWorkingBufferSensitivity: 1
 maxPacketDataSize: 150MB
-blockDisruptorSize: 4096
+blockDisruptorSlotCount: 4096
+blockDisruptorMaxMemorySize : 300MB
 blockElementTraceInterval: 1
-transactionDisruptorSize: 16384
+transactionDisruptorSlotCount: 8192
+transactionDisruptorMaxMemorySize : 20MB
 transactionElementTraceInterval: 10
 enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
@@ -148,8 +150,8 @@ delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 
-minPartnerNodeVersion: 0.10.0.4
-maxPartnerNodeVersion: 0.10.0.4
+minPartnerNodeVersion: 0.10.0.5
+maxPartnerNodeVersion: 0.10.0.5
 
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
@@ -169,6 +171,8 @@ maxBannedNodes: 5000
 numReadRateMonitoringBuckets: 4
 readRateMonitoringBucketDuration: 15s
 maxReadRateMonitoringTotalSize: 100MB
+minTransactionFailuresCountForBan: 8
+minTransactionFailuresPercentForBan: 10
 
 #Rocksdb
 enableStatistics: false
@@ -198,8 +202,3 @@ baseRetryDelay: 750
 votingKeyStartEpoch: 1
 votingKeyEndEpoch: 26280
 enableRevoteOnBoot: true
-
-#fork height
-votingKeyLinkV2: 0
-importanceBlock: 0
-accountRestrictionsV2: 0
