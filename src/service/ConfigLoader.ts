@@ -163,22 +163,24 @@ export class ConfigLoader {
     }
 
     public createPresetData({
+        password,
         root,
         preset,
         assembly,
         customPreset,
         customPresetObject,
     }: {
+        password: string | undefined;
         root: string;
         preset: Preset;
         assembly?: string;
         customPreset?: string;
         customPresetObject?: any;
     }): ConfigPreset {
-        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'));
-        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`);
-        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`) : {};
-        const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset) : {};
+        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), undefined);
+        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, undefined);
+        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, undefined) : {};
+        const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
         const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
         if (!ConfigLoader.presetInfoLogged) {
@@ -326,27 +328,27 @@ export class ConfigLoader {
         });
     }
 
-    public loadExistingPresetDataIfPreset(target: string): ConfigPreset | undefined {
+    public loadExistingPresetDataIfPreset(target: string, password: string | undefined): ConfigPreset | undefined {
         const generatedPresetLocation = this.getGeneratedPresetLocation(target);
         if (existsSync(generatedPresetLocation)) {
-            return BootstrapUtils.loadYaml(generatedPresetLocation);
+            return BootstrapUtils.loadYaml(generatedPresetLocation, password);
         }
         return undefined;
     }
 
-    public loadExistingPresetData(target: string): ConfigPreset {
-        const presetData = this.loadExistingPresetDataIfPreset(target);
+    public loadExistingPresetData(target: string, password: string | undefined): ConfigPreset {
+        const presetData = this.loadExistingPresetDataIfPreset(target, password);
         if (!presetData) {
             throw new Error(`The file ${this.getGeneratedPresetLocation(target)} doesn't exist. Have you executed the 'config' command?`);
         }
         return presetData;
     }
 
-    public loadExistingAddressesIfPreset(target: string): Addresses | undefined {
+    public loadExistingAddressesIfPreset(target: string, password: string | undefined): Addresses | undefined {
         const generatedAddressLocation = this.getGeneratedAddressLocation(target);
         if (existsSync(generatedAddressLocation)) {
-            const presetData = this.loadExistingPresetData(target);
-            return this.migrateAddresses(BootstrapUtils.loadYaml(generatedAddressLocation), presetData.networkType);
+            const presetData = this.loadExistingPresetData(target, password);
+            return this.migrateAddresses(BootstrapUtils.loadYaml(generatedAddressLocation, password), presetData.networkType);
         }
         return undefined;
     }
@@ -385,8 +387,8 @@ export class ConfigLoader {
         ];
     }
 
-    public loadExistingAddresses(target: string): Addresses {
-        const addresses = this.loadExistingAddressesIfPreset(target);
+    public loadExistingAddresses(target: string, password: string | undefined): Addresses {
+        const addresses = this.loadExistingAddressesIfPreset(target, password);
         if (!addresses) {
             throw new Error(`The file ${this.getGeneratedAddressLocation(target)} doesn't exist. Have you executed the 'config' command?`);
         }

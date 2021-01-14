@@ -48,11 +48,16 @@ import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
+import { CryptoUtils } from './CryptoUtils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
+
+export class KnownError extends Error {
+    public readonly known = true;
+}
 
 /**
  * The operation to migrate the data.
@@ -83,6 +88,12 @@ export class BootstrapUtils {
         char: 't',
         description: 'The target folder where the symbol-bootstrap network is generated',
         default: BootstrapUtils.defaultTargetFolder,
+    });
+
+    public static passwordFlag = flags.string({
+        description: `A password used to encrypt and decrypted generated addresses.yml and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`,
+        default: '',
+        hidden: true,
     });
 
     private static onProcessListener = (() => {
@@ -359,8 +370,8 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(path: string, object: any): Promise<void> {
-        const yamlString = this.toYaml(object);
+    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
+        const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
         await BootstrapUtils.writeTextFile(path, yamlString);
     }
 
@@ -389,8 +400,23 @@ export class BootstrapUtils {
         return yaml.safeLoad(yamlString);
     }
 
-    public static loadYaml(fileLocation: string): any {
-        return this.fromYaml(this.loadFileAsText(fileLocation));
+    public static loadYaml(fileLocation: string, password: string | undefined): any {
+        const object = this.fromYaml(this.loadFileAsText(fileLocation));
+        if (password) {
+            BootstrapUtils.validatePassword(password);
+            try {
+                return CryptoUtils.decrypt(object, password);
+            } catch (e) {
+                throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
+            }
+        } else {
+            if (CryptoUtils.encryptedCount(object) > 0) {
+                throw new KnownError(
+                    `File ${fileLocation} seems to be encrypted but no password has been provided. Have you used the --password param?`,
+                );
+            }
+        }
+        return object;
     }
 
     public static loadFileAsText(fileLocation: string): string {
@@ -669,7 +695,15 @@ export class BootstrapUtils {
         throw new Error(`Invalid Network Type ${networkType}`);
     }
 
-    static createDerFile(privateKey: string, file: string) {
+    static createDerFile(privateKey: string, file: string): void {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
+    }
+
+    private static validatePassword(password: string): string {
+        const passwordMinSize = 4;
+        if (password.length < passwordMinSize) {
+            throw new Error(`Password is too short. It should have at least ${passwordMinSize} characters!`);
+        }
+        return password;
     }
 }

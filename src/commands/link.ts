@@ -25,6 +25,7 @@ export default class Link extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
+        password: BootstrapUtils.passwordFlag,
         url: flags.string({
             char: 'u',
             description: 'the network url',

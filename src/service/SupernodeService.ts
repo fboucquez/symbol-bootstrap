@@ -31,7 +31,7 @@ import { ConfigLoader } from './ConfigLoader';
 
 const logger: Logger = LoggerFactory.getLogger();
 
-export type SupernodeParams = { target: string; url: string; maxFee: number };
+export type SupernodeParams = { target: string; readonly password?: string; url: string; maxFee: number };
 
 export class SupernodeService {
     public static readonly defaultParams: SupernodeParams = {
@@ -47,8 +47,8 @@ export class SupernodeService {
     }
 
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
-        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         if (!presetData.supernodeControllerPublicKey) {
             logger.warn('This network does not have a supernode controller public key. Nodes cannot be registered.');
             return;

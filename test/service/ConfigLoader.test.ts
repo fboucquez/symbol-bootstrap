@@ -36,6 +36,7 @@ describe('ConfigLoader', () => {
                 assembly: undefined,
                 customPreset: undefined,
                 customPresetObject: undefined,
+                password: 'abc',
             });
         } catch (e) {
             expect(e.message).to.equal('Preset testnet requires assembly (-a, --assembly option). Possible values are: api, dual, peer');
@@ -51,6 +52,7 @@ describe('ConfigLoader', () => {
             assembly: 'dual',
             customPreset: undefined,
             customPresetObject: undefined,
+            password: 'abc',
         });
         expect(presetData).to.not.be.undefined;
     });
@@ -62,11 +64,27 @@ describe('ConfigLoader', () => {
             assembly: undefined,
             customPreset: 'test/override-currency-preset.yml',
             customPresetObject: undefined,
+            password: 'abcd',
         });
         expect(presetData).to.not.be.undefined;
         expect(presetData?.nemesis?.mosaics?.[0].accounts).to.be.eq(20);
         const yaml = BootstrapUtils.toYaml(presetData);
         expect(BootstrapUtils.fromYaml(yaml)).to.be.deep.eq(presetData);
+    });
+
+    it('ConfigLoader loadPresetData bootstrap custom too short!', async () => {
+        try {
+            await configLoader.createPresetData({
+                root: '.',
+                preset: Preset.bootstrap,
+                assembly: undefined,
+                customPreset: 'test/override-currency-preset.yml',
+                customPresetObject: undefined,
+                password: 'abc',
+            });
+        } catch (e) {
+            expect(e.message).eq('Password is too short. It should have at least 4 characters!');
+        }
     });
 
     it('applyIndex', async () => {
@@ -231,14 +249,14 @@ describe('ConfigLoader', () => {
     });
 
     it('should migrated old addresses', () => {
-        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml');
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml');
+        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', undefined);
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', undefined);
         const addresses = configLoader.migrateAddresses(oldAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });
 
     it('should migrated not migrate new addresses', () => {
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml');
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', undefined);
         const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });
