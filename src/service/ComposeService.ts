@@ -24,7 +24,7 @@ import { Addresses, ConfigPreset, DockerCompose, DockerComposeService, DockerSer
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export type ComposeParams = { target: string; user?: string; upgrade?: boolean };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -69,8 +69,8 @@ export class ComposeService {
     }
 
     public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
-        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
@@ -81,7 +81,7 @@ export class ComposeService {
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (existsSync(dockerFile)) {
             logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
-            return BootstrapUtils.loadYaml(dockerFile);
+            return BootstrapUtils.loadYaml(dockerFile, undefined);
         }
 
         await BootstrapUtils.mkdir(targetDocker);
@@ -392,7 +392,7 @@ export class ComposeService {
             };
 
         dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
-        await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
+        await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }

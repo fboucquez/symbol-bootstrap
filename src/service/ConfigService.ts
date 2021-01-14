@@ -34,7 +34,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
-import { BootstrapUtils } from './BootstrapUtils';
+import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { NemgenService } from './NemgenService';
@@ -55,6 +55,7 @@ export interface ConfigParams {
     upgrade: boolean;
     preset: Preset;
     target: string;
+    password?: string;
     user: string;
     pullImages?: boolean;
     assembly?: string;
@@ -97,25 +98,25 @@ export class ConfigService {
                 logger.info(
                     `The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset or --upgrade to upgrade)`,
                 );
-                const presetData = this.configLoader.loadExistingPresetData(target);
-                const addresses = this.configLoader.loadExistingAddresses(target);
+                const presetData = this.configLoader.loadExistingPresetData(target, this.params.password);
+                const addresses = this.configLoader.loadExistingAddresses(target, this.params.password);
                 if (this.params.report) {
                     await new ReportService(this.root, this.params).run(presetData);
                 }
-                await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses);
-                await BootstrapUtils.writeYaml(presetLocation, presetData);
+                await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, this.params.password);
+                await BootstrapUtils.writeYaml(presetLocation, presetData, this.params.password);
                 return { presetData, addresses };
             }
 
-            const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target);
-            const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target);
+            const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target, this.params.password);
+            const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target, this.params.password);
 
             if (oldAddresses && !oldPresetData) {
-                throw new Error(`Configuration cannot be upgraded without a previous ${presetLocation} file. (run -r to reset)`);
+                throw new KnownError(`Configuration cannot be upgraded without a previous ${presetLocation} file. (run -r to reset)`);
             }
 
             if (!oldAddresses && oldPresetData) {
-                throw new Error(`Configuration cannot be upgraded without a previous ${addressesLocation} file. (run -r to reset)`);
+                throw new KnownError(`Configuration cannot be upgraded without a previous ${addressesLocation} file. (run -r to reset)`);
             }
 
             if (oldAddresses && oldPresetData) {
@@ -124,7 +125,7 @@ export class ConfigService {
 
             const presetData: ConfigPreset = _.merge(
                 oldPresetData || {},
-                this.configLoader.createPresetData({ ...this.params, root: this.root }),
+                this.configLoader.createPresetData({ ...this.params, root: this.root, password: this.params.password }),
             );
 
             if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
@@ -150,14 +151,18 @@ export class ConfigService {
                 await new ReportService(this.root, this.params).run(presetData);
             }
 
-            await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses);
-            await BootstrapUtils.writeYaml(presetLocation, presetData);
+            await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, this.params.password);
+            await BootstrapUtils.writeYaml(presetLocation, presetData, this.params.password);
             logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {
-            logger.error(`Unknown error generating the configuration. ${e.message}`, e);
-            logger.error(`The target folder '${target}' should be deleted!!!`);
-            console.log(e);
+            if (e.known) {
+                logger.error(e.message);
+            } else {
+                logger.error(`Unknown error generating the configuration. ${e.message}`);
+                logger.error(`The target folder '${target}' should be deleted!!!`);
+                console.log(e);
+            }
             throw e;
         }
     }

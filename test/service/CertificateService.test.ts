@@ -64,6 +64,7 @@ describe('CertificateService', () => {
         const presetData = new ConfigLoader().createPresetData({
             root: '.',
             preset: Preset.bootstrap,
+            password: 'abc',
         });
         const networkType = NetworkType.TEST_NET;
         const main = Account.generateNewAccount(networkType);

@@ -25,6 +25,7 @@ export default class Compose extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
+        password: BootstrapUtils.passwordFlag,
         upgrade: flags.boolean({
             description: 'It regenerates the docker compose and utility files from the <target>/docker folder',
             default: ComposeService.defaultParams.upgrade,
