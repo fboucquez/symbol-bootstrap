@@ -46,6 +46,12 @@ OPTIONS
   --args=args
       Add extra arguments to the docker-compose up command. Check out https://docs.docker.com/compose/reference/up.
 
+  --backupSync
+      It downloads a backup with the Mongo and RocksDb databases for faster synchronization.
+
+      The location of the backup can be found and changed using the 'backupSyncLocation' preset configuration. This 
+      configuration allows local files and remote URLs
+
   --healthCheck
       It checks if the services created with docker compose are up and running.
 

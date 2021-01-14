@@ -16,6 +16,7 @@
 
 import { Addresses, ConfigPreset } from '../model';
 import { DockerCompose } from '../model/DockerCompose';
+import { BackupSyncParams, BackupSyncService } from './BackupSyncService';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
@@ -55,6 +56,18 @@ export class BootstrapService {
         passedAddresses?: Addresses,
     ): Promise<DockerCompose> {
         return new ComposeService(this.root, config).run(passedPresetData, passedAddresses);
+    }
+
+    /**
+     * It creates a zip backup with the node's data and mongo database folders ready for backupSync.
+     *
+     * Docker Compose must not be running when executing this operation.
+     *
+     * @param config the params of the compose command.
+     * @param passedPresetData the created preset if you know it, otherwise will load the latest one resolved from the target folder.
+     */
+    public backup(config: BackupSyncParams = BackupSyncService.defaultParams, passedPresetData?: ConfigPreset): Promise<void> {
+        return new BackupSyncService(this.root, config).createBackup(passedPresetData);
     }
 
     /**

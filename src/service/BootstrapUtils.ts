@@ -76,9 +76,9 @@ export class BootstrapUtils {
     public static readonly CURRENT_USER = 'current';
     private static readonly pulledImages: string[] = [];
 
-    public static readonly VERSION = version;
+    public static stopProcess = false;
 
-    private static stopProcess = false;
+    public static readonly VERSION = version;
 
     public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
 

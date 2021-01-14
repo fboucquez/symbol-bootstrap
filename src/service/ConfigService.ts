@@ -34,6 +34,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
+import { BackupSyncService } from './BackupSyncService';
 import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
@@ -57,6 +58,7 @@ export interface ConfigParams {
     target: string;
     password?: string;
     user: string;
+    backupSync?: boolean;
     pullImages?: boolean;
     assembly?: string;
     customPreset?: string;
@@ -78,6 +80,7 @@ export class ConfigService {
         reset: false,
         upgrade: false,
         pullImages: false,
+        backupSync: false,
         user: BootstrapUtils.CURRENT_USER,
     };
     private readonly configLoader: ConfigLoader;
@@ -135,18 +138,13 @@ export class ConfigService {
             await BootstrapUtils.mkdir(target);
 
             this.cleanUpConfiguration(presetData);
-
             await this.generateNodeCertificates(presetData, addresses);
             await this.generateAgentCertificates(presetData);
             await this.generateNodes(presetData, addresses);
+            await this.generateDataFolders(oldPresetData, oldAddresses, presetData, addresses);
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData);
             await this.generateWallets(presetData);
-            if (!oldPresetData && !oldAddresses) {
-                await this.generateNemesis(presetData, addresses);
-            } else {
-                logger.info('Nemesis data cannot be generated or copied when upgrading...');
-            }
 
             if (this.params.report) {
                 await new ReportService(this.root, this.params).run(presetData);
@@ -168,10 +166,32 @@ export class ConfigService {
         }
     }
 
+    private async generateDataFolders(
+        oldPresetData: ConfigPreset | undefined,
+        oldAddresses: Addresses | undefined,
+        presetData: ConfigPreset,
+        addresses: Addresses,
+    ) {
+        if (!oldPresetData && !oldAddresses) {
+            if (this.params.backupSync) {
+                const backupSyncService = new BackupSyncService(this.root, this.params);
+                await backupSyncService.run(presetData);
+                logger.info('Backup Sync has been executed...');
+            } else {
+                await this.generateNemesis(presetData, addresses);
+            }
+        } else {
+            if (this.params.backupSync) {
+                logger.info('Backup Sync cannot be executed when upgrading...');
+            } else {
+                logger.info('Nemesis data cannot be generated or copied when upgrading...');
+            }
+        }
+    }
+
     private async generateNemesis(presetData: ConfigPreset, addresses: Addresses) {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
-
         if (!presetData.nemesisSeedFolder && presetData.nemesis) {
             await this.generateNemesisConfig(presetData, addresses);
         } else {
@@ -179,6 +199,12 @@ export class ConfigService {
             await BootstrapUtils.generateConfiguration({}, copyFrom, nemesisSeedFolder);
         }
 
+        return await this.copyNemesisSeed(presetData, addresses);
+    }
+
+    private async copyNemesisSeed(presetData: ConfigPreset, addresses: Addresses) {
+        const target = this.params.target;
+        const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         BootstrapUtils.validateFolder(nemesisSeedFolder);
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {

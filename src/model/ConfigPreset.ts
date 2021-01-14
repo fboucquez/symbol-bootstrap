@@ -181,4 +181,6 @@ export interface ConfigPreset {
     votingKeyEndEpoch: number;
     supernodeControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
+    backupSyncLocation?: string;
+    backupSyncLocalCacheFileName?: string;
 }
