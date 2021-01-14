@@ -34,7 +34,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
-import { BootstrapUtils } from './BootstrapUtils';
+import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { NemgenService } from './NemgenService';
@@ -112,11 +112,11 @@ export class ConfigService {
             const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target, this.params.password);
 
             if (oldAddresses && !oldPresetData) {
-                throw new Error(`Configuration cannot be upgraded without a previous ${presetLocation} file. (run -r to reset)`);
+                throw new KnownError(`Configuration cannot be upgraded without a previous ${presetLocation} file. (run -r to reset)`);
             }
 
             if (!oldAddresses && oldPresetData) {
-                throw new Error(`Configuration cannot be upgraded without a previous ${addressesLocation} file. (run -r to reset)`);
+                throw new KnownError(`Configuration cannot be upgraded without a previous ${addressesLocation} file. (run -r to reset)`);
             }
 
             if (oldAddresses && oldPresetData) {
@@ -156,9 +156,13 @@ export class ConfigService {
             logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {
-            logger.error(`Unknown error generating the configuration. ${e.message}`, e);
-            logger.error(`The target folder '${target}' should be deleted!!!`);
-            console.log(e);
+            if (e.known) {
+                logger.error(e.message);
+            } else {
+                logger.error(`Unknown error generating the configuration. ${e.message}`);
+                logger.error(`The target folder '${target}' should be deleted!!!`);
+                console.log(e);
+            }
             throw e;
         }
     }

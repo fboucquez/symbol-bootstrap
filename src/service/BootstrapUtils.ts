@@ -56,6 +56,10 @@ const yaml = require('js-yaml');
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
+export class KnownError extends Error {
+    public readonly known = true;
+}
+
 /**
  * The operation to migrate the data.
  */
@@ -88,7 +92,7 @@ export class BootstrapUtils {
     });
 
     public static passwordFlag = flags.string({
-        description: `A password used to encrypt and decrypted generated addresses.yml and preset.yml files. When providing a password, private keys would be encrypted.`,
+        description: `A password used to encrypt and decrypted generated addresses.yml and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`,
         default: '',
         hidden: true,
     });
@@ -435,11 +439,11 @@ export class BootstrapUtils {
             try {
                 return CryptoUtils.decrypt(object, password);
             } catch (e) {
-                throw Error(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
+                throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
             }
         } else {
             if (CryptoUtils.encryptedCount(object) > 0) {
-                throw Error(
+                throw new KnownError(
                     `File ${fileLocation} seems to be encrypted but no password has been provided. Have you used the --password param?`,
                 );
             }
@@ -723,7 +727,7 @@ export class BootstrapUtils {
         throw new Error(`Invalid Network Type ${networkType}`);
     }
 
-    static createDerFile(privateKey: string, file: string) {
+    static createDerFile(privateKey: string, file: string): void {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
     }
 
