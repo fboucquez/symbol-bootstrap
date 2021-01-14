@@ -693,7 +693,7 @@ export class BootstrapUtils {
     private static validatePassword(password: string): string {
         const passwordMinSize = 4;
         if (password.length < passwordMinSize) {
-            throw new Error(`Password is too short. It should have at least ${passwordMinSize} characters!`);
+            throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
         }
         return password;
     }
