@@ -25,6 +25,7 @@ export default class Config extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
+        password: BootstrapUtils.passwordFlag,
         preset: flags.enum({
             char: 'p',
             description: 'the network preset',

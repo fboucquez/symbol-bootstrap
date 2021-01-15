@@ -18,16 +18,18 @@ import { expect } from '@oclif/test';
 import 'mocha';
 import { DtoMapping, TransactionType, UInt64 } from 'symbol-sdk';
 import { BootstrapService, ConfigService, LinkService, Preset } from '../../src/service';
-
+const password = '1234';
 describe('LinkService', () => {
     it('LinkService testnet when down', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual',
+            password,
             reset: false,
             preset: Preset.testnet,
             assembly: 'dual',
+
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },
@@ -45,6 +47,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual-voting',
+            password,
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/voting_preset.yml',
@@ -77,6 +80,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual',
+            password,
             reset: true,
             preset: Preset.testnet,
             customPresetObject: {
@@ -106,6 +110,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual-not-remote',
+            password,
             reset: false,
             preset: Preset.testnet,
             customPresetObject: {
@@ -133,6 +138,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-api',
+            password,
             reset: false,
             preset: Preset.testnet,
             customPresetObject: {
@@ -157,6 +163,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-api-voting',
+            password,
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/voting_preset.yml',
@@ -179,6 +186,6 @@ describe('LinkService', () => {
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
         expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
         expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VOTING_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[2].version).eq(2);
+        expect(nodeAndTransactions[0].transactions[2].version).eq(1);
     });
 });

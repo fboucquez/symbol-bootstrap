@@ -24,6 +24,7 @@ export interface DockerServicePreset {
     excludeDockerService?: boolean;
     environment?: any;
     compose?: any;
+    dockerComposeDebugMode?: boolean;
 }
 
 export interface MosaicPreset {
@@ -59,6 +60,7 @@ export interface NemesisPreset {
 export interface NodePreset extends DockerServicePreset {
     // At least these properties.
     // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
+    serverVersion?: string;
     nodeUseRemoteAccount?: boolean;
     repeat?: number;
     harvesting: boolean;
@@ -84,6 +86,12 @@ export interface NodePreset extends DockerServicePreset {
     brokerOpenPort?: boolean | number | string;
     brokerExcludeDockerService?: boolean;
     brokerCompose?: any;
+    brokerDockerComposeDebugMode?: boolean;
+    //super node
+    supernode?: boolean | string;
+    supernodeOpenPort?: boolean | number | string;
+    agentUrl?: string; //calculated if not provided.
+    restGatewayUrl?: string; // calculated if not provided;
 }
 
 export interface GatewayPreset extends DockerServicePreset {
@@ -123,6 +131,8 @@ export interface FaucetPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    agentBinaryLocation: string;
+    serverVersion: string;
     epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;
@@ -139,6 +149,9 @@ export interface ConfigPreset {
     namespaceRentalFeeSinkAddress?: string;
     nodeUseRemoteAccount: boolean;
     networkheight: boolean;
+    dockerComposeVersion: number | string;
+    dockerComposeServiceRestart: string;
+    dockerComposeDebugMode: boolean;
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];
@@ -152,6 +165,7 @@ export interface ConfigPreset {
     baseNamespace: string;
     databases?: DatabasePreset[];
     knownPeers?: Record<NodeType, any[]>;
+    mongoComposeRunParam: string;
     mongoImage: string;
     symbolServerToolsImage: string;
     symbolExplorerImage: string;
@@ -161,5 +175,6 @@ export interface ConfigPreset {
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
+    supernodeControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
 }

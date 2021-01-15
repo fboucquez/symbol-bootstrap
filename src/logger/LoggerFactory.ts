@@ -37,7 +37,7 @@ export default class LoggerFactory {
             level: 'info',
         });
 
-    public static getLogger(id: LogType): Logger {
+    public static getLogger(id = LogType.System): Logger {
         if (!winston.loggers.has(id.toString())) {
             winston.loggers.add(id.toString(), {
                 transports: [LoggerFactory.consoleTransport, LoggerFactory.fileTransport(id)],

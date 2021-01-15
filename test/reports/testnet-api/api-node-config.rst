@@ -80,7 +80,7 @@ config-finalization.properties
 
     **finalization**;
     enableVoting; false
-    enableRevoteOnBoot; false
+    enableRevoteOnBoot; true
     size; 10'000
     threshold; 7'000
     stepDuration; 4m
@@ -537,7 +537,7 @@ config-logging-broker.properties
     directory; logs
     filePattern; logs/catapult_broker%4N.log
     rotationSize; 25MB
-    maxTotalSize; 2500MB
+    maxTotalSize; 1000MB
     minFreeSpace; 100MB
     **file.component.levels**;
 
@@ -558,7 +558,7 @@ config-logging-recovery.properties
     directory; logs
     filePattern; logs/catapult_recovery%4N.log
     rotationSize; 25MB
-    maxTotalSize; 2500MB
+    maxTotalSize; 1000MB
     minFreeSpace; 100MB
     **file.component.levels**;
 
@@ -579,7 +579,7 @@ config-logging-server.properties
     directory; logs
     filePattern; logs/catapult_server%4N.log
     rotationSize; 25MB
-    maxTotalSize; 2500MB
+    maxTotalSize; 1000MB
     minFreeSpace; 100MB
     **file.component.levels**;
 
@@ -601,15 +601,15 @@ config-network.properties
 
     **network**; ; ;
     identifier; public-test; NetworkIdentifier; Network identifier.
-    nemesisSignerPublicKey; 78F0F6FFDE5C130777506FE2A597ADC5E98BD46041ABF775908299FE94BFD5D0; Key; Nemesis public key.
+    nemesisSignerPublicKey; 071964D3C040D62DE905EAE978E2119BFC8E70489BFDF45A85B3D7ED5A517AA8; Key; Nemesis public key.
     nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
-    generationHashSeed; 6C1B92391CCB41C96478471C2634C111D9E989DECD66130C0430B5B8D20117CD; ;
+    generationHashSeed; 45FBCF2F0EA36EFA7923C9BC923D6503169651F7FA4EFC46A8EAF5AE09057EBD; ;
     epochAdjustment; 1573430400s; utils::TimeSpan; Nemesis epoch time adjustment.
     **chain**; ; ;
     enableVerifiableState; true; bool; Set to true if block chain should calculate state hashes so that state is fully verifiable at each block.
     enableVerifiableReceipts; true; bool; Set to true if block chain should calculate receipts so that state changes are fully verifiable at each block.
-    currencyMosaicId; 0x5B66'E76B'ECAD'0860; MosaicId; Mosaic id used as primary chain currency.
-    harvestingMosaicId; 0x5B66'E76B'ECAD'0860; MosaicId; Mosaic id used to provide harvesting ability.
+    currencyMosaicId; 0x2CF4'03E8'5507'F39E; MosaicId; Mosaic id used as primary chain currency.
+    harvestingMosaicId; 0x2CF4'03E8'5507'F39E; MosaicId; Mosaic id used to provide harvesting ability.
     blockGenerationTargetTime; 30s; utils::TimeSpan; Targeted time between blocks.
     blockTimeSmoothingFactor; 3000; uint32_t; Note: A higher value makes the network more biased. Note: This can lower security because it will increase the influence of time relative to importance.
     importanceGrouping; 180; uint64_t; Number of blocks that should be treated as a group for importance purposes. Note: Importances will only be calculated at blocks that are multiples of this grouping number.
@@ -633,10 +633,6 @@ config-network.properties
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
     harvestNetworkFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
-    **fork_heights**;
-    votingKeyLinkV2; 215500
-    importanceBlock; 215500
-    accountRestrictionsV2; 215500
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
@@ -697,31 +693,33 @@ config-node.properties
     enableAutoSyncCleanup; false; bool; Set to true if temporary sync files should be automatically cleaned up. Note: This should be Set to false if broker process is running.
     enableTransactionSpamThrottling; true; bool; Set to true if transaction spam throttling should be enabled.
     transactionSpamThrottlingMaxBoostFee; 10'000'000; Amount; Maximum fee that will boost a transaction through the spam throttle when spam throttling is enabled.
-    maxHashesPerSyncAttempt; 610; ;
-    maxBlocksPerSyncAttempt; 602; uint32_t; Maximum number of blocks per sync attempt.
+    maxHashesPerSyncAttempt; 370; ;
+    maxBlocksPerSyncAttempt; 360; uint32_t; Maximum number of blocks per sync attempt.
     maxChainBytesPerSyncAttempt; 100MB; utils::FileSize; Maximum chain bytes per sync attempt.
     shortLivedCacheTransactionDuration; 10m; utils::TimeSpan; Duration of a transaction in the short lived cache.
     shortLivedCacheBlockDuration; 100m; utils::TimeSpan; Duration of a block in the short lived cache.
     shortLivedCachePruneInterval; 90s; utils::TimeSpan; Time between short lived cache pruning.
-    shortLivedCacheMaxSize; 200'000; uint32_t; Maximum size of a short lived cache.
+    shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
     minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
     transactionSelectionStrategy; maximize-fee; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
-    unconfirmedTransactionsCacheMaxResponseSize; 20MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
-    unconfirmedTransactionsCacheMaxSize; 50'000; uint32_t; Maximum size of the unconfirmed transactions cache.
+    unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
+    unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
     connectTimeout; 15s; utils::TimeSpan; Timeout for connecting to a peer.
-    syncTimeout; 120s; utils::TimeSpan; Timeout for syncing with a peer.
-    socketWorkingBufferSize; 512KB; utils::FileSize; Initial socket working buffer size (socket reads will attempt to read buffers of roughly this size).
-    socketWorkingBufferSensitivity; 100; uint32_t; Socket working buffer sensitivity (lower values will cause memory to be more aggressively reclaimed). Note: Set to 0 will disable memory reclamation.
+    syncTimeout; 20m; utils::TimeSpan; Timeout for syncing with a peer.
+    socketWorkingBufferSize; 16KB; utils::FileSize; Initial socket working buffer size (socket reads will attempt to read buffers of roughly this size).
+    socketWorkingBufferSensitivity; 1; uint32_t; Socket working buffer sensitivity (lower values will cause memory to be more aggressively reclaimed). Note: Set to 0 will disable memory reclamation.
     maxPacketDataSize; 150MB; utils::FileSize; Maximum packet data size.
-    blockDisruptorSize; 4096; uint32_t; Size of the block disruptor circular buffer.
+    blockDisruptorSlotCount; 4096; uint32_t; Size of the block disruptor circular buffer.
     blockElementTraceInterval; 1; uint32_t; Multiple of elements at which a block element should be traced through queue and completion.
-    transactionDisruptorSize; 16384; uint32_t; Size of the transaction disruptor circular buffer.
+    blockDisruptorMaxMemorySize; 300MB; ;
+    transactionDisruptorSlotCount; 8192; uint32_t; Size of the transaction disruptor circular buffer.
     transactionElementTraceInterval; 10; uint32_t; Multiple of elements at which a transaction element should be traced through queue and completion.
+    transactionDisruptorMaxMemorySize; 20MB; ;
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
     minPartnerNodeVersion; 0.10.0.4; ;
-    maxPartnerNodeVersion; 0.10.0.4; ;
+    maxPartnerNodeVersion; 0.10.0.5; ;
     trustedHosts; 127.0.0.1, 172.20.0.25; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1, 172.20.0.25; unordered_set<string>; Networks that should be treated as local.
     listenInterface; 0.0.0.0; ;
@@ -736,7 +734,7 @@ config-node.properties
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-    version; 0.10.0.4; uint32_t; Node version.
+    version; 0.10.0.5; uint32_t; Node version.
     roles; Api; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
@@ -757,6 +755,8 @@ config-node.properties
     numReadRateMonitoringBuckets; 4; uint16_t; Number of read rate monitoring buckets (Set to 0 to disable read rate monitoring).
     readRateMonitoringBucketDuration; 15s; utils::TimeSpan; Duration of each read rate monitoring bucket.
     maxReadRateMonitoringTotalSize; 100MB; utils::FileSize; Maximum size allowed during full read rate monitoring period.
+    minTransactionFailuresCountForBan; 8; ;
+    minTransactionFailuresPercentForBan; 10; ;
 
 config-pt.properties
 ====================
@@ -765,8 +765,8 @@ config-pt.properties
     :delim: ;
 
     **partialtransactions**;
-    cacheMaxResponseSize; 20MB
-    cacheMaxSize; 1'000'000
+    cacheMaxResponseSize; 5MB
+    cacheMaxSize; 20MB
 
 config-task.properties
 ======================

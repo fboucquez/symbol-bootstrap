@@ -46,18 +46,6 @@ harvestNetworkFeeSinkAddress = {{{harvestNetworkFeeSinkAddress}}}
 
 maxTransactionsPerBlock = {{{toAmount maxTransactionsPerBlock}}}
 
-[fork_heights]
-
-{{#if votingKeyLinkV2 includeZero=true}}
-votingKeyLinkV2 = {{{votingKeyLinkV2}}}
-{{/if}}
-{{#if importanceBlock includeZero=true}}
-importanceBlock = {{{importanceBlock}}}
-{{/if}}
-{{#if accountRestrictionsV2 includeZero=true}}
-accountRestrictionsV2 = {{{accountRestrictionsV2}}}
-{{/if}}
-
 [plugin:catapult.plugins.accountlink]
 
 dummy = to trigger plugin load

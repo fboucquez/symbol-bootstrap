@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { chmodSync, copyFileSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { LogType } from '../logger';
@@ -23,8 +24,7 @@ import { Addresses, ConfigPreset, DockerCompose, DockerComposeService, DockerSer
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
-export type ComposeParams = { target: string; user?: string; upgrade?: boolean };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -34,11 +34,22 @@ const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
 const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
 const targetWalletsFolder = BootstrapUtils.targetWalletsFolder;
 
+export interface PortConfiguration {
+    internalPort: number;
+    openPort: number | undefined | boolean | string;
+}
+
 export class ComposeService {
     public static defaultParams: ComposeParams = {
         target: BootstrapUtils.defaultTargetFolder,
         user: BootstrapUtils.CURRENT_USER,
         upgrade: false,
+    };
+
+    public static readonly DEBUG_SERVICE_PARAMS = {
+        security_opt: ['seccomp:unconfined'],
+        cap_add: ['ALL'],
+        privileged: true,
     };
 
     private readonly configLoader: ConfigLoader;
@@ -47,9 +58,19 @@ export class ComposeService {
         this.configLoader = new ConfigLoader();
     }
 
+    public resolveDebugOptions(dockerComposeDebugMode: boolean, dockerComposeServiceDebugMode: boolean | undefined) {
+        if (dockerComposeServiceDebugMode == false) {
+            return {};
+        }
+        if (dockerComposeServiceDebugMode || dockerComposeDebugMode) {
+            return ComposeService.DEBUG_SERVICE_PARAMS;
+        }
+        return {};
+    }
+
     public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
-        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target);
-        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
@@ -58,9 +79,9 @@ export class ComposeService {
             BootstrapUtils.deleteFolder(targetDocker);
         }
         const dockerFile = join(targetDocker, 'docker-compose.yml');
-        if (fs.existsSync(dockerFile)) {
+        if (existsSync(dockerFile)) {
             logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
-            return BootstrapUtils.loadYaml(dockerFile);
+            return BootstrapUtils.loadYaml(dockerFile, undefined);
         }
 
         await BootstrapUtils.mkdir(targetDocker);
@@ -76,14 +97,15 @@ export class ComposeService {
 
         const services: (DockerComposeService | undefined)[] = [];
 
-        const resolvePorts = (internalPort: number, openPort: number | undefined | boolean | string): string[] => {
-            if (!openPort) {
-                return [];
-            }
-            if (openPort === true || openPort === 'true') {
-                return [`${internalPort}:${internalPort}`];
-            }
-            return [`${openPort}:${internalPort}`];
+        const resolvePorts = (portConfigurations: PortConfiguration[]): string[] => {
+            return portConfigurations
+                .filter((c) => c.openPort)
+                .map(({ openPort, internalPort }) => {
+                    if (openPort === true || openPort === 'true') {
+                        return `${internalPort}:${internalPort}`;
+                    }
+                    return `${openPort}:${internalPort}`;
+                });
         };
 
         const resolveService = async (
@@ -142,20 +164,23 @@ export class ComposeService {
             (presetData.databases || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const databaseName = n.databaseName || presetData.databaseName;
+                    const databasePort = 27017;
                     services.push(
                         await resolveService(n, {
                             user,
-                            environment: { MONGO_INITDB_DATABASE: n.databaseName || presetData.databaseName },
+                            environment: { MONGO_INITDB_DATABASE: databaseName },
                             container_name: n.name,
                             image: presetData.mongoImage,
-                            command: `mongod --dbpath=/dbdata --bind_ip=${n.name}`,
+                            command: `mongod --dbpath=/dbdata --bind_ip=${n.name} ${presetData.mongoComposeRunParam}`,
                             stop_signal: 'SIGINT',
                             working_dir: '/docker-entrypoint-initdb.d',
-                            ports: resolvePorts(27017, n.openPort),
+                            ports: resolvePorts([{ internalPort: databasePort, openPort: n.openPort }]),
                             volumes: [
                                 vol(`./mongo`, `/docker-entrypoint-initdb.d`, true),
                                 vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata', false),
                             ],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -164,25 +189,46 @@ export class ComposeService {
 
         const nodeWorkingDirectory = '/symbol-workdir';
         const nodeCommandsDirectory = '/symbol-commands';
-        // const restart = 'unless-stopped';
-        const restart = 'on-failure:2';
+        const restart = presetData.dockerComposeServiceRestart;
         await Promise.all(
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
                     const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
                     const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
-                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}`;
+                    let serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}`;
                     const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || ''}`;
                     const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
+                    const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
 
-                    const serverServiceCommand = n.brokerName
-                        ? `bash -c "${[waitForBroker, serverCommand].join(' && ')}"`
-                        : `bash -c "${[recoverServerCommand, serverCommand].join(' && ')}"`;
+                    if (n.supernode) {
+                        await BootstrapUtils.mkdir(join(targetDocker, 'server'));
+                        // Pull from cloud!!!!
+                        const supernodeAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent/agent.properties`;
+                        const rootDestination = join(this.root, 'agent-linux.bin');
+                        await BootstrapUtils.download(presetData.agentBinaryLocation, rootDestination);
+                        const localDestination = join(targetDocker, 'server', 'agent-linux.bin');
+                        logger.info(`Copying from ${rootDestination} to ${localDestination}`);
+                        copyFileSync(rootDestination, localDestination);
+                        chmodSync(localDestination, '755');
 
+                        portConfigurations.push({
+                            internalPort: 7880,
+                            openPort: _.isUndefined(n.supernodeOpenPort) ? true : n.supernodeOpenPort,
+                        });
+                        serverCommand += ' & ' + supernodeAgentCommand;
+                    }
+
+                    const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [recoverServerCommand, serverCommand];
+
+                    const serverServiceCommand = `bash -c "${serverServiceCommands.join(' && ')}"`;
                     const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
 
                     const serverDependsOn = n.brokerName ? [n.brokerName] : [];
+                    const volumes = [
+                        vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
+                        vol(`./server`, nodeCommandsDirectory, true),
+                    ];
                     const nodeService = await resolveService(n, {
                         user,
                         container_name: n.name,
@@ -191,12 +237,10 @@ export class ComposeService {
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         restart: restart,
-                        ports: resolvePorts(7900, n.openPort),
-                        volumes: [
-                            vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
-                            vol(`./server`, nodeCommandsDirectory, true),
-                        ],
+                        ports: resolvePorts(portConfigurations),
+                        volumes: volumes,
                         depends_on: serverDependsOn,
+                        ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                         ...n.compose,
                     });
 
@@ -216,10 +260,11 @@ export class ComposeService {
                                     image: nodeService.image,
                                     working_dir: nodeWorkingDirectory,
                                     command: brokerServiceCommand,
-                                    ports: resolvePorts(7902, n.brokerOpenPort),
+                                    ports: resolvePorts([{ internalPort: 7902, openPort: n.brokerOpenPort }]),
                                     stop_signal: 'SIGINT',
                                     restart: restart,
                                     volumes: nodeService.volumes,
+                                    ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.brokerDockerComposeDebugMode),
                                     ...n.brokerCompose,
                                 },
                             ),
@@ -232,6 +277,8 @@ export class ComposeService {
             (presetData.gateways || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const internalPort = 3000;
+                    const volumes = [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory, false)];
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
@@ -240,9 +287,11 @@ export class ComposeService {
                             command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
-                            ports: resolvePorts(3000, n.openPort),
-                            volumes: [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory, false)],
+                            ports: resolvePorts([{ internalPort: internalPort, openPort: n.openPort }]),
+                            restart: restart,
+                            volumes: volumes,
                             depends_on: [n.databaseHost],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -253,15 +302,17 @@ export class ComposeService {
             (presetData.wallets || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const volumes = [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config', true)];
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
                             image: presetData.symbolWalletImage,
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
-                            ports: resolvePorts(80, n.openPort),
+                            ports: resolvePorts([{ internalPort: 80, openPort: n.openPort }]),
                             restart: restart,
-                            volumes: [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config', true)],
+                            volumes: volumes,
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -272,6 +323,10 @@ export class ComposeService {
             (presetData.explorers || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const volumes = [
+                        vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory, true),
+                        vol(`./explorer`, nodeCommandsDirectory, true),
+                    ];
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
@@ -279,12 +334,10 @@ export class ComposeService {
                             command: `ash -c "/bin/ash ${nodeCommandsDirectory}/run.sh ${n.name}"`,
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
-                            ports: resolvePorts(80, n.openPort),
+                            ports: resolvePorts([{ internalPort: 80, openPort: n.openPort }]),
                             restart: restart,
-                            volumes: [
-                                vol(`../${targetExplorersFolder}/${n.name}`, nodeWorkingDirectory, true),
-                                vol(`./explorer`, nodeCommandsDirectory, true),
-                            ],
+                            volumes: volumes,
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -309,8 +362,9 @@ export class ComposeService {
                                 ),
                             },
                             restart: restart,
-                            ports: resolvePorts(4000, n.openPort),
+                            ports: resolvePorts([{ internalPort: 4000, openPort: n.openPort }]),
                             depends_on: [n.gateway],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
                     );
@@ -319,8 +373,8 @@ export class ComposeService {
 
         const validServices: DockerComposeService[] = services.filter((s) => s).map((s) => s as DockerComposeService);
         const servicesMap: Record<string, DockerComposeService> = _.keyBy(validServices, 'container_name');
-        const dockerCompose: DockerCompose = {
-            version: '3',
+        let dockerCompose: DockerCompose = {
+            version: presetData.dockerComposeVersion,
             services: servicesMap,
         };
 
@@ -337,7 +391,8 @@ export class ComposeService {
                 },
             };
 
-        await BootstrapUtils.writeYaml(dockerFile, dockerCompose);
+        dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
+        await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }

@@ -30,7 +30,14 @@ describe('ConfigLoader', () => {
 
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
         try {
-            await configLoader.createPresetData('.', Preset.testnet, undefined, undefined, undefined);
+            await configLoader.createPresetData({
+                root: '.',
+                preset: Preset.testnet,
+                assembly: undefined,
+                customPreset: undefined,
+                customPresetObject: undefined,
+                password: 'abc',
+            });
         } catch (e) {
             expect(e.message).to.equal('Preset testnet requires assembly (-a, --assembly option). Possible values are: api, dual, peer');
             return;
@@ -39,22 +46,45 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData testnet assembly', async () => {
-        const presetData = await configLoader.createPresetData('.', Preset.testnet, 'dual', undefined, undefined);
+        const presetData = await configLoader.createPresetData({
+            root: '.',
+            preset: Preset.testnet,
+            assembly: 'dual',
+            customPreset: undefined,
+            customPresetObject: undefined,
+            password: 'abc',
+        });
         expect(presetData).to.not.be.undefined;
     });
 
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
-        const presetData = await configLoader.createPresetData(
-            '.',
-            Preset.bootstrap,
-            undefined,
-            'test/override-currency-preset.yml',
-            undefined,
-        );
+        const presetData = await configLoader.createPresetData({
+            root: '.',
+            preset: Preset.bootstrap,
+            assembly: undefined,
+            customPreset: 'test/override-currency-preset.yml',
+            customPresetObject: undefined,
+            password: 'abcd',
+        });
         expect(presetData).to.not.be.undefined;
         expect(presetData?.nemesis?.mosaics?.[0].accounts).to.be.eq(20);
         const yaml = BootstrapUtils.toYaml(presetData);
         expect(BootstrapUtils.fromYaml(yaml)).to.be.deep.eq(presetData);
+    });
+
+    it('ConfigLoader loadPresetData bootstrap custom too short!', async () => {
+        try {
+            await configLoader.createPresetData({
+                root: '.',
+                preset: Preset.bootstrap,
+                assembly: undefined,
+                customPreset: 'test/override-currency-preset.yml',
+                customPresetObject: undefined,
+                password: 'abc',
+            });
+        } catch (e) {
+            expect(e.message).eq('Password is too short. It should have at least 4 characters!');
+        }
     });
 
     it('applyIndex', async () => {
@@ -159,14 +189,14 @@ describe('ConfigLoader', () => {
 
         const expectedExpandedServices = [
             {
-                apiNodeName: 'api-node-{{$index}}',
-                apiNodeHost: 'api-node-{{$index}}',
-                apiNodeBrokerHost: 'api-node-broker-{{$index}}',
-                name: 'rest-gateway-{{$index}}',
+                apiNodeBrokerHost: 'api-node-broker-0',
+                apiNodeHost: 'api-node-0',
+                apiNodeName: 'api-node-0',
+                databaseHost: 'db-0',
                 description: 'catapult development network',
-                databaseHost: 'db-{{$index}}',
+                ipv4_address: '172.20.0.5',
+                name: 'rest-gateway-0',
                 openPort: true,
-                ipv4_address: '172.20.0.{{add $index 5}}',
             },
         ];
         expect(expandedServices).to.be.deep.eq(expectedExpandedServices);
@@ -219,14 +249,14 @@ describe('ConfigLoader', () => {
     });
 
     it('should migrated old addresses', () => {
-        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml');
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml');
+        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', undefined);
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', undefined);
         const addresses = configLoader.migrateAddresses(oldAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });
 
     it('should migrated not migrate new addresses', () => {
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml');
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', undefined);
         const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });

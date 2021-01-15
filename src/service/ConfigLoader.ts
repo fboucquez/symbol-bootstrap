@@ -142,6 +142,7 @@ export class ConfigLoader {
         const node = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.transportPrivateKey));
 
         const friendlyName = nodePreset.friendlyName || ca.publicKey.substr(0, 7);
+
         const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, main: ca, transport: node };
 
         const useRemoteAccount = nodePreset.nodeUseRemoteAccount || presetData.nodeUseRemoteAccount;
@@ -150,7 +151,6 @@ export class ConfigLoader {
             nodeAccount.remote = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.remotePrivateKey));
         if (nodePreset.voting) nodeAccount.voting = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
         if (nodePreset.harvesting) nodeAccount.vrf = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
-
         return nodeAccount;
     }
 
@@ -162,26 +162,34 @@ export class ConfigLoader {
         return [...Array(size).keys()];
     }
 
-    public createPresetData(
-        root: string,
-        preset: Preset,
-        assembly: string | undefined,
-        customPresetFile: string | undefined,
-        customPresetObject: any | undefined,
-    ): ConfigPreset {
-        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'));
-        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`);
-        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`) : {};
-        const customPreset = customPresetFile ? BootstrapUtils.loadYaml(customPresetFile) : {};
+    public createPresetData({
+        password,
+        root,
+        preset,
+        assembly,
+        customPreset,
+        customPresetObject,
+    }: {
+        password: string | undefined;
+        root: string;
+        preset: Preset;
+        assembly?: string;
+        customPreset?: string;
+        customPresetObject?: any;
+    }): ConfigPreset {
+        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), undefined);
+        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, undefined);
+        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, undefined) : {};
+        const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
-        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPreset, customPresetObject, { preset });
+        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
                 logger.info(`Assembly preset ${assembly}`);
             }
-            if (customPresetFile) {
-                logger.info(`Custom preset file ${customPresetFile}`);
+            if (customPreset) {
+                logger.info(`Custom preset file ${customPreset}`);
             }
         }
         ConfigLoader.presetInfoLogged = true;
@@ -311,11 +319,7 @@ export class ConfigLoader {
             if (service.repeat === 0) {
                 return [];
             }
-            if (!service.repeat) {
-                return [service];
-            }
-
-            return _.range(service.repeat).map((index) => {
+            return _.range(service.repeat || 1).map((index) => {
                 return _.omit(
                     _.mapValues(service, (v: any) => this.applyValueTemplate({ ...context, ...service, $index: index }, v)),
                     'repeat',
@@ -324,27 +328,27 @@ export class ConfigLoader {
         });
     }
 
-    public loadExistingPresetDataIfPreset(target: string): ConfigPreset | undefined {
+    public loadExistingPresetDataIfPreset(target: string, password: string | undefined): ConfigPreset | undefined {
         const generatedPresetLocation = this.getGeneratedPresetLocation(target);
         if (existsSync(generatedPresetLocation)) {
-            return BootstrapUtils.loadYaml(generatedPresetLocation);
+            return BootstrapUtils.loadYaml(generatedPresetLocation, password);
         }
         return undefined;
     }
 
-    public loadExistingPresetData(target: string): ConfigPreset {
-        const presetData = this.loadExistingPresetDataIfPreset(target);
+    public loadExistingPresetData(target: string, password: string | undefined): ConfigPreset {
+        const presetData = this.loadExistingPresetDataIfPreset(target, password);
         if (!presetData) {
             throw new Error(`The file ${this.getGeneratedPresetLocation(target)} doesn't exist. Have you executed the 'config' command?`);
         }
         return presetData;
     }
 
-    public loadExistingAddressesIfPreset(target: string): Addresses | undefined {
+    public loadExistingAddressesIfPreset(target: string, password: string | undefined): Addresses | undefined {
         const generatedAddressLocation = this.getGeneratedAddressLocation(target);
         if (existsSync(generatedAddressLocation)) {
-            const presetData = this.loadExistingPresetData(target);
-            return this.migrateAddresses(BootstrapUtils.loadYaml(generatedAddressLocation), presetData.networkType);
+            const presetData = this.loadExistingPresetData(target, password);
+            return this.migrateAddresses(BootstrapUtils.loadYaml(generatedAddressLocation, password), presetData.networkType);
         }
         return undefined;
     }
@@ -383,8 +387,8 @@ export class ConfigLoader {
         ];
     }
 
-    public loadExistingAddresses(target: string): Addresses {
-        const addresses = this.loadExistingAddressesIfPreset(target);
+    public loadExistingAddresses(target: string, password: string | undefined): Addresses {
+        const addresses = this.loadExistingAddressesIfPreset(target, password);
         if (!addresses) {
             throw new Error(`The file ${this.getGeneratedAddressLocation(target)} doesn't exist. Have you executed the 'config' command?`);
         }

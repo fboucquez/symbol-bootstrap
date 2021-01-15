@@ -67,13 +67,13 @@ socketWorkingBufferSensitivity:
 maxPacketDataSize:
     type: 'utils::FileSize'
     description: Maximum packet data size.
-blockDisruptorSize:
+blockDisruptorSlotCount:
     type: uint32_t
     description: Size of the block disruptor circular buffer.
 blockElementTraceInterval:
     type: uint32_t
     description: Multiple of elements at which a block element should be traced through queue and completion.
-transactionDisruptorSize:
+transactionDisruptorSlotCount:
     type: uint32_t
     description: Size of the transaction disruptor circular buffer.
 transactionElementTraceInterval:

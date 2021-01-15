@@ -17,29 +17,38 @@
 import { flags } from '@oclif/command';
 import { spawn } from 'child_process';
 import { textSync } from 'figlet';
-import { existsSync, lstatSync, promises as fsPromises, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'fs';
-import * as Handlebars from 'handlebars';
-import * as _ from 'lodash';
-import { basename, join } from 'path';
 import {
-    Deadline,
-    DtoMapping,
-    LinkAction,
-    NetworkType,
-    Transaction,
-    UInt64,
-    VotingKeyLinkTransaction,
-    VotingKeyLinkV1Transaction,
-} from 'symbol-sdk';
+    createWriteStream,
+    existsSync,
+    lstatSync,
+    promises as fsPromises,
+    readdirSync,
+    readFileSync,
+    rmdirSync,
+    statSync,
+    unlinkSync,
+    writeFileSync,
+} from 'fs';
+import * as Handlebars from 'handlebars';
+import { get } from 'https';
+import * as _ from 'lodash';
+import { platform, totalmem } from 'os';
+import { basename, join } from 'path';
+import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
+import { CryptoUtils } from './CryptoUtils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
+
+export class KnownError extends Error {
+    public readonly known = true;
+}
 
 /**
  * The operation to migrate the data.
@@ -72,11 +81,73 @@ export class BootstrapUtils {
         default: BootstrapUtils.defaultTargetFolder,
     });
 
+    public static passwordFlag = flags.string({
+        description: `A password used to encrypt and decrypted generated addresses.yml and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`,
+        default: '',
+        hidden: true,
+    });
+
     private static onProcessListener = (() => {
         process.on('SIGINT', () => {
             BootstrapUtils.stopProcess = true;
         });
     })();
+
+    public static async download(url: string, dest: string): Promise<boolean> {
+        if (existsSync(url)) {
+            logger.info(`Copying ${url} to ${dest}`);
+            await fsPromises.copyFile(url, dest);
+            return true;
+        }
+        logger.info(`Checking remote file ${url}`);
+        const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
+        return new Promise((resolve, reject) => {
+            function showDownloadingProgress(received: number, total: number) {
+                const percentage = ((received * 100) / total).toFixed(2);
+                process.stdout.write(platform() == 'win32' ? '\\033[0G' : '\r');
+                process.stdout.write(percentage + '% | ' + received + ' bytes downloaded out of ' + total + ' bytes.');
+            }
+            const request = get(url, (response) => {
+                const total = parseInt(response.headers['content-length'] || '0', 10);
+                let received = 0;
+                if (total === destinationSize) {
+                    logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
+                    request.abort();
+                    resolve(false);
+                } else if (response.statusCode === 200) {
+                    existsSync(dest) && unlinkSync(dest);
+                    const file = createWriteStream(dest, { flags: 'wx' });
+                    logger.info(`Downloading file ${url}`);
+                    response.pipe(file);
+                    response.on('data', function (chunk) {
+                        received += chunk.length;
+                        showDownloadingProgress(received, total);
+                    });
+
+                    file.on('finish', () => {
+                        resolve(true);
+                    });
+
+                    file.on('error', (err) => {
+                        file.close();
+                        if (err.code === 'EEXIST') {
+                            reject(new Error('File already exists'));
+                        } else {
+                            unlinkSync(dest); // Delete temp file
+                            reject(err);
+                        }
+                    });
+                } else {
+                    reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
+                }
+            });
+
+            request.on('error', (err) => {
+                existsSync(dest) && unlinkSync(dest); // Delete temp file
+                reject(err.message);
+            });
+        });
+    }
 
     public static deleteFolder(folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
@@ -155,22 +226,32 @@ export class BootstrapUtils {
         cmds,
         binds,
     }: {
-        catapultAppFolder: string;
+        catapultAppFolder?: string;
         image: string;
-        userId?: string | undefined;
-        workdir?: string | undefined;
+        userId?: string;
+        workdir?: string;
         cmds: string[];
         binds: string[];
     }): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
-        const environmentParam = `--env LD_LIBRARY_PATH=${catapultAppFolder}/lib:${catapultAppFolder}/deps`;
+        const environmentParam = catapultAppFolder ? `--env LD_LIBRARY_PATH=${catapultAppFolder}/lib:${catapultAppFolder}/deps` : '';
         const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${cmds
             .map((a) => `"${a}"`)
             .join(' ')}`;
-        logger.info(`Running image using Exec: ${image} ${cmds.join(' ')}`);
+        logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
         return await this.exec(runCommand);
+    }
+
+    public static toAns1(privateKey: string): string {
+        const prefix = '302e020100300506032b657004220420';
+        return `${prefix}${privateKey.toLowerCase()}`;
+    }
+
+    public static secureString(text: string): string {
+        const regex = new RegExp('[0-9a-fA-F]{64}', 'g');
+        return text.replace(regex, 'HIDDEN_KEY');
     }
 
     public static sleep(ms: number): Promise<any> {
@@ -182,10 +263,6 @@ export class BootstrapUtils {
         });
     }
 
-    public static createLongVotingKey(votingPublicKey: string): string {
-        return votingPublicKey.padEnd(96, '0');
-    }
-
     public static createVotingKeyTransaction(
         shortPublicKey: string,
         currentHeight: UInt64,
@@ -193,38 +270,11 @@ export class BootstrapUtils {
             networkType: NetworkType;
             votingKeyStartEpoch: number;
             votingKeyEndEpoch: number;
-            votingKeyLinkV2: number | undefined;
         },
         deadline: Deadline,
         maxFee: UInt64,
     ): Transaction {
-        if (presetData.votingKeyLinkV2 === undefined) {
-            // Public net v1 short key (to be defined, this mix messes up catbuffer deserialization).
-            logger.info('Voting Key Link Transaction Short Key V1 resolved');
-            return VotingKeyLinkTransaction.create(
-                deadline,
-                shortPublicKey,
-                presetData.votingKeyStartEpoch,
-                presetData.votingKeyEndEpoch,
-                LinkAction.Link,
-                presetData.networkType,
-                1,
-                maxFee,
-            );
-        }
-        if (currentHeight.compact() < presetData.votingKeyLinkV2) {
-            logger.info('Voting Key Link Transaction Long Key V1 resolved');
-            return VotingKeyLinkV1Transaction.create(
-                deadline,
-                BootstrapUtils.createLongVotingKey(shortPublicKey),
-                presetData.votingKeyStartEpoch,
-                presetData.votingKeyEndEpoch,
-                LinkAction.Link,
-                presetData.networkType,
-                maxFee,
-            );
-        }
-        logger.info('Voting Key Link Transaction Short Key V2 resolved');
+        logger.info('Voting Key Link Transaction Short Key V1 resolved');
         return VotingKeyLinkTransaction.create(
             deadline,
             shortPublicKey,
@@ -232,7 +282,7 @@ export class BootstrapUtils {
             presetData.votingKeyEndEpoch,
             LinkAction.Link,
             presetData.networkType,
-            2,
+            1,
             maxFee,
         );
     }
@@ -265,6 +315,7 @@ export class BootstrapUtils {
         copyFrom: string,
         copyTo: string,
         excludeFiles: string[] = [],
+        includeFiles: string[] = [],
     ): Promise<void> {
         // Loop through all the files in the config folder
         await fsPromises.mkdir(copyTo, { recursive: true });
@@ -280,7 +331,9 @@ export class BootstrapUtils {
                     const isMustache = file.indexOf('.mustache') > -1;
                     const destinationFile = toPath.replace('.mustache', '');
                     const fileName = basename(destinationFile);
-                    if (excludeFiles.indexOf(fileName) === -1) {
+                    const notBlacklisted = excludeFiles.indexOf(fileName) === -1;
+                    const inWhitelistIfAny = includeFiles.length === 0 || includeFiles.indexOf(fileName) > -1;
+                    if (notBlacklisted && inWhitelistIfAny) {
                         if (isMustache) {
                             const template = await BootstrapUtils.readTextFile(fromPath);
                             const renderedTemplate = this.runTemplate(template, templateContext);
@@ -291,7 +344,7 @@ export class BootstrapUtils {
                     }
                 } else if (stat.isDirectory()) {
                     await fsPromises.mkdir(toPath, { recursive: true });
-                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles);
+                    await this.generateConfiguration(templateContext, fromPath, toPath, excludeFiles, includeFiles);
                 }
             }),
         );
@@ -308,9 +361,25 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(path: string, object: any): Promise<void> {
-        const yamlString = this.toYaml(object);
+    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
+        const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
         await BootstrapUtils.writeTextFile(path, yamlString);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static pruneEmpty(obj: any): any {
+        return (function prune(current: any) {
+            _.forOwn(current, (value, key) => {
+                if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value) || (_.isObject(value) && _.isEmpty(prune(value)))) {
+                    delete current[key];
+                }
+            });
+            // remove any leftover undefined values from the delete
+            // operation on an array
+            if (_.isArray(current)) _.pull(current, undefined);
+
+            return current;
+        })(_.cloneDeep(obj)); // Do not modify the original object, create a clone instead
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -322,8 +391,23 @@ export class BootstrapUtils {
         return yaml.safeLoad(yamlString);
     }
 
-    public static loadYaml(fileLocation: string): any {
-        return this.fromYaml(this.loadFileAsText(fileLocation));
+    public static loadYaml(fileLocation: string, password: string | undefined): any {
+        const object = this.fromYaml(this.loadFileAsText(fileLocation));
+        if (password) {
+            BootstrapUtils.validatePassword(password);
+            try {
+                return CryptoUtils.decrypt(object, password);
+            } catch (e) {
+                throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
+            }
+        } else {
+            if (CryptoUtils.encryptedCount(object) > 0) {
+                throw new KnownError(
+                    `File ${fileLocation} seems to be encrypted but no password has been provided. Have you used the --password param?`,
+                );
+            }
+        }
+        return object;
     }
 
     public static loadFileAsText(fileLocation: string): string {
@@ -365,12 +449,12 @@ export class BootstrapUtils {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
-            let logText = '';
+            let logText = useLogger ? '' : 'Check console for output....';
             const log = (data: string, isError: boolean) => {
-                logText = logText + `${data}\n`;
                 if (useLogger) {
-                    if (isError) logger.warn(logPrefix + data);
-                    else logger.info(logPrefix + data);
+                    logText = logText + `${data}\n`;
+                    if (isError) logger.warn(BootstrapUtils.secureString(logPrefix + data));
+                    else logger.info(BootstrapUtils.secureString(logPrefix + data));
                 } else {
                     console.log(logPrefix + data);
                 }
@@ -486,6 +570,7 @@ export class BootstrapUtils {
         Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
+        Handlebars.registerHelper('computerMemory', BootstrapUtils.computerMemory);
     })();
 
     private static add(a: any, b: any): string | number {
@@ -506,6 +591,10 @@ export class BootstrapUtils {
             throw new TypeError('expected the second argument to be a number');
         }
         return Number(a) - Number(b);
+    }
+
+    public static computerMemory(percentage: number): number {
+        return (totalmem() * percentage) / 100;
     }
 
     public static toAmount(renderedText: string | number): string {
@@ -595,5 +684,17 @@ export class BootstrapUtils {
                 return 'privateTest';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
+    }
+
+    static createDerFile(privateKey: string, file: string): void {
+        writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
+    }
+
+    private static validatePassword(password: string): string {
+        const passwordMinSize = 4;
+        if (password.length < passwordMinSize) {
+            throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
+        }
+        return password;
     }
 }

@@ -25,6 +25,7 @@ export default class Link extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
+        password: BootstrapUtils.passwordFlag,
         url: flags.string({
             char: 'u',
             description: 'the network url',
@@ -35,7 +36,7 @@ export default class Link extends Command {
             default: LinkService.defaultParams.unlink,
         }),
         maxFee: flags.integer({
-            description: 'the max fee used when announcing',
+            description: 'the max fee used when announcing (absolute)',
             default: LinkService.defaultParams.maxFee,
         }),
     };

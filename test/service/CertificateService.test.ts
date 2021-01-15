@@ -16,10 +16,11 @@
 
 import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
+import { promises as fsPromises } from 'fs';
 import 'mocha';
 import * as sshpk from 'sshpk';
-import { Convert } from 'symbol-sdk';
-import { BootstrapUtils, CertificateService, ForgeCertificateService } from '../../src/service';
+import { Account, Convert, NetworkType } from 'symbol-sdk';
+import { BootstrapUtils, CertificateService, ConfigLoader, ForgeCertificateService, NodeCertificates, Preset } from '../../src/service';
 
 describe('CertificateService', () => {
     it('forge create certificate', async () => {
@@ -54,5 +55,43 @@ describe('CertificateService', () => {
         const publicKey = Convert.uint8ToHex(nodeCertKey.parts[0].data);
         expect('C69A74157E2DB00A43CCB604007D8C34322DA96936FDF9E1C007938F4713FEA9').be.eq(publicKey);
         console.log(publicKey);
+    });
+
+    it('createCertificates', async () => {
+        const target = 'target/CertificateService.test';
+        await BootstrapUtils.deleteFolder(target);
+        const service = new CertificateService('.', { target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        const presetData = new ConfigLoader().createPresetData({
+            root: '.',
+            preset: Preset.bootstrap,
+            password: 'abc',
+        });
+        const networkType = NetworkType.TEST_NET;
+        const main = Account.generateNewAccount(networkType);
+        const transport = Account.generateNewAccount(networkType);
+        const keys: NodeCertificates = {
+            main: ConfigLoader.toConfig(main),
+            transport: ConfigLoader.toConfig(transport),
+        };
+        await service.run(presetData.symbolServerToolsImage, 'test-node', keys, target);
+
+        const files = await fsPromises.readdir(target);
+        expect(files).deep.eq([
+            'ca.cert.pem',
+            'ca.cnf',
+            'ca.pubkey.pem',
+            'index.txt',
+            'index.txt.attr',
+            'index.txt.attr.old',
+            'index.txt.old',
+            'new_certs',
+            'node.cnf',
+            'node.crt.pem',
+            'node.csr.pem',
+            'node.full.crt.pem',
+            'node.key.pem',
+            'serial.dat',
+            'serial.dat.old',
+        ]);
     });
 });

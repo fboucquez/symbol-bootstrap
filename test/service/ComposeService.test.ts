@@ -19,21 +19,28 @@ import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { DockerCompose } from '../../src/model';
-import { BootstrapService, BootstrapUtils, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
+import { BootstrapService, BootstrapUtils, ComposeService, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 
 describe('ComposeService', () => {
+    const password = '1234';
+
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
         const service = new BootstrapService('.');
         const configResult = await service.config(params);
         const dockerCompose = await service.compose(params, configResult.presetData);
+        Object.values(dockerCompose.services).forEach((service) => {
+            if (service.mem_limit) {
+                service.mem_limit = 123;
+            }
+        });
         const targetDocker = join(params.target, `docker`, 'docker-compose.yml');
         expect(existsSync(targetDocker)).to.be.true;
         const expectedFileLocation = `./test/composes/${expectedComposeFile}`;
         if (!existsSync(expectedFileLocation)) {
-            await BootstrapUtils.writeYaml(expectedFileLocation, dockerCompose);
+            await BootstrapUtils.writeYaml(expectedFileLocation, dockerCompose, params.password);
         }
 
-        const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml(expectedFileLocation);
+        const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml(expectedFileLocation, params.password);
 
         const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
             if (!service.user) {
@@ -63,11 +70,40 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/testnet-dual',
+            password,
             reset: false,
             preset: Preset.testnet,
             assembly: 'dual',
         };
         await assertDockerCompose(params, 'expected-testnet-dual-compose.yml');
+    });
+
+    it('Compose testnet supernode', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/testnet-supernode',
+            password,
+            customPreset: './test/supernode.yml',
+            reset: false,
+            preset: Preset.testnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-testnet-supernode-compose.yml');
+    });
+
+    it('Compose testnet dual voting', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/testnet-voting',
+            password,
+            reset: false,
+            customPreset: './test/voting_preset.yml',
+            preset: Preset.testnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-testnet-voting-compose.yml');
     });
 
     it('Compose bootstrap default', async () => {
@@ -100,6 +136,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                 ],
             },
             target: 'target/ConfigService.bootstrap.compose',
+            password,
             customPreset: './test/custom_compose_preset.yml',
             reset: false,
             preset: Preset.bootstrap,
@@ -107,7 +144,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom-compose.yml');
     });
 
-    it('Compose bootstrap full', async () => {
+    it('Compose bootstrap custom preset', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
@@ -118,7 +155,28 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
+            target: 'target/ConfigService.bootstrap.custom',
+            customPreset: './test/custom_preset.yml',
+            reset: false,
+            preset: Preset.bootstrap,
+        };
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
+    });
+
+    it('Compose bootstrap full with debug on', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            customPresetObject: {
+                dockerComposeDebugMode: true,
+                faucets: [
+                    {
+                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                    },
+                ],
+            },
             target: 'target/ConfigService.bootstrap.full',
+            password,
             reset: false,
             assembly: 'full',
             preset: Preset.bootstrap,
@@ -137,11 +195,22 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            reset: true,
+            reset: false,
             target: 'target/ConfigService.bootstrap.repeat',
+            password,
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-repeat.yml');
+    });
+
+    it('Compose bootstrap repeat', async () => {
+        const service = new ComposeService('.', ComposeService.defaultParams);
+        expect(service.resolveDebugOptions(true, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
+        expect(service.resolveDebugOptions(true, undefined)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
+        expect(service.resolveDebugOptions(true, false)).deep.equals({});
+        expect(service.resolveDebugOptions(false, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
+        expect(service.resolveDebugOptions(false, undefined)).deep.equals({});
+        expect(service.resolveDebugOptions(false, false)).deep.equals({});
     });
 });

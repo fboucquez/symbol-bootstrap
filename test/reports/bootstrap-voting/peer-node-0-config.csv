@@ -101,7 +101,7 @@ level; Info
 directory; logs
 filePattern; logs/catapult_broker%4N.log
 rotationSize; 25MB
-maxTotalSize; 2500MB
+maxTotalSize; 1000MB
 minFreeSpace; 100MB
 
 file.component.levels
@@ -121,7 +121,7 @@ level; Info
 directory; logs
 filePattern; logs/catapult_recovery%4N.log
 rotationSize; 25MB
-maxTotalSize; 2500MB
+maxTotalSize; 1000MB
 minFreeSpace; 100MB
 
 file.component.levels
@@ -141,7 +141,7 @@ level; Info
 directory; logs
 filePattern; logs/catapult_server%4N.log
 rotationSize; 25MB
-maxTotalSize; 2500MB
+maxTotalSize; 1000MB
 minFreeSpace; 100MB
 
 file.component.levels
@@ -189,11 +189,6 @@ harvestBeneficiaryPercentage; 10; uint8_t; Percentage of the harvested fee that 
 harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
 harvestNetworkFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the harvest network fee sink account.
 maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
-
-fork_heights
-votingKeyLinkV2; 0
-importanceBlock; 0
-accountRestrictionsV2; 0
 
 plugin:catapult.plugins.accountlink
 dummy; to trigger plugin load
@@ -261,31 +256,33 @@ enableCacheDatabaseStorage; true; bool; Set to true if cache data should be save
 enableAutoSyncCleanup; true; bool; Set to true if temporary sync files should be automatically cleaned up. Note: This should be Set to false if broker process is running.
 enableTransactionSpamThrottling; true; bool; Set to true if transaction spam throttling should be enabled.
 transactionSpamThrottlingMaxBoostFee; 10'000'000; Amount; Maximum fee that will boost a transaction through the spam throttle when spam throttling is enabled.
-maxHashesPerSyncAttempt; 610; ;
-maxBlocksPerSyncAttempt; 602; uint32_t; Maximum number of blocks per sync attempt.
+maxHashesPerSyncAttempt; 370; ;
+maxBlocksPerSyncAttempt; 360; uint32_t; Maximum number of blocks per sync attempt.
 maxChainBytesPerSyncAttempt; 100MB; utils::FileSize; Maximum chain bytes per sync attempt.
 shortLivedCacheTransactionDuration; 10m; utils::TimeSpan; Duration of a transaction in the short lived cache.
 shortLivedCacheBlockDuration; 100m; utils::TimeSpan; Duration of a block in the short lived cache.
 shortLivedCachePruneInterval; 90s; utils::TimeSpan; Time between short lived cache pruning.
-shortLivedCacheMaxSize; 200'000; uint32_t; Maximum size of a short lived cache.
+shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
 minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
 transactionSelectionStrategy; maximize-fee; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
-unconfirmedTransactionsCacheMaxResponseSize; 20MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
-unconfirmedTransactionsCacheMaxSize; 50'000; uint32_t; Maximum size of the unconfirmed transactions cache.
+unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
+unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
 connectTimeout; 15s; utils::TimeSpan; Timeout for connecting to a peer.
-syncTimeout; 120s; utils::TimeSpan; Timeout for syncing with a peer.
-socketWorkingBufferSize; 512KB; utils::FileSize; Initial socket working buffer size (socket reads will attempt to read buffers of roughly this size).
-socketWorkingBufferSensitivity; 100; uint32_t; Socket working buffer sensitivity (lower values will cause memory to be more aggressively reclaimed). Note: Set to 0 will disable memory reclamation.
+syncTimeout; 20m; utils::TimeSpan; Timeout for syncing with a peer.
+socketWorkingBufferSize; 16KB; utils::FileSize; Initial socket working buffer size (socket reads will attempt to read buffers of roughly this size).
+socketWorkingBufferSensitivity; 1; uint32_t; Socket working buffer sensitivity (lower values will cause memory to be more aggressively reclaimed). Note: Set to 0 will disable memory reclamation.
 maxPacketDataSize; 150MB; utils::FileSize; Maximum packet data size.
-blockDisruptorSize; 4096; uint32_t; Size of the block disruptor circular buffer.
+blockDisruptorSlotCount; 4096; uint32_t; Size of the block disruptor circular buffer.
 blockElementTraceInterval; 1; uint32_t; Multiple of elements at which a block element should be traced through queue and completion.
-transactionDisruptorSize; 16384; uint32_t; Size of the transaction disruptor circular buffer.
+blockDisruptorMaxMemorySize; 300MB; ;
+transactionDisruptorSlotCount; 8192; uint32_t; Size of the transaction disruptor circular buffer.
 transactionElementTraceInterval; 10; uint32_t; Multiple of elements at which a transaction element should be traced through queue and completion.
+transactionDisruptorMaxMemorySize; 20MB; ;
 enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
 enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
 maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
 minPartnerNodeVersion; 0.10.0.4; ;
-maxPartnerNodeVersion; 0.10.0.4; ;
+maxPartnerNodeVersion; 0.10.0.5; ;
 trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
 localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
 listenInterface; 0.0.0.0; ;
@@ -302,7 +299,7 @@ maxWriteBatchSize; 5MB
 localnode
 host; peer-node-0; string; Node host (leave empty to auto-detect IP).
 friendlyName; my-peer-node-0; string; Node friendly name (leave empty to use address).
-version; 0.10.0.4; uint32_t; Node version.
+version; 0.10.0.5; uint32_t; Node version.
 roles; Peer,Voting; ionet::NodeRoles; Node roles.
 
 outgoing_connections
@@ -326,12 +323,14 @@ maxBannedNodes; 5'000; uint32_t; Maximum number of banned nodes.
 numReadRateMonitoringBuckets; 4; uint16_t; Number of read rate monitoring buckets (Set to 0 to disable read rate monitoring).
 readRateMonitoringBucketDuration; 15s; utils::TimeSpan; Duration of each read rate monitoring bucket.
 maxReadRateMonitoringTotalSize; 100MB; utils::FileSize; Maximum size allowed during full read rate monitoring period.
+minTransactionFailuresCountForBan; 8; ;
+minTransactionFailuresPercentForBan; 10; ;
 
 
 config-pt.properties
 partialtransactions
-cacheMaxResponseSize; 20MB
-cacheMaxSize; 1'000'000
+cacheMaxResponseSize; 5MB
+cacheMaxSize; 20MB
 
 
 config-task.properties

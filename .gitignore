@@ -14,3 +14,6 @@ symbol-bootstrap-*.tgz
 coverage
 /ts-docs/
 /oclif.manifest.json
+/ngrok-testnet.yml
+/boat.png
+/agent-linux.bin
