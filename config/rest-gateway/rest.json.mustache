@@ -1,8 +1,7 @@
 {
   "network": {
     "name": "{{{networkName}}}",
-    "description": "{{{description}}}",
-    "propertiesFilePath": "{{{apiNodeConfigPath}}}/config-network.properties"
+    "description": "{{{description}}}"
   },
 
   "port": 3000,
@@ -38,7 +37,9 @@
     "tlsClientCertificatePath": "{{{apiNodeConfigPath}}}/cert/node.crt.pem",
     "tlsClientKeyPath": "{{{apiNodeConfigPath}}}/cert/node.key.pem",
     "tlsCaCertificatePath": "{{{apiNodeConfigPath}}}/cert/ca.cert.pem",
-    "timeout": {{{apiNodeTimeout}}}
+    "timeout": {{{apiNodeTimeout}}},
+    "networkPropertyFilePath": "{{{apiNodeConfigPath}}}/config-network.properties",
+    "nodePropertyFilePath": "{{{apiNodeConfigPath}}}/config-node.properties"
   },
 
   "websocket": {

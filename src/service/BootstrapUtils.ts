@@ -34,17 +34,7 @@ import { get } from 'https';
 import * as _ from 'lodash';
 import { platform, totalmem } from 'os';
 import { basename, join } from 'path';
-import {
-    Convert,
-    Deadline,
-    DtoMapping,
-    LinkAction,
-    NetworkType,
-    Transaction,
-    UInt64,
-    VotingKeyLinkTransaction,
-    VotingKeyLinkV1Transaction,
-} from 'symbol-sdk';
+import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
@@ -273,10 +263,6 @@ export class BootstrapUtils {
         });
     }
 
-    public static createLongVotingKey(votingPublicKey: string): string {
-        return votingPublicKey.padEnd(96, '0');
-    }
-
     public static createVotingKeyTransaction(
         shortPublicKey: string,
         currentHeight: UInt64,
@@ -284,38 +270,11 @@ export class BootstrapUtils {
             networkType: NetworkType;
             votingKeyStartEpoch: number;
             votingKeyEndEpoch: number;
-            votingKeyLinkV2: number | undefined;
         },
         deadline: Deadline,
         maxFee: UInt64,
     ): Transaction {
-        if (presetData.votingKeyLinkV2 === undefined) {
-            // Public net v1 short key (to be defined, this mix messes up catbuffer deserialization).
-            logger.info('Voting Key Link Transaction Short Key V1 resolved');
-            return VotingKeyLinkTransaction.create(
-                deadline,
-                shortPublicKey,
-                presetData.votingKeyStartEpoch,
-                presetData.votingKeyEndEpoch,
-                LinkAction.Link,
-                presetData.networkType,
-                1,
-                maxFee,
-            );
-        }
-        if (currentHeight.compact() < presetData.votingKeyLinkV2) {
-            logger.info('Voting Key Link Transaction Long Key V1 resolved');
-            return VotingKeyLinkV1Transaction.create(
-                deadline,
-                BootstrapUtils.createLongVotingKey(shortPublicKey),
-                presetData.votingKeyStartEpoch,
-                presetData.votingKeyEndEpoch,
-                LinkAction.Link,
-                presetData.networkType,
-                maxFee,
-            );
-        }
-        logger.info('Voting Key Link Transaction Short Key V2 resolved');
+        logger.info('Voting Key Link Transaction Short Key V1 resolved');
         return VotingKeyLinkTransaction.create(
             deadline,
             shortPublicKey,
@@ -323,7 +282,7 @@ export class BootstrapUtils {
             presetData.votingKeyEndEpoch,
             LinkAction.Link,
             presetData.networkType,
-            2,
+            1,
             maxFee,
         );
     }
@@ -734,7 +693,7 @@ export class BootstrapUtils {
     private static validatePassword(password: string): string {
         const passwordMinSize = 4;
         if (password.length < passwordMinSize) {
-            throw new Error(`Password is too short. It should have at least ${passwordMinSize} characters!`);
+            throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
         }
         return password;
     }

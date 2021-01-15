@@ -9,8 +9,8 @@ minNamespaceDuration: 30d
 assemblies: 'api, dual, peer'
 harvestBeneficiaryPercentage: 25
 batchVerificationRandomSource: /dev/urandom
-currencyMosaicId: 5B66E76BECAD0860
-harvestingMosaicId: 5B66E76BECAD0860
+currencyMosaicId: 2CF403E85507F39E
+harvestingMosaicId: 2CF403E85507F39E
 baseNamespace: symbol
 currencyName: 'xym'
 supernodeControllerPublicKey: 68B6A1D2F292E75F9BB8E9EDDA086A7C293A198C9968FF7528374075AAF4D983
@@ -21,16 +21,12 @@ maxSecretLockDuration: 365d
 maxNamespaceDuration: 1825d
 namespaceGracePeriodDuration: 1d
 blockGenerationTargetTime: 30s
-nemesisGenerationHashSeed: 6C1B92391CCB41C96478471C2634C111D9E989DECD66130C0430B5B8D20117CD
-nemesisSignerPublicKey: 78F0F6FFDE5C130777506FE2A597ADC5E98BD46041ABF775908299FE94BFD5D0
+nemesisGenerationHashSeed: 45FBCF2F0EA36EFA7923C9BC923D6503169651F7FA4EFC46A8EAF5AE09057EBD
+nemesisSignerPublicKey: 071964D3C040D62DE905EAE978E2119BFC8E70489BFDF45A85B3D7ED5A517AA8
 harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
-enableRevoteOnBoot: false
-faucetUrl: 'http://faucet-0.10.0.x-01.symboldev.network'
-votingKeyLinkV2: 215500
-importanceBlock: 215500
-accountRestrictionsV2: 215500
+faucetUrl: 'http://faucet.testnet.symboldev.network'
 trustedHosts:
 inflation:
     starting-at-height-2: 95998521
@@ -457,109 +453,67 @@ inflation:
     starting-at-height-220937757: 0
 knownPeers:
     api-node:
-        - publicKey: c7f6b7749b23b3871736058963390c7ed2a7b40924a1c300c717611f49b316b7
+        - publicKey: a11c90064f5506d998accb1fcfc5986004d0edba08c6d2c0e589ba9466035266
           endpoint:
-              host: api-01.us-east-1.0.10.0.x.symboldev.network
+              host: api-01.ap-northeast-1.testnet.symboldev.network
               port: 7900
           metadata:
-              name: api-01-us-east-1
-              roles: Api
-        - publicKey: f5a8da4cb59aa234a0a1cb62aeec508ad9a3d4ebd5946be2bccccab111af199c
+              name: api-01-ap-northeast-1
+              roles: Api,Peer,Voting
+        - publicKey: fea03571d125d1a5b8663ab3e80b1f6b5cf9e6e3dff25034f5738fadeab201cb
           endpoint:
-              host: api-01.us-west-1.0.10.0.x.symboldev.network
+              host: api-01.eu-west-1.testnet.symboldev.network
+              port: 7900
+          metadata:
+              name: api-01-eu-west-1
+              roles: Api,Peer,Voting
+        - publicKey: 7CB6F76A7F6F3C573F98296BB45666BF45880732603399FC03D12FB2E9181B11
+          endpoint:
+              host: api-01.us-west-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: api-01-us-west-1
-              roles: Api
-        - publicKey: f6ed2438b3cf41959d6522c89e489426bcf8b358df663b6018c9e9e781fb35de
-          endpoint:
-              host: api-01.ap-southeast-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: api-01-ap-southeast-1
-              roles: Api
+              roles: Api,Voting
     peer-node:
-        - publicKey: f8d2c569c6d30f665fe504ee8b26fa906a29e2d6e1555d2078a9e01b439008c0
+        - publicKey: 4c4ffe262f779ef4b970b1560c1efa467051f85d7925e5f590f4267545b292c2
           endpoint:
-              host: beacon-01.us-east-1.0.10.0.x.symboldev.network
+              host: beacon-01.us-east-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: beacon-01-us-east-1
               roles: Peer,Voting
-        - publicKey: 08eec3b8599df74c608d4d35fd6908856161d817b16aa4b246be3309610cc6f8
+        - publicKey: de8e3b886edcf138c40c0aa706b95a72ec379a1c210fcb11467efd5b864c0ab0
           endpoint:
-              host: peer-01.us-east-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: peer-01-us-east-1
-              roles: Peer
-        - publicKey: f75d57280e4443cbf20650c81480154d90ca754ca98c25ce05157248f2d67f47
-          endpoint:
-              host: beacon-01.eu-west-1.0.10.0.x.symboldev.network
+              host: beacon-01.eu-west-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: beacon-01-eu-west-1
               roles: Peer,Voting
-        - publicKey: 01a40fd2e3da7050ce3570b466b633692e1ebdd7d60d599fd2c7d445ca9e4e36
+        - publicKey: d4687a30b7d949a378c91c17ff6c64d8bc8ad041273b809f2711b2165afda2e1
           endpoint:
-              host: peer-01.eu-west-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: peer-01-eu-west-1
-              roles: Peer
-        - publicKey: bdd05a1fbffc4bc88b62faa837465e93dff60e2435f8365134308fc0c5cb79be
-          endpoint:
-              host: beacon-01.us-west-1.0.10.0.x.symboldev.network
+              host: beacon-01.us-west-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: beacon-01-us-west-1
               roles: Peer,Voting
-        - publicKey: eef961455227c01cb3bb23cccdd818149812d0325694d503e21f70390329d18f
+        - publicKey: 059d07aa3c86e42b8d0d87fb36d2fa63dbce5d0e22c59560a3cd3a72fe6a8b3d
           endpoint:
-              host: peer-01.us-west-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: peer-01-us-west-1
-              roles: Peer
-        - publicKey: bd1359cf93ae4c269f7d8840393b703124e34b79a401299497d9290a7b332cc4
-          endpoint:
-              host: beacon-01.ap-southeast-1.0.10.0.x.symboldev.network
+              host: beacon-01.ap-southeast-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: beacon-01-ap-southeast-1
               roles: Peer,Voting
-        - publicKey: 3a0734eac5f3fa631631337dcf6636578862422ac22e8e85245c795f9cd10887
+        - publicKey: c2627dabe47a4154ce658322fec3fe4b7b403e0523351dbad0a95e04db0c87f1
           endpoint:
-              host: peer-01.ap-southeast-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: peer-01-ap-southeast-1
-              roles: Peer
-        - publicKey: 8ae5f54861d8bb63d57204da710b295fdf7952e32ba083bcc5b32b44023ea645
-          endpoint:
-              host: beacon-01.eu-central-1.0.10.0.x.symboldev.network
+              host: beacon-01.eu-central-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: beacon-01-eu-central-1
               roles: Peer,Voting
-        - publicKey: 71e3368145218a952e99637a1368c017bf1efbd0d36771b915d77a9ee59a1984
+        - publicKey: 87865009522acc0b68aa71fec2ac4d452a33f2aad3d16138cf56194b2e8bc60e
           endpoint:
-              host: peer-01.eu-central-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: peer-01-eu-central-1
-              roles: Peer
-        - publicKey: 11e37f63292e47e148dbdbee2b801a388f8641290a28bc0c8ae1791452fbbf9d
-          endpoint:
-              host: beacon-01.ap-northeast-1.0.10.0.x.symboldev.network
+              host: beacon-01.ap-northeast-1.testnet.symboldev.network
               port: 7900
           metadata:
               name: beacon-01-ap-northeast-1
               roles: Peer,Voting
-        - publicKey: e7ab3f489ace89130a093cc67e4dfd41a034594b23f9f758cbefb9a778d6e34f
-          endpoint:
-              host: peer-01.ap-northeast-1.0.10.0.x.symboldev.network
-              port: 7900
-          metadata:
-              name: peer-01-ap-northeast-1
-              roles: Peer

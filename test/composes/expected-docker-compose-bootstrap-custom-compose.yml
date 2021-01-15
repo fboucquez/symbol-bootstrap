@@ -5,7 +5,7 @@ services:
         environment:
             MONGO_INITDB_DATABASE: catapult
         container_name: db-0
-        image: 'mongo:4.2.6-bionic'
+        image: 'mongo:4.4.3-bionic'
         command: mongod --dbpath=/dbdata --bind_ip=db-0 --wiredTigerCacheSizeGB 2
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
@@ -23,7 +23,7 @@ services:
     peer-node-0:
         user: '1000:1000'
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -47,7 +47,7 @@ services:
     peer-node-1:
         user: '1000:1000'
         container_name: peer-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -71,7 +71,7 @@ services:
     api-node-0:
         user: '1000:1000'
         container_name: api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -89,7 +89,7 @@ services:
     api-node-broker-0:
         user: '1000:1000'
         container_name: api-node-broker-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.4'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
@@ -104,7 +104,7 @@ services:
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.2.1'
+        image: 'symbolplatform/symbol-rest:2.3.0'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

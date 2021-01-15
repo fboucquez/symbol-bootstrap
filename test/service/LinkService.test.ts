@@ -186,6 +186,6 @@ describe('LinkService', () => {
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);
         expect(nodeAndTransactions[0].transactions[1].type).eq(TransactionType.NODE_KEY_LINK);
         expect(nodeAndTransactions[0].transactions[2].type).eq(TransactionType.VOTING_KEY_LINK);
-        expect(nodeAndTransactions[0].transactions[2].version).eq(2);
+        expect(nodeAndTransactions[0].transactions[2].version).eq(1);
     });
 });

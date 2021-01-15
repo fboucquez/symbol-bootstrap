@@ -4,16 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.3.2] - Dec-24-2020
+## [0.4.0] - Jan-14-2020
 
-**Milestone**: Hippopotamus(0.10.0.4)
+**Milestone**: Hippopotamus(0.10.0.5)
 
  Package  | Version  | Link
 ---|---|---
-Symbol Bootstrap | v0.3.1 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
+Symbol Bootstrap | v0.4.0 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap)
 
-- Added `mem_limit` in Testnet's mongo db services to 50% of the machine creating the docker compose file by default.
-- Fixed memory leak when concatenating `logText` on long OS span calls.
+- **Re track to catapult-server main branch**
+- Compose file version default to 2.4.
+- Fixed mongo memory usage by adding `--wiredTigerCacheSizeGB` limit.
+- Allowing users to exclude custom preset data from a compose service.
+- Basic implementation of supernode program monitoring agent. Supernode Agent installation and supernode enrol command, disabled at present, awaiting full programme implementation, preparatory step.
+- Private key in generated addresses.yml and preset.yml can be encrypted and protected by using --password.
 - Masking 64 hex keys HIDDEN_KEY on log lines.
 - Removed unused Server configuration files in the Rest container. This reduces the risk of exposing config files if the Rest machine gets compromised.
 

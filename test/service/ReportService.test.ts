@@ -104,7 +104,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: true,
+            reset: false,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'api',
@@ -137,7 +137,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: true,
+            reset: false,
             preset: Preset.bootstrap,
             customPresetObject: customPresetObject,
             target: target,

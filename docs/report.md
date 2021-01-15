@@ -21,4 +21,4 @@ EXAMPLE
   $ symbol-bootstrap report
 ```
 
-_See code: [src/commands/report.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.3.2/src/commands/report.ts)_
+_See code: [src/commands/report.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.0/src/commands/report.ts)_

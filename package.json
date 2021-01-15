@@ -1,7 +1,7 @@
 {
     "name": "symbol-bootstrap",
     "description": "Symbol tool that allows you creating, configuring and running Symbol's networks",
-    "version": "0.3.2",
+    "version": "0.4.0",
     "author": "Fernando Boucquez <fboucquez@gmail.com>",
     "bin": {
         "symbol-bootstrap": "bin/run"
@@ -20,7 +20,7 @@
         "rxjs": "^6.6.3",
         "shx": "^0.3.2",
         "sshpk": "^1.16.1",
-        "symbol-sdk": "0.22.1",
+        "symbol-sdk": "0.23.0",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
