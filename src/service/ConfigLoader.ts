@@ -177,9 +177,9 @@ export class ConfigLoader {
         customPreset?: string;
         customPresetObject?: any;
     }): ConfigPreset {
-        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), undefined);
-        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, undefined);
-        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, undefined) : {};
+        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
+        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
+        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false) : {};
         const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
         const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
@@ -328,7 +328,7 @@ export class ConfigLoader {
         });
     }
 
-    public loadExistingPresetDataIfPreset(target: string, password: string | undefined): ConfigPreset | undefined {
+    public loadExistingPresetDataIfPreset(target: string, password: string | false | undefined): ConfigPreset | undefined {
         const generatedPresetLocation = this.getGeneratedPresetLocation(target);
         if (existsSync(generatedPresetLocation)) {
             return BootstrapUtils.loadYaml(generatedPresetLocation, password);
@@ -336,7 +336,7 @@ export class ConfigLoader {
         return undefined;
     }
 
-    public loadExistingPresetData(target: string, password: string | undefined): ConfigPreset {
+    public loadExistingPresetData(target: string, password: string | false | undefined): ConfigPreset {
         const presetData = this.loadExistingPresetDataIfPreset(target, password);
         if (!presetData) {
             throw new Error(`The file ${this.getGeneratedPresetLocation(target)} doesn't exist. Have you executed the 'config' command?`);
@@ -344,7 +344,7 @@ export class ConfigLoader {
         return presetData;
     }
 
-    public loadExistingAddressesIfPreset(target: string, password: string | undefined): Addresses | undefined {
+    public loadExistingAddressesIfPreset(target: string, password: string | false | undefined): Addresses | undefined {
         const generatedAddressLocation = this.getGeneratedAddressLocation(target);
         if (existsSync(generatedAddressLocation)) {
             const presetData = this.loadExistingPresetData(target, password);
@@ -387,7 +387,7 @@ export class ConfigLoader {
         ];
     }
 
-    public loadExistingAddresses(target: string, password: string | undefined): Addresses {
+    public loadExistingAddresses(target: string, password: string | false | undefined): Addresses {
         const addresses = this.loadExistingAddressesIfPreset(target, password);
         if (!addresses) {
             throw new Error(`The file ${this.getGeneratedAddressLocation(target)} doesn't exist. Have you executed the 'config' command?`);

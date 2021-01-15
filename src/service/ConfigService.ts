@@ -94,22 +94,23 @@ export class ConfigService {
             }
             const presetLocation = this.configLoader.getGeneratedPresetLocation(target);
             const addressesLocation = this.configLoader.getGeneratedAddressLocation(target);
+            const password = this.params.password;
             if (fs.existsSync(presetLocation) && !this.params.upgrade) {
                 logger.info(
                     `The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset or --upgrade to upgrade)`,
                 );
-                const presetData = this.configLoader.loadExistingPresetData(target, this.params.password);
-                const addresses = this.configLoader.loadExistingAddresses(target, this.params.password);
+                const presetData = this.configLoader.loadExistingPresetData(target, password);
+                const addresses = this.configLoader.loadExistingAddresses(target, password);
                 if (this.params.report) {
                     await new ReportService(this.root, this.params).run(presetData);
                 }
-                await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, this.params.password);
-                await BootstrapUtils.writeYaml(presetLocation, presetData, this.params.password);
+                await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, password);
+                await BootstrapUtils.writeYaml(presetLocation, presetData, password);
                 return { presetData, addresses };
             }
 
-            const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target, this.params.password);
-            const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target, this.params.password);
+            const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target, password);
+            const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target, password);
 
             if (oldAddresses && !oldPresetData) {
                 throw new KnownError(`Configuration cannot be upgraded without a previous ${presetLocation} file. (run -r to reset)`);
@@ -125,7 +126,7 @@ export class ConfigService {
 
             const presetData: ConfigPreset = _.merge(
                 oldPresetData || {},
-                this.configLoader.createPresetData({ ...this.params, root: this.root, password: this.params.password }),
+                this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }),
             );
 
             if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
@@ -151,8 +152,8 @@ export class ConfigService {
                 await new ReportService(this.root, this.params).run(presetData);
             }
 
-            await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, this.params.password);
-            await BootstrapUtils.writeYaml(presetLocation, presetData, this.params.password);
+            await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, password);
+            await BootstrapUtils.writeYaml(presetLocation, presetData, password);
             logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {

@@ -24,7 +24,7 @@ import { ConfigPreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
-export type ReportParams = { target: string; password?: string };
+export type ReportParams = { target: string };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -100,7 +100,7 @@ export class ReportService {
     private async createReportsPerNode(presetData: ConfigPreset): Promise<ReportNode[]> {
         const workingDir = process.cwd();
         const target = join(workingDir, this.params.target);
-        const descriptions = await BootstrapUtils.loadYaml(join(this.root, 'presets', 'descriptions.yml'), undefined);
+        const descriptions = await BootstrapUtils.loadYaml(join(this.root, 'presets', 'descriptions.yml'), false);
         const promises: Promise<ReportNode>[] = (presetData.nodes || []).map(async (n) => {
             const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'userconfig', 'resources');
             const files = await fsPromises.readdir(resourcesFolder);
@@ -130,7 +130,7 @@ export class ReportService {
      * @param passedPresetData the preset data,
      */
     public async run(passedPresetData?: ConfigPreset): Promise<string[]> {
-        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, false);
 
         const reportFolder = join(this.params.target, 'reports');
         BootstrapUtils.deleteFolder(reportFolder);

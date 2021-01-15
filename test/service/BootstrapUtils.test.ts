@@ -21,6 +21,7 @@ import { it } from 'mocha';
 import { totalmem } from 'os';
 import { Account, Deadline, LinkAction, NetworkType, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
+import { CryptoUtils } from '../../src/service/CryptoUtils';
 import assert = require('assert');
 
 describe('BootstrapUtils', () => {
@@ -97,6 +98,44 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toHex("0x5E62'990D'CAC5'BE8A")).to.be.eq("0x5E62'990D'CAC5'BE8A");
         expect(BootstrapUtils.toHex('0x5E62990DCAC5BE8A')).to.be.eq("0x5E62'990D'CAC5'BE8A");
         expect(BootstrapUtils.toHex("5E62'990D'CAC5'BE8A")).to.be.eq("0x5E62'990D'CAC5'BE8A");
+    });
+
+    it('BootstrapUtils.loadYaml', async () => {
+        expect(CryptoUtils.encryptedCount(BootstrapUtils.loadYaml('test/encrypted.yml', '1234'))).to.be.eq(0);
+
+        try {
+            BootstrapUtils.loadYaml('test/encrypted.yml', 'abc');
+            expect(1).eq(0);
+        } catch (e) {
+            expect(e.message).eq('Password is too short. It should have at least 4 characters!');
+        }
+
+        try {
+            BootstrapUtils.loadYaml('test/encrypted.yml', 'abcd');
+            expect(1).eq(0);
+        } catch (e) {
+            expect(e.message).eq('Cannot decrypt file test/encrypted.yml. Have you used the right --password param?');
+        }
+
+        try {
+            BootstrapUtils.loadYaml('test/encrypted.yml', '');
+            expect(1).eq(0);
+        } catch (e) {
+            expect(e.message).eq(
+                'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you used the --password param?',
+            );
+        }
+
+        try {
+            BootstrapUtils.loadYaml('test/encrypted.yml', undefined);
+            expect(1).eq(0);
+        } catch (e) {
+            expect(e.message).eq(
+                'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you used the --password param?',
+            );
+        }
+
+        expect(CryptoUtils.encryptedCount(BootstrapUtils.loadYaml('test/encrypted.yml', false))).to.be.eq(6);
     });
 
     it('createVotingKeyTransaction v1 short key', async () => {

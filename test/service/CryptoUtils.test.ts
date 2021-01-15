@@ -16,6 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { BootstrapUtils } from '../../src/service';
 import { CryptoUtils } from '../../src/service/CryptoUtils';
 
 describe('CryptoUtils', () => {
@@ -59,10 +60,10 @@ describe('CryptoUtils', () => {
             ],
         };
 
-        const password = '123';
+        const password = '1234';
         const encryptedObject = CryptoUtils.encrypt(object, password);
         const encryptedObjectJson = JSON.stringify(encryptedObject, null, 2);
-        console.log(encryptedObjectJson);
+        console.log(BootstrapUtils.toYaml(encryptedObject));
         expect(encryptedObjectJson).not.deep.eq(object);
 
         expect(CryptoUtils.encryptedCount(object)).eq(0);
@@ -115,7 +116,7 @@ describe('CryptoUtils', () => {
             ],
         };
 
-        const password = '123';
+        const password = '1234';
         const encryptedObject = CryptoUtils.encrypt(object, password);
         try {
             CryptoUtils.decrypt(encryptedObject, 'invalidPassword');

@@ -25,7 +25,6 @@ export default class Clean extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
-        password: BootstrapUtils.passwordFlag,
     };
 
     public async run(): Promise<void> {
