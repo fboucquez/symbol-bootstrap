@@ -223,7 +223,17 @@ export class ComposeService {
                     const serverServiceCommand = `bash -c "${serverServiceCommands.join(' && ')}"`;
                     const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
 
-                    const serverDependsOn = n.brokerName ? [n.brokerName] : [];
+                    const serverDependsOn: string[] = [];
+                    const brokerDependsOn: string[] = [];
+
+                    if (n.databaseHost) {
+                        serverDependsOn.push(n.databaseHost);
+                        brokerDependsOn.push(n.databaseHost);
+                    }
+                    if (n.brokerName) {
+                        serverDependsOn.push(n.brokerName);
+                    }
+
                     const volumes = [
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
@@ -263,6 +273,7 @@ export class ComposeService {
                                     stop_signal: 'SIGINT',
                                     restart: restart,
                                     volumes: nodeService.volumes,
+                                    depends_on: brokerDependsOn,
                                     ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.brokerDockerComposeDebugMode),
                                     ...n.brokerCompose,
                                 },
