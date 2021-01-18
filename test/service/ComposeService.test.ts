@@ -204,7 +204,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-repeat.yml');
     });
 
-    it('Compose bootstrap repeat', async () => {
+    it('resolveDebugOptions', async () => {
         const service = new ComposeService('.', ComposeService.defaultParams);
         expect(service.resolveDebugOptions(true, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
         expect(service.resolveDebugOptions(true, undefined)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);

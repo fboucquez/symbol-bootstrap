@@ -249,14 +249,14 @@ describe('ConfigLoader', () => {
     });
 
     it('should migrated old addresses', () => {
-        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', undefined);
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', undefined);
+        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', false);
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false);
         const addresses = configLoader.migrateAddresses(oldAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });
 
     it('should migrated not migrate new addresses', () => {
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', undefined);
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false);
         const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });

@@ -46,6 +46,8 @@ const yaml = require('js-yaml');
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
+export type Password = string | false | undefined;
+
 export class KnownError extends Error {
     public readonly known = true;
 }
@@ -386,7 +388,7 @@ export class BootstrapUtils {
         return yaml.safeLoad(yamlString);
     }
 
-    public static loadYaml(fileLocation: string, password: string | undefined): any {
+    public static loadYaml(fileLocation: string, password: Password): any {
         const object = this.fromYaml(this.loadFileAsText(fileLocation));
         if (password) {
             BootstrapUtils.validatePassword(password);
@@ -396,7 +398,7 @@ export class BootstrapUtils {
                 throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
             }
         } else {
-            if (CryptoUtils.encryptedCount(object) > 0) {
+            if (password !== false && CryptoUtils.encryptedCount(object) > 0) {
                 throw new KnownError(
                     `File ${fileLocation} seems to be encrypted but no password has been provided. Have you used the --password param?`,
                 );
