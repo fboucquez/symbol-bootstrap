@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;src/service/ReportService&quot; | symbol-openapi-typescript-fetch-client</title>
+	<title>&quot;src/service/AnnounceService&quot; | symbol-openapi-typescript-fetch-client</title>
 	<meta name="description" content="Documentation for symbol-openapi-typescript-fetch-client">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_src_service_reportservice_.html">&quot;src/service/ReportService&quot;</a>
+					<a href="_src_service_announceservice_.html">&quot;src/service/AnnounceService&quot;</a>
 				</li>
 			</ul>
-			<h1>Module &quot;src/service/ReportService&quot;</h1>
+			<h1>Module &quot;src/service/AnnounceService&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -73,28 +73,19 @@
 						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_src_service_reportservice_.reportservice.html" class="tsd-kind-icon">Report<wbr>Service</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Interfaces</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_src_service_reportservice_.reportfile.html" class="tsd-kind-icon">Report<wbr>File</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_src_service_reportservice_.reportline.html" class="tsd-kind-icon">Report<wbr>Line</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_src_service_reportservice_.reportnode.html" class="tsd-kind-icon">Report<wbr>Node</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_src_service_reportservice_.reportsection.html" class="tsd-kind-icon">Report<wbr>Section</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_src_service_announceservice_.announceservice.html" class="tsd-kind-icon">Announce<wbr>Service</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_src_service_reportservice_.html#reportparams" class="tsd-kind-icon">Report<wbr>Params</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_src_service_announceservice_.html#transactionstoannounce" class="tsd-kind-icon">Transactions<wbr>ToAnnounce</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_src_service_reportservice_.html#logger" class="tsd-kind-icon">logger</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_src_service_announceservice_.html#logger" class="tsd-kind-icon">logger</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,22 +94,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
-					<a name="reportparams" class="tsd-anchor"></a>
-					<h3>Report<wbr>Params</h3>
-					<div class="tsd-signature tsd-kind-icon">Report<wbr>Params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>password<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
+					<a name="transactionstoannounce" class="tsd-anchor"></a>
+					<h3>Transactions<wbr>ToAnnounce</h3>
+					<div class="tsd-signature tsd-kind-icon">Transactions<wbr>ToAnnounce<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>node<span class="tsd-signature-symbol">: </span><a href="../interfaces/_src_model_addresses_.nodeaccount.html" class="tsd-signature-type">NodeAccount</a><span class="tsd-signature-symbol">; </span>transactions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/22d80eb/src/service/ReportService.ts#L27">src/service/ReportService.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/22d80eb/src/service/AnnounceService.ts#L26">src/service/AnnounceService.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> password<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								<h5>node<span class="tsd-signature-symbol">: </span><a href="../interfaces/_src_model_addresses_.nodeaccount.html" class="tsd-signature-type">NodeAccount</a></h5>
 							</li>
 							<li class="tsd-parameter">
-								<h5>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+								<h5>transactions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></h5>
 							</li>
 						</ul>
 					</div>
@@ -132,7 +123,7 @@
 					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol"> = LoggerFactory.getLogger(LogType.System)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/22d80eb/src/service/ReportService.ts#L29">src/service/ReportService.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/22d80eb/src/service/AnnounceService.ts#L25">src/service/AnnounceService.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -145,32 +136,20 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="_src_service_reportservice_.html">&quot;src/service/<wbr>Report<wbr>Service&quot;</a>
+						<a href="_src_service_announceservice_.html">&quot;src/service/<wbr>Announce<wbr>Service&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_src_service_reportservice_.reportservice.html" class="tsd-kind-icon">Report<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../interfaces/_src_service_reportservice_.reportfile.html" class="tsd-kind-icon">Report<wbr>File</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../interfaces/_src_service_reportservice_.reportline.html" class="tsd-kind-icon">Report<wbr>Line</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../interfaces/_src_service_reportservice_.reportnode.html" class="tsd-kind-icon">Report<wbr>Node</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../interfaces/_src_service_reportservice_.reportsection.html" class="tsd-kind-icon">Report<wbr>Section</a>
+						<a href="../classes/_src_service_announceservice_.announceservice.html" class="tsd-kind-icon">Announce<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
-						<a href="_src_service_reportservice_.html#reportparams" class="tsd-kind-icon">Report<wbr>Params</a>
+						<a href="_src_service_announceservice_.html#transactionstoannounce" class="tsd-kind-icon">Transactions<wbr>ToAnnounce</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_src_service_reportservice_.html#logger" class="tsd-kind-icon">logger</a>
+						<a href="_src_service_announceservice_.html#logger" class="tsd-kind-icon">logger</a>
 					</li>
 				</ul>
 			</nav>

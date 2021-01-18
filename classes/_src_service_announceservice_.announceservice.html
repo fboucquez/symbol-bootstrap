@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PortService | symbol-openapi-typescript-fetch-client</title>
+	<title>AnnounceService | symbol-openapi-typescript-fetch-client</title>
 	<meta name="description" content="Documentation for symbol-openapi-typescript-fetch-client">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_src_service_portservice_.html">&quot;src/service/PortService&quot;</a>
+					<a href="../modules/_src_service_announceservice_.html">&quot;src/service/AnnounceService&quot;</a>
 				</li>
 				<li>
-					<a href="_src_service_portservice_.portservice.html">PortService</a>
+					<a href="_src_service_announceservice_.announceservice.html">AnnounceService</a>
 				</li>
 			</ul>
-			<h1>Class PortService</h1>
+			<h1>Class AnnounceService</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">PortService</span>
+						<span class="target">AnnounceService</span>
 					</li>
 				</ul>
 			</section>
@@ -84,7 +84,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_src_service_portservice_.portservice.html#isreachable" class="tsd-kind-icon">is<wbr>Reachable</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_src_service_announceservice_.announceservice.html#announce" class="tsd-kind-icon">announce</a></li>
 							</ul>
 						</section>
 					</div>
@@ -92,32 +92,38 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="isreachable" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Reachable</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Reachable<span class="tsd-signature-symbol">(</span>port<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, host<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, timeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="announce" class="tsd-anchor"></a>
+					<h3>announce</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">announce<span class="tsd-signature-symbol">(</span>repositoryFactory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RepositoryFactoryHttp</span>, presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/_src_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a>, transactionNodes<span class="tsd-signature-symbol">: </span><a href="../modules/_src_service_announceservice_.html#transactionstoannounce" class="tsd-signature-type">TransactionsToAnnounce</a><span class="tsd-signature-symbol">[]</span>, generationHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, tokenAmount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/22d80eb/src/service/PortService.ts#L20">src/service/PortService.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/22d80eb/src/service/AnnounceService.ts#L29">src/service/AnnounceService.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>port: <span class="tsd-signature-type">number</span></h5>
+									<h5>repositoryFactory: <span class="tsd-signature-type">RepositoryFactoryHttp</span></h5>
 								</li>
 								<li>
-									<h5>host: <span class="tsd-signature-type">string</span></h5>
+									<h5>presetData: <a href="../interfaces/_src_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> timeout: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1000</span></h5>
+									<h5>transactionNodes: <a href="../modules/_src_service_announceservice_.html#transactionstoannounce" class="tsd-signature-type">TransactionsToAnnounce</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>generationHash: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> tokenAmount: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;some&quot;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -130,7 +136,7 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_src_service_portservice_.html">&quot;src/service/<wbr>Port<wbr>Service&quot;</a>
+						<a href="../modules/_src_service_announceservice_.html">&quot;src/service/<wbr>Announce<wbr>Service&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -139,15 +145,21 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="_src_service_portservice_.portservice.html" class="tsd-kind-icon">Port<wbr>Service</a>
+						<a href="_src_service_announceservice_.announceservice.html" class="tsd-kind-icon">Announce<wbr>Service</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="_src_service_portservice_.portservice.html#isreachable" class="tsd-kind-icon">is<wbr>Reachable</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_src_service_announceservice_.announceservice.html#announce" class="tsd-kind-icon">announce</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_src_service_announceservice_.html#transactionstoannounce" class="tsd-kind-icon">Transactions<wbr>ToAnnounce</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_src_service_announceservice_.html#logger" class="tsd-kind-icon">logger</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -162,16 +174,14 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>
