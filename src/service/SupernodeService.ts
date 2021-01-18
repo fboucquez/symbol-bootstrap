@@ -19,13 +19,14 @@ import {
     PlainMessage,
     PublicAccount,
     RepositoryFactoryHttp,
-    TransactionService,
+    Transaction,
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset } from '../model';
+import { AnnounceService, TransactionsToAnnounce } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
@@ -73,12 +74,10 @@ export class SupernodeService {
             );
         }
 
-        const faucetUrl = presetData.faucetUrl;
-
         const deadline = Deadline.create(await repositoryFactory.getEpochAdjustment().toPromise());
 
-        const supernodeRegistrationTransactions = (presetData.nodes || [])
-            .map((node, index) => {
+        const transactionNodes = (presetData.nodes || [])
+            .map((node, index): TransactionsToAnnounce | undefined => {
                 const nodeAccount = addresses.nodes![index];
                 if (!node.supernode) {
                     return;
@@ -103,44 +102,23 @@ export class SupernodeService {
                 const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
                 const message = PlainMessage.create(plainMessage);
                 logger.info(`Sending registration with message '${plainMessage}' using signer ${mainAccount.address.plain()}`);
-                const transaction = TransferTransaction.create(deadline, supernodeControllerAddress, [], message, networkType, maxFee);
-
-                return { singedTransaction: mainAccount.sign(transaction, generationHash), node };
+                const transaction: Transaction = TransferTransaction.create(
+                    deadline,
+                    supernodeControllerAddress,
+                    [],
+                    message,
+                    networkType,
+                    maxFee,
+                );
+                return { transactions: [transaction], node: nodeAccount };
             })
-            .filter((p) => p);
+            .filter((p) => p)
+            .map((p) => p as TransactionsToAnnounce);
 
-        if (!supernodeRegistrationTransactions.length) {
+        if (!transactionNodes.length) {
             logger.info(`There are no supernodes to register!!! (have you use the custom preset flag 'supernode: true'?)`);
             return;
         }
-
-        const listener = repositoryFactory.createListener();
-        await listener.open();
-        const service = new TransactionService(
-            repositoryFactory.createTransactionRepository(),
-            repositoryFactory.createReceiptRepository(),
-        );
-        try {
-            const promises = supernodeRegistrationTransactions.map(async (pair) => {
-                if (!pair) return;
-                const signer = PublicAccount.createFromPublicKey(pair.singedTransaction.signerPublicKey, networkType).address;
-                const noFundsMessage = faucetUrl
-                    ? `Does your node signing address have any network coin? Send 3M+ tokens to ${signer.plain()} via ${faucetUrl}/?recipient=${signer.plain()}`
-                    : `Does your node signing address have any network coin? Send 3M+ tokens to ${signer.plain()} :).`;
-                try {
-                    await service.announce(pair.singedTransaction, listener).toPromise();
-                    logger.info(`Supernode registration transaction for node '${pair.node.name}' confirmed`);
-                } catch (e) {
-                    logger.error(
-                        `There has been an error sending registration transaction for node '${
-                            pair.node.name
-                        }, signer is: ${signer.plain()}'. ${noFundsMessage}. ${e}`,
-                    );
-                }
-            });
-            await Promise.all(promises);
-        } finally {
-            listener.close();
-        }
+        await new AnnounceService().announce(repositoryFactory, presetData, transactionNodes, generationHash, '3M+');
     }
 }

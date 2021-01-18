@@ -19,7 +19,7 @@ import { statSync } from 'fs';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
-import { Account, Deadline, NetworkType, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
+import { Account, Deadline, LinkAction, NetworkType, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
 import assert = require('assert');
 
@@ -103,7 +103,6 @@ describe('BootstrapUtils', () => {
         const networkType = NetworkType.PRIVATE;
         const deadline = Deadline.createFromDTO('1');
         const voting = Account.generateNewAccount(networkType);
-        const currentHeight = UInt64.fromUint(10);
         const presetData = {
             networkType,
             votingKeyStartEpoch: 1,
@@ -113,7 +112,7 @@ describe('BootstrapUtils', () => {
 
         const transaction = BootstrapUtils.createVotingKeyTransaction(
             voting.publicKey,
-            currentHeight,
+            LinkAction.Link,
             presetData,
             deadline,
             maxFee,

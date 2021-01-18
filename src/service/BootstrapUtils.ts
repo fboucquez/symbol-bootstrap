@@ -265,22 +265,17 @@ export class BootstrapUtils {
 
     public static createVotingKeyTransaction(
         shortPublicKey: string,
-        currentHeight: UInt64,
-        presetData: {
-            networkType: NetworkType;
-            votingKeyStartEpoch: number;
-            votingKeyEndEpoch: number;
-        },
+        action: LinkAction,
+        presetData: { networkType: NetworkType; votingKeyStartEpoch: number; votingKeyEndEpoch: number },
         deadline: Deadline,
         maxFee: UInt64,
     ): Transaction {
-        logger.info('Voting Key Link Transaction Short Key V1 resolved');
         return VotingKeyLinkTransaction.create(
             deadline,
             shortPublicKey,
             presetData.votingKeyStartEpoch,
             presetData.votingKeyEndEpoch,
-            LinkAction.Link,
+            action,
             presetData.networkType,
             1,
             maxFee,

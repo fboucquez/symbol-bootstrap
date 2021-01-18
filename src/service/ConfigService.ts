@@ -490,7 +490,7 @@ export class ConfigService {
         }
         const voting = BootstrapUtils.createVotingKeyTransaction(
             node.voting.publicKey,
-            UInt64.fromUint(0),
+            LinkAction.Link,
             presetData,
             Deadline.createFromDTO('1'),
             UInt64.fromUint(0),
