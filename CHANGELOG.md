@@ -15,6 +15,7 @@ Symbol Bootstrap | v0.4.1 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 - Improved --password. It's only required when private keys need to be read.
 - Added `database` service to server and broker `depends_on` compose services.
 - Fixed `link --unlink` command for Voting Key Link transactions.
+- Added multisig account validation to `link` and `supernode` commands.
 
 ## [0.4.0] - Jan-14-2020
 
