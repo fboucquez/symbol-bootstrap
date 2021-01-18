@@ -46,6 +46,8 @@ const yaml = require('js-yaml');
 const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
+export type Password = string | false | undefined;
+
 export class KnownError extends Error {
     public readonly known = true;
 }
@@ -386,7 +388,7 @@ export class BootstrapUtils {
         return yaml.safeLoad(yamlString);
     }
 
-    public static loadYaml(fileLocation: string, password: string | false | undefined): any {
+    public static loadYaml(fileLocation: string, password: Password): any {
         const object = this.fromYaml(this.loadFileAsText(fileLocation));
         if (password) {
             BootstrapUtils.validatePassword(password);

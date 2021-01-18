@@ -393,8 +393,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:90/'
-            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
-            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
         restart: 'on-failure:2'
         ports:
             - '100:4000'
@@ -415,8 +415,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:91/'
-            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
-            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
         restart: 'on-failure:2'
         ports:
             - '101:4000'
@@ -437,8 +437,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:92/'
-            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
-            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
         restart: 'on-failure:2'
         ports:
             - '102:4000'
@@ -459,8 +459,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:93/'
-            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
-            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
         restart: 'on-failure:2'
         ports:
             - '103:4000'

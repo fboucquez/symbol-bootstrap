@@ -21,7 +21,7 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset } from '../model';
-import { BootstrapUtils, Migration } from './BootstrapUtils';
+import { BootstrapUtils, Migration, Password } from './BootstrapUtils';
 import { Preset } from './ConfigService';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -328,7 +328,7 @@ export class ConfigLoader {
         });
     }
 
-    public loadExistingPresetDataIfPreset(target: string, password: string | false | undefined): ConfigPreset | undefined {
+    public loadExistingPresetDataIfPreset(target: string, password: Password): ConfigPreset | undefined {
         const generatedPresetLocation = this.getGeneratedPresetLocation(target);
         if (existsSync(generatedPresetLocation)) {
             return BootstrapUtils.loadYaml(generatedPresetLocation, password);
@@ -336,7 +336,7 @@ export class ConfigLoader {
         return undefined;
     }
 
-    public loadExistingPresetData(target: string, password: string | false | undefined): ConfigPreset {
+    public loadExistingPresetData(target: string, password: Password): ConfigPreset {
         const presetData = this.loadExistingPresetDataIfPreset(target, password);
         if (!presetData) {
             throw new Error(`The file ${this.getGeneratedPresetLocation(target)} doesn't exist. Have you executed the 'config' command?`);
@@ -344,7 +344,7 @@ export class ConfigLoader {
         return presetData;
     }
 
-    public loadExistingAddressesIfPreset(target: string, password: string | false | undefined): Addresses | undefined {
+    public loadExistingAddressesIfPreset(target: string, password: Password): Addresses | undefined {
         const generatedAddressLocation = this.getGeneratedAddressLocation(target);
         if (existsSync(generatedAddressLocation)) {
             const presetData = this.loadExistingPresetData(target, password);
@@ -387,7 +387,7 @@ export class ConfigLoader {
         ];
     }
 
-    public loadExistingAddresses(target: string, password: string | false | undefined): Addresses {
+    public loadExistingAddresses(target: string, password: Password): Addresses {
         const addresses = this.loadExistingAddressesIfPreset(target, password);
         if (!addresses) {
             throw new Error(`The file ${this.getGeneratedAddressLocation(target)} doesn't exist. Have you executed the 'config' command?`);
