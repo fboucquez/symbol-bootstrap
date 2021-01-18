@@ -122,6 +122,7 @@ services:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
+            - db-0
             - api-node-broker-0
         networks:
             default:
@@ -140,6 +141,7 @@ services:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
+            - db-1
             - api-node-broker-1
         networks:
             default:
@@ -158,6 +160,7 @@ services:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
+            - db-2
             - api-node-broker-2
         networks:
             default:
@@ -176,6 +179,7 @@ services:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
+            - db-3
             - api-node-broker-3
         networks:
             default:
@@ -197,6 +201,8 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+        depends_on:
+            - db-0
     api-node-broker-1:
         user: '1000:1000'
         container_name: api-node-broker-1
@@ -212,6 +218,8 @@ services:
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+        depends_on:
+            - db-1
     api-node-broker-2:
         user: '1000:1000'
         container_name: api-node-broker-2
@@ -227,6 +235,8 @@ services:
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+        depends_on:
+            - db-2
     api-node-broker-3:
         user: '1000:1000'
         container_name: api-node-broker-3
@@ -242,6 +252,8 @@ services:
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+        depends_on:
+            - db-3
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
@@ -381,8 +393,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:90/'
-            FAUCET_PRIVATE_KEY: MockMe
-            NATIVE_CURRENCY_ID: Mockme2
+            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
+            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
         restart: 'on-failure:2'
         ports:
             - '100:4000'
@@ -403,8 +415,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:91/'
-            FAUCET_PRIVATE_KEY: MockMe
-            NATIVE_CURRENCY_ID: Mockme2
+            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
+            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
         restart: 'on-failure:2'
         ports:
             - '101:4000'
@@ -425,8 +437,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:92/'
-            FAUCET_PRIVATE_KEY: MockMe
-            NATIVE_CURRENCY_ID: Mockme2
+            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
+            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
         restart: 'on-failure:2'
         ports:
             - '102:4000'
@@ -447,8 +459,8 @@ services:
             MAX_UNCONFIRMED: 99
             BLACKLIST_MOSAIC_IDS: '[]'
             EXPLORER_URL: 'http://localhost:93/'
-            FAUCET_PRIVATE_KEY: MockMe
-            NATIVE_CURRENCY_ID: Mockme2
+            FAUCET_PRIVATE_KEY: 942184FBF786B4C878D12858FD40A8F9EF6D27F64F15B53732126C7165908187
+            NATIVE_CURRENCY_ID: 58A8D5B6EE719EA6
         restart: 'on-failure:2'
         ports:
             - '103:4000'

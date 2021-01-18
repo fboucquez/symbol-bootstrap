@@ -62,6 +62,7 @@ services:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
+            - db-0
             - api-node-broker-0
         networks:
             default:
@@ -83,6 +84,8 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+        depends_on:
+            - db-0
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
