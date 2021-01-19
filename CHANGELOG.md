@@ -16,6 +16,7 @@ Symbol Bootstrap | v0.4.1 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 - Added `database` service to server and broker `depends_on` compose services.
 - Fixed `link --unlink` command for Voting Key Link transactions.
 - Added multisig account validation to `link` and `supernode` commands.
+- Added `CONTROLLER_PUBLIC_KEY` to Supernode's agent configuration
 
 ## [0.4.0] - Jan-14-2020
 
