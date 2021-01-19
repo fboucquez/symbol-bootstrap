@@ -39,7 +39,6 @@ export type RunParams = {
     args?: string[];
     resetData?: boolean;
     target: string;
-    password?: string;
 };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -64,7 +63,7 @@ export class RunService {
         }
 
         const target = this.params.target;
-        const preset = this.configLoader.loadExistingPresetData(target, this.params.password);
+        const preset = this.configLoader.loadExistingPresetData(target, false);
         preset.nodes?.forEach((node) => {
             // The lock files that should be removed when starting. If there is a server.lock or a broker.lock, the recovery needs to execute.
             const lockFiles = ['recovery.lock', 'broker.started'];
@@ -172,7 +171,7 @@ export class RunService {
     public async resetData(): Promise<void> {
         logger.info('Resetting data');
         const target = this.params.target;
-        const preset = this.configLoader.loadExistingPresetData(target, this.params.password);
+        const preset = this.configLoader.loadExistingPresetData(target, false);
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await Promise.all(
             (preset.nodes || []).map(async (node) => {
@@ -209,7 +208,7 @@ export class RunService {
         }
 
         //Creating folders to avoid being created using sudo. Is there a better way?
-        const dockerCompose: DockerCompose = await BootstrapUtils.loadYaml(dockerFile, undefined);
+        const dockerCompose: DockerCompose = await BootstrapUtils.loadYaml(dockerFile, false);
         if (!ignoreIfNotFound && this.params.pullImages) await this.pullImages(dockerCompose);
 
         const volumenList = _.flatMap(Object.values(dockerCompose?.services), (s) => s.volumes?.map((v) => v.split(':')[0]) || []) || [];

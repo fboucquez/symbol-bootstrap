@@ -80,6 +80,7 @@ services:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
+            - db-0
             - api-node-broker-0
         networks:
             default:
@@ -101,10 +102,12 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+        depends_on:
+            - db-0
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.0'
+        image: 'symbolplatform/symbol-rest:2.3.1'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

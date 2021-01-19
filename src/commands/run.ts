@@ -27,7 +27,6 @@ export default class Run extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
-        password: BootstrapUtils.passwordFlag,
         detached: flags.boolean({
             char: 'd',
             description:

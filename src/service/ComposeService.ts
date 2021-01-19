@@ -69,8 +69,7 @@ export class ComposeService {
     }
 
     public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
-        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
-        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
+        const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password || false);
 
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
@@ -81,7 +80,7 @@ export class ComposeService {
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (existsSync(dockerFile)) {
             logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
-            return BootstrapUtils.loadYaml(dockerFile, undefined);
+            return BootstrapUtils.loadYaml(dockerFile, false);
         }
 
         await BootstrapUtils.mkdir(targetDocker);
@@ -224,7 +223,17 @@ export class ComposeService {
                     const serverServiceCommand = `bash -c "${serverServiceCommands.join(' && ')}"`;
                     const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
 
-                    const serverDependsOn = n.brokerName ? [n.brokerName] : [];
+                    const serverDependsOn: string[] = [];
+                    const brokerDependsOn: string[] = [];
+
+                    if (n.databaseHost) {
+                        serverDependsOn.push(n.databaseHost);
+                        brokerDependsOn.push(n.databaseHost);
+                    }
+                    if (n.brokerName) {
+                        serverDependsOn.push(n.brokerName);
+                    }
+
                     const volumes = [
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
@@ -264,6 +273,7 @@ export class ComposeService {
                                     stop_signal: 'SIGINT',
                                     restart: restart,
                                     volumes: nodeService.volumes,
+                                    depends_on: brokerDependsOn,
                                     ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.brokerDockerComposeDebugMode),
                                     ...n.brokerCompose,
                                 },
@@ -348,6 +358,7 @@ export class ComposeService {
             (presetData.faucets || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
                     // const nemesisPrivateKey = addresses?.mosaics?[0]?/;
                     services.push(
                         await resolveService(n, {

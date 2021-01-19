@@ -16,7 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import { DtoMapping, TransactionType, UInt64 } from 'symbol-sdk';
+import { DtoMapping, TransactionType } from 'symbol-sdk';
 import { BootstrapService, ConfigService, LinkService, Preset } from '../../src/service';
 const password = '1234';
 describe('LinkService', () => {
@@ -58,13 +58,7 @@ describe('LinkService', () => {
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
-        const height = UInt64.fromUint(10);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
-            epochAdjustment,
-            height,
-            addresses,
-            presetData,
-        );
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(epochAdjustment, addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
         expect(nodeAndTransactions[0].transactions.length).eq(4);
@@ -90,13 +84,7 @@ describe('LinkService', () => {
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
-        const height = UInt64.fromUint(10);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
-            epochAdjustment,
-            height,
-            addresses,
-            presetData,
-        );
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(epochAdjustment, addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
         expect(nodeAndTransactions[0].transactions.length).eq(3);
@@ -120,13 +108,7 @@ describe('LinkService', () => {
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
-        const height = UInt64.fromUint(10);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
-            epochAdjustment,
-            height,
-            addresses,
-            presetData,
-        );
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(epochAdjustment, addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].node).eq(addresses.nodes?.[0]);
         expect(nodeAndTransactions[0].transactions.length).eq(1);
@@ -148,13 +130,7 @@ describe('LinkService', () => {
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
-        const height = UInt64.fromUint(10);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
-            epochAdjustment,
-            height,
-            addresses,
-            presetData,
-        );
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(epochAdjustment, addresses, presetData);
         expect(nodeAndTransactions.length).eq(0);
     });
 
@@ -174,13 +150,7 @@ describe('LinkService', () => {
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const epochAdjustment = DtoMapping.parseServerDuration(presetData.epochAdjustment).seconds();
-        const height = UInt64.fromUint(360000);
-        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(
-            epochAdjustment,
-            height,
-            addresses,
-            presetData,
-        );
+        const nodeAndTransactions = await new LinkService(params).createTransactionsToAnnounce(epochAdjustment, addresses, presetData);
         expect(nodeAndTransactions.length).eq(1);
         expect(nodeAndTransactions[0].transactions.length).eq(3);
         expect(nodeAndTransactions[0].transactions[0].type).eq(TransactionType.ACCOUNT_KEY_LINK);

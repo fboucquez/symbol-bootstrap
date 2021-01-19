@@ -15,8 +15,6 @@
  */
 
 import * as _ from 'lodash';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
 import {
     Account,
     AccountKeyLinkTransaction,
@@ -25,7 +23,6 @@ import {
     NodeKeyLinkTransaction,
     RepositoryFactoryHttp,
     Transaction,
-    TransactionService,
     UInt64,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
@@ -33,6 +30,7 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
+import { AnnounceService } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
@@ -77,85 +75,12 @@ export class LinkService {
         }
 
         const epochAdjustment = await repositoryFactory.getEpochAdjustment().toPromise();
-        const height = (await repositoryFactory.createChainRepository().getChainInfo().toPromise()).height;
-
-        const transactionNodes = this.createTransactionsToAnnounce(epochAdjustment, height, addresses, presetData);
-
-        if (!transactionNodes.length) {
-            logger.info(`There are no transactions to announce...`);
-            return;
-        }
-
-        const transactionRepository = repositoryFactory.createTransactionRepository();
-        const transactionService = new TransactionService(transactionRepository, repositoryFactory.createReceiptRepository());
-        const listener = repositoryFactory.createListener();
-        await listener.open();
-
-        const faucetUrl = presetData.faucetUrl;
-
-        const signedTransactionObservable = from(transactionNodes).pipe(
-            mergeMap(({ node, transactions }) => {
-                if (!node.main) {
-                    throw new Error('CA account is required!');
-                }
-                const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
-                const noFundsMessage = faucetUrl
-                    ? `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} via ${faucetUrl}/?recipient=${account.address.plain()}`
-                    : `Does your node signing address have any network coin? Send some tokens to ${account.address.plain()} .`;
-                return repositoryFactory
-                    .createAccountRepository()
-                    .getAccountInfo(account.address)
-                    .pipe(
-                        mergeMap((a) => {
-                            const currencyMosaicIdHex = BootstrapUtils.toHex(presetData.currencyMosaicId);
-                            const mosaic = a.mosaics.find((m) => BootstrapUtils.toHex(m.id.toHex()) === currencyMosaicIdHex);
-                            if (!mosaic || mosaic.amount.compare(UInt64.fromUint(0)) < 1) {
-                                logger.error(
-                                    `Node signing account ${account.address.plain()} does not have enough currency. Mosaic id: ${currencyMosaicIdHex}. \n\n${noFundsMessage}`,
-                                );
-                                return EMPTY;
-                            }
-                            return from(transactions.map((t) => account.sign(t, generationHash)));
-                        }),
-                        catchError((e) => {
-                            logger.error(
-                                `Node signing account ${account.address.plain()} is not valid. ${e.message}. \n\n${noFundsMessage}`,
-                            );
-                            return EMPTY;
-                        }),
-                    );
-            }),
-        );
-
-        const announceCalls: Observable<string> = signedTransactionObservable.pipe(
-            mergeMap((signedTransaction) => {
-                return transactionService.announce(signedTransaction, listener).pipe(
-                    map((completedTransaction) => {
-                        const message = `Transaction ${completedTransaction.type} ${
-                            completedTransaction.transactionInfo?.hash
-                        } - signer ${completedTransaction.signer?.address.plain()} has been confirmed`;
-                        logger.info(message);
-                        return message;
-                    }),
-                    catchError((e) => {
-                        const message =
-                            `Transaction ${signedTransaction.type} ${
-                                signedTransaction.hash
-                            } - signer ${signedTransaction.getSignerAddress().plain()} failed!! ` + e.message;
-                        logger.error(message);
-                        return of(message);
-                    }),
-                );
-            }),
-        );
-
-        await announceCalls.pipe(toArray()).toPromise();
-        listener.close();
+        const transactionNodes = this.createTransactionsToAnnounce(epochAdjustment, addresses, presetData);
+        await new AnnounceService().announce(repositoryFactory, presetData, transactionNodes, generationHash);
     }
 
     public createTransactionsToAnnounce(
         epochAdjustment: number,
-        height: UInt64,
         addresses: Addresses,
         presetData: ConfigPreset,
     ): { node: NodeAccount; transactions: Transaction[] }[] {
@@ -199,7 +124,7 @@ export class LinkService {
                         `Creating VotingKeyLinkTransaction - node: ${node.name}, signer public key: ${account.publicKey}, Voting public key: ${node.voting.publicKey}`,
                     );
                     transactions.push(
-                        BootstrapUtils.createVotingKeyTransaction(node.voting.publicKey, height, presetData, deadline, maxFee),
+                        BootstrapUtils.createVotingKeyTransaction(node.voting.publicKey, action, presetData, deadline, maxFee),
                     );
                 }
                 return { node, transactions };
