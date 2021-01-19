@@ -4,6 +4,27 @@ set -e
 name=$1
 echo "RUNNING startServer.sh $name"
 
-ulimit -c unlimited
+export LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps
 
-exec env LD_LIBRARY_PATH={{{catapultAppFolder}}}/lib:{{{catapultAppFolder}}}/deps {{{catapultAppFolder}}}/bin/catapult.server ./userconfig
+rm -f {{{dataDirectory}}}/recovery.lock
+
+ulimit -c unlimited
+if [ -e "{{{dataDirectory}}}/broker.lock" ] || [ -e "{{{dataDirectory}}}/server.lock" ]; then
+  echo "!!!! Have lock file present, going to run recovery...."
+  {{{catapultAppFolder}}}/bin/catapult.recovery ./userconfig
+  echo "!!!! Finished running recovery, should be moving on to start server..."
+else
+  echo "!!!! DO NOT HAVE ANY LOCK FILE... There is no need to recover"
+fi
+if [ $2 = "server-broker-and-agent" ]; then
+  echo "Running Server, Broker And Agent"
+  ({{{catapultAppFolder}}}/bin/catapult.server ./userconfig) & ({{{catapultAppFolder}}}/bin/catapult.broker ./userconfig) & (/symbol-commands/agent-linux.bin --config ./userconfig/agent/agent.properties)
+elif [ $2 = "server-and-broker" ]; then
+  echo "Running Server And Broker"
+  ({{{catapultAppFolder}}}/bin/catapult.server ./userconfig) & ({{{catapultAppFolder}}}/bin/catapult.broker ./userconfig)
+else
+  echo "Running Server"
+  {{{catapultAppFolder}}}/bin/catapult.server ./userconfig
+fi
+
+

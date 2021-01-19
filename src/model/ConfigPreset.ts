@@ -23,6 +23,7 @@ export interface DockerServicePreset {
     openPort?: boolean | number | string;
     host?: string;
     excludeDockerService?: boolean;
+    dockerComposeServiceRestart?: string;
     environment?: any;
     compose?: any;
     dockerComposeDebugMode?: boolean;
@@ -83,11 +84,8 @@ export interface NodePreset extends DockerServicePreset {
     //Broker specific
     brokerName?: string;
     brokerHost?: string;
-    brokerIpv4_address?: string;
     brokerOpenPort?: boolean | number | string;
-    brokerExcludeDockerService?: boolean;
-    brokerCompose?: any;
-    brokerDockerComposeDebugMode?: boolean;
+
     //super node
     supernode?: boolean | string;
     supernodeOpenPort?: boolean | number | string;

@@ -9,35 +9,25 @@ services:
         command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
+        restart: 'on-failure:2'
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db:/dbdata:rw'
     api-node:
         user: '1000:1000'
+        networks:
+            default:
+                aliases:
+                    - api-broker
         container_name: api-node
         image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
-        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node"
+        command: /bin/bash /symbol-commands/startServer.sh api-node server-and-broker
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         ports:
             - '7900:7900'
-        volumes:
-            - '../nodes/api-node:/symbol-workdir:rw'
-            - './server:/symbol-commands:ro'
-        depends_on:
-            - db
-            - api-broker
-    api-broker:
-        user: '1000:1000'
-        container_name: api-broker
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
-        working_dir: /symbol-workdir
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-broker && /bin/bash /symbol-commands/startBroker.sh api-broker"
-        ports:
             - '7902:7902'
-        stop_signal: SIGINT
-        restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
