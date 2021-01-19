@@ -17,7 +17,7 @@ The best way to validate your configuration is by inspecting the generated confi
 ### Custom Rest image and throttling
 
 ```yaml
-symbolRestImage: symbolplatform/symbol-rest:2.3.0
+symbolRestImage: symbolplatform/symbol-rest:2.3.1
 throttlingBurst: 35
 throttlingRate: 1000
 ```

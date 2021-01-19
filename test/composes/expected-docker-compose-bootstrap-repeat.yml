@@ -257,7 +257,7 @@ services:
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.0'
+        image: 'symbolplatform/symbol-rest:2.3.1'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -274,7 +274,7 @@ services:
     rest-gateway-1:
         container_name: rest-gateway-1
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.0'
+        image: 'symbolplatform/symbol-rest:2.3.1'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -291,7 +291,7 @@ services:
     rest-gateway-2:
         container_name: rest-gateway-2
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.0'
+        image: 'symbolplatform/symbol-rest:2.3.1'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -308,7 +308,7 @@ services:
     rest-gateway-3:
         container_name: rest-gateway-3
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.0'
+        image: 'symbolplatform/symbol-rest:2.3.1'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
