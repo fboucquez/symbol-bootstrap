@@ -17,6 +17,7 @@ Symbol Bootstrap | v0.4.1 | [symbol-bootstrap](https://www.npmjs.com/package/sym
 - Fixed `link --unlink` command for Voting Key Link transactions.
 - Added multisig account validation to `link` and `supernode` commands.
 - Added `CONTROLLER_PUBLIC_KEY` to Supernode's agent configuration
+- Upgraded Symbol Rest to version 2.3.1.
 
 ## [0.4.0] - Jan-14-2020
 
