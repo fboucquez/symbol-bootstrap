@@ -1,43 +1,12 @@
-initialCurrencyAtomicUnits: 7831975436000000
-maxMosaicAtomicUnits: 9000000000000000
-totalChainImportance: 7831975436000000
-minHarvesterBalance: 10000000000
-maxHarvesterBalance: 50000000000000
-minVoterBalance: 3000000000000
-networkType: 152
-minNamespaceDuration: 30d
-assemblies: 'api, dual, peer'
-harvestBeneficiaryPercentage: 25
-batchVerificationRandomSource: /dev/urandom
-currencyMosaicId: 2CF403E85507F39E
-harvestingMosaicId: 2CF403E85507F39E
+assemblies: api, dual, peer, demo
 baseNamespace: symbol
-currencyName: 'xym'
-rewardProgramControllerPublicKey: 68B6A1D2F292E75F9BB8E9EDDA086A7C293A198C9968FF7528374075AAF4D983
-rewardProgramCaFile: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZpekNDQTNNQ0ZGWkpmSjRMaXVxOXJzRVJUbllOa0ZQQ3dySTJNQTBHQ1NxR1NJYjNEUUVCQ3dVQU1JR0IKTVFzd0NRWURWUVFHRXdKVlV6RUxNQWtHQTFVRUNBd0NUVUV4RHpBTkJnTlZCQWNNQmtKdmMzUnZiakVUTUJFRwpBMVVFQ2d3S1JYaGhiWEJzWlNCRGJ6RVFNQTRHQTFVRUN3d0hkR1ZqYUc5d2N6RUxNQWtHQTFVRUF3d0NZMkV4CklEQWVCZ2txaGtpRzl3MEJDUUVXRVdObGNuUnpRR1Y0WVcxd2JHVXVZMjl0TUI0WERUSXhNREV4TVRFME16QXoKTVZvWERUUTRNRFV5T0RFME16QXpNVm93Z1lFeEN6QUpCZ05WQkFZVEFsVlRNUXN3Q1FZRFZRUUlEQUpOUVRFUApNQTBHQTFVRUJ3d0dRbTl6ZEc5dU1STXdFUVlEVlFRS0RBcEZlR0Z0Y0d4bElFTnZNUkF3RGdZRFZRUUxEQWQwClpXTm9iM0J6TVFzd0NRWURWUVFEREFKallURWdNQjRHQ1NxR1NJYjNEUUVKQVJZUlkyVnlkSE5BWlhoaGJYQnMKWlM1amIyMHdnZ0lpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElDRHdBd2dnSUtBb0lDQVFDbHhWVzlZZ2RmSFlGcwpad1BIcVlOaUhWcUtaMnlLZ2VnYXdqYTRuZlN5WkFmWHpIRzdiMmNaRXZUbDkwY2EreFhSdjhCR0J1RmM0QksyCmJCRGpMQk9VMmpQaXVqLytNTEFHR1dYUGtReGtLYzZjc3M1Q1RWUkx0SXhucERHZk1GSmhLNDFTZlcydmZleEUKYThXMldHWjdmc3dGV1IyMlFJL2RwSkM2TEtqdE15VmdhUi9EUDNXTE45MmZRbE5VajdIQ1ZFbVg4ZWI1Y3I3egpnK2I0cWt3S1Z4cWJWNGhmektqT0w0ZURWSksxVlZieFJLaE1iRmNhWVBlTnUrUzc3a05xajh6aE1MSTBTK0xpCnMvckNpUFBjelFuakcraFNiZHUvSnhYL0psR282VTlvb1BKKzNsNHBHUE9nTmNYOW9NS01TK2NoWXJ0aE5uWnMKbUMvMWpZUm5jcXdKRUlGVTBqYzBtSFhyTytTM2tSMEpjUVRPU05lMVVYMExrOWdjaFl2aUVOaFV6VVUxRHEvSwpTbGJQdjBNdGluaTNQVUs5endlL2J6d3VTMDlldkFhNjdDWDNSRWdoTnFienlwS2c2ZHY4LzdUUTBldFUvcmxWClo5UEVodW84R1I1bEpNbUJSaTY5MlQ2NEg1QmZQdHlpbk04NWw5NzBacCsvTjAxOUJlTDQ2NkUzdWFMdmhHQS8KTXV5NEd0ZVI5N0p4UFJzN2d3ZGY0VDdNbXQ1Vk1jVWFiMGFNc1pwdjNzZlBYNWZxYWNYckVxMjJMaldlVW93KwoxaDFWRmhFdXVwcnZOalViY25zNTNpZE0wZHNRN2xuOU5iY0pJdjZhQkFCZndYQ3FsSXU2OUNiYStGWnYxRTI5ClRhRlF3UERONTFsOU9IbEo4OFpWTXpOY2FUVjdVUUlEQVFBQk1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQ0UKQ2RkQXJxUHVrV1ZITkFmdXZWcjc0akZPWXQ2cU5vTDA0cGoxalhnOEkzUkpiQzJwRU4vYisrNmFRbUp3R1ZlaQpLZ1BLWmgwVU1lYm9qR1hrcllBVDJKMjRXa1NNb2V5MmFyYzFEa2xlN2x3d1MvQ2xsMVgrVWVkd2JmWmxjYTRFCkJJRzNveXJPeVlRR1hMRGFKcEh1Z28zY3dndkNZNlZVRmIwQUhSeExHN0dIVmt3VzU3aDRkWSt5cWg4QnJHalIKcjRKRlBtcWlPVHUyTTNWdjJoV1dGUVgwSkZUQlJsMldldENVa1FjVEZVK2I2R1VTMnBRUTRpZkFITXdYY05aagpCUHpoT2JVYmd5Mkg0enhlVStENmFORTJDell5TlFCWHFUVDJPcHVDV3B3VmlzRHNRMUVZdmdZc3ZUenF2b1pDCmpnZVlVWi9hdXJIQkRnRGNDc3g1NkE0MUtNbFV3Y0Zub3FsOUdDZVNWY2ErTmR4UnEwWTJGVjNQVDJZVjJRc24KeXRxWndGTVcyWm1PVUl1N202SjMzdkptdS9YTncwMlVQZm53c1ppK3dkbDJ2cFdWQmNJRko2eXc0U0lVYXNLeQp3anVENVhuQTdwR2FEZjdkcVNiOUl0eGNZaFhSR3IySU1RbEppUHpnUVJCSS9UYnh5YjFKdWZlb1M2cU1kRitOCnRjbE5TaGlpeFJxOE1XSUxEdngzMC9WdU9uanEvY1NyV0NlQ3JwSHVySU1MclN2OXVUTk9MRW1EMkxtVXo1Q3EKdEJQNkZqOEE2b1pCUWxqc2pGQU5WaGwwcXJQRCtLL0NaS1lVeStiOG50bHM2dnJWQVppSXl2U2YxT1NTRldTYgpLUjZFdDZhZGc3TVRPd1EreXI1UlFTbGNBVTZlNVl6RE5ETC9zSFdJS2c9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
-harvestingName: 'xym'
-votingSetGrouping: 720
-maxSecretLockDuration: 365d
-maxNamespaceDuration: 1825d
-namespaceGracePeriodDuration: 1d
-blockGenerationTargetTime: 30s
-nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/testnet/seed.zip'
-nemesisGenerationHashSeed: 45FBCF2F0EA36EFA7923C9BC923D6503169651F7FA4EFC46A8EAF5AE09057EBD
-nemesisSignerPublicKey: 071964D3C040D62DE905EAE978E2119BFC8E70489BFDF45A85B3D7ED5A517AA8
-harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
-mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
-namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
-faucetUrl: 'http://faucet.testnet.symboldev.network'
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.1.7
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.1.7
-knownRestGateways:
-    - 'http://api-01.ap-northeast-1.testnet.symboldev.network:3000'
-    - 'http://api-01.ap-southeast-1.testnet.symboldev.network:3000'
-    - 'http://api-01.eu-central-1.testnet.symboldev.network:3000'
-    - 'http://api-01.eu-west-1.testnet.symboldev.network:3000'
-    - 'http://api-01.us-east-1.testnet.symboldev.network:3000'
-    - 'http://api-01.us-west-1.testnet.symboldev.network:3000'
-trustedHosts:
+batchVerificationRandomSource: /dev/urandom
+currencyMosaicId: 4F8E3FB75C77C83E
+currencyName: xym
+harvestBeneficiaryPercentage: 25
+harvestNetworkFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
+harvestingMosaicId: 4F8E3FB75C77C83E
+harvestingName: xym
 inflation:
     starting-at-height-2: 95998521
     starting-at-height-200: 91882261
@@ -461,69 +430,26 @@ inflation:
     starting-at-height-219887757: 1
     starting-at-height-220412757: 1
     starting-at-height-220937757: 0
-knownPeers:
-    api-node:
-        - publicKey: a11c90064f5506d998accb1fcfc5986004d0edba08c6d2c0e589ba9466035266
-          endpoint:
-              host: api-01.ap-northeast-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: api-01-ap-northeast-1
-              roles: Api,Peer,Voting
-        - publicKey: fea03571d125d1a5b8663ab3e80b1f6b5cf9e6e3dff25034f5738fadeab201cb
-          endpoint:
-              host: api-01.eu-west-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: api-01-eu-west-1
-              roles: Api,Peer,Voting
-        - publicKey: 7CB6F76A7F6F3C573F98296BB45666BF45880732603399FC03D12FB2E9181B11
-          endpoint:
-              host: api-01.us-west-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: api-01-us-west-1
-              roles: Api,Voting
-    peer-node:
-        - publicKey: 4c4ffe262f779ef4b970b1560c1efa467051f85d7925e5f590f4267545b292c2
-          endpoint:
-              host: beacon-01.us-east-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: beacon-01-us-east-1
-              roles: Peer,Voting
-        - publicKey: de8e3b886edcf138c40c0aa706b95a72ec379a1c210fcb11467efd5b864c0ab0
-          endpoint:
-              host: beacon-01.eu-west-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: beacon-01-eu-west-1
-              roles: Peer,Voting
-        - publicKey: d4687a30b7d949a378c91c17ff6c64d8bc8ad041273b809f2711b2165afda2e1
-          endpoint:
-              host: beacon-01.us-west-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: beacon-01-us-west-1
-              roles: Peer,Voting
-        - publicKey: 059d07aa3c86e42b8d0d87fb36d2fa63dbce5d0e22c59560a3cd3a72fe6a8b3d
-          endpoint:
-              host: beacon-01.ap-southeast-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: beacon-01-ap-southeast-1
-              roles: Peer,Voting
-        - publicKey: c2627dabe47a4154ce658322fec3fe4b7b403e0523351dbad0a95e04db0c87f1
-          endpoint:
-              host: beacon-01.eu-central-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: beacon-01-eu-central-1
-              roles: Peer,Voting
-        - publicKey: 87865009522acc0b68aa71fec2ac4d452a33f2aad3d16138cf56194b2e8bc60e
-          endpoint:
-              host: beacon-01.ap-northeast-1.testnet.symboldev.network
-              port: 7900
-          metadata:
-              name: beacon-01-ap-northeast-1
-              roles: Peer,Voting
+knownPeers: []
+knownRestGateways: []
+maxHarvesterBalance: 50000000000000
+maxMosaicAtomicUnits: 9000000000000000
+minHarvesterBalance: 10000000000
+minNamespaceDuration: 30d
+minVoterBalance: 3000000000000
+mosaicRentalFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
+namespaceRentalFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
+nemesisGenerationHashSeed: 57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6
+nemesisSignerPublicKey: 78F0F6FFDE5C130777506FE2A597ADC5E98BD46041ABF775908299FE94BFD5D0
+networkType: 104
+rewardProgramCaFile: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZpekNDQTNNQ0ZGWkpmSjRMaXVxOXJzRVJUbllOa0ZQQ3dySTJNQTBHQ1NxR1NJYjNEUUVCQ3dVQU1JR0IKTVFzd0NRWURWUVFHRXdKVlV6RUxNQWtHQTFVRUNBd0NUVUV4RHpBTkJnTlZCQWNNQmtKdmMzUnZiakVUTUJFRwpBMVVFQ2d3S1JYaGhiWEJzWlNCRGJ6RVFNQTRHQTFVRUN3d0hkR1ZqYUc5d2N6RUxNQWtHQTFVRUF3d0NZMkV4CklEQWVCZ2txaGtpRzl3MEJDUUVXRVdObGNuUnpRR1Y0WVcxd2JHVXVZMjl0TUI0WERUSXhNREV4TVRFME16QXoKTVZvWERUUTRNRFV5T0RFME16QXpNVm93Z1lFeEN6QUpCZ05WQkFZVEFsVlRNUXN3Q1FZRFZRUUlEQUpOUVRFUApNQTBHQTFVRUJ3d0dRbTl6ZEc5dU1STXdFUVlEVlFRS0RBcEZlR0Z0Y0d4bElFTnZNUkF3RGdZRFZRUUxEQWQwClpXTm9iM0J6TVFzd0NRWURWUVFEREFKallURWdNQjRHQ1NxR1NJYjNEUUVKQVJZUlkyVnlkSE5BWlhoaGJYQnMKWlM1amIyMHdnZ0lpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElDRHdBd2dnSUtBb0lDQVFDbHhWVzlZZ2RmSFlGcwpad1BIcVlOaUhWcUtaMnlLZ2VnYXdqYTRuZlN5WkFmWHpIRzdiMmNaRXZUbDkwY2EreFhSdjhCR0J1RmM0QksyCmJCRGpMQk9VMmpQaXVqLytNTEFHR1dYUGtReGtLYzZjc3M1Q1RWUkx0SXhucERHZk1GSmhLNDFTZlcydmZleEUKYThXMldHWjdmc3dGV1IyMlFJL2RwSkM2TEtqdE15VmdhUi9EUDNXTE45MmZRbE5VajdIQ1ZFbVg4ZWI1Y3I3egpnK2I0cWt3S1Z4cWJWNGhmektqT0w0ZURWSksxVlZieFJLaE1iRmNhWVBlTnUrUzc3a05xajh6aE1MSTBTK0xpCnMvckNpUFBjelFuakcraFNiZHUvSnhYL0psR282VTlvb1BKKzNsNHBHUE9nTmNYOW9NS01TK2NoWXJ0aE5uWnMKbUMvMWpZUm5jcXdKRUlGVTBqYzBtSFhyTytTM2tSMEpjUVRPU05lMVVYMExrOWdjaFl2aUVOaFV6VVUxRHEvSwpTbGJQdjBNdGluaTNQVUs5endlL2J6d3VTMDlldkFhNjdDWDNSRWdoTnFienlwS2c2ZHY4LzdUUTBldFUvcmxWClo5UEVodW84R1I1bEpNbUJSaTY5MlQ2NEg1QmZQdHlpbk04NWw5NzBacCsvTjAxOUJlTDQ2NkUzdWFMdmhHQS8KTXV5NEd0ZVI5N0p4UFJzN2d3ZGY0VDdNbXQ1Vk1jVWFiMGFNc1pwdjNzZlBYNWZxYWNYckVxMjJMaldlVW93KwoxaDFWRmhFdXVwcnZOalViY25zNTNpZE0wZHNRN2xuOU5iY0pJdjZhQkFCZndYQ3FsSXU2OUNiYStGWnYxRTI5ClRhRlF3UERONTFsOU9IbEo4OFpWTXpOY2FUVjdVUUlEQVFBQk1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQ0UKQ2RkQXJxUHVrV1ZITkFmdXZWcjc0akZPWXQ2cU5vTDA0cGoxalhnOEkzUkpiQzJwRU4vYisrNmFRbUp3R1ZlaQpLZ1BLWmgwVU1lYm9qR1hrcllBVDJKMjRXa1NNb2V5MmFyYzFEa2xlN2x3d1MvQ2xsMVgrVWVkd2JmWmxjYTRFCkJJRzNveXJPeVlRR1hMRGFKcEh1Z28zY3dndkNZNlZVRmIwQUhSeExHN0dIVmt3VzU3aDRkWSt5cWg4QnJHalIKcjRKRlBtcWlPVHUyTTNWdjJoV1dGUVgwSkZUQlJsMldldENVa1FjVEZVK2I2R1VTMnBRUTRpZkFITXdYY05aagpCUHpoT2JVYmd5Mkg0enhlVStENmFORTJDell5TlFCWHFUVDJPcHVDV3B3VmlzRHNRMUVZdmdZc3ZUenF2b1pDCmpnZVlVWi9hdXJIQkRnRGNDc3g1NkE0MUtNbFV3Y0Zub3FsOUdDZVNWY2ErTmR4UnEwWTJGVjNQVDJZVjJRc24KeXRxWndGTVcyWm1PVUl1N202SjMzdkptdS9YTncwMlVQZm53c1ppK3dkbDJ2cFdWQmNJRko2eXc0U0lVYXNLeQp3anVENVhuQTdwR2FEZjdkcVNiOUl0eGNZaFhSR3IySU1RbEppUHpnUVJCSS9UYnh5YjFKdWZlb1M2cU1kRitOCnRjbE5TaGlpeFJxOE1XSUxEdngzMC9WdU9uanEvY1NyV0NlQ3JwSHVySU1MclN2OXVUTk9MRW1EMkxtVXo1Q3EKdEJQNkZqOEE2b1pCUWxqc2pGQU5WaGwwcXJQRCtLL0NaS1lVeStiOG50bHM2dnJWQVppSXl2U2YxT1NTRldTYgpLUjZFdDZhZGc3TVRPd1EreXI1UlFTbGNBVTZlNVl6RE5ETC9zSFdJS2c9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+rewardProgramControllerPublicKey: 68B6A1D2F292E75F9BB8E9EDDA086A7C293A198C9968FF7528374075AAF4D983
+totalChainImportance: 7831975436000000
+votingSetGrouping: 720
+maxSecretLockDuration: 365d
+maxNamespaceDuration: 1825d
+namespaceGracePeriodDuration: 1d
+blockGenerationTargetTime: 30s
+throttlingBurst: 35
+throttlingRate: 1000
+nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/mainnet/seed.zip'

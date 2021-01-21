@@ -68,7 +68,7 @@ symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.7
 symbolRestImage: symbolplatform/symbol-rest:2.3.3
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
-symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
+symbolFaucetImage: symbolplatform/symbol-faucet:0.5.0-alpha
 symbolAgentBaseImage: ubuntu:20.04
 mongoImage: mongo:4.4.3-bionic
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2

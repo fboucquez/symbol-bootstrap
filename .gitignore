@@ -12,6 +12,7 @@ node_modules
 symbol-bootstrap-*.tgz
 /.eslintcache
 coverage
+privateSeeds
 /ts-docs/
 /oclif.manifest.json
 /ngrok-testnet.yml
@@ -20,3 +21,4 @@ coverage
 /privateSeeds/
 /test/service/logs.log
 /backup-sync/
+/nemesis.7z

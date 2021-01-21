@@ -149,6 +149,7 @@ export interface ConfigPreset {
     transactionsDirectory: string;
     faucetUrl?: string;
     nemesis?: NemesisPreset;
+    nemesisSeedUrl?: string; // Optional seed with zip file.
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
     assemblies?: string;
     databaseName: string;

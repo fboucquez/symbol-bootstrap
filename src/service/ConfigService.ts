@@ -40,6 +40,7 @@ import { NemgenService } from './NemgenService';
 import { ReportService } from './ReportService';
 import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
+import { ZipUtils } from './ZipUtils';
 
 /**
  * Defined presets.
@@ -47,6 +48,7 @@ import { VotingService } from './VotingService';
 export enum Preset {
     bootstrap = 'bootstrap',
     testnet = 'testnet',
+    mainnet = 'mainnet',
 }
 
 export interface ConfigParams {
@@ -172,12 +174,7 @@ export class ConfigService {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
 
-        if (!presetData.nemesisSeedFolder && presetData.nemesis) {
-            await this.generateNemesisConfig(presetData, addresses);
-        } else {
-            const copyFrom = presetData.nemesisSeedFolder || join(this.root, 'presets', this.params.preset, 'seed');
-            await BootstrapUtils.generateConfiguration({}, copyFrom, nemesisSeedFolder);
-        }
+        await this.downloadNemesis(presetData, addresses);
 
         BootstrapUtils.validateFolder(nemesisSeedFolder);
         await Promise.all(
@@ -190,6 +187,42 @@ export class ConfigService {
             }),
         );
         return { presetData, addresses };
+    }
+
+    private async downloadNemesis(presetData: ConfigPreset, addresses: Addresses) {
+        const target = this.params.target;
+        const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
+        await BootstrapUtils.mkdir(nemesisSeedFolder);
+
+        if (presetData.nemesisSeedFolder) {
+            await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
+            return;
+        }
+
+        if (presetData.nemesisSeedUrl) {
+            process.on('SIGINT', function () {
+                logger.error('The seed cannot be downloaded. Processed has been terminated...');
+                process.exit();
+            });
+            while (true) {
+                try {
+                    const zipFile = `${this.params.preset}-nemesis.zip`;
+                    await BootstrapUtils.download(presetData.nemesisSeedUrl, zipFile);
+                    await ZipUtils.unzip(zipFile, 'seed', nemesisSeedFolder);
+                    return;
+                } catch (e) {
+                    logger.warn(`Seed ${presetData.nemesisSeedUrl} cannot be downloaded. Error ${e.message}`);
+                    logger.warn(`The ${presetData.preset} network hasn't been launched yet!!!. Retrying in 10 seconds ....`);
+                    await BootstrapUtils.sleep(10000);
+                }
+            }
+        }
+
+        if (presetData.nemesis) {
+            await this.generateNemesisConfig(presetData, addresses);
+            return;
+        }
+        await BootstrapUtils.generateConfiguration({}, join(this.root, 'presets', this.params.preset, 'seed'), nemesisSeedFolder);
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {

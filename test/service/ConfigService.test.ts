@@ -47,6 +47,16 @@ describe('ConfigService', () => {
         }).run();
     });
 
+    it('ConfigService mainnet assemlby', async () => {
+        await new ConfigService('.', {
+            ...ConfigService.defaultParams,
+            reset: true,
+            target: 'target/tests/ConfigService.test.mainnet',
+            preset: Preset.mainnet,
+            assembly: 'demo',
+        }).run();
+    });
+
     it('ConfigService bootstrap default', async () => {
         await new ConfigService('.', {
             ...ConfigService.defaultParams,

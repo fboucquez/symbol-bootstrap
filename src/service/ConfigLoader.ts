@@ -182,7 +182,15 @@ export class ConfigLoader {
         const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false) : {};
         const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
+        const inflation =
+            customPresetObject?.inflation ||
+            customPresetFileObject?.inflation ||
+            assemblyPreset?.inflation ||
+            networkPreset?.inflation ||
+            sharedPreset?.inflation ||
+            [];
         const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
+        presetData.inflation = inflation;
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
