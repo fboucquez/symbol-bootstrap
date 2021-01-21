@@ -30,7 +30,7 @@ OPTIONS
   -h, --help
       It shows the help of this command.
 
-  -p, --preset=(bootstrap|testnet)
+  -p, --preset=(bootstrap|testnet|mainnet)
       [default: bootstrap] the network preset
 
   -r, --reset

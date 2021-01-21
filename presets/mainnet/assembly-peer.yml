@@ -1,0 +1,8 @@
+localNetworks: 127.0.0.1
+nodes:
+    - harvesting: true
+      voting: false
+      api: false
+      name: 'node'
+      openPort: true
+      host: ''

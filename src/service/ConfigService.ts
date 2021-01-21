@@ -43,6 +43,7 @@ import { NemgenService } from './NemgenService';
 import { ReportService } from './ReportService';
 import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
+import { ZipUtils } from './ZipUtils';
 
 /**
  * Defined presets.
@@ -50,6 +51,7 @@ import { VotingService } from './VotingService';
 export enum Preset {
     bootstrap = 'bootstrap',
     testnet = 'testnet',
+    mainnet = 'mainnet',
 }
 
 export enum KeyName {
@@ -214,22 +216,56 @@ export class ConfigService {
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await BootstrapUtils.mkdir(nemesisSeedFolder);
 
-        if (presetData.nemesisSeedFolder) {
-            await this.validateSeedFolder(
-                presetData.nemesisSeedFolder,
-                `Is the provided preset nemesisSeedFolder: ${presetData.nemesisSeedFolder} a valid seed folder?`,
-            );
-            await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
-            return;
-        }
-
         if (presetData.nemesis) {
             await this.generateNemesisConfig(presetData, addresses);
             await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
             return;
         }
-        await BootstrapUtils.generateConfiguration({}, join(this.root, 'presets', this.params.preset, 'seed'), nemesisSeedFolder);
-        await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
+
+        if (presetData.nemesisSeedFolder) {
+            await this.validateSeedFolder(
+                presetData.nemesisSeedFolder,
+                `Is the provided preset nemesisSeedFolder: ${presetData.nemesisSeedFolder} a valid seed folder?`,
+            );
+            logger.info(`Using custom nemesis seed folder in ${presetData.nemesisSeedFolder}`);
+            await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
+            return;
+        }
+        const finalNemesisSeed = join(this.root, 'presets', this.params.preset, 'seed');
+        if (existsSync(finalNemesisSeed)) {
+            await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
+            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
+            return;
+        }
+        logger.warn(`Seed for preset ${this.params.preset} could not be found in ${finalNemesisSeed}`);
+
+        if (presetData.nemesisSeedUrl) {
+            let downloading = true;
+            process.on('SIGINT', () => {
+                if (downloading) {
+                    logger.error('The seed cannot be downloaded. Processed has been terminated...');
+                    process.exit();
+                }
+            });
+            while (true) {
+                try {
+                    const zipFile = `${this.params.preset}-nemesis.zip`;
+                    await BootstrapUtils.download(presetData.nemesisSeedUrl, zipFile);
+                    await ZipUtils.unzip(zipFile, 'seed', nemesisSeedFolder);
+                    await this.validateSeedFolder(
+                        nemesisSeedFolder,
+                        `Is the nemesisSeedUrl: ${presetData.nemesisSeedUrl} a valid seed zip file?`,
+                    );
+                    downloading = false;
+                    return;
+                } catch (e) {
+                    logger.warn(`Seed ${presetData.nemesisSeedUrl} cannot be downloaded. Error ${e.message}`);
+                    logger.warn(`The ${presetData.preset} network hasn't been launched yet!!!. Retrying in 10 seconds ....`);
+                    await BootstrapUtils.sleep(10000);
+                }
+            }
+        }
+        throw new Error('Seed could not be found!!!!');
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
