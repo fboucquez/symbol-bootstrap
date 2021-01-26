@@ -441,7 +441,7 @@ export class ConfigService {
             throw new Error('Main keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
-        const vrf = AccountKeyLinkTransaction.create(
+        const akl = AccountKeyLinkTransaction.create(
             deadline,
             node.remote.publicKey,
             LinkAction.Link,
@@ -449,7 +449,7 @@ export class ConfigService {
             UInt64.fromUint(0),
         );
         const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
-        const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
+        const signedTransaction = account.sign(akl, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
 
@@ -465,7 +465,7 @@ export class ConfigService {
             throw new Error('Main keys should have been generated!!');
         }
         const deadline = Deadline.createFromDTO('1');
-        const vrf = NodeKeyLinkTransaction.create(
+        const nkl = NodeKeyLinkTransaction.create(
             deadline,
             node.transport.publicKey,
             LinkAction.Link,
@@ -473,7 +473,7 @@ export class ConfigService {
             UInt64.fromUint(0),
         );
         const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
-        const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
+        const signedTransaction = account.sign(nkl, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `node_${node.name}`, signedTransaction.payload);
     }
 
