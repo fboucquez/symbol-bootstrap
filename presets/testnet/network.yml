@@ -27,6 +27,13 @@ harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 faucetUrl: 'http://faucet.testnet.symboldev.network'
+knownRestGateways:
+    - 'http://api-01.ap-northeast-1.testnet.symboldev.network:3000'
+    - 'http://api-01.ap-southeast-1.testnet.symboldev.network:3000'
+    - 'http://api-01.eu-central-1.testnet.symboldev.network:3000'
+    - 'http://api-01.eu-west-1.testnet.symboldev.network:3000'
+    - 'http://api-01.us-east-1.testnet.symboldev.network:3000'
+    - 'http://api-01.us-west-1.testnet.symboldev.network:3000'
 trustedHosts:
 inflation:
     starting-at-height-2: 95998521

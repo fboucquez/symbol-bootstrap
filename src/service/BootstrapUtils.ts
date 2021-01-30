@@ -95,60 +95,105 @@ export class BootstrapUtils {
         });
     })();
 
-    public static async download(url: string, dest: string): Promise<boolean> {
-        if (existsSync(url)) {
-            logger.info(`Copying ${url} to ${dest}`);
-            await fsPromises.copyFile(url, dest);
-            return true;
-        }
-        logger.info(`Checking remote file ${url}`);
+    public static getFilesRecursively(path: string): string[] {
+        const isDirectory = (path: string) => statSync(path).isDirectory();
+        const getDirectories = (path: string) =>
+            readdirSync(path)
+                .map((name) => join(path, name))
+                .filter(isDirectory);
+
+        const isFile = (path: string) => statSync(path).isFile();
+        const getFiles = (path: string): string[] =>
+            readdirSync(path)
+                .map((name) => join(path, name))
+                .filter(isFile);
+
+        const dirs = getDirectories(path);
+        const files = dirs
+            .map((dir) => BootstrapUtils.getFilesRecursively(dir)) // go through each directory
+            .reduce((a, b) => a.concat(b), []); // map returns a 2d array (array of file arrays) so flatten
+        return files.concat(getFiles(path));
+    }
+
+    public static async download(
+        url: string,
+        dest: string,
+    ): Promise<{
+        downloaded: boolean;
+        fileLocation: string;
+    }> {
         const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
-        return new Promise((resolve, reject) => {
-            function showDownloadingProgress(received: number, total: number) {
-                const percentage = ((received * 100) / total).toFixed(2);
-                process.stdout.write(platform() == 'win32' ? '\\033[0G' : '\r');
-                process.stdout.write(percentage + '% | ' + received + ' bytes downloaded out of ' + total + ' bytes.');
+        const isHttpRequest = url.toLowerCase().startsWith('https:') || url.toLowerCase().startsWith('http:');
+        if (!isHttpRequest) {
+            const stats = statSync(url);
+            if (existsSync(url) && !stats.isDirectory()) {
+                return {
+                    downloaded: false,
+                    fileLocation: url,
+                };
+            } else {
+                throw new Error(`Local file ${url} does not exist`);
             }
-            const request = get(url, (response) => {
-                const total = parseInt(response.headers['content-length'] || '0', 10);
-                let received = 0;
-                if (total === destinationSize) {
-                    logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
-                    request.abort();
-                    resolve(false);
-                } else if (response.statusCode === 200) {
-                    existsSync(dest) && unlinkSync(dest);
-                    const file = createWriteStream(dest, { flags: 'wx' });
-                    logger.info(`Downloading file ${url}`);
-                    response.pipe(file);
-                    response.on('data', function (chunk) {
-                        received += chunk.length;
-                        showDownloadingProgress(received, total);
-                    });
-
-                    file.on('finish', () => {
-                        resolve(true);
-                    });
-
-                    file.on('error', (err) => {
-                        file.close();
-                        if (err.code === 'EEXIST') {
-                            reject(new Error('File already exists'));
-                        } else {
-                            unlinkSync(dest); // Delete temp file
-                            reject(err);
-                        }
-                    });
-                } else {
-                    reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
+        } else {
+            logger.info(`Checking remote file ${url}`);
+            return new Promise((resolve, reject) => {
+                function showDownloadingProgress(received: number, total: number) {
+                    const percentage = ((received * 100) / total).toFixed(2);
+                    const message = percentage + '% | ' + received + ' bytes downloaded out of ' + total + ' bytes.';
+                    BootstrapUtils.logSameLineMessage(message);
                 }
-            });
+                const request = get(url, (response) => {
+                    const total = parseInt(response.headers['content-length'] || '0', 10);
+                    let received = 0;
+                    if (total === destinationSize) {
+                        logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
+                        request.abort();
+                        resolve({
+                            downloaded: false,
+                            fileLocation: dest,
+                        });
+                    } else if (response.statusCode === 200) {
+                        existsSync(dest) && unlinkSync(dest);
+                        const file = createWriteStream(dest, { flags: 'wx' });
+                        logger.info(`Downloading file ${url}. This could take a while!`);
+                        response.pipe(file);
+                        response.on('data', function (chunk) {
+                            received += chunk.length;
+                            showDownloadingProgress(received, total);
+                        });
 
-            request.on('error', (err) => {
-                existsSync(dest) && unlinkSync(dest); // Delete temp file
-                reject(err.message);
+                        file.on('finish', () => {
+                            resolve({
+                                downloaded: true,
+                                fileLocation: dest,
+                            });
+                        });
+
+                        file.on('error', (err) => {
+                            file.close();
+                            if (err.code === 'EEXIST') {
+                                reject(new Error('File already exists'));
+                            } else {
+                                unlinkSync(dest); // Delete temp file
+                                reject(err);
+                            }
+                        });
+                    } else {
+                        reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
+                    }
+                });
+
+                request.on('error', (err) => {
+                    existsSync(dest) && unlinkSync(dest); // Delete temp file
+                    reject(err.message);
+                });
             });
-        });
+        }
+    }
+
+    public static logSameLineMessage(message: string): void {
+        process.stdout.write(platform() == 'win32' ? '\\033[0G' : '\r');
+        process.stdout.write(message);
     }
 
     public static deleteFolder(folder: string, excludeFiles: string[] = []): void {

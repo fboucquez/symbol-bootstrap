@@ -177,8 +177,9 @@ export class RunService {
             (preset.nodes || []).map(async (node) => {
                 const componentConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, node.name);
                 const dataFolder = join(componentConfigFolder, 'data');
-                BootstrapUtils.deleteFolder(join(componentConfigFolder, 'data'), ['private_key_tree1.dat']);
-                BootstrapUtils.deleteFolder(join(componentConfigFolder, 'logs'));
+                const logsFolder = join(componentConfigFolder, 'logs');
+                BootstrapUtils.deleteFolder(dataFolder);
+                BootstrapUtils.deleteFolder(logsFolder);
                 logger.info(`Copying block 1 seed to ${dataFolder}`);
                 await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder, []);
             }),

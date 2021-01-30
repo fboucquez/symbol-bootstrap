@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Command, flags } from '@oclif/command';
+import { Command } from '@oclif/command';
 import { BootstrapService, BootstrapUtils } from '../service';
-import { SupernodeService } from '../service/SupernodeService';
+import { AnnounceService } from '../service/AnnounceService';
 
 export default class Supernode extends Command {
     static description = `It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.`;
@@ -26,15 +26,7 @@ export default class Supernode extends Command {
     static flags = {
         help: BootstrapUtils.helpFlag,
         target: BootstrapUtils.targetFlag,
-        url: flags.string({
-            char: 'u',
-            description: 'the network url',
-            default: SupernodeService.defaultParams.url,
-        }),
-        maxFee: flags.integer({
-            description: 'the max fee used when announcing (absolute)',
-            default: SupernodeService.defaultParams.maxFee,
-        }),
+        ...AnnounceService.flags,
     };
 
     public async run(): Promise<void> {
