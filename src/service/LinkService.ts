@@ -16,7 +16,6 @@
 
 import { prompt } from 'inquirer';
 import {
-    Account,
     AccountInfo,
     AccountKeyLinkTransaction,
     Deadline,
@@ -29,7 +28,7 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigAccount, ConfigPreset, NodeAccount, NodePreset } from '../model';
+import { Addresses, ConfigAccount, ConfigPreset, NodeAccount } from '../model';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -47,6 +46,15 @@ export type LinkParams = {
 };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
+
+export interface LinkServiceTransactionFactoryParams {
+    presetData: ConfigPreset;
+    nodeAccount: NodeAccount;
+    mainAccountInfo: AccountInfo;
+    deadline: Deadline;
+    maxFee: UInt64;
+    usePrompt: boolean;
+}
 
 export class LinkService implements TransactionFactory {
     public static readonly defaultParams: LinkParams = {
@@ -67,6 +75,7 @@ export class LinkService implements TransactionFactory {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         logger.info(`${this.params.unlink ? 'Unlinking' : 'Linking'} nodes`);
+
         await new AnnounceService().announce(
             this.params.url,
             this.params.maxFee,
@@ -77,56 +86,59 @@ export class LinkService implements TransactionFactory {
         );
     }
 
-    async createTransactions(
-        presetData: ConfigPreset,
-        nodePreset: NodePreset,
-        nodeAccount: NodeAccount,
-        accountInfo: AccountInfo,
-        mainAccount: Account,
-        deadline: Deadline,
-        maxFee: UInt64,
-    ): Promise<Transaction[]> {
+    async createTransactions({
+        presetData,
+        nodeAccount,
+        mainAccountInfo,
+        deadline,
+        maxFee,
+        usePrompt,
+    }: LinkServiceTransactionFactoryParams): Promise<Transaction[]> {
         const transactions: Transaction[] = [];
         const unlink = this.params.unlink;
         const networkType = presetData.networkType;
 
-        logger.info(`Creating transactions for node: ${nodeAccount.name}, ca/main account: ${accountInfo.address.plain()}`);
+        logger.info('');
+        logger.info(`Creating transactions for node: ${nodeAccount.name}, ca/main account: ${mainAccountInfo.address.plain()}`);
 
         if (nodeAccount.remote) {
             await this.addTransaction(
-                accountInfo.supplementalPublicKeys.linked,
+                mainAccountInfo.supplementalPublicKeys.linked,
                 unlink,
                 (publicKey, action) => AccountKeyLinkTransaction.create(deadline, publicKey, action, networkType, maxFee),
                 nodeAccount,
                 'Remote',
                 nodeAccount.remote,
                 transactions,
+                usePrompt,
             );
 
             await this.addTransaction(
-                accountInfo.supplementalPublicKeys.node,
+                mainAccountInfo.supplementalPublicKeys.node,
                 unlink,
                 (publicKey, action) => NodeKeyLinkTransaction.create(deadline, publicKey, action, networkType, maxFee),
                 nodeAccount,
                 'Transport/Node',
                 nodeAccount.transport,
                 transactions,
+                usePrompt,
             );
         }
 
         if (nodeAccount.vrf) {
             await this.addTransaction(
-                accountInfo.supplementalPublicKeys.vrf,
+                mainAccountInfo.supplementalPublicKeys.vrf,
                 unlink,
                 (publicKey, action) => VrfKeyLinkTransaction.create(deadline, publicKey, action, networkType, maxFee),
                 nodeAccount,
                 'VRF',
                 nodeAccount.vrf,
                 transactions,
+                usePrompt,
             );
         }
         if (nodeAccount.voting) {
-            const alreadyLinkedAccount = (accountInfo.supplementalPublicKeys?.voting || []).find(
+            const alreadyLinkedAccount = (mainAccountInfo.supplementalPublicKeys?.voting || []).find(
                 (a) => a.publicKey.toUpperCase() === nodeAccount.voting?.publicKey.toUpperCase(),
             );
             await this.addTransaction(
@@ -137,6 +149,7 @@ export class LinkService implements TransactionFactory {
                 'Voting',
                 nodeAccount.voting,
                 transactions,
+                usePrompt,
             );
         }
         return transactions;
@@ -150,6 +163,7 @@ export class LinkService implements TransactionFactory {
         accountName: string,
         accountTobeLinked: ConfigAccount,
         transactions: Transaction[],
+        usePrompt: boolean,
     ): Promise<void> {
         if (unlink) {
             if (alreadyLinkedAccount) {
@@ -164,21 +178,10 @@ export class LinkService implements TransactionFactory {
                         `Node ${nodeAccount.name} is linked to a different ${accountName} public key ${alreadyLinkedAccount.publicKey} and not the configured ${accountTobeLinked.publicKey}.`,
                     );
 
-                    if (
-                        (
-                            await prompt([
-                                {
-                                    name: 'value',
-                                    message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
-                                    type: 'confirm',
-                                    default: false,
-                                },
-                            ])
-                        ).value
-                    ) {
+                    if (!usePrompt || (await this.confirmUnlink(accountName, alreadyLinkedAccount))) {
                         const transaction = transactionFactory(alreadyLinkedAccount.publicKey, LinkAction.Unlink);
                         logger.info(
-                            `Creating Unlink ${transaction} from Node ${nodeAccount.name} to ${accountName} public key ${alreadyLinkedAccount.publicKey}.`,
+                            `Creating Unlink ${transaction.constructor.name} for node ${nodeAccount.name} to ${accountName} public key ${alreadyLinkedAccount.publicKey}.`,
                         );
                         transactions.push(transaction);
                     }
@@ -198,18 +201,7 @@ export class LinkService implements TransactionFactory {
                         `Node ${nodeAccount.name} is already linked to ${accountName} public key ${alreadyLinkedAccount.publicKey} which is different from the configured ${accountTobeLinked.publicKey}.`,
                     );
 
-                    if (
-                        (
-                            await prompt([
-                                {
-                                    name: 'value',
-                                    message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
-                                    type: 'confirm',
-                                    default: false,
-                                },
-                            ])
-                        ).value
-                    ) {
+                    if (!usePrompt || (await this.confirmUnlink(accountName, alreadyLinkedAccount))) {
                         const unlinkTransaction = transactionFactory(alreadyLinkedAccount.publicKey, LinkAction.Unlink);
                         logger.info(
                             `Creating Unlink ${unlinkTransaction.constructor.name} from Node ${nodeAccount.name} to ${accountName} public key ${alreadyLinkedAccount.publicKey}.`,
@@ -231,5 +223,17 @@ export class LinkService implements TransactionFactory {
                 transactions.push(transaction);
             }
         }
+    }
+
+    private async confirmUnlink(accountName: string, alreadyLinkedAccount: { publicKey: string }): Promise<boolean> {
+        const result = await prompt([
+            {
+                name: 'value',
+                message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
+                type: 'confirm',
+                default: false,
+            },
+        ]);
+        return result.value;
     }
 }

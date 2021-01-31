@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Account, AccountInfo, Deadline, PlainMessage, PublicAccount, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
+import { Deadline, PlainMessage, PublicAccount, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
@@ -30,6 +30,14 @@ export type SupernodeParams = {
     maxFee?: number;
     useKnownRestGateways: boolean;
 };
+
+export interface SupernodeServiceTransactionFactoryParams {
+    presetData: ConfigPreset;
+    nodePreset: NodePreset;
+    nodeAccount: NodeAccount;
+    deadline: Deadline;
+    maxFee: UInt64;
+}
 
 export class SupernodeService implements TransactionFactory {
     public static readonly defaultParams: SupernodeParams = {
@@ -62,15 +70,13 @@ export class SupernodeService implements TransactionFactory {
         );
     }
 
-    async createTransactions(
-        presetData: ConfigPreset,
-        nodePreset: NodePreset,
-        nodeAccount: NodeAccount,
-        account: AccountInfo,
-        mainAccount: Account,
-        deadline: Deadline,
-        maxFee: UInt64,
-    ): Promise<Transaction[]> {
+    async createTransactions({
+        presetData,
+        nodePreset,
+        nodeAccount,
+        deadline,
+        maxFee,
+    }: SupernodeServiceTransactionFactoryParams): Promise<Transaction[]> {
         const transactions: Transaction[] = [];
         const networkType = presetData.networkType;
         if (!nodePreset.supernode) {
@@ -99,7 +105,7 @@ export class SupernodeService implements TransactionFactory {
         const agentUrl = nodePreset.agentUrl || `https://${nodePreset.host}:7880`;
         const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
         const message = PlainMessage.create(plainMessage);
-        logger.info(`Sending registration with message '${plainMessage}' using signer ${mainAccount.address.plain()}`);
+        logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
         const transaction: Transaction = TransferTransaction.create(deadline, supernodeControllerAddress, [], message, networkType, maxFee);
         return [transaction];
     }
