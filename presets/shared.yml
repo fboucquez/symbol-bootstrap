@@ -78,7 +78,7 @@ transactionsDirectory: './transactions'
 binDirectory: ./seed
 certificateDirectory: ./userconfig/resources/cert
 dataDirectory: ./data
-votingKeysDirectory: ./data/votingkeys
+votingKeysDirectory: ./userconfig/votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 agentBinaryLocation: 'https://symbol-node-reward.s3-eu-west-1.amazonaws.com/agent_binary/agent-linux.bin'

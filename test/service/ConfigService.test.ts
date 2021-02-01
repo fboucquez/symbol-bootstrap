@@ -23,7 +23,7 @@ describe('ConfigService', () => {
         await new ConfigService('.', {
             ...ConfigService.defaultParams,
             reset: true,
-            target: 'target/ConfigService.test.optin',
+            target: 'target/tests/ConfigService.test.optin',
             customPreset: './test/optin_preset.yml',
         }).run();
     });
@@ -32,7 +32,7 @@ describe('ConfigService', () => {
         await new ConfigService('.', {
             ...ConfigService.defaultParams,
             reset: true,
-            target: 'target/ConfigService.test.custom',
+            target: 'target/tests/ConfigService.test.custom',
             customPreset: './test/override-currency-preset.yml',
         }).run();
     });
@@ -41,7 +41,7 @@ describe('ConfigService', () => {
         await new ConfigService('.', {
             ...ConfigService.defaultParams,
             reset: true,
-            target: 'target/ConfigService.test.testnet',
+            target: 'target/tests/ConfigService.test.testnet',
             preset: Preset.testnet,
             assembly: 'dual',
         }).run();
@@ -51,7 +51,7 @@ describe('ConfigService', () => {
         await new ConfigService('.', {
             ...ConfigService.defaultParams,
             reset: true,
-            target: 'target/bootstrap',
+            target: 'target/tests/bootstrap',
             preset: Preset.bootstrap,
         }).run();
     });
@@ -60,7 +60,7 @@ describe('ConfigService', () => {
         const configResult = await new ConfigService('.', {
             ...ConfigService.defaultParams,
             reset: true,
-            target: 'target/ConfigService.bootstrap.repeat',
+            target: 'target/tests/ConfigService.bootstrap.repeat',
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',
         }).run();

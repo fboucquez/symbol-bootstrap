@@ -198,6 +198,7 @@ export class ConfigLoader {
         }
         const presetDataWithDynamicDefaults = {
             version: 1,
+            preset: preset,
             ...presetData,
             nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
         };

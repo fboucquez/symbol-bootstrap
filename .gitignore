@@ -17,3 +17,5 @@ coverage
 /ngrok-testnet.yml
 /boat.png
 /agent-linux.bin
+/privateSeeds/
+/test/service/logs.log
