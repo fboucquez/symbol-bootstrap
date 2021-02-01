@@ -21,8 +21,8 @@ OPTIONS
   --maxFee=maxFee         the max fee used when announcing (absolute). The node min multiplier will be used if it is not
                           provided.
 
-  --useKnownRestGateways  Use the best NGL known node when announcing. Otherwise the command will use the --url provided
-                          host.
+  --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
+                          provided.
 
 EXAMPLE
   $ symbol-bootstrap supernode

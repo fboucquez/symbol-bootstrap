@@ -443,4 +443,4 @@ config-user.properties
     certificateDirectory; ./userconfig/resources/cert
     dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib
-    votingKeysDirectory; ./data/votingkeys
+    votingKeysDirectory; ./userconfig/votingkeys

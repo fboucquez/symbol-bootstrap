@@ -23,8 +23,8 @@ OPTIONS
 
   --unlink                Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account
 
-  --useKnownRestGateways  Use the best NGL known node when announcing. Otherwise the command will use the --url provided
-                          host.
+  --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
+                          provided.
 
 EXAMPLE
   $ symbol-bootstrap link
