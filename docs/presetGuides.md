@@ -256,7 +256,7 @@ This is done by passing [docker-compose up](https://docs.docker.com/compose/refe
 symbol-bootstrap start -r --args "--scale rest-gateway-0=0"
 ```
 
-**Enable compose debug mode**
+### Enable compose debug mode
 
 It adds debug attributes to the docker compose services. The attributes are:
 
