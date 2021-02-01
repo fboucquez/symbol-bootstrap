@@ -112,6 +112,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#run" class="tsd-kind-icon">run</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#stop" class="tsd-kind-icon">stop</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_service_bootstrapservice_.bootstrapservice.html#supernode" class="tsd-kind-icon">supernode</a></li>
 							</ul>
 						</section>
 					</div>
@@ -129,7 +130,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L30">src/service/BootstrapService.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L31">src/service/BootstrapService.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -151,7 +152,7 @@
 					<div class="tsd-signature tsd-kind-icon">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L31">src/service/BootstrapService.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L32">src/service/BootstrapService.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -162,13 +163,13 @@
 					<a name="compose" class="tsd-anchor"></a>
 					<h3>compose</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">compose<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../modules/_service_composeservice_.html#composeparams" class="tsd-signature-type">ComposeParams</a>, passedPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_model_dockercompose_.dockercompose.html" class="tsd-signature-type">DockerCompose</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">compose<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../modules/_service_composeservice_.html#composeparams" class="tsd-signature-type">ComposeParams</a>, passedPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a>, passedAddresses<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_addresses_.addresses.html" class="tsd-signature-type">Addresses</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_model_dockercompose_.dockercompose.html" class="tsd-signature-type">DockerCompose</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L50">src/service/BootstrapService.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L52">src/service/BootstrapService.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -191,6 +192,12 @@
 										<p>the created preset if you know it, otherwise will load the latest one resolved from the target folder.</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> passedAddresses: <a href="../interfaces/_model_addresses_.addresses.html" class="tsd-signature-type">Addresses</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the created addresses if you know if, otherwise will load the latest one resolved form the target folder.</p>
+									</div>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_model_dockercompose_.dockercompose.html" class="tsd-signature-type">DockerCompose</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
@@ -206,7 +213,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L38">src/service/BootstrapService.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L39">src/service/BootstrapService.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -237,7 +244,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L112">src/service/BootstrapService.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L133">src/service/BootstrapService.ts:133</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,7 +280,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L64">src/service/BootstrapService.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L70">src/service/BootstrapService.ts:70</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -317,7 +324,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L81">src/service/BootstrapService.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L102">src/service/BootstrapService.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -356,7 +363,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L103">src/service/BootstrapService.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L124">src/service/BootstrapService.ts:124</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -392,7 +399,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L94">src/service/BootstrapService.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L115">src/service/BootstrapService.ts:115</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -425,7 +432,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L121">src/service/BootstrapService.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L142">src/service/BootstrapService.ts:142</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -456,7 +463,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/8c5867a/src/service/BootstrapService.ts#L135">src/service/BootstrapService.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L156">src/service/BootstrapService.ts:156</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -471,6 +478,49 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../modules/_service_runservice_.html#runparams" class="tsd-signature-type">RunParams</a><span class="tsd-signature-symbol"> = RunService.defaultParams</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the params necessary to detect and stop the network.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="supernode" class="tsd-anchor"></a>
+					<h3>supernode</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">supernode<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../modules/_service_supernodeservice_.html#supernodeparams" class="tsd-signature-type">SupernodeParams</a>, passedPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span>, passedAddresses<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_model_addresses_.addresses.html" class="tsd-signature-type">Addresses</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/03ce110/src/service/BootstrapService.ts#L85">src/service/BootstrapService.ts:85</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It calls a running service announcing the registration of the nodes to the supernode rewards program.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../modules/_service_supernodeservice_.html#supernodeparams" class="tsd-signature-type">SupernodeParams</a><span class="tsd-signature-symbol"> = SupernodeService.defaultParams</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the params passed</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> passedPresetData: <a href="../interfaces/_model_configpreset_.configpreset.html" class="tsd-signature-type">ConfigPreset</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the created preset if you know it, otherwise will load the latest one resolved from the target folder.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> passedAddresses: <a href="../interfaces/_model_addresses_.addresses.html" class="tsd-signature-type">Addresses</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the created addresses if you know it, otherwise will load the latest one resolved from the target folder.</p>
 									</div>
 								</li>
 							</ul>
@@ -530,6 +580,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_service_bootstrapservice_.bootstrapservice.html#stop" class="tsd-kind-icon">stop</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_service_bootstrapservice_.bootstrapservice.html#supernode" class="tsd-kind-icon">supernode</a>
 							</li>
 						</ul>
 					</li>

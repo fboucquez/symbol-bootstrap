@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>symbol-openapi-typescript-fetch-client</title>
-	<meta name="description" content="Documentation for symbol-openapi-typescript-fetch-client">
+	<title>symbol-bootstrap</title>
+	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">symbol-openapi-typescript-fetch-client</a>
+					<a href="index.html" class="title">symbol-bootstrap</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -56,7 +56,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1>symbol-openapi-typescript-fetch-client</h1>
+			<h1>symbol-bootstrap</h1>
 		</div>
 	</div>
 </header>
@@ -64,12 +64,240 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#symbol-sdk-openapi-typescript-fetch-client" id="symbol-sdk-openapi-typescript-fetch-client" style="color: inherit; text-decoration: none;">
-					<h1>symbol-sdk-openapi-typescript-fetch-client</h1>
+				<a href="#symbol-bootstrap" id="symbol-bootstrap" style="color: inherit; text-decoration: none;">
+					<h1>symbol-bootstrap</h1>
 				</a>
-				<p>Generated Open API library for <a href="https://github.com/nemtech/symbol-sdk-typescript-javascript">symbol-sdk-typescript-javascript</a> using <a href="https://github.com/nemtech/symbol-openapi-generator">symbol-openapi-generator</a>. </p>
-				<p>If you want to create a Symbol javascript/typescript client, use <a href="https://github.com/nemtech/symbol-sdk-typescript-javascript">symbol-sdk-typescript-javascript</a></p>
-				<p>If you want to regenerate the client, check the <a href="https://github.com/nemtech/symbol-openapi-generator">symbol-openapi-generator</a> page library.</p>
+				<p>Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s complete networks or nodes to be sync with existing networks.</p>
+				<p><a href="https://oclif.io"><img src="https://img.shields.io/badge/cli-oclif-brightgreen.svg" alt="oclif"></a>
+					<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/v/symbol-bootstrap.svg" alt="Version"></a>
+					<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/dw/symbol-bootstrap.svg" alt="Downloads/week"></a>
+					<a href="https://github.com/nemtech/symbol-bootstrap/blob/master/package.json"><img src="https://img.shields.io/npm/l/symbol-bootstrap.svg" alt="License"></a>
+					<a href="https://travis-ci.com/nemtech/symbol-bootstrap"><img src="https://travis-ci.com/nemtech/symbol-bootstrap.svg?branch=main" alt="Build Status"></a>
+					<a href="https://coveralls.io/github/nemtech/symbol-bootstrap?branch=main"><img src="https://coveralls.io/repos/github/nemtech/symbol-bootstrap/badge.svg?branch=main" alt="Coverage Status"></a>
+				<a href="https://nemtech.github.io/symbol-bootstrap/"><img src="https://img.shields.io/badge/api-doc-blue.svg" alt="Api Doc"></a></p>
+				<!-- toc -->
+				<ul>
+					<li><a href="#symbol-bootstrap">symbol-bootstrap</a></li>
+					<li><a href="#why-this-tool">Why this tool?</a></li>
+					<li><a href="#key-benefits">Key benefits:</a></li>
+					<li><a href="#concepts">Concepts</a></li>
+					<li><a href="#requirements">Requirements</a></li>
+					<li><a href="#usage">Usage</a></li>
+					<li><a href="#e2e-testing-support">E2E Testing support</a></li>
+					<li><a href="#development">Development</a></li>
+					<li><a href="#commands">Commands</a></li>
+					<li><a href="#command-topics">Command Topics</a><!-- tocstop -->
+					</li>
+				</ul>
+				<a href="#why-this-tool" id="why-this-tool" style="color: inherit; text-decoration: none;">
+					<h1>Why this tool?</h1>
+				</a>
+				<p>This tool has been created to address the problems defined in Symbol&#39;s <a href="https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md">NIP11</a>.</p>
+				<p>It replaces:</p>
+				<ul>
+					<li><a href="https://github.com/nemtech/catapult-service-bootstrap">catapult-service-bootstrap</a></li>
+					<li><a href="https://github.com/nemgrouplimited/symbol-service-bootstrap">symbol-testnet-bootstrap</a></li>
+				</ul>
+				<a href="#key-benefits" id="key-benefits" style="color: inherit; text-decoration: none;">
+					<h1>Key benefits:</h1>
+				</a>
+				<ul>
+					<li>It&#39;s an installable cli tool. It&#39;s not a repo you need to clone and compile.</li>
+					<li>The configuration is parametrized via CLI commands and presets instead of by changing properties files.</li>
+					<li>The tools code is unique for any type of network, new networks or nodes in a network. It doesn&#39;t need to be copied and pasted in different projects or assemblies.</li>
+					<li>The config command runs on the host machine, not via docker making it easier to debug or tune</li>
+					<li>It&#39;s uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
+					<li>Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
+					<li>Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
+					<li>Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
+					<li>The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
+					<li>The used docker images versions can be changed via configuration/preset</li>
+					<li>It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
+					<li>It can be included as a npm dependency for clients&#39; e2e testing.</li>
+				</ul>
+				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
+					<h1>Concepts</h1>
+				</a>
+				<a href="#preset" id="preset" style="color: inherit; text-decoration: none;">
+					<h2>Preset:</h2>
+				</a>
+				<p>Yaml files that define the configuration and layout of the network and nodes. It defines how many nodes, database, rest gateways, the modes, keys, etc.</p>
+				<p>Presets are defined at 4 levels from general to specific:</p>
+				<ul>
+					<li>Shared: Default configurations for all the networks.</li>
+					<li>Network: It defines the main preset of a given network, example: <code>bootstrap</code> or <code>testnet</code>.</li>
+					<li>Assembly: It defines a modification of a network, example: <code>testnet peer</code>, <code>tesnet dual</code>, <code>testnet api</code>. Assembly is required for some networks (like <code>testnet</code>).</li>
+					<li>Custom: A user provided yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</li>
+				</ul>
+				<p>Properties in each file override the previous values (by object deep merge).</p>
+				<a href="#out-of-the-box-presets" id="out-of-the-box-presets" style="color: inherit; text-decoration: none;">
+					<h3>Out-of-the-box presets:</h3>
+				</a>
+				<ul>
+					<li><code>-p bootstrap</code>: Default <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml">preset</a>. It&#39;s a private network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.</li>
+					<li><code>-p bootstrap -a light</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-light.yml">light</a> network. It&#39;s a version of bootstrap preset with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.</li>
+					<li><code>-p bootstrap -a full</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-full.yml">full</a> network. The default bootstrap preset plus 1 wallet, 1 explorer and 1 faucet. Great for demonstration purposes. Nemesis block is generated.</li>
+					<li><code>-p testnet -a peer</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml">harvesting</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a>. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+					<li><code>-p testnet -a api</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml">api</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+					<li><code>-p testnet -a dual</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml">dual</a> haversting peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+				</ul>
+				<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
+					<h3>Custom preset:</h3>
+				</a>
+				<p>It&#39;s the way you can tune the network without modifying the code. It&#39;s a yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</p>
+				<p>Custom presets give Symbol Bootstrap its versatility. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
+				<a href="#target" id="target" style="color: inherit; text-decoration: none;">
+					<h2>Target:</h2>
+				</a>
+				<p>The folder where the generated config, docker files and data are stored. The folder structure is:</p>
+				<ul>
+					<li><code>./preset.yml</code>: the final generated preset.yml that it&#39;s used to configure bootstrap, the nodes, docker, etc.</li>
+					<li><code>./addresses.yml</code>: randomly generated data that wasn&#39;t provided in the preset. e.g.: SSL keys, nodes&#39; keys, nemesis accounts, generation hash seed, etc.</li>
+					<li><code>./nodes</code>: it holds the configuration, data and logs for all the defined node instances.</li>
+					<li><code>./gateways</code>: it holds the configuration and logs for all the defined node rest gateways.</li>
+					<li><code>./nemesis</code>: The folder used to hold the nemesis block. Block 1 data is generated via <code>nemgen</code> tool for new networks. For existing network, it is copied over.</li>
+					<li><code>./databases</code>: the location where the mongo data is stored for the different database instances.</li>
+					<li><code>./docker</code>: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. </li>
+					<li><code>./reports</code>: the location of the generated reports.</li>
+				</ul>
+				<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
+					<h1>Requirements</h1>
+				</a>
+				<ul>
+					<li>Node 10+</li>
+					<li>Docker</li>
+					<li>Docker Compose</li>
+				</ul>
+				<p>Validate your environment by running:</p>
+				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">-v</span>
+docker -v
+docker-compose -v</code></pre>
+				<p>Check your user can run docker without sudo:</p>
+				<pre><code>docker <span class="hljs-keyword">run</span><span class="bash"> hello-world</span></code></pre>
+				<p>If you see an error like:</p>
+				<pre><code>Got permission denied <span class="hljs-keyword">while</span> trying <span class="hljs-built_in">to</span> connect <span class="hljs-built_in">to</span> <span class="hljs-keyword">the</span> Docker daemon <span class="hljs-built_in">socket</span> <span class="hljs-keyword">at</span> unix:<span class="hljs-comment">///var/run/docker.sock</span></code></pre>
+				<p>Please follow this <a href="https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket">guide</a>.</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h1>Usage</h1>
+				</a>
+				<p>It&#39;s recommended to run the commands from en empty working dir.</p>
+				<p>The network configuration, data and docker files will be created inside the target folder (&#39;./target&#39;) by default.</p>
+				<pre><code><span class="hljs-keyword">mkdir</span> <span class="hljs-keyword">my</span>-networks
+cd <span class="hljs-keyword">my</span>-networks</code></pre>
+				<p>Once in the working dir:</p>
+				<!-- usage -->
+				<pre><code class="language-sh-session">$ npm install -g symbol-bootstrap
+$ symbol-bootstrap COMMAND
+running command...
+$ symbol-bootstrap (-v|--version|version)
+symbol-bootstrap/0.4.2 linux-x64 node-v12.18.4
+$ symbol-bootstrap --help [COMMAND]
+USAGE
+  $ symbol-bootstrap COMMAND
+...</code></pre>
+				<!-- usagestop -->
+				<p>The general usage would be:</p>
+				<pre><code>symbol-<span class="hljs-keyword">bootstrap </span><span class="hljs-built_in">config</span> -p <span class="hljs-keyword">bootstrap
+</span>symbol-<span class="hljs-keyword">bootstrap </span>compose
+symbol-<span class="hljs-keyword">bootstrap </span>run</code></pre>
+				<p>You can aggregate all these commands with this one liner:</p>
+				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span></code></pre>
+				<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
+				<pre><code>sudo rm -rf <span class="hljs-string">./target</span></code></pre>
+				<a href="#e2e-testing-support" id="e2e-testing-support" style="color: inherit; text-decoration: none;">
+					<h1>E2E Testing support</h1>
+				</a>
+				<p>One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:</p>
+				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span> --detached
+YOUR <span class="hljs-keyword">TEST</span> (<span class="hljs-keyword">e</span>.<span class="hljs-keyword">g</span>: npm <span class="hljs-keyword">run</span> <span class="hljs-keyword">test</span>, gradle <span class="hljs-keyword">test</span>, selenium etc.)
+symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
+				<p><code>--detached</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
+				<p>You can also provide your own custom preset (<code>-c</code>) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)</p>
+				<a href="#node-client-e2e-via-cli" id="node-client-e2e-via-cli" style="color: inherit; text-decoration: none;">
+					<h2>Node client E2E via CLI:</h2>
+				</a>
+				<p>The CLI can also be used as npm project (dev) dependency (<code>npm install --save-dev symbol-bootstrap</code>). Then you can integrate the network to your npm test cycle.
+				Your <code>package.json</code> can look like this:</p>
+				<pre><code class="language-yaml">
+<span class="hljs-attr">&quot;devDependencies&quot;:</span> {
+    <span class="hljs-string">....</span>
+    <span class="hljs-attr">&quot;symbol-bootstrap&quot;:</span> <span class="hljs-string">&quot;0.0.x&quot;</span>,
+    <span class="hljs-string">....</span>
+}
+
+<span class="hljs-string">scripts&quot;:</span> {
+<span class="hljs-string">...</span>
+    <span class="hljs-attr">&quot;clean-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap clean&quot;</span>,
+    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --detached --healthCheck&quot;</span>,
+    <span class="hljs-attr">&quot;run-stop&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap stop&quot;</span>,
+    <span class="hljs-attr">&quot;integration-test&quot;:</span> <span class="hljs-string">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span>,
+    <span class="hljs-attr">&quot;e2e&quot;:</span> <span class="hljs-string">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span>,
+<span class="hljs-string">...</span>
+}</code></pre>
+				<p>Then, you, Jenkins, Travis or your CI tool can run;</p>
+				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> e2e</span></code></pre>
+				<a href="#node-client-e2e-via-api" id="node-client-e2e-via-api" style="color: inherit; text-decoration: none;">
+					<h2>Node client E2E via API:</h2>
+				</a>
+				<p>Alternatively, you can use the <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
+				<p>Example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {BootstrapService, StartParams, Preset} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;symbol-bootstrap&#x27;</span>;
+<span class="hljs-keyword">import</span> {expect} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@oclif/test&#x27;</span>; 
+
+it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> service = <span class="hljs-keyword">new</span> BootstrapService();
+    <span class="hljs-keyword">const</span> config: StartParams = {
+        <span class="hljs-attr">preset</span>: Preset.bootstrap,
+        <span class="hljs-attr">reset</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">healthCheck</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">timeout</span>: <span class="hljs-number">60000</span> * <span class="hljs-number">5</span>,
+        <span class="hljs-attr">target</span>: <span class="hljs-string">&#x27;target/bootstrap-test&#x27;</span>,
+        <span class="hljs-attr">detached</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">user</span>: <span class="hljs-string">&#x27;current&#x27;</span>,
+    };
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">await</span> service.stop(config);
+        <span class="hljs-keyword">const</span> configResult = <span class="hljs-keyword">await</span> service.start(config);
+        expect(configResult.presetData).not.null;
+        expect(configResult.addresses).not.null;
+        <span class="hljs-comment">// Here you can write unit tests against a http://localhost:3000 network</span>
+    } <span class="hljs-keyword">finally</span> {
+        <span class="hljs-keyword">await</span> service.stop(config);
+    }
+});</code></pre>
+				<p>It&#39;s recommended to reuse the same server for multiple tests by using <code>beforeAll</code>, <code>afterAll</code> kind of statements.</p>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h1>Development</h1>
+				</a>
+				<p>If you want to contribute to this tool, clone this repo and run:</p>
+				<pre><code>npm <span class="hljs-keyword">install</span> -g</code></pre>
+				<p>Then, <code>symbol-bootstrap</code> runs from the source code. You can now try your features after changing the code.</p>
+				<p>Pull Requests are appreciated! Please follow the contributing <a href="CONTRIBUTING.md">guidelines</a>.</p>
+				<p>Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
+				General users should install this tool like any other node module.</p>
+				<a href="#commands" id="commands" style="color: inherit; text-decoration: none;">
+					<h1>Commands</h1>
+				</a>
+				<!-- commands -->
+				<a href="#command-topics" id="command-topics" style="color: inherit; text-decoration: none;">
+					<h1>Command Topics</h1>
+				</a>
+				<ul>
+					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder deleting the generated configuration and data</li>
+					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
+					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
+					<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
+					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
+					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
+					<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
+					<li><a href="docs/resetData.md"><code>symbol-bootstrap resetData</code></a> - It removes the data keeping the generated configuration, certificates, keys and block 1.</li>
+					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
+					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
+					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
+					<li><a href="docs/supernode.md"><code>symbol-bootstrap supernode</code></a> - It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.</li>
+				</ul>
+				<!-- commandsstop -->
+				<pre><code></code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -78,851 +306,125 @@
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_clean_.html">&quot;commands/clean&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_clean_.html">&quot;src/commands/clean&quot;</a>
+						<a href="modules/_commands_compose_.html">&quot;commands/compose&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_compose_.html">&quot;src/commands/compose&quot;</a>
+						<a href="modules/_commands_config_.html">&quot;commands/config&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_config_.html">&quot;src/commands/config&quot;</a>
+						<a href="modules/_commands_healthcheck_.html">&quot;commands/health<wbr>Check&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_healthcheck_.html">&quot;src/commands/health<wbr>Check&quot;</a>
+						<a href="modules/_commands_link_.html">&quot;commands/link&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_link_.html">&quot;src/commands/link&quot;</a>
+						<a href="modules/_commands_report_.html">&quot;commands/report&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_report_.html">&quot;src/commands/report&quot;</a>
+						<a href="modules/_commands_resetdata_.html">&quot;commands/reset<wbr>Data&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_resetdata_.html">&quot;src/commands/reset<wbr>Data&quot;</a>
+						<a href="modules/_commands_run_.html">&quot;commands/run&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_run_.html">&quot;src/commands/run&quot;</a>
+						<a href="modules/_commands_start_.html">&quot;commands/start&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_start_.html">&quot;src/commands/start&quot;</a>
+						<a href="modules/_commands_stop_.html">&quot;commands/stop&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_stop_.html">&quot;src/commands/stop&quot;</a>
+						<a href="modules/_commands_supernode_.html">&quot;commands/supernode&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_commands_supernode_.html">&quot;src/commands/supernode&quot;</a>
+						<a href="modules/_index_.html">&quot;index&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_index_.html">&quot;src/index&quot;</a>
+						<a href="modules/_logger_logtype_.html">&quot;logger/<wbr>Log<wbr>Type&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_logger_logtype_.html">&quot;src/logger/<wbr>Log<wbr>Type&quot;</a>
+						<a href="modules/_logger_logger_.html">&quot;logger/<wbr>Logger&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_logger_logger_.html">&quot;src/logger/<wbr>Logger&quot;</a>
+						<a href="modules/_logger_loggerfactory_.html">&quot;logger/<wbr>Logger<wbr>Factory&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_logger_loggerfactory_.html">&quot;src/logger/<wbr>Logger<wbr>Factory&quot;</a>
+						<a href="modules/_logger_index_.html">&quot;logger/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_logger_index_.html">&quot;src/logger/index&quot;</a>
+						<a href="modules/_model_addresses_.html">&quot;model/<wbr>Addresses&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_model_addresses_.html">&quot;src/model/<wbr>Addresses&quot;</a>
+						<a href="modules/_model_configpreset_.html">&quot;model/<wbr>Config<wbr>Preset&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_model_configpreset_.html">&quot;src/model/<wbr>Config<wbr>Preset&quot;</a>
+						<a href="modules/_model_dockercompose_.html">&quot;model/<wbr>Docker<wbr>Compose&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_model_dockercompose_.html">&quot;src/model/<wbr>Docker<wbr>Compose&quot;</a>
+						<a href="modules/_model_nodetype_.html">&quot;model/<wbr>Node<wbr>Type&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_model_nodetype_.html">&quot;src/model/<wbr>Node<wbr>Type&quot;</a>
+						<a href="modules/_model_index_.html">&quot;model/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_model_index_.html">&quot;src/model/index&quot;</a>
+						<a href="modules/_service_agentcertificateservice_.html">&quot;service/<wbr>Agent<wbr>Certificate<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_agentcertificateservice_.html">&quot;src/service/<wbr>Agent<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="modules/_service_announceservice_.html">&quot;service/<wbr>Announce<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_announceservice_.html">&quot;src/service/<wbr>Announce<wbr>Service&quot;</a>
+						<a href="modules/_service_bootstrapservice_.html">&quot;service/<wbr>Bootstrap<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_bootstrapservice_.html">&quot;src/service/<wbr>Bootstrap<wbr>Service&quot;</a>
+						<a href="modules/_service_bootstraputils_.html">&quot;service/<wbr>Bootstrap<wbr>Utils&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_bootstraputils_.html">&quot;src/service/<wbr>Bootstrap<wbr>Utils&quot;</a>
+						<a href="modules/_service_certificateservice_.html">&quot;service/<wbr>Certificate<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_certificateservice_.html">&quot;src/service/<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="modules/_service_composeservice_.html">&quot;service/<wbr>Compose<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_composeservice_.html">&quot;src/service/<wbr>Compose<wbr>Service&quot;</a>
+						<a href="modules/_service_configloader_.html">&quot;service/<wbr>Config<wbr>Loader&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_configloader_.html">&quot;src/service/<wbr>Config<wbr>Loader&quot;</a>
+						<a href="modules/_service_configservice_.html">&quot;service/<wbr>Config<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_configservice_.html">&quot;src/service/<wbr>Config<wbr>Service&quot;</a>
+						<a href="modules/_service_cryptoutils_.html">&quot;service/<wbr>Crypto<wbr>Utils&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_cryptoutils_.html">&quot;src/service/<wbr>Crypto<wbr>Utils&quot;</a>
+						<a href="modules/_service_forgecertificateservice_.html">&quot;service/<wbr>Forge<wbr>Certificate<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_forgecertificateservice_.html">&quot;src/service/<wbr>Forge<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="modules/_service_linkservice_.html">&quot;service/<wbr>Link<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_linkservice_.html">&quot;src/service/<wbr>Link<wbr>Service&quot;</a>
+						<a href="modules/_service_nemgenservice_.html">&quot;service/<wbr>Nemgen<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_nemgenservice_.html">&quot;src/service/<wbr>Nemgen<wbr>Service&quot;</a>
+						<a href="modules/_service_portservice_.html">&quot;service/<wbr>Port<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_portservice_.html">&quot;src/service/<wbr>Port<wbr>Service&quot;</a>
+						<a href="modules/_service_reportservice_.html">&quot;service/<wbr>Report<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_reportservice_.html">&quot;src/service/<wbr>Report<wbr>Service&quot;</a>
+						<a href="modules/_service_runservice_.html">&quot;service/<wbr>Run<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_runservice_.html">&quot;src/service/<wbr>Run<wbr>Service&quot;</a>
+						<a href="modules/_service_sshpkservice_.html">&quot;service/<wbr>Sshpk<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_sshpkservice_.html">&quot;src/service/<wbr>Sshpk<wbr>Service&quot;</a>
+						<a href="modules/_service_supernodeservice_.html">&quot;service/<wbr>Supernode<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_supernodeservice_.html">&quot;src/service/<wbr>Supernode<wbr>Service&quot;</a>
+						<a href="modules/_service_votingservice_.html">&quot;service/<wbr>Voting<wbr>Service&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_votingservice_.html">&quot;src/service/<wbr>Voting<wbr>Service&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_src_service_index_.html">&quot;src/service/index&quot;</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountaddressrestrictiontransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Address<wbr>Restriction<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountaddressrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Address<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>AccountDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountids_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Ids&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountkeylinknetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Key<wbr>Link<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountkeylinktransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Key<wbr>Link<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountkeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountkeytypeflagsenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Key<wbr>Type<wbr>Flags<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountlinkpublickeydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Link<wbr>Public<wbr>KeyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountlinkvotingkeydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Link<wbr>Voting<wbr>KeyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountlinkvotingkeysdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Link<wbr>Voting<wbr>KeysDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountmetadatatransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Metadata<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountmetadatatransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Metadata<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountmosaicrestrictiontransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Mosaic<wbr>Restriction<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountmosaicrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Mosaic<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountnamesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>NamesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountoperationrestrictiontransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Operation<wbr>Restriction<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountoperationrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Operation<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountorderbyenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Order<wbr>ByEnum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountrestrictiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>RestrictionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountrestrictionflagsenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Restriction<wbr>Flags<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountrestrictionnetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Restriction<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountrestrictionsdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>RestrictionsDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountrestrictionsinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Restrictions<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountrestrictionspage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Restrictions<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accounttypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Account<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_accountsnamesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Accounts<wbr>NamesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_activitybucketdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Activity<wbr>BucketDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_addressaliastransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Address<wbr>Alias<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_addressaliastransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Address<wbr>Alias<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_addresses_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Addresses&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aggregatenetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Aggregate<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aggregatetransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Aggregate<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aggregatetransactionbodyextendeddto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Aggregate<wbr>Transaction<wbr>Body<wbr>ExtendedDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aggregatetransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Aggregate<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aggregatetransactionextendeddto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Aggregate<wbr>Transaction<wbr>ExtendedDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aliasactionenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Alias<wbr>Action<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aliasdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>AliasDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_aliastypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Alias<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_announcetransactioninfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Announce<wbr>Transaction<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_balancechangereceiptdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Balance<wbr>Change<wbr>ReceiptDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_balancechangereceiptdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Balance<wbr>Change<wbr>ReceiptDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_balancetransferreceiptdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Balance<wbr>Transfer<wbr>ReceiptDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_balancetransferreceiptdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Balance<wbr>Transfer<wbr>ReceiptDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_blockdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>BlockDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_blockdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>BlockDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_blockinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Block<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_blockmetadto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Block<wbr>MetaDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_blockorderbyenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Block<wbr>Order<wbr>ByEnum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_blockpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Block<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_bmtreesignature_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>BmTree<wbr>Signature&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_chaininfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Chain<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_chainpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Chain<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_communicationtimestampsdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Communication<wbr>TimestampsDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_cosignature_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Cosignature&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_cosignaturedto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>CosignatureDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_cosignaturedtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>CosignatureDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedaccountaddressrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Account<wbr>Address<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedaccountkeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Account<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedaccountmetadatatransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Account<wbr>Metadata<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedaccountmosaicrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Account<wbr>Mosaic<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedaccountoperationrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Account<wbr>Operation<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedaddressaliastransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Address<wbr>Alias<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedhashlocktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Hash<wbr>Lock<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmosaicaddressrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Mosaic<wbr>Address<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmosaicaliastransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Mosaic<wbr>Alias<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmosaicdefinitiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Mosaic<wbr>Definition<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmosaicglobalrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Mosaic<wbr>Global<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmosaicmetadatatransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Mosaic<wbr>Metadata<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmosaicsupplychangetransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Mosaic<wbr>Supply<wbr>Change<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedmultisigaccountmodificationtransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Multisig<wbr>Account<wbr>Modification<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddednamespacemetadatatransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Namespace<wbr>Metadata<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddednamespaceregistrationtransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Namespace<wbr>Registration<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddednodekeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Node<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedsecretlocktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Secret<wbr>Lock<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedsecretprooftransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Secret<wbr>Proof<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedtransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedtransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedtransactioninfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Transaction<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedtransactionmetadto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Transaction<wbr>MetaDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedtransfertransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Transfer<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedvotingkeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Voting<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_embeddedvrfkeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Embedded<wbr>Vrf<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_entitydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>EntityDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_finalizationproofdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Finalization<wbr>ProofDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_finalizedblockdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Finalized<wbr>BlockDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_hashlockentrydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Hash<wbr>Lock<wbr>EntryDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_hashlockinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Hash<wbr>Lock<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_hashlocknetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Hash<wbr>Lock<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_hashlockpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Hash<wbr>Lock<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_hashlocktransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Hash<wbr>Lock<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_hashlocktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Hash<wbr>Lock<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_importanceblockdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Importance<wbr>BlockDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_importanceblockdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Importance<wbr>BlockDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_inflationreceiptdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Inflation<wbr>ReceiptDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_inflationreceiptdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Inflation<wbr>ReceiptDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_linkactionenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Link<wbr>Action<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_lockhashalgorithmenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Lock<wbr>Hash<wbr>Algorithm<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_lockstatus_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Lock<wbr>Status&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merklepathitemdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>Path<wbr>ItemDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merkleproofinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>Proof<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merklestateinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>State<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merkletreebranchdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>Tree<wbr>BranchDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merkletreebranchlinkdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>Tree<wbr>Branch<wbr>LinkDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merkletreeleafdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>Tree<wbr>LeafDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_merkletreenodetypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Merkle<wbr>Tree<wbr>Node<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_messagegroup_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Message<wbr>Group&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_metadataentrydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Metadata<wbr>EntryDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_metadatainfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Metadata<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_metadatanetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Metadata<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_metadatapage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Metadata<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_metadatatypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Metadata<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_modelerror_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Model<wbr>Error&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaic_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaddressrestrictiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Address<wbr>RestrictionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaddressrestrictionentrydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Address<wbr>Restriction<wbr>EntryDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaddressrestrictionentrywrapperdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Address<wbr>Restriction<wbr>Entry<wbr>WrapperDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaddressrestrictiontransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Address<wbr>Restriction<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaddressrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Address<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaliastransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Alias<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicaliastransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Alias<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>MosaicDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicdefinitiontransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Definition<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicdefinitiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Definition<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicexpiryreceiptdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Expiry<wbr>ReceiptDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicexpiryreceiptdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Expiry<wbr>ReceiptDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicglobalrestrictiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Global<wbr>RestrictionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicglobalrestrictionentrydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Global<wbr>Restriction<wbr>EntryDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicglobalrestrictionentryrestrictiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Global<wbr>Restriction<wbr>Entry<wbr>RestrictionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicglobalrestrictionentrywrapperdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Global<wbr>Restriction<wbr>Entry<wbr>WrapperDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicglobalrestrictiontransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Global<wbr>Restriction<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicglobalrestrictiontransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Global<wbr>Restriction<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicids_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Ids&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicmetadatatransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Metadata<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicmetadatatransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Metadata<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicnamesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>NamesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicnetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicrestrictiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>RestrictionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicrestrictionentrytypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Restriction<wbr>Entry<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicrestrictionnetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Restriction<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicrestrictiontypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Restriction<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicrestrictionspage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Restrictions<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicsupplychangeactionenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Supply<wbr>Change<wbr>Action<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicsupplychangetransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Supply<wbr>Change<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicsupplychangetransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaic<wbr>Supply<wbr>Change<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_mosaicsnamesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Mosaics<wbr>NamesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_multisigaccountgraphinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Multisig<wbr>Account<wbr>Graph<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_multisigaccountinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Multisig<wbr>Account<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_multisigaccountmodificationtransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Multisig<wbr>Account<wbr>Modification<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_multisigaccountmodificationtransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Multisig<wbr>Account<wbr>Modification<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_multisigdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>MultisigDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_multisignetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Multisig<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacedto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>NamespaceDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceexpiryreceiptdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Expiry<wbr>ReceiptDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceexpiryreceiptdtoallof_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Expiry<wbr>ReceiptDTOAll<wbr>Of&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceids_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Ids&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacemetadto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>MetaDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacemetadatatransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Metadata<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacemetadatatransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Metadata<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacenamedto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>NameDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacenetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespacepage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceregistrationtransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Registration<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceregistrationtransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Registration<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_namespaceregistrationtypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Namespace<wbr>Registration<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_networkconfigurationdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Network<wbr>ConfigurationDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_networkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_networktypedto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Network<wbr>TypeDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_networktypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Network<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodehealthdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>HealthDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodehealthinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>Health<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodeidentityequalitystrategy_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>Identity<wbr>Equality<wbr>Strategy&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodeinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodekeylinknetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>Key<wbr>Link<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodekeylinktransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>Key<wbr>Link<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodekeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodestatusenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>Status<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_nodetimedto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Node<wbr>TimeDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_order_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Order&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_pagination_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Pagination&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_parentpublickeysignaturepair_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Parent<wbr>Public<wbr>Key<wbr>Signature<wbr>Pair&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_pluginspropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Plugins<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_positionenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Position<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_receiptdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>ReceiptDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_receipttypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Receipt<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_rentalfeesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Rental<wbr>FeesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_resolutionentrydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Resolution<wbr>EntryDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_resolutionstatementdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Resolution<wbr>StatementDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_resolutionstatementinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Resolution<wbr>Statement<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_resolutionstatementpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Resolution<wbr>Statement<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretlockentrydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Lock<wbr>EntryDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretlockinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Lock<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretlocknetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Lock<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretlockpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Lock<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretlocktransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Lock<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretlocktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Lock<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretprooftransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Proof<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_secretprooftransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Secret<wbr>Proof<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_serverdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>ServerDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_serverinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Server<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_sizeprefixedentitydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Size<wbr>Prefixed<wbr>EntityDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_sourcedto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>SourceDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_stageenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Stage<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_storageinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Storage<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_supplementalpublickeysdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Supplemental<wbr>Public<wbr>KeysDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionfeesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>FeesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactiongroupenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Group<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionhashes_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Hashes&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionids_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Ids&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactioninfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionmetadto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>MetaDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionpayload_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Payload&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionstatementdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>StatementDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionstatementinfodto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Statement<wbr>InfoDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionstatementpage_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Statement<wbr>Page&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionstatusdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>StatusDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactionstatusenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Status<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transactiontypeenum_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transaction<wbr>Type<wbr>Enum&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transfernetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transfer<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transfertransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transfer<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_transfertransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Transfer<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_unlockedaccountdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Unlocked<wbr>AccountDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_unresolvedmosaic_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Unresolved<wbr>Mosaic&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_verifiableentitydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Verifiable<wbr>EntityDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_votingkeylinknetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Voting<wbr>Key<wbr>Link<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_votingkeylinktransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Voting<wbr>Key<wbr>Link<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_votingkeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Voting<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_vrfkeylinknetworkpropertiesdto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Vrf<wbr>Key<wbr>Link<wbr>Network<wbr>PropertiesDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_vrfkeylinktransactionbodydto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Vrf<wbr>Key<wbr>Link<wbr>Transaction<wbr>BodyDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_vrfkeylinktransactiondto_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/<wbr>Vrf<wbr>Key<wbr>Link<wbr>TransactionDTO&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_models_index_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/models/index&quot;</a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-external">
-						<a href="modules/_node_modules_symbol_openapi_typescript_fetch_client_src_runtime_.html">&quot;node_<wbr>modules/symbol-<wbr>openapi-<wbr>typescript-<wbr>fetch-<wbr>client/src/runtime&quot;</a>
+						<a href="modules/_service_index_.html">&quot;service/index&quot;</a>
 					</li>
 				</ul>
 			</nav>
