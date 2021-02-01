@@ -21,7 +21,7 @@ import { join } from 'path';
 import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
 
 describe('RunService', () => {
-    const target = 'target/BootstrapService.standard';
+    const target = 'target/tests/BootstrapService.standard';
 
     it('healthCheck', async () => {
         const bootstrapService = new BootstrapService('.');

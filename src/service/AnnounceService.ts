@@ -49,7 +49,6 @@ export interface TransactionFactoryParams {
     mainAccount: Account;
     deadline: Deadline;
     maxFee: UInt64;
-    usePrompt: boolean;
 }
 
 export interface TransactionFactory {
@@ -169,7 +168,6 @@ export class AnnounceService {
                 mainAccount,
                 deadline,
                 maxFee: defaultMaxFee,
-                usePrompt: true,
             };
             const transactions = await transactionFactory.createTransactions(params);
             if (!transactions.length) {

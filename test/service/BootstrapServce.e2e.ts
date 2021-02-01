@@ -82,7 +82,7 @@ describe('BootstrapService', () => {
             timeout: 60000 * 5,
             pullImages: true,
             healthCheck: true,
-            target: 'target/bootstrap-test',
+            target: 'target/tests/bootstrap-test',
             detached: true,
             user: BootstrapUtils.CURRENT_USER,
         };
@@ -107,7 +107,7 @@ describe('BootstrapService', () => {
             timeout: 60000 * 5,
             healthCheck: true,
             pullImages: true,
-            target: 'target/light-test',
+            target: 'target/tests/light-test',
             detached: true,
             user: BootstrapUtils.CURRENT_USER,
         };

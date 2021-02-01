@@ -17,9 +17,11 @@
 import { map, toArray } from 'rxjs/operators';
 import {
     Account,
+    AccountKeyLinkTransaction,
     AggregateTransaction,
     CosignatureTransaction,
     Deadline,
+    LinkAction,
     MultisigAccountModificationTransaction,
     RawMessage,
     RepositoryFactoryHttp,
@@ -30,17 +32,17 @@ import {
 } from 'symbol-sdk';
 import { BootstrapUtils } from '../../src/service';
 
-const url = 'http://localhost:3000';
-const multisigPrivateKey = '96258E6EDBFA77D4138A56D03A7A38B89F1BC7721B532B91A43704AE87BBCC87';
-const cosignatory1PrivateKey = 'B1AA7A73D3FCB6054BC7A968C289EFDAF57BCBDC1756E0F3F58696C03F201BFD';
-const cosignatory2PrivateKey = 'AECAA68E6C12C88D28067612AA71B70AA9DA9549CEB3B54D897B711A63E93B71';
-const cosignatory3PrivateKey = '2515356696EB926299ACD3BA872A404BB6D8AD35F9F86015F280858D60C16600';
+// const url = 'http://localhost:3000';
+// const multisigPrivateKey = '96258E6EDBFA77D4138A56D03A7A38B89F1BC7721B532B91A43704AE87BBCC87';
+// const cosignatory1PrivateKey = 'B1AA7A73D3FCB6054BC7A968C289EFDAF57BCBDC1756E0F3F58696C03F201BFD';
+// const cosignatory2PrivateKey = 'AECAA68E6C12C88D28067612AA71B70AA9DA9549CEB3B54D897B711A63E93B71';
+// const cosignatory3PrivateKey = '2515356696EB926299ACD3BA872A404BB6D8AD35F9F86015F280858D60C16600';
 
-// const url = 'http://api-01.ap-northeast-1.testnet.symboldev.network:3000';
-// const multisigPrivateKey = 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD';
-// const cosignatory1PrivateKey = 'AAAAB232742BB4AB3A1368BD4615E4E6D0224AB71A016BAF8520A332C9778737';
-// const cosignatory2PrivateKey = 'BBBEE976890916E54FA825D26BDD0235F5EB5B6A143C199AB0AE5EE9328E08CE';
-// const cosignatory3PrivateKey = 'CCCEE976890916E54FA825D26BDD0235F5EB5B6A143C199AB0AE5EE9328E08EE';
+const url = 'http://api-01.ap-northeast-1.testnet.symboldev.network:3000';
+const multisigPrivateKey = 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD';
+const cosignatory1PrivateKey = 'AAAAB232742BB4AB3A1368BD4615E4E6D0224AB71A016BAF8520A332C9778737';
+const cosignatory2PrivateKey = 'BBBEE976890916E54FA825D26BDD0235F5EB5B6A143C199AB0AE5EE9328E08CE';
+const cosignatory3PrivateKey = 'CCCEE976890916E54FA825D26BDD0235F5EB5B6A143C199AB0AE5EE9328E08EE';
 
 const example = async () => {
     const repositoryFactory = new RepositoryFactoryHttp(url);
@@ -101,6 +103,32 @@ const example = async () => {
             cosignatory1.address,
             [currency.createAbsolute(1)],
             new RawMessage(),
+            networkType,
+            maxFee,
+        );
+
+        const aggregateTransaction = AggregateTransaction.createComplete(
+            deadline,
+            [transferTransaction.toAggregate(multisig.publicAccount)],
+            networkType,
+            [],
+            maxFee,
+        );
+
+        const signedTransaction = cosignatory1.signTransactionWithCosignatories(
+            aggregateTransaction,
+            [cosignatory2, cosignatory3],
+            networkGenerationHash,
+        );
+        await service.announce(signedTransaction, listener).toPromise();
+        return signedTransaction;
+    };
+
+    const sendUnlink = async () => {
+        const transferTransaction = AccountKeyLinkTransaction.create(
+            deadline,
+            '68691D068EFDDF1F9505CF978B65D83006E8ADC45E06453E04126EBB1A3767A2',
+            LinkAction.Unlink,
             networkType,
             maxFee,
         );

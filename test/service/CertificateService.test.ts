@@ -24,8 +24,8 @@ import { BootstrapUtils, CertificateService, ConfigLoader, ForgeCertificateServi
 
 describe('CertificateService', () => {
     it('forge create certificate', async () => {
-        await BootstrapUtils.deleteFolder('./target/unitTests');
-        const service = new ForgeCertificateService({ target: './target/unitTests' });
+        await BootstrapUtils.deleteFolder('./target/tests/unitTests');
+        const service = new ForgeCertificateService({ target: './target/tests/unitTests' });
         await service.run('peer-node');
     });
 
@@ -58,7 +58,7 @@ describe('CertificateService', () => {
     });
 
     it('createCertificates', async () => {
-        const target = 'target/CertificateService.test';
+        const target = 'target/tests/CertificateService.test';
         await BootstrapUtils.deleteFolder(target);
         const service = new CertificateService('.', { target: target, user: await BootstrapUtils.getDockerUserGroup() });
         const presetData = new ConfigLoader().createPresetData({

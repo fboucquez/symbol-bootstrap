@@ -89,7 +89,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-dual',
+            target: 'target/tests/testnet-dual',
             password,
             reset: false,
             preset: Preset.testnet,
@@ -111,7 +111,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-dual-voting',
+            target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
             preset: Preset.testnet,
@@ -130,7 +130,7 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: notLinkedAcccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);
@@ -145,7 +145,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-dual-voting',
+            target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
             preset: Preset.testnet,
@@ -164,7 +164,7 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);
@@ -197,11 +197,43 @@ describe('LinkService', () => {
         assertTransaction(transactions[6], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
     });
 
+    it('LinkService create transactions when dual + voting and already linked not removed', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/testnet-dual-voting',
+            password,
+            reset: false,
+            preset: Preset.testnet,
+            customPreset: './test/voting_preset.yml',
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
+            assembly: 'dual',
+        };
+        const { addresses, presetData } = await new BootstrapService('.').config(params);
+        const maxFee = UInt64.fromUint(10);
+        const nodeAccount = addresses.nodes![0];
+        const parmas: LinkServiceTransactionFactoryParams = {
+            presetData,
+            deadline: Deadline.create(1),
+            nodeAccount: nodeAccount,
+            maxFee: maxFee,
+            mainAccountInfo: alreadyLinkedAccountInfo,
+            removeOldLinked: false,
+        };
+
+        const transactions = await new LinkService(params).createTransactions(parmas);
+        expect(transactions.length).eq(1);
+
+        assertTransaction(transactions[0], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
+    });
+
     it('LinkService create transactions when dual', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-dual',
+            target: 'target/tests/testnet-dual',
             password,
             reset: true,
             preset: Preset.testnet,
@@ -219,7 +251,7 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: notLinkedAcccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);
@@ -233,7 +265,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-dual',
+            target: 'target/tests/testnet-dual',
             password,
             reset: true,
             preset: Preset.testnet,
@@ -251,7 +283,7 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);
@@ -281,11 +313,40 @@ describe('LinkService', () => {
         assertTransaction(transactions[5], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
 
+    it('LinkService create transactions when dual already linked not removing', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/testnet-dual',
+            password,
+            reset: true,
+            preset: Preset.testnet,
+            customPresetObject: {
+                nodeUseRemoteAccount: true,
+            },
+            assembly: 'dual',
+        };
+        const { addresses, presetData } = await new BootstrapService('.').config(params);
+        const maxFee = UInt64.fromUint(10);
+        const nodeAccount = addresses.nodes![0];
+        const parmas: LinkServiceTransactionFactoryParams = {
+            presetData,
+            deadline: Deadline.create(1),
+            nodeAccount: nodeAccount,
+            maxFee: maxFee,
+            mainAccountInfo: alreadyLinkedAccountInfo,
+            removeOldLinked: false,
+        };
+
+        const transactions = await new LinkService(params).createTransactions(parmas);
+        expect(transactions.length).eq(0);
+    });
+
     it('LinkService create transactions when dual not using remote account', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-dual-not-remote',
+            target: 'target/tests/testnet-dual-not-remote',
             password,
             reset: false,
             preset: Preset.testnet,
@@ -304,7 +365,7 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: notLinkedAcccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);
@@ -316,7 +377,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-api',
+            target: 'target/tests/testnet-api',
             password,
             reset: false,
             preset: Preset.testnet,
@@ -333,7 +394,7 @@ describe('LinkService', () => {
             nodeAccount: addresses.nodes![0],
             maxFee: maxFee,
             mainAccountInfo: notLinkedAcccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);
@@ -344,7 +405,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/testnet-api-voting',
+            target: 'target/tests/testnet-api-voting',
             password,
             reset: false,
             preset: Preset.testnet,
@@ -363,7 +424,7 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: notLinkedAcccountInfo,
-            usePrompt: false,
+            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(parmas);

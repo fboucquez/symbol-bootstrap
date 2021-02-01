@@ -22,7 +22,7 @@ import { AgentCertificateService } from '../../src/service/AgentCertificateServi
 
 describe('AgentCertificateService', () => {
     it('createCertificate', async () => {
-        const target = 'target/AgentCertificateService';
+        const target = 'target/tests/AgentCertificateService';
         await BootstrapUtils.deleteFolder(target);
         await BootstrapUtils.mkdir(target);
         const service = new AgentCertificateService('.', { target: target, user: await BootstrapUtils.getDockerUserGroup() });
