@@ -124,7 +124,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -133,7 +133,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(4);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
@@ -158,7 +158,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -167,7 +167,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(7);
 
         assertTransaction(
@@ -214,7 +214,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -223,7 +223,7 @@ describe('LinkService', () => {
             removeOldLinked: false,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(1);
 
         assertTransaction(transactions[0], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
@@ -245,7 +245,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -254,7 +254,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(3);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
@@ -277,7 +277,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -286,7 +286,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(6);
         assertTransaction(
             transactions[0],
@@ -329,7 +329,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -338,7 +338,7 @@ describe('LinkService', () => {
             removeOldLinked: false,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 
@@ -359,7 +359,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -368,7 +368,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(1);
         assertTransaction(transactions[0], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
@@ -388,7 +388,7 @@ describe('LinkService', () => {
         };
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: addresses.nodes![0],
@@ -397,7 +397,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 
@@ -418,7 +418,7 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService('.').config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const parmas: LinkServiceTransactionFactoryParams = {
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
@@ -427,7 +427,7 @@ describe('LinkService', () => {
             removeOldLinked: true,
         };
 
-        const transactions = await new LinkService(params).createTransactions(parmas);
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(3);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);

@@ -66,7 +66,7 @@ export class SupernodeService implements TransactionFactory {
             presetData,
             addresses,
             this,
-            '3M+',
+            '1M+',
         );
     }
 
@@ -80,6 +80,7 @@ export class SupernodeService implements TransactionFactory {
         const transactions: Transaction[] = [];
         const networkType = presetData.networkType;
         if (!nodePreset.supernode) {
+            logger.warn(`Node ${nodeAccount.name} hasn't been configured as supernode.`);
             return transactions;
         }
         if (!nodePreset.voting) {
