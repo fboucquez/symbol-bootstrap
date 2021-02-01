@@ -32,6 +32,8 @@ services:
         cap_add:
             - ALL
         privileged: true
+        ulimits:
+            core: -1
         networks:
             default:
                 aliases:
@@ -55,6 +57,8 @@ services:
         cap_add:
             - ALL
         privileged: true
+        ulimits:
+            core: -1
         networks:
             default:
                 aliases:
@@ -79,6 +83,8 @@ services:
         cap_add:
             - ALL
         privileged: true
+        ulimits:
+            core: -1
         networks:
             default:
                 aliases:
@@ -91,7 +97,7 @@ services:
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-0"
+            api-node-broker-0 DEBUG"
         ports:
             - '8002:7902'
         stop_signal: SIGINT
@@ -106,6 +112,8 @@ services:
         cap_add:
             - ALL
         privileged: true
+        ulimits:
+            core: -1
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
@@ -125,6 +133,8 @@ services:
         cap_add:
             - ALL
         privileged: true
+        ulimits:
+            core: -1
         networks:
             default:
                 ipv4_address: 172.20.0.25
