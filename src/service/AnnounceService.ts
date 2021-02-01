@@ -76,7 +76,8 @@ export class AnnounceService {
             default: 'http://localhost:3000',
         }),
         useKnownRestGateways: flags.boolean({
-            description: 'Use the best NEM node available when announcing. Otherwise the command will use the node provided.',
+            description:
+                'Use the best NEM node available when announcing. Otherwise the command will use the node provided by the --url parameter.',
         }),
         maxFee: flags.integer({
             description: 'the max fee used when announcing (absolute). The node min multiplier will be used if it is not provided.',

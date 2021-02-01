@@ -22,7 +22,7 @@ OPTIONS
                           provided.
 
   --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
-                          provided.
+                          provided by the --url parameter.
 
 EXAMPLE
   $ symbol-bootstrap supernode
