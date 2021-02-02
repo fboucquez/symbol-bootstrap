@@ -50,7 +50,6 @@ export class ComposeService {
         security_opt: ['seccomp:unconfined'],
         cap_add: ['ALL'],
         privileged: true,
-        ulimits: { core: -1 },
     };
 
     private readonly configLoader: ConfigLoader;
@@ -194,8 +193,9 @@ export class ComposeService {
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
-                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? ' DEBUG' : '';
-                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? ' DEBUG' : '';
+                    const debugFlag = ' DEBUG';
+                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : '';
+                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : '';
                     const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
                     const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
                     let serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
@@ -242,7 +242,7 @@ export class ComposeService {
                         vol(`./server`, nodeCommandsDirectory, true),
                     ];
                     const nodeService = await resolveService(n, {
-                        user,
+                        user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
                         container_name: n.name,
                         image: presetData.symbolServerImage,
                         command: serverServiceCommand,
@@ -267,7 +267,7 @@ export class ComposeService {
                                     host: n.brokerHost,
                                 },
                                 {
-                                    user,
+                                    user: brokerDebugMode === debugFlag ? undefined : user, // if debug on, run as root
                                     container_name: n.brokerName,
                                     image: nodeService.image,
                                     working_dir: nodeWorkingDirectory,
