@@ -17,6 +17,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Storing downloaded artifacts (like agent binary) in the current working dir fixing issue when installing bootstrap as root.
 -   Moved voting keys files from ./data to ./userconfig in the target folder.
 -   Added Symbol Bootstrap version to generated configuration reports.
+-   Renamed command from `supernode` for `enrolSupernode`.
 
 ## [0.4.1] - Jan-19-2020
 
