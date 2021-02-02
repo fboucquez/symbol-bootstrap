@@ -286,6 +286,7 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder deleting the generated configuration and data</li>
 					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
 					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
+					<li><a href="docs/enrolSupernode.md"><code>symbol-bootstrap enrolSupernode</code></a> - It enrols the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.</li>
 					<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
 					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
@@ -294,7 +295,6 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
 					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
-					<li><a href="docs/supernode.md"><code>symbol-bootstrap supernode</code></a> - It registers the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.</li>
 				</ul>
 				<!-- commandsstop -->
 				<pre><code></code></pre>
@@ -316,6 +316,9 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 						<a href="modules/_commands_config_.html">&quot;commands/config&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/_commands_enrolsupernode_.html">&quot;commands/enrol<wbr>Supernode&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/_commands_healthcheck_.html">&quot;commands/health<wbr>Check&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -335,9 +338,6 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_stop_.html">&quot;commands/stop&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_commands_supernode_.html">&quot;commands/supernode&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_index_.html">&quot;index&quot;</a>
