@@ -15,6 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
+import { Preset } from '../service';
 import { NodeType } from './NodeType';
 
 export interface DockerServicePreset {
@@ -131,6 +132,8 @@ export interface FaucetPreset extends DockerServicePreset {
 }
 
 export interface ConfigPreset {
+    preset: Preset;
+    votingKeysDirectory: string;
     agentBinaryLocation: string;
     serverVersion: string;
     epochAdjustment: string;
@@ -165,6 +168,7 @@ export interface ConfigPreset {
     baseNamespace: string;
     databases?: DatabasePreset[];
     knownPeers?: Record<NodeType, any[]>;
+    knownRestGateways?: string[];
     mongoComposeRunParam: string;
     mongoImage: string;
     symbolServerToolsImage: string;

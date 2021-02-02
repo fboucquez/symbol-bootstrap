@@ -13,32 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-    Account,
-    Deadline,
-    PlainMessage,
-    PublicAccount,
-    RepositoryFactoryHttp,
-    Transaction,
-    TransferTransaction,
-    UInt64,
-} from 'symbol-sdk';
+import { Deadline, PlainMessage, PublicAccount, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset } from '../model';
-import { AnnounceService, TransactionsToAnnounce } from './AnnounceService';
+import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
+import { AnnounceService, TransactionFactory } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
 const logger: Logger = LoggerFactory.getLogger();
 
-export type SupernodeParams = { target: string; readonly password?: string; url: string; maxFee: number };
+export type SupernodeParams = {
+    target: string;
+    readonly password?: string;
+    url: string;
+    maxFee?: number;
+    useKnownRestGateways: boolean;
+};
 
-export class SupernodeService {
+export interface SupernodeServiceTransactionFactoryParams {
+    presetData: ConfigPreset;
+    nodePreset: NodePreset;
+    nodeAccount: NodeAccount;
+    deadline: Deadline;
+    maxFee: UInt64;
+}
+
+export class SupernodeService implements TransactionFactory {
     public static readonly defaultParams: SupernodeParams = {
+        useKnownRestGateways: false,
         target: BootstrapUtils.defaultTargetFolder,
         url: 'http://localhost:3000',
-        maxFee: 100000,
     };
 
     private readonly configLoader: ConfigLoader;
@@ -47,78 +52,62 @@ export class SupernodeService {
         this.configLoader = new ConfigLoader();
     }
 
-    public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
+    public async enrol(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         if (!presetData.supernodeControllerPublicKey) {
             logger.warn('This network does not have a supernode controller public key. Nodes cannot be registered.');
             return;
         }
-        const url = this.params.url.replace(/\/$/, '');
-        const repositoryFactory = new RepositoryFactoryHttp(url);
-        const currency = (await repositoryFactory.getCurrencies().toPromise()).currency;
-
-        const networkType = await repositoryFactory.getNetworkType().toPromise();
-        const supernodeControllerAddress = PublicAccount.createFromPublicKey(presetData.supernodeControllerPublicKey, networkType).address;
-
-        const maxFee = UInt64.fromUint(this.params.maxFee);
-        logger.info(
-            `Registering super nodes using network url ${url}. Max Fee ${this.params.maxFee / Math.pow(10, currency.divisibility)}`,
+        await new AnnounceService().announce(
+            this.params.url,
+            this.params.maxFee,
+            this.params.useKnownRestGateways,
+            presetData,
+            addresses,
+            this,
+            '1M+',
         );
-        logger.info(`Registration transfer transaction will be sent to ${supernodeControllerAddress.plain()}`);
+    }
 
-        const generationHash = await repositoryFactory.getGenerationHash().toPromise();
-        if (generationHash !== presetData.nemesisGenerationHashSeed) {
-            throw new Error(
-                `You are connecting to the wrong network. Expected generation hash is ${presetData.nemesisGenerationHashSeed} but got ${generationHash}`,
+    async createTransactions({
+        presetData,
+        nodePreset,
+        nodeAccount,
+        deadline,
+        maxFee,
+    }: SupernodeServiceTransactionFactoryParams): Promise<Transaction[]> {
+        const transactions: Transaction[] = [];
+        const networkType = presetData.networkType;
+        if (!nodePreset.supernode) {
+            logger.warn(`Node ${nodeAccount.name} hasn't been configured as supernode.`);
+            return transactions;
+        }
+        if (!nodePreset.voting) {
+            logger.warn(`Node ${nodeAccount.name} 'voting: true' custom preset flag wasn't provided!`);
+            return transactions;
+        }
+        if (!presetData.supernodeControllerPublicKey) {
+            return transactions;
+        }
+
+        const supernodeControllerAddress = PublicAccount.createFromPublicKey(presetData.supernodeControllerPublicKey, networkType).address;
+        const agentPublicKey = nodeAccount.transport.publicKey;
+        if (!agentPublicKey) {
+            logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
+            return transactions;
+        }
+        if (!nodePreset.host) {
+            logger.warn(
+                `Node ${nodeAccount.name} public host name hasn't been provided! Please use 'host: myNodeHost' custom preset param.`,
             );
+            return transactions;
         }
-
-        const deadline = Deadline.create(await repositoryFactory.getEpochAdjustment().toPromise());
-
-        const transactionNodes = (presetData.nodes || [])
-            .map((node, index): TransactionsToAnnounce | undefined => {
-                const nodeAccount = addresses.nodes![index];
-                if (!node.supernode) {
-                    return;
-                }
-                if (!node.voting) {
-                    logger.warn(`Node ${node.name} 'voting: true' custom preset flag wasn't provided!`);
-                    return;
-                }
-                const agentPublicKey = nodeAccount.transport.publicKey;
-                if (!agentPublicKey) {
-                    logger.warn(`Cannot resolve harvester public key of node ${node.name}`);
-                    return;
-                }
-                if (!node.host) {
-                    logger.warn(
-                        `Node ${node.name} public host name hasn't been provided! Please use 'host: myNodeHost' custom preset param.`,
-                    );
-                    return;
-                }
-                const mainAccount = Account.createFromPrivateKey(nodeAccount.main.privateKey, networkType);
-                const agentUrl = node.agentUrl || 'https://' + node.host + ':7880';
-                const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
-                const message = PlainMessage.create(plainMessage);
-                logger.info(`Sending registration with message '${plainMessage}' using signer ${mainAccount.address.plain()}`);
-                const transaction: Transaction = TransferTransaction.create(
-                    deadline,
-                    supernodeControllerAddress,
-                    [],
-                    message,
-                    networkType,
-                    maxFee,
-                );
-                return { transactions: [transaction], node: nodeAccount };
-            })
-            .filter((p) => p)
-            .map((p) => p as TransactionsToAnnounce);
-
-        if (!transactionNodes.length) {
-            logger.info(`There are no supernodes to register!!! (have you use the custom preset flag 'supernode: true'?)`);
-            return;
-        }
-        await new AnnounceService().announce(repositoryFactory, presetData, transactionNodes, generationHash, '3M+');
+        const agentUrl = nodePreset.agentUrl || `https://${nodePreset.host}:7880`;
+        const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
+        const message = PlainMessage.create(plainMessage);
+        logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
+        const transaction: Transaction = TransferTransaction.create(deadline, supernodeControllerAddress, [], message, networkType, maxFee);
+        return [transaction];
     }
 }

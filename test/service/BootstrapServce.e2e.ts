@@ -80,8 +80,9 @@ describe('BootstrapService', () => {
             preset: Preset.bootstrap,
             reset: true,
             timeout: 60000 * 5,
+            pullImages: true,
             healthCheck: true,
-            target: 'target/bootstrap-test',
+            target: 'target/tests/bootstrap-test',
             detached: true,
             user: BootstrapUtils.CURRENT_USER,
         };
@@ -105,7 +106,8 @@ describe('BootstrapService', () => {
             reset: true,
             timeout: 60000 * 5,
             healthCheck: true,
-            target: 'target/light-test',
+            pullImages: true,
+            target: 'target/tests/light-test',
             detached: true,
             user: BootstrapUtils.CURRENT_USER,
         };

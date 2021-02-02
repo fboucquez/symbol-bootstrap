@@ -58,7 +58,7 @@ export class ComposeService {
         this.configLoader = new ConfigLoader();
     }
 
-    public resolveDebugOptions(dockerComposeDebugMode: boolean, dockerComposeServiceDebugMode: boolean | undefined) {
+    public resolveDebugOptions(dockerComposeDebugMode: boolean, dockerComposeServiceDebugMode: boolean | undefined): any {
         if (dockerComposeServiceDebugMode == false) {
             return {};
         }
@@ -204,8 +204,8 @@ export class ComposeService {
                         await BootstrapUtils.mkdir(join(targetDocker, 'server'));
                         // Pull from cloud!!!!
                         const supernodeAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent/agent.properties`;
-                        const rootDestination = join(this.root, 'agent-linux.bin');
-                        await BootstrapUtils.download(presetData.agentBinaryLocation, rootDestination);
+                        const rootDestination = (await BootstrapUtils.download(presetData.agentBinaryLocation, 'agent-linux.bin'))
+                            .fileLocation;
                         const localDestination = join(targetDocker, 'server', 'agent-linux.bin');
                         logger.info(`Copying from ${rootDestination} to ${localDestination}`);
                         copyFileSync(rootDestination, localDestination);

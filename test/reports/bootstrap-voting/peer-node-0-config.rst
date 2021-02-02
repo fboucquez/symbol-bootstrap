@@ -1,3 +1,5 @@
+Symbol Bootstrap Version: CURRENT_VERSION
+
 config-database.properties
 ==========================
 .. csv-table::
@@ -8,6 +10,8 @@ config-database.properties
     databaseUri; mongodb://:27017
     databaseName; catapult
     maxWriterThreads; 8
+    maxDropBatchSize; 100
+    writeTimeout; 10m
     **plugins**;
     catapult.mongo.plugins.accountlink; true
     catapult.mongo.plugins.aggregate; true
@@ -295,6 +299,7 @@ config-node.properties
     shortLivedCachePruneInterval; 90s; utils::TimeSpan; Time between short lived cache pruning.
     shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
     minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
+    maxTimeBehindPullTransactionsStart; 5m; ;
     transactionSelectionStrategy; maximize-fee; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
     unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
     unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
@@ -312,8 +317,8 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 0.10.0.4; ;
-    maxPartnerNodeVersion; 0.10.0.5; ;
+    minPartnerNodeVersion; 0.10.0.5; ;
+    maxPartnerNodeVersion; 0.10.0.6; ;
     trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
     listenInterface; 0.0.0.0; ;
@@ -328,7 +333,7 @@ config-node.properties
     **localnode**; ; ;
     host; peer-node-0; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-peer-node-0; string; Node friendly name (leave empty to use address).
-    version; 0.10.0.5; uint32_t; Node version.
+    version; 0.10.0.6; uint32_t; Node version.
     roles; Peer,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
@@ -457,4 +462,4 @@ config-user.properties
     certificateDirectory; ./userconfig/resources/cert
     dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib
-    votingKeysDirectory; ./data/votingkeys
+    votingKeysDirectory; ./userconfig/votingkeys

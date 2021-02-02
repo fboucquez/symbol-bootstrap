@@ -166,29 +166,31 @@ export class ReportService {
 
     private async toRstReport(reportFolder: string, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.rst`);
-        const reportContent = n.files
-            .map((fileReport) => {
-                const hasDescriptionSection = fileReport.sections.find((s) => s.lines.find((l) => l.description || l.type));
-                const header = hasDescriptionSection ? '"Property", "Value", "Type", "Description"' : '"Property", "Value"';
-                const csvBody = fileReport.sections
-                    .map((s) => {
-                        const hasDescriptionSection = s.lines.find((l) => l.description || l.type);
-                        return (
-                            (hasDescriptionSection ? `**${s.header}**; ; ;\n` : `**${s.header}**;\n`) +
-                            s.lines
-                                .map((l) => {
-                                    if (hasDescriptionSection)
-                                        return `${l.property}; ${l.value}; ${l.type}; ${l.description}`.trim() + '\n';
-                                    else {
-                                        return `${l.property}; ${l.value}`.trim() + '\n';
-                                    }
-                                })
-                                .join('')
-                        );
-                    })
-                    .join('');
+        const reportContent =
+            `Symbol Bootstrap Version: ${BootstrapUtils.VERSION}\n` +
+            n.files
+                .map((fileReport) => {
+                    const hasDescriptionSection = fileReport.sections.find((s) => s.lines.find((l) => l.description || l.type));
+                    const header = hasDescriptionSection ? '"Property", "Value", "Type", "Description"' : '"Property", "Value"';
+                    const csvBody = fileReport.sections
+                        .map((s) => {
+                            const hasDescriptionSection = s.lines.find((l) => l.description || l.type);
+                            return (
+                                (hasDescriptionSection ? `**${s.header}**; ; ;\n` : `**${s.header}**;\n`) +
+                                s.lines
+                                    .map((l) => {
+                                        if (hasDescriptionSection)
+                                            return `${l.property}; ${l.value}; ${l.type}; ${l.description}`.trim() + '\n';
+                                        else {
+                                            return `${l.property}; ${l.value}`.trim() + '\n';
+                                        }
+                                    })
+                                    .join('')
+                            );
+                        })
+                        .join('');
 
-                return `
+                    return `
 ${fileReport.fileName}
 ${fileReport.fileName.replace(/./g, '=')}
 .. csv-table::
@@ -196,8 +198,8 @@ ${fileReport.fileName.replace(/./g, '=')}
     :delim: ;
 
 ${csvBody.trim().replace(/^/gm, '    ')}`;
-            })
-            .join('\n');
+                })
+                .join('\n');
 
         await BootstrapUtils.writeTextFile(reportFile, reportContent);
         logger.info(`Report file ${reportFile} created`);
@@ -206,30 +208,32 @@ ${csvBody.trim().replace(/^/gm, '    ')}`;
 
     private async toCsvReport(reportFolder: string, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.csv`);
-        const reportContent = n.files
-            .map((fileReport) => {
-                const csvBody = fileReport.sections
-                    .map((s) => {
-                        const hasDescriptionSection = s.lines.find((l) => l.description || l.type);
-                        return (
-                            `${s.header}\n` +
-                            s.lines
-                                .map((l) => {
-                                    if (hasDescriptionSection)
-                                        return `${l.property}; ${l.value}; ${l.type}; ${l.description}`.trim() + '\n';
-                                    else {
-                                        return `${l.property}; ${l.value}`.trim() + '\n';
-                                    }
-                                })
-                                .join('')
-                        );
-                    })
-                    .join('\n');
+        const reportContent =
+            `symbol-bootstrap-version; ${BootstrapUtils.VERSION}\n\n` +
+            n.files
+                .map((fileReport) => {
+                    const csvBody = fileReport.sections
+                        .map((s) => {
+                            const hasDescriptionSection = s.lines.find((l) => l.description || l.type);
+                            return (
+                                `${s.header}\n` +
+                                s.lines
+                                    .map((l) => {
+                                        if (hasDescriptionSection)
+                                            return `${l.property}; ${l.value}; ${l.type}; ${l.description}`.trim() + '\n';
+                                        else {
+                                            return `${l.property}; ${l.value}`.trim() + '\n';
+                                        }
+                                    })
+                                    .join('')
+                            );
+                        })
+                        .join('\n');
 
-                return `${fileReport.fileName}
+                    return `${fileReport.fileName}
 ${csvBody.trim()}`;
-            })
-            .join('\n\n\n');
+                })
+                .join('\n\n\n');
 
         await BootstrapUtils.writeTextFile(reportFile, reportContent);
         logger.info(`Report file ${reportFile} created`);

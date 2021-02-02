@@ -27,7 +27,7 @@ describe('BootstrapService', () => {
             reset: true,
             upgrade: false,
             timeout: 60000 * 5,
-            target: 'target/BootstrapService.standard',
+            target: 'target/tests/BootstrapService.standard',
             detached: true,
             user: 'current',
         };

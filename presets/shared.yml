@@ -25,6 +25,7 @@ maxMessageSize: 1024
 reservedRootNamespaceNames: 'symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info'
 defaultDynamicFeeMultiplier: 1000
 minFeeMultiplier: 100
+maxTimeBehindPullTransactionsStart: 5m
 epochAdjustment: 1573430400s
 nodeEqualityStrategy: host
 maxVotingKeyLifetime: 26280
@@ -62,9 +63,9 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.5
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.5
-symbolRestImage: symbolplatform/symbol-rest:2.3.1
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.6
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.6
+symbolRestImage: symbolplatform/symbol-rest:2.3.2
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
@@ -78,7 +79,7 @@ transactionsDirectory: './transactions'
 binDirectory: ./seed
 certificateDirectory: ./userconfig/resources/cert
 dataDirectory: ./data
-votingKeysDirectory: ./data/votingkeys
+votingKeysDirectory: ./userconfig/votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 agentBinaryLocation: 'https://symbol-node-reward.s3-eu-west-1.amazonaws.com/agent_binary/agent-linux.bin'
@@ -86,6 +87,8 @@ agentBinaryLocation: 'https://symbol-node-reward.s3-eu-west-1.amazonaws.com/agen
 # config database
 databaseName: catapult
 maxWriterThreads: 8
+maxDropBatchSize: 100
+writeTimeout: 10m
 
 # config finalization
 shortLivedCacheMessageDuration: 10m
@@ -116,7 +119,7 @@ timeSynchronizationMinImportance: 3750
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
 nodeListenInterface: 0.0.0.0
-serverVersion: 0.10.0.5
+serverVersion: 0.10.0.6
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 370
@@ -151,8 +154,8 @@ dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
 
-minPartnerNodeVersion: 0.10.0.4
-maxPartnerNodeVersion: 0.10.0.5
+minPartnerNodeVersion: 0.10.0.5
+maxPartnerNodeVersion: 0.10.0.6
 
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200

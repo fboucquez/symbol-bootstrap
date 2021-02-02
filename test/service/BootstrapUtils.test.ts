@@ -47,9 +47,9 @@ describe('BootstrapUtils', () => {
 
         const expectedSize = 177762;
         async function download(): Promise<boolean> {
-            const downloaded = await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
+            const result = await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
             expect(statSync('boat.png').size).eq(expectedSize);
-            return downloaded;
+            return result.downloaded;
         }
         expect(await download()).eq(true);
         expect(await download()).eq(false);

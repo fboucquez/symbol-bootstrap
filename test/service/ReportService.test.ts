@@ -30,7 +30,7 @@ describe('ReportService', () => {
 
         const promises = paths.map(async (reportPath) => {
             expect(reportPath.indexOf(`${params.target}/report`)).to.be.greaterThan(-1);
-            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
+            const generatedReport = (await BootstrapUtils.readTextFile(reportPath)).replace(BootstrapUtils.VERSION, 'CURRENT_VERSION');
             const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
             if (!existsSync(expectedReportPath)) {
                 await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim());
@@ -47,7 +47,7 @@ describe('ReportService', () => {
     };
 
     it('ReportService testnet dual voting report', async () => {
-        const target = 'target/ReportService.testnet.voting.report';
+        const target = 'target/tests/ReportService.testnet.voting.report';
         const customPresetObject = {
             nodes: [
                 {
@@ -70,7 +70,7 @@ describe('ReportService', () => {
     });
 
     it('ReportService testnet peer voting report', async () => {
-        const target = 'target/ReportService.testnet.peer.report';
+        const target = 'target/tests/ReportService.testnet.peer.report';
         const customPresetObject = {
             nodes: [
                 {
@@ -93,7 +93,7 @@ describe('ReportService', () => {
     });
 
     it('ReportService testnet api', async () => {
-        const target = 'target/ReportService.testnet.api.report';
+        const target = 'target/tests/ReportService.testnet.api.report';
         const customPresetObject = {
             nodes: [
                 {
@@ -116,7 +116,7 @@ describe('ReportService', () => {
     });
 
     it('ReportService bootstrap report', async () => {
-        const target = 'target/ReportService.bootstrap.voting.report';
+        const target = 'target/tests/ReportService.bootstrap.voting.report';
         const customPresetObject = {
             nemesisGenerationHashSeed: '6AF8E35BBC7AC341E7931B39E2C9A591EDBE9F9111996053E6771D48E9C53B31',
             nemesis: {
