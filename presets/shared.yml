@@ -119,7 +119,7 @@ timeSynchronizationMinImportance: 3750
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
 nodeListenInterface: 0.0.0.0
-serverVersion: 0.10.0.5
+serverVersion: 0.10.0.6
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 370
@@ -154,8 +154,8 @@ dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
 
-minPartnerNodeVersion: 0.10.0.4
-maxPartnerNodeVersion: 0.10.0.5
+minPartnerNodeVersion: 0.10.0.5
+maxPartnerNodeVersion: 0.10.0.6
 
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
