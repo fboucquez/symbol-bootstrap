@@ -134,11 +134,10 @@ describe('LinkService', () => {
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
-        expect(transactions.length).eq(4);
+        expect(transactions.length).eq(3);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
-        assertTransaction(transactions[1], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
-        assertTransaction(transactions[2], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
-        assertTransaction(transactions[3], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
+        assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        assertTransaction(transactions[2], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
     });
 
     it('LinkService create transactions when dual + voting and already linked', async () => {
@@ -168,7 +167,7 @@ describe('LinkService', () => {
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
-        expect(transactions.length).eq(7);
+        expect(transactions.length).eq(5);
 
         assertTransaction(
             transactions[0],
@@ -180,21 +179,13 @@ describe('LinkService', () => {
 
         assertTransaction(
             transactions[2],
-            TransactionType.NODE_KEY_LINK,
-            LinkAction.Unlink,
-            alreadyLinkedAccountInfo.supplementalPublicKeys.node!.publicKey,
-        );
-        assertTransaction(transactions[3], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
-
-        assertTransaction(
-            transactions[4],
             TransactionType.VRF_KEY_LINK,
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.vrf!.publicKey,
         );
-        assertTransaction(transactions[5], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        assertTransaction(transactions[3], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
 
-        assertTransaction(transactions[6], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
+        assertTransaction(transactions[4], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
     });
 
     it('LinkService create transactions when dual + voting and already linked not removed', async () => {
@@ -255,10 +246,9 @@ describe('LinkService', () => {
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
-        expect(transactions.length).eq(3);
+        expect(transactions.length).eq(2);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
-        assertTransaction(transactions[1], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
-        assertTransaction(transactions[2], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
 
     it('LinkService create transactions when dual already linked', async () => {
@@ -287,7 +277,7 @@ describe('LinkService', () => {
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
-        expect(transactions.length).eq(6);
+        expect(transactions.length).eq(4);
         assertTransaction(
             transactions[0],
             TransactionType.ACCOUNT_KEY_LINK,
@@ -298,19 +288,11 @@ describe('LinkService', () => {
 
         assertTransaction(
             transactions[2],
-            TransactionType.NODE_KEY_LINK,
-            LinkAction.Unlink,
-            alreadyLinkedAccountInfo.supplementalPublicKeys.node!.publicKey,
-        );
-        assertTransaction(transactions[3], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
-
-        assertTransaction(
-            transactions[4],
             TransactionType.VRF_KEY_LINK,
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.vrf!.publicKey,
         );
-        assertTransaction(transactions[5], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        assertTransaction(transactions[3], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
 
     it('LinkService create transactions when dual already linked not removing', async () => {
@@ -428,9 +410,8 @@ describe('LinkService', () => {
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
-        expect(transactions.length).eq(3);
+        expect(transactions.length).eq(2);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
-        assertTransaction(transactions[1], TransactionType.NODE_KEY_LINK, LinkAction.Link, nodeAccount.transport!.publicKey);
-        assertTransaction(transactions[2], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
+        assertTransaction(transactions[1], TransactionType.VOTING_KEY_LINK, LinkAction.Link, nodeAccount.voting!.publicKey);
     });
 });
