@@ -52,7 +52,7 @@ export class SupernodeService implements TransactionFactory {
         this.configLoader = new ConfigLoader();
     }
 
-    public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
+    public async enrol(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         if (!presetData.supernodeControllerPublicKey) {
