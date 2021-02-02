@@ -17,7 +17,7 @@ The best way to validate your configuration is by inspecting the generated confi
 ### Custom Rest image and throttling
 
 ```yaml
-symbolRestImage: symbolplatform/symbol-rest:2.3.1
+symbolRestImage: symbolplatform/symbol-rest:2.3.2
 throttlingBurst: 35
 throttlingRate: 1000
 ```
@@ -178,7 +178,7 @@ will generate a docker service like:
 ```yaml
   peer-node-0:
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         .......
         cpu_count: 4
         shm_size: 64M

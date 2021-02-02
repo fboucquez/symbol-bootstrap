@@ -59,7 +59,7 @@ services:
     peer-node-0:
         user: '1000:1000'
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -77,7 +77,7 @@ services:
     peer-node-1:
         user: '1000:1000'
         container_name: peer-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -95,7 +95,7 @@ services:
     peer-node-2:
         user: '1000:1000'
         container_name: peer-node-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-2 && /bin/bash /symbol-commands/startServer.sh peer-node-2"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -113,7 +113,7 @@ services:
     api-node-0:
         user: '1000:1000'
         container_name: api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -132,7 +132,7 @@ services:
     api-node-1:
         user: '1000:1000'
         container_name: api-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -151,7 +151,7 @@ services:
     api-node-2:
         user: '1000:1000'
         container_name: api-node-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-2"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -170,7 +170,7 @@ services:
     api-node-3:
         user: '1000:1000'
         container_name: api-node-3
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-3"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -189,7 +189,7 @@ services:
     api-node-broker-0:
         user: '1000:1000'
         container_name: api-node-broker-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
@@ -206,7 +206,7 @@ services:
     api-node-broker-1:
         user: '1000:1000'
         container_name: api-node-broker-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-1 && /bin/bash /symbol-commands/startBroker.sh
@@ -223,7 +223,7 @@ services:
     api-node-broker-2:
         user: '1000:1000'
         container_name: api-node-broker-2
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-2 && /bin/bash /symbol-commands/startBroker.sh
@@ -240,7 +240,7 @@ services:
     api-node-broker-3:
         user: '1000:1000'
         container_name: api-node-broker-3
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.5'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-3 && /bin/bash /symbol-commands/startBroker.sh
@@ -257,7 +257,7 @@ services:
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.1'
+        image: 'symbolplatform/symbol-rest:2.3.2'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -274,7 +274,7 @@ services:
     rest-gateway-1:
         container_name: rest-gateway-1
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.1'
+        image: 'symbolplatform/symbol-rest:2.3.2'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -291,7 +291,7 @@ services:
     rest-gateway-2:
         container_name: rest-gateway-2
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.1'
+        image: 'symbolplatform/symbol-rest:2.3.2'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -308,7 +308,7 @@ services:
     rest-gateway-3:
         container_name: rest-gateway-3
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.1'
+        image: 'symbolplatform/symbol-rest:2.3.2'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

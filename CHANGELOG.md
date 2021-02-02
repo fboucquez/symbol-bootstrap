@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.4.2] - Next
+## [0.4.2] - Feb-2-2020
 
-**Milestone**: Hippopotamus(0.10.0.5)
+**Milestone**: Hippopotamus(0.10.0.6)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
