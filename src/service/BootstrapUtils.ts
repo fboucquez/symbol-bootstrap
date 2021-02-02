@@ -41,6 +41,9 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { CryptoUtils } from './CryptoUtils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const version = require('../../package.json').version;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = util.promisify(require('child_process').exec);
@@ -72,6 +75,8 @@ export class BootstrapUtils {
 
     public static readonly CURRENT_USER = 'current';
     private static readonly pulledImages: string[] = [];
+
+    public static readonly VERSION = version;
 
     private static stopProcess = false;
 

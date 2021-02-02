@@ -19,6 +19,7 @@ cache:
 before_script:
     - . ./travis/node-functions.sh
     - VERSION="$(node_load_version)"
+    - if [[ ! -z "$DOCKER_USERNAME" ]] ; then echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; fi
     - log_env_variables
 script:
     - npm pack

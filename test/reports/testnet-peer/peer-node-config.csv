@@ -1,3 +1,5 @@
+symbol-bootstrap-version; CURRENT_VERSION
+
 config-database.properties
 database
 databaseUri; mongodb://:27017
