@@ -10,6 +10,8 @@ config-database.properties
     databaseUri; mongodb://db:27017
     databaseName; catapult
     maxWriterThreads; 8
+    maxDropBatchSize; 100
+    writeTimeout; 10m
     **plugins**;
     catapult.mongo.plugins.accountlink; true
     catapult.mongo.plugins.aggregate; true
@@ -703,6 +705,7 @@ config-node.properties
     shortLivedCachePruneInterval; 90s; utils::TimeSpan; Time between short lived cache pruning.
     shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
     minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
+    maxTimeBehindPullTransactionsStart; 5m; ;
     transactionSelectionStrategy; maximize-fee; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
     unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
     unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
