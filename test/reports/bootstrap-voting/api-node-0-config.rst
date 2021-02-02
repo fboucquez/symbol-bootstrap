@@ -1,3 +1,5 @@
+Symbol Bootstrap Version: CURRENT_VERSION
+
 config-database.properties
 ==========================
 .. csv-table::

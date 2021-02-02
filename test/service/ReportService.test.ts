@@ -30,7 +30,7 @@ describe('ReportService', () => {
 
         const promises = paths.map(async (reportPath) => {
             expect(reportPath.indexOf(`${params.target}/report`)).to.be.greaterThan(-1);
-            const generatedReport = await BootstrapUtils.readTextFile(reportPath);
+            const generatedReport = (await BootstrapUtils.readTextFile(reportPath)).replace(BootstrapUtils.VERSION, 'CURRENT_VERSION');
             const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
             if (!existsSync(expectedReportPath)) {
                 await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim());
