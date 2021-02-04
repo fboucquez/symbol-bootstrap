@@ -30,4 +30,4 @@ EXAMPLE
   $ symbol-bootstrap link
 ```
 
-_See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.2/src/commands/link.ts)_
+_See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.3/src/commands/link.ts)_
