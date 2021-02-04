@@ -193,10 +193,13 @@ export class ComposeService {
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const debugFlag = ' DEBUG';
+                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : '';
+                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : '';
                     const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
                     const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
-                    let serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}`;
-                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || ''}`;
+                    let serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
+                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || 'broker'}${brokerDebugMode}`;
                     const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
 
@@ -239,7 +242,7 @@ export class ComposeService {
                         vol(`./server`, nodeCommandsDirectory, true),
                     ];
                     const nodeService = await resolveService(n, {
-                        user,
+                        user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
                         container_name: n.name,
                         image: presetData.symbolServerImage,
                         command: serverServiceCommand,
@@ -264,7 +267,7 @@ export class ComposeService {
                                     host: n.brokerHost,
                                 },
                                 {
-                                    user,
+                                    user: brokerDebugMode === debugFlag ? undefined : user, // if debug on, run as root
                                     container_name: n.brokerName,
                                     image: nodeService.image,
                                     working_dir: nodeWorkingDirectory,
@@ -358,7 +361,6 @@ export class ComposeService {
             (presetData.faucets || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
-                    const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
                     // const nemesisPrivateKey = addresses?.mosaics?[0]?/;
                     services.push(
                         await resolveService(n, {
@@ -367,7 +369,7 @@ export class ComposeService {
                             stop_signal: 'SIGINT',
                             environment: {
                                 FAUCET_PRIVATE_KEY:
-                                    n.environment?.FAUCET_PRIVATE_KEY || addresses?.mosaics?.[0]?.accounts[0].privateKey || '',
+                                    n.environment?.FAUCET_PRIVATE_KEY || this.getMainAccountPrivateKey(passedAddresses) || '',
                                 NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(
                                     n.environment?.NATIVE_CURRENCY_ID || presetData.currencyMosaicId || '',
                                 ),
@@ -406,5 +408,10 @@ export class ComposeService {
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
         logger.info(`docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
+    }
+
+    private getMainAccountPrivateKey(passedAddresses: Addresses | undefined) {
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
+        return addresses?.mosaics?.[0]?.accounts[0].privateKey;
     }
 }

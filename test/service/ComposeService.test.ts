@@ -19,15 +19,15 @@ import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { DockerCompose } from '../../src/model';
-import { BootstrapService, BootstrapUtils, ComposeService, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
+import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 
 describe('ComposeService', () => {
     const password = '1234';
 
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
-        const service = new BootstrapService('.');
-        const configResult = await service.config(params);
-        const dockerCompose = await service.compose(params, configResult.presetData);
+        const root = '.';
+        const presetData = new ConfigLoader().createPresetData({ root, password, ...params });
+        const dockerCompose = await new ComposeService(root, params).run(presetData);
         Object.values(dockerCompose.services).forEach((service) => {
             if (service.mem_limit) {
                 service.mem_limit = 123;
@@ -63,6 +63,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
 
 `,
         ).to.be.deep.eq(expectedDockerCompose);
+        BootstrapUtils.deleteFolder(params.target);
     };
 
     it('Compose testnet dual', async () => {
@@ -96,7 +97,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
-            target: 'target/tests/testnet-voting',
+            target: 'target/tests/ComposeService-testnet-voting',
             password,
             reset: false,
             customPreset: './test/voting_preset.yml',
@@ -117,7 +118,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/tests/ConfigService.bootstrap.default',
+            target: 'target/tests/ComposeService-bootstrap.default',
             reset: false,
             preset: Preset.bootstrap,
         };
@@ -135,7 +136,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/tests/ConfigService.bootstrap.compose',
+            target: 'target/tests/ComposeService-bootstrap.compose',
             password,
             customPreset: './test/custom_compose_preset.yml',
             reset: false,
@@ -155,7 +156,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/tests/ConfigService.bootstrap.custom',
+            target: 'target/tests/ComposeService-bootstrap.custom',
             customPreset: './test/custom_preset.yml',
             reset: false,
             preset: Preset.bootstrap,
@@ -175,7 +176,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/tests/ConfigService.bootstrap.full',
+            target: 'target/tests/ComposeService-bootstrap.full',
             password,
             reset: false,
             assembly: 'full',
@@ -196,7 +197,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                 ],
             },
             reset: false,
-            target: 'target/tests/ConfigService.bootstrap.repeat',
+            target: 'target/tests/ComposeService-bootstrap.repeat',
             password,
             preset: Preset.bootstrap,
             customPreset: './test/repeat_preset.yml',
