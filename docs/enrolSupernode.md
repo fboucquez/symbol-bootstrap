@@ -28,4 +28,4 @@ EXAMPLE
   $ symbol-bootstrap enrolSupernode
 ```
 
-_See code: [src/commands/enrolSupernode.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.2/src/commands/enrolSupernode.ts)_
+_See code: [src/commands/enrolSupernode.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.3/src/commands/enrolSupernode.ts)_

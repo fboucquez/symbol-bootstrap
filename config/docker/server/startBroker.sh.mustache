@@ -2,10 +2,17 @@
 set -e
 
 name=$1
-echo "RUNNING startBroker.sh $name"
+mode=$2
+
+echo "RUNNING startBroker.sh $name $mode"
 
 ulimit -c unlimited
 
+if [ "$mode" == "DEBUG" ]; then
+  echo "Setting up core dump..."
+  mkdir -p ./logs
+  echo './logs/broker.%e.%t' > /proc/sys/kernel/core_pattern
+fi
 
 touch ./data/broker.started
 
