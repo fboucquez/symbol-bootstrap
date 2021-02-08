@@ -1,0 +1,8 @@
+#dockerComposeDebugMode: true
+#gateways:
+#  - repeat: 0
+#nodes:
+#  - repeat: 1
+#  - repeat: 0
+#databases:
+#  - repeat: 0
