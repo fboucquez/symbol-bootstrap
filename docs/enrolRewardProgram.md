@@ -1,13 +1,13 @@
 `symbol-bootstrap enrolRewardProgram`
 =====================================
 
-It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be post-launch enrolled is 'SuperNode'.
+It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
 * [`symbol-bootstrap enrolRewardProgram`](#symbol-bootstrap-enrolrewardprogram)
 
 ## `symbol-bootstrap enrolRewardProgram`
 
-It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be post-launch enrolled is 'SuperNode'.
+It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
 ```
 USAGE

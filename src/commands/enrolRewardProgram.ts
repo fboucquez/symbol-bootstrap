@@ -19,7 +19,7 @@ import { BootstrapService, BootstrapUtils } from '../service';
 import { AnnounceService } from '../service/AnnounceService';
 
 export default class EnrolRewardProgram extends Command {
-    static description = `It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be post-launch enrolled is 'SuperNode'.`;
+    static description = `It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be enrolled post-launch is 'SuperNode'.`;
 
     static examples = [`$ symbol-bootstrap enrolRewardProgram`];
 
