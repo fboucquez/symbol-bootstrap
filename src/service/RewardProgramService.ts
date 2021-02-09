@@ -18,12 +18,12 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
-import { BootstrapUtils } from './BootstrapUtils';
+import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
 const logger: Logger = LoggerFactory.getLogger();
 
-export type SupernodeParams = {
+export type RewardProgramParams = {
     target: string;
     readonly password?: string;
     url: string;
@@ -31,7 +31,7 @@ export type SupernodeParams = {
     useKnownRestGateways: boolean;
 };
 
-export interface SupernodeServiceTransactionFactoryParams {
+export interface RewardProgramServiceTransactionFactoryParams {
     presetData: ConfigPreset;
     nodePreset: NodePreset;
     nodeAccount: NodeAccount;
@@ -39,8 +39,14 @@ export interface SupernodeServiceTransactionFactoryParams {
     maxFee: UInt64;
 }
 
-export class SupernodeService implements TransactionFactory {
-    public static readonly defaultParams: SupernodeParams = {
+export enum RewardProgram {
+    EarlyAdoption = 'EarlyAdoption',
+    Ecosystem = 'Ecosystem',
+    SuperNode = 'SuperNode',
+}
+
+export class RewardProgramService implements TransactionFactory {
+    public static readonly defaultParams: RewardProgramParams = {
         useKnownRestGateways: false,
         target: BootstrapUtils.defaultTargetFolder,
         url: 'http://localhost:3000',
@@ -48,15 +54,27 @@ export class SupernodeService implements TransactionFactory {
 
     private readonly configLoader: ConfigLoader;
 
-    constructor(protected readonly params: SupernodeParams) {
+    constructor(protected readonly params: RewardProgramParams) {
         this.configLoader = new ConfigLoader();
+    }
+
+    public static getRewardProgram(value: string | true): RewardProgram {
+        if (value === true) {
+            return RewardProgram.SuperNode;
+        }
+        const programs = Object.values(RewardProgram) as RewardProgram[];
+        const program = programs.find((p) => p.toLowerCase() == value.toLowerCase());
+        if (program) {
+            return program;
+        }
+        throw new KnownError(`${value} is not a valid Reward program. Please use one of ${programs.join(', ')}`);
     }
 
     public async enrol(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
-        if (!presetData.supernodeControllerPublicKey) {
-            logger.warn('This network does not have a supernode controller public key. Nodes cannot be registered.');
+        if (!presetData.rewardProgramControllerPublicKey) {
+            logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
         }
         await new AnnounceService().announce(
@@ -76,22 +94,32 @@ export class SupernodeService implements TransactionFactory {
         nodeAccount,
         deadline,
         maxFee,
-    }: SupernodeServiceTransactionFactoryParams): Promise<Transaction[]> {
+    }: RewardProgramServiceTransactionFactoryParams): Promise<Transaction[]> {
         const transactions: Transaction[] = [];
         const networkType = presetData.networkType;
-        if (!nodePreset.supernode) {
-            logger.warn(`Node ${nodeAccount.name} hasn't been configured as supernode.`);
+        if (!nodePreset.rewardProgram) {
+            logger.warn(`Node ${nodeAccount.name} hasn't been configured as rewardProgram.`);
+            return transactions;
+        }
+
+        const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
+
+        if (rewardProgram === RewardProgram.EarlyAdoption || rewardProgram === RewardProgram.Ecosystem) {
+            logger.warn(
+                `Node ${nodeAccount.name} cannot be enrolled. Program ${nodePreset.rewardProgram} is not eligible for post-launch enrolment.`,
+            );
             return transactions;
         }
         if (!nodePreset.voting) {
             logger.warn(`Node ${nodeAccount.name} 'voting: true' custom preset flag wasn't provided!`);
             return transactions;
         }
-        if (!presetData.supernodeControllerPublicKey) {
+        if (!presetData.rewardProgramControllerPublicKey) {
             return transactions;
         }
 
-        const supernodeControllerAddress = PublicAccount.createFromPublicKey(presetData.supernodeControllerPublicKey, networkType).address;
+        const rewardProgramControllerAddress = PublicAccount.createFromPublicKey(presetData.rewardProgramControllerPublicKey, networkType)
+            .address;
         const agentPublicKey = nodeAccount.transport.publicKey;
         if (!agentPublicKey) {
             logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
@@ -107,7 +135,14 @@ export class SupernodeService implements TransactionFactory {
         const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
         const message = PlainMessage.create(plainMessage);
         logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
-        const transaction: Transaction = TransferTransaction.create(deadline, supernodeControllerAddress, [], message, networkType, maxFee);
+        const transaction: Transaction = TransferTransaction.create(
+            deadline,
+            rewardProgramControllerAddress,
+            [],
+            message,
+            networkType,
+            maxFee,
+        );
         return [transaction];
     }
 }

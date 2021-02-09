@@ -1,6 +1,6 @@
 nodes:
     - voting: true
-      supernode: 'EarlyAdoption'
+      rewardProgram: 'supernode'
       host: fboucquez-agent-symbollocal.ngrok.io
       agentUrl: https://fboucquez-agent-symbollocal.ngrok.io
       restGatewayUrl: http://fboucquez-rest-gateway-symbollocal.ngrok.io
