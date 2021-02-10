@@ -89,8 +89,8 @@ export interface NodePreset extends DockerServicePreset {
     brokerCompose?: any;
     brokerDockerComposeDebugMode?: boolean;
     //super node
-    supernode?: boolean | string;
-    supernodeOpenPort?: boolean | number | string;
+    rewardProgram?: boolean | string;
+    rewardProgramAgentOpenPort?: boolean | number | string;
     agentUrl?: string; //calculated if not provided.
     restGatewayUrl?: string; // calculated if not provided;
 }
@@ -179,6 +179,6 @@ export interface ConfigPreset {
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
-    supernodeControllerPublicKey?: string;
+    rewardProgramControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
 }

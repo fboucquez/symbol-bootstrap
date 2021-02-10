@@ -20,8 +20,8 @@ import { ComposeParams, ComposeService } from './ComposeService';
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
 import { ReportParams, ReportService } from './ReportService';
+import { RewardProgramParams, RewardProgramService } from './RewardProgramService';
 import { RunParams, RunService } from './RunService';
-import { SupernodeParams, SupernodeService } from './SupernodeService';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
 
@@ -82,12 +82,12 @@ export class BootstrapService {
      * @param passedPresetData  the created preset if you know it, otherwise will load the latest one resolved from the target folder.
      * @param passedAddresses  the created addresses if you know it, otherwise will load the latest one resolved from the target folder.
      */
-    public async enrolSupernode(
-        config: SupernodeParams = SupernodeService.defaultParams,
+    public async enrolRewardProgram(
+        config: RewardProgramParams = RewardProgramService.defaultParams,
         passedPresetData?: ConfigPreset | undefined,
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
-        await new SupernodeService(config).enrol(passedPresetData, passedAddresses);
+        await new RewardProgramService(config).enrol(passedPresetData, passedAddresses);
     }
 
     /**

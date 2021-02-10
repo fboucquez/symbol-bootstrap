@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.4.2] - Feb-2-2020
+## [0.4.3] - NEXT
+
+**Milestone**: Hippopotamus(0.10.0.6)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v0.4.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Added Core Dump files when `dockerComposeDebugMode: true`.
+-   Added autocomplete support. Try `symbol-bootstrap autocomplete` and follow the instructions (Thanks @44uk).
+-   Renamed `supernode` keywords for `rewardProgram` for clarification.  Supernode is a type of Reward Program.
+-   Renamed command from `enrolSupernode` for `enrolRewardProgram`. 
+-   Added preset configurable `connectionPoolSize` to the Rest Gateway configuration.
+
+## [0.4.2] - Feb-2-2021
 
 **Milestone**: Hippopotamus(0.10.0.6)
 
@@ -19,7 +33,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added Symbol Bootstrap version to generated configuration reports.
 -   Renamed command from `supernode` for `enrolSupernode`.
 
-## [0.4.1] - Jan-19-2020
+## [0.4.1] - Jan-19-2021
 
 **Milestone**: Hippopotamus(0.10.0.5)
 
@@ -34,7 +48,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added `CONTROLLER_PUBLIC_KEY` to Supernode's agent configuration
 -   Upgraded Symbol Rest to version 2.3.1.
 
-## [0.4.0] - Jan-14-2020
+## [0.4.0] - Jan-14-2021
 
 **Milestone**: Hippopotamus(0.10.0.5)
 

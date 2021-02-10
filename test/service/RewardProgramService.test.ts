@@ -18,11 +18,25 @@ import { expect } from '@oclif/test';
 import 'mocha';
 import { Deadline, TransactionType, TransferTransaction, UInt64 } from 'symbol-sdk';
 import { BootstrapService, ConfigService, LinkService, Preset } from '../../src/service';
-import { SupernodeService, SupernodeServiceTransactionFactoryParams } from '../../src/service/SupernodeService';
+import { RewardProgram, RewardProgramService, RewardProgramServiceTransactionFactoryParams } from '../../src/service/RewardProgramService';
 
 const password = '1234';
-describe('SupernodeService', () => {
-    it('SupernodeService create transactions when supernode', async () => {
+describe('RewardProgramService', () => {
+    it('getRewardProgram', async () => {
+        expect(RewardProgramService.getRewardProgram(true)).eq(RewardProgram.SuperNode);
+        expect(RewardProgramService.getRewardProgram('ecosystem')).eq(RewardProgram.Ecosystem);
+        expect(RewardProgramService.getRewardProgram('Ecosystem')).eq(RewardProgram.Ecosystem);
+        expect(RewardProgramService.getRewardProgram('superNODE')).eq(RewardProgram.SuperNode);
+        expect(RewardProgramService.getRewardProgram('earlyAdoption')).eq(RewardProgram.EarlyAdoption);
+        try {
+            RewardProgramService.getRewardProgram('NA');
+            expect(1).eq(0);
+        } catch (e) {
+            expect(e.message).eq('NA is not a valid Reward program. Please use one of EarlyAdoption, Ecosystem, SuperNode');
+        }
+    });
+
+    it('RewardProgramService create transactions when supernode', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
@@ -40,7 +54,7 @@ describe('SupernodeService', () => {
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const nodePreset = presetData.nodes![0];
-        const transactionFactoryParams: SupernodeServiceTransactionFactoryParams = {
+        const transactionFactoryParams: RewardProgramServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodePreset: nodePreset,
@@ -48,7 +62,7 @@ describe('SupernodeService', () => {
             maxFee: maxFee,
         };
 
-        const transactions = await new SupernodeService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new RewardProgramService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(1);
         const transaction = transactions[0] as TransferTransaction;
         expect(transaction.type).eq(TransactionType.TRANSFER);
@@ -75,7 +89,7 @@ describe('SupernodeService', () => {
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const nodePreset = presetData.nodes![0];
-        const transactionFactoryParams: SupernodeServiceTransactionFactoryParams = {
+        const transactionFactoryParams: RewardProgramServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodePreset: nodePreset,
@@ -83,7 +97,7 @@ describe('SupernodeService', () => {
             maxFee: maxFee,
         };
 
-        const transactions = await new SupernodeService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new RewardProgramService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 });
