@@ -179,8 +179,8 @@ export class RunService {
                 const logsFolder = join(componentConfigFolder, 'logs');
                 BootstrapUtils.deleteFolder(dataFolder);
                 BootstrapUtils.deleteFolder(logsFolder);
-                BootstrapUtils.mkdir(dataFolder);
-                BootstrapUtils.mkdir(logsFolder);
+                await BootstrapUtils.mkdir(dataFolder);
+                await BootstrapUtils.mkdir(logsFolder);
             }),
         );
         (preset.gateways || []).forEach((node) => {
