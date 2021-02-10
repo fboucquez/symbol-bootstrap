@@ -236,10 +236,11 @@ export class ComposeService {
                     if (n.brokerName) {
                         serverDependsOn.push(n.brokerName);
                     }
-
+                    const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
                     const volumes = [
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
+                        vol(nemesisSeedFolder, '/seed', true),
                     ];
                     const nodeService = await resolveService(n, {
                         user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
