@@ -76,9 +76,9 @@ export class BootstrapUtils {
     public static readonly CURRENT_USER = 'current';
     private static readonly pulledImages: string[] = [];
 
-    public static readonly VERSION = version;
-
     public static stopProcess = false;
+
+    public static readonly VERSION = version;
 
     public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
 
@@ -92,6 +92,12 @@ export class BootstrapUtils {
         description: `A password used to encrypt and decrypted generated addresses.yml and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`,
         default: '',
         hidden: true,
+    });
+
+    public static fullBackupFlag = flags.boolean({
+        description: `If the restore/backup to be performed is a full backup (RocksDB + Mongo) or partial backup (RocksDB + Catapult's Importer)`,
+        default: false,
+        allowNo: true,
     });
 
     private static onProcessListener = (() => {
@@ -238,7 +244,7 @@ export class BootstrapUtils {
     }
 
     public static showBanner(): void {
-        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'full' }));
+        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

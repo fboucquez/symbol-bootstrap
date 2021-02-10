@@ -29,6 +29,7 @@ export type ComposeParams = { target: string; user?: string; upgrade?: boolean; 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 const targetNodesFolder = BootstrapUtils.targetNodesFolder;
+const targetNemesisFolder = BootstrapUtils.targetNemesisFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
 const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
 const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
@@ -197,16 +198,14 @@ export class ComposeService {
                     const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : '';
                     const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : '';
                     const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
-                    const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
                     const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
                     const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || 'broker'}${brokerDebugMode}`;
-                    const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
 
-                    const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [recoverServerCommand, serverCommand];
+                    const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [serverCommand];
 
                     const serverServiceCommand = `bash -c "${serverServiceCommands.join(' && ')}"`;
-                    const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
+                    const brokerServiceCommand = `bash -c "${[brokerCommand].join(' && ')}"`;
 
                     const serverDependsOn: string[] = [];
                     const brokerDependsOn: string[] = [];
@@ -218,10 +217,10 @@ export class ComposeService {
                     if (n.brokerName) {
                         serverDependsOn.push(n.brokerName);
                     }
-
                     const volumes = [
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
+                        vol(`../${targetNemesisFolder}/seed`, '/seed', true),
                     ];
                     const nodeService = await resolveService(n, {
                         user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root

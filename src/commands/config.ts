@@ -58,6 +58,15 @@ export default class Config extends Command {
             default: ConfigService.defaultParams.report,
         }),
 
+        backupSync: flags.boolean({
+            description: `It downloads a backup with the RocksDb and Mongo databases for faster synchronization.
+
+The location of the backup can be found and changed using the 'backupSyncLocation' preset configuration. This configuration allows local files and remote URLs`,
+            default: ConfigService.defaultParams.backupSync,
+        }),
+
+        fullBackup: BootstrapUtils.fullBackupFlag,
+
         pullImages: flags.boolean({
             description:
                 'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',

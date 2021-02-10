@@ -30,6 +30,15 @@ OPTIONS
   -u, --user=user                   [default: current] User used to run docker images when creating configuration files
                                     like certificates or nemesis block. "current" means the current user.
 
+  --backupSync                      It downloads a backup with the RocksDb and Mongo databases for faster
+                                    synchronization.
+
+                                    The location of the backup can be found and changed using the 'backupSyncLocation'
+                                    preset configuration. This configuration allows local files and remote URLs
+
+  --[no-]fullBackup                 If the restore/backup to be performed is a full backup (RocksDB + Mongo) or partial
+                                    backup (RocksDB + Catapult's Importer)
+
   --pullImages                      It pulls the utility images from DockerHub when running the configuration. It only
                                     affects alpha/dev docker images.
 

@@ -3,15 +3,37 @@ set -e
 
 name=$1
 mode=$2
+application="server"
+config="./$application-config"
 
-echo "RUNNING startServer.sh $name $mode"
+echo "RUNNING $application $name $mode"
+export LD_LIBRARY_PATH=/usr/catapult/lib:/usr/catapult/deps
 
 ulimit -c unlimited
 
 if [ "$mode" == "DEBUG" ]; then
   echo "Setting up core dump..."
   mkdir -p ./logs
-  echo './logs/server.%e.%t' >/proc/sys/kernel/core_pattern
+  echo "./logs/$application.%e.%t" >/proc/sys/kernel/core_pattern
 fi
 
-exec env LD_LIBRARY_PATH={{{catapultAppFolder}}}/lib:{{{catapultAppFolder}}}/deps {{{catapultAppFolder}}}/bin/catapult.server ./userconfig
+if [ -e "{{{dataDirectory}}}/$application-importer.run" ]; then
+  echo "!!!! Have Importer file present, going to run importer in $application mode...."
+  {{{catapultAppFolder}}}/bin/catapult.importer "$config"
+  echo "!!!! Finished running importer, should be moving on to start $application..."
+fi
+
+rm -rf "{{{dataDirectory}}}/$application-importer.run"
+
+if [ -e "{{{dataDirectory}}}/$application.lock" ]; then
+  echo "!!!! Have lock file present, going to run recovery in $application mode...."
+  {{{catapultAppFolder}}}/bin/catapult.recovery "$config"
+  echo "!!!! Finished running recovery, should be moving on to start $application..."
+fi
+
+rm -f "{{{dataDirectory}}}/$application.lock"
+rm -f "{{{dataDirectory}}}/recovery.lock"
+
+touch "{{{dataDirectory}}}/$application.started"
+
+{{{catapultAppFolder}}}/bin/catapult.server "$config"

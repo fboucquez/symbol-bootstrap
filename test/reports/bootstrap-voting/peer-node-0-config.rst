@@ -47,6 +47,7 @@ config-extensions-recovery.properties
     extension.addressextraction; false
     extension.mongo; false
     extension.zeromq; false
+    extension.filespooling; true
     extension.hashcache; true
 
 config-extensions-server.properties
@@ -461,7 +462,7 @@ config-user.properties
     enableDelegatedHarvestersAutoDetection; true
     **storage**;
     seedDirectory; ./seed
-    certificateDirectory; ./userconfig/resources/cert
+    certificateDirectory; ./cert
     dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib
-    votingKeysDirectory; ./userconfig/votingkeys
+    votingKeysDirectory; ./votingkeys
