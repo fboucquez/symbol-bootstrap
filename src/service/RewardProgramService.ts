@@ -102,14 +102,6 @@ export class RewardProgramService implements TransactionFactory {
             return transactions;
         }
 
-        const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
-
-        if (rewardProgram === RewardProgram.EarlyAdoption || rewardProgram === RewardProgram.Ecosystem) {
-            logger.warn(
-                `Node ${nodeAccount.name} cannot be enrolled. Program ${nodePreset.rewardProgram} is not eligible for post-launch enrolment.`,
-            );
-            return transactions;
-        }
         if (!nodePreset.voting) {
             logger.warn(`Node ${nodeAccount.name} 'voting: true' custom preset flag wasn't provided!`);
             return transactions;

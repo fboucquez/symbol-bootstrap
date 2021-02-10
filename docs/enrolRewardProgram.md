@@ -1,13 +1,15 @@
 `symbol-bootstrap enrolRewardProgram`
 =====================================
 
-It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be enrolled post-launch is 'SuperNode'.
+It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
+
+Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
 * [`symbol-bootstrap enrolRewardProgram`](#symbol-bootstrap-enrolrewardprogram)
 
 ## `symbol-bootstrap enrolRewardProgram`
 
-It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. Currently, the only program that can be enrolled post-launch is 'SuperNode'.
+It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
 
 ```
 USAGE
@@ -23,6 +25,9 @@ OPTIONS
 
   --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
                           provided by the --url parameter.
+
+DESCRIPTION
+  Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
 EXAMPLE
   $ symbol-bootstrap enrolRewardProgram
