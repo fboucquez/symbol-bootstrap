@@ -16,7 +16,7 @@ services:
             - '../databases/db-0:/dbdata:rw'
     peer-node-0:
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
+        image: 'symbolplatform/symbol-server-private:gcc-testnet_10.0.7-eb9c5c4da7'
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0
             DEBUG"
@@ -28,6 +28,7 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         security_opt:
             - 'seccomp:unconfined'
         cap_add:
@@ -40,7 +41,7 @@ services:
         hostname: peer-node-0
     peer-node-1:
         container_name: peer-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
+        image: 'symbolplatform/symbol-server-private:gcc-testnet_10.0.7-eb9c5c4da7'
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1
             DEBUG"
@@ -52,6 +53,7 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         security_opt:
             - 'seccomp:unconfined'
         cap_add:
@@ -64,7 +66,7 @@ services:
         hostname: peer-node-1
     api-node-0:
         container_name: api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
+        image: 'symbolplatform/symbol-server-private:gcc-testnet_10.0.7-eb9c5c4da7'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0 DEBUG"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -72,6 +74,7 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
             - api-node-broker-0
@@ -87,7 +90,7 @@ services:
         hostname: api-node-0
     api-node-broker-0:
         container_name: api-node-broker-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
+        image: 'symbolplatform/symbol-server-private:gcc-testnet_10.0.7-eb9c5c4da7'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
@@ -99,6 +102,7 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
         security_opt:
@@ -109,7 +113,7 @@ services:
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.2'
+        image: 'symbolplatform/symbol-rest:2.3.3-alpha'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
