@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.4.3] - Feb-11-2021
+## [0.4.3] - Feb-15-2021
 
 **Milestone**: Hippopotamus(0.10.0.7)
 
@@ -15,8 +15,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added Core Dump files when `dockerComposeDebugMode: true`.
 -   Added autocomplete support. Try `symbol-bootstrap autocomplete` and follow the instructions (Thanks @44uk).
 -   Renamed `supernode` keywords for `rewardProgram` for clarification.  Supernode is a type of Reward Program.
+-   Voting is not required to enrol a program.
 -   Renamed command from `enrolSupernode` for `enrolRewardProgram`. 
 -   Added preset configurable `connectionPoolSize` to the Rest Gateway configuration.
+-   Removed Node Key Link transactions from nemesis and link `command`.
 
 ## [0.4.2] - Feb-2-2021
 

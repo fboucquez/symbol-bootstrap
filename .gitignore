@@ -19,3 +19,4 @@ coverage
 /agent-linux.bin
 /privateSeeds/
 /test/service/logs.log
+/backup-sync/

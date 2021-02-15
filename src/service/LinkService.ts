@@ -15,16 +15,7 @@
  */
 
 import { prompt } from 'inquirer';
-import {
-    AccountInfo,
-    AccountKeyLinkTransaction,
-    Deadline,
-    LinkAction,
-    NodeKeyLinkTransaction,
-    Transaction,
-    UInt64,
-    VrfKeyLinkTransaction,
-} from 'symbol-sdk';
+import { AccountInfo, AccountKeyLinkTransaction, Deadline, LinkAction, Transaction, UInt64, VrfKeyLinkTransaction } from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
@@ -109,17 +100,6 @@ export class LinkService implements TransactionFactory {
                 nodeAccount,
                 'Remote',
                 nodeAccount.remote,
-                transactions,
-                removeOldLinked,
-            );
-
-            await this.addTransaction(
-                mainAccountInfo.supplementalPublicKeys.node,
-                unlink,
-                (publicKey, action) => NodeKeyLinkTransaction.create(deadline, publicKey, action, networkType, maxFee),
-                nodeAccount,
-                'Transport/Node',
-                nodeAccount.transport,
                 transactions,
                 removeOldLinked,
             );

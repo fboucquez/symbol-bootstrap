@@ -23,7 +23,6 @@ import { RewardProgram, RewardProgramService, RewardProgramServiceTransactionFac
 const password = '1234';
 describe('RewardProgramService', () => {
     it('getRewardProgram', async () => {
-        expect(RewardProgramService.getRewardProgram(true)).eq(RewardProgram.SuperNode);
         expect(RewardProgramService.getRewardProgram('ecosystem')).eq(RewardProgram.Ecosystem);
         expect(RewardProgramService.getRewardProgram('Ecosystem')).eq(RewardProgram.Ecosystem);
         expect(RewardProgramService.getRewardProgram('superNODE')).eq(RewardProgram.SuperNode);
