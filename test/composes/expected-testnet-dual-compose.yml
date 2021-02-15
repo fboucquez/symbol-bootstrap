@@ -15,7 +15,7 @@ services:
     api-node:
         user: '1000:1000'
         container_name: api-node
-        image: 'symbolplatform/symbol-server-private:gcc-testnet_10.0.7-eb9c5c4da7'
+        image: 'symbolplatform/symbol-server:gcc-0.10.1.7'
         command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -31,7 +31,7 @@ services:
     api-broker:
         user: '1000:1000'
         container_name: api-broker
-        image: 'symbolplatform/symbol-server-private:gcc-testnet_10.0.7-eb9c5c4da7'
+        image: 'symbolplatform/symbol-server:gcc-0.10.1.7'
         working_dir: /symbol-workdir
         command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-broker && /bin/bash /symbol-commands/startBroker.sh api-broker"
         ports:
@@ -46,7 +46,7 @@ services:
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.3-alpha'
+        image: 'symbolplatform/symbol-rest:2.3.3'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
