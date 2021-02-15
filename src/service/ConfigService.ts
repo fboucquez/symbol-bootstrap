@@ -23,7 +23,6 @@ import {
     Convert,
     Deadline,
     LinkAction,
-    NodeKeyLinkTransaction,
     Transaction,
     TransactionMapping,
     UInt64,
@@ -39,6 +38,7 @@ import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { NemgenService } from './NemgenService';
 import { ReportService } from './ReportService';
+import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
 
 /**
@@ -184,7 +184,9 @@ export class ConfigService {
             (addresses.nodes || []).map(async (account) => {
                 const name = account.name;
                 const dataFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'data');
-                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder);
+                await BootstrapUtils.mkdir(dataFolder);
+                const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
+                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, seedFolder);
             }),
         );
         return { presetData, addresses };
@@ -211,7 +213,7 @@ export class ConfigService {
     private async generateAgentCertificates(presetData: ConfigPreset): Promise<void> {
         await Promise.all(
             (presetData.nodes || [])
-                .filter((n) => n.supernode)
+                .filter((n) => n.rewardProgram)
                 .map(async (account) => {
                     return await new AgentCertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name);
                 }),
@@ -243,16 +245,21 @@ export class ConfigService {
             excludeFiles.push('config-networkheight.properties');
         }
 
-        if (nodePreset.supernode) {
+        if (nodePreset.rewardProgram) {
             if (!nodePreset.host) {
-                throw new Error(`Cannot create supernode configuration. You need to provide a host field in preset: ${nodePreset.name}`);
+                throw new Error(
+                    `Cannot create reward program configuration. You need to provide a host field in preset: ${nodePreset.name}`,
+                );
             }
             const restService = presetData.gateways?.find((g) => g.apiNodeName == nodePreset.name);
             if (!restService) {
-                throw new Error(`Cannot create supernode configuration. There is not rest gateway for the api node: ${nodePreset.name}`);
+                throw new Error(
+                    `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
+                );
             }
+            const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
-            templateContext.rewardProgram = _.isString(nodePreset.supernode) ? nodePreset.supernode : 'SuperNode';
+            templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
         } else {
             excludeFiles.push('agent.properties');
@@ -332,13 +339,6 @@ export class ConfigService {
             (addresses.nodes || [])
                 .filter((n) => n.remote)
                 .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
-        );
-
-        //Node links to main is only required when remote harvesting is on!
-        await Promise.all(
-            (addresses.nodes || [])
-                .filter((n) => n.remote && n.transport)
-                .map((n) => this.createNodeKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
 
         await Promise.all(
@@ -451,30 +451,6 @@ export class ConfigService {
         const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
         const signedTransaction = account.sign(akl, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
-    }
-
-    private async createNodeKeyLinkTransaction(
-        transactionsDirectory: string,
-        presetData: ConfigPreset,
-        node: NodeAccount,
-    ): Promise<Transaction> {
-        if (!node.transport) {
-            throw new Error('Transport keys should have been generated!!');
-        }
-        if (!node.main) {
-            throw new Error('Main keys should have been generated!!');
-        }
-        const deadline = Deadline.createFromDTO('1');
-        const nkl = NodeKeyLinkTransaction.create(
-            deadline,
-            node.transport.publicKey,
-            LinkAction.Link,
-            presetData.networkType,
-            UInt64.fromUint(0),
-        );
-        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
-        const signedTransaction = account.sign(nkl, presetData.nemesisGenerationHashSeed);
-        return await this.storeTransaction(transactionsDirectory, `node_${node.name}`, signedTransaction.payload);
     }
 
     private async createVotingKeyTransaction(

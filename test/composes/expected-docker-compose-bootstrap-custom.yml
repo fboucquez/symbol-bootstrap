@@ -15,10 +15,11 @@ services:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db-0:/dbdata:rw'
     peer-node-0:
-        user: '1000:1000'
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
+        command: >-
+            bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0
+            DEBUG"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -38,10 +39,11 @@ services:
                     - peer-node-0
         hostname: peer-node-0
     peer-node-1:
-        user: '1000:1000'
         container_name: peer-node-1
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
+        command: >-
+            bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1
+            DEBUG"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -61,10 +63,9 @@ services:
                     - peer-node-1
         hostname: peer-node-1
     api-node-0:
-        user: '1000:1000'
         container_name: api-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
-        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0"
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
+        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0 DEBUG"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -85,13 +86,12 @@ services:
                     - api-node-0
         hostname: api-node-0
     api-node-broker-0:
-        user: '1000:1000'
         container_name: api-node-broker-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
+        image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
         working_dir: /symbol-workdir
         command: >-
             bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-0"
+            api-node-broker-0 DEBUG"
         ports:
             - '8002:7902'
         stop_signal: SIGINT
@@ -109,7 +109,7 @@ services:
     rest-gateway-0:
         container_name: rest-gateway-0
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.2'
+        image: 'symbolplatform/symbol-rest:2.3.3'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

@@ -10,6 +10,7 @@
     "dependencies": {
         "@oclif/command": "^1.7.0",
         "@oclif/config": "^1.16.0",
+        "@oclif/plugin-autocomplete": "^0.3.0",
         "@oclif/plugin-help": "^3.1.0",
         "figlet": "^1.2.4",
         "handlebars": "^4.7.6",
@@ -21,7 +22,7 @@
         "rxjs": "^6.6.3",
         "shx": "^0.3.2",
         "sshpk": "^1.16.1",
-        "symbol-sdk": "^0.23.1-alpha-202101271842",
+        "symbol-sdk": "^0.23.2",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
@@ -80,6 +81,7 @@
         "commands": "./lib/commands",
         "bin": "symbol-bootstrap",
         "plugins": [
+            "@oclif/plugin-autocomplete",
             "@oclif/plugin-help"
         ]
     },

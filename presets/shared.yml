@@ -63,9 +63,9 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.6
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.6
-symbolRestImage: symbolplatform/symbol-rest:2.3.2
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.7
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.7
+symbolRestImage: symbolplatform/symbol-rest:2.3.3
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
@@ -77,6 +77,7 @@ logLevel: 'Info'
 # serverLogLevel: 'Info'
 transactionsDirectory: './transactions'
 binDirectory: ./seed
+seedDirectory: ./seed
 certificateDirectory: ./userconfig/resources/cert
 dataDirectory: ./data
 votingKeysDirectory: ./userconfig/votingkeys
@@ -87,7 +88,7 @@ agentBinaryLocation: 'https://symbol-node-reward.s3-eu-west-1.amazonaws.com/agen
 # config database
 databaseName: catapult
 maxWriterThreads: 8
-maxDropBatchSize: 100
+maxDropBatchSize: 10
 writeTimeout: 10m
 
 # config finalization
@@ -119,7 +120,7 @@ timeSynchronizationMinImportance: 3750
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
 nodeListenInterface: 0.0.0.0
-serverVersion: 0.10.0.6
+serverVersion: 0.10.0.7
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 370
@@ -148,14 +149,15 @@ enableDispatcherInputAuditing: false
 maxTrackedNodes: 5'000
 beneficiaryAddress: ''
 enableAutoHarvesting: true
+fileDatabaseBatchSize: 1
 maxUnlockedAccounts: 5
 delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
 
-minPartnerNodeVersion: 0.10.0.5
-maxPartnerNodeVersion: 0.10.0.6
+minPartnerNodeVersion: 0.10.0.6
+maxPartnerNodeVersion: 0.10.0.7
 
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
@@ -201,6 +203,7 @@ apiNodeBrokerConnectTimeout: 10000
 apiNodeBrokerMonitorLoggingThrottle: 60000
 maxConnectionAttempts: 15
 baseRetryDelay: 750
+connectionPoolSize: 10
 
 #voting
 votingKeyStartEpoch: 1
