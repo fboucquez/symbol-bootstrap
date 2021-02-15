@@ -6,7 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [0.4.3] - Feb-15-2021
 
-**Milestone**: Hippopotamus(0.10.1.7)
+**Milestone**: Hippopotamus(0.10.0.7)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
