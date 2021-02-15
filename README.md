@@ -264,10 +264,11 @@ General users should install this tool like any other node module.
 <!-- commands -->
 # Command Topics
 
+* [`symbol-bootstrap autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
 * [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder deleting the generated configuration and data
 * [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
-* [`symbol-bootstrap enrolSupernode`](docs/enrolSupernode.md) - It enrols the nodes in the supernode rewards program by announcing the enrol transaction to the registration address.
+* [`symbol-bootstrap enrolRewardProgram`](docs/enrolRewardProgram.md) - It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
 * [`symbol-bootstrap healthCheck`](docs/healthCheck.md) - It checks if the services created with docker compose are up and running.
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
 * [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.

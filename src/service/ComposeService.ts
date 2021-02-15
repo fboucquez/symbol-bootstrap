@@ -203,10 +203,10 @@ export class ComposeService {
                     const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
 
-                    if (n.supernode) {
+                    if (n.rewardProgram) {
                         await BootstrapUtils.mkdir(join(targetDocker, 'server'));
                         // Pull from cloud!!!!
-                        const supernodeAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent/agent.properties`;
+                        const rewardProgramAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent/agent.properties`;
                         const rootDestination = (await BootstrapUtils.download(presetData.agentBinaryLocation, 'agent-linux.bin'))
                             .fileLocation;
                         const localDestination = join(targetDocker, 'server', 'agent-linux.bin');
@@ -216,9 +216,9 @@ export class ComposeService {
 
                         portConfigurations.push({
                             internalPort: 7880,
-                            openPort: _.isUndefined(n.supernodeOpenPort) ? true : n.supernodeOpenPort,
+                            openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
                         });
-                        serverCommand += ' & ' + supernodeAgentCommand;
+                        serverCommand += ' & ' + rewardProgramAgentCommand;
                     }
 
                     const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [recoverServerCommand, serverCommand];

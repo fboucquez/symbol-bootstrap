@@ -38,6 +38,7 @@ import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { NemgenService } from './NemgenService';
 import { ReportService } from './ReportService';
+import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
 
 /**
@@ -210,7 +211,7 @@ export class ConfigService {
     private async generateAgentCertificates(presetData: ConfigPreset): Promise<void> {
         await Promise.all(
             (presetData.nodes || [])
-                .filter((n) => n.supernode)
+                .filter((n) => n.rewardProgram)
                 .map(async (account) => {
                     return await new AgentCertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name);
                 }),
@@ -242,16 +243,21 @@ export class ConfigService {
             excludeFiles.push('config-networkheight.properties');
         }
 
-        if (nodePreset.supernode) {
+        if (nodePreset.rewardProgram) {
             if (!nodePreset.host) {
-                throw new Error(`Cannot create supernode configuration. You need to provide a host field in preset: ${nodePreset.name}`);
+                throw new Error(
+                    `Cannot create reward program configuration. You need to provide a host field in preset: ${nodePreset.name}`,
+                );
             }
             const restService = presetData.gateways?.find((g) => g.apiNodeName == nodePreset.name);
             if (!restService) {
-                throw new Error(`Cannot create supernode configuration. There is not rest gateway for the api node: ${nodePreset.name}`);
+                throw new Error(
+                    `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
+                );
             }
+            const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
-            templateContext.rewardProgram = _.isString(nodePreset.supernode) ? nodePreset.supernode : 'SuperNode';
+            templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
         } else {
             excludeFiles.push('agent.properties');

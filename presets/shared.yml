@@ -201,6 +201,7 @@ apiNodeBrokerConnectTimeout: 10000
 apiNodeBrokerMonitorLoggingThrottle: 60000
 maxConnectionAttempts: 15
 baseRetryDelay: 750
+connectionPoolSize: 10
 
 #voting
 votingKeyStartEpoch: 1
