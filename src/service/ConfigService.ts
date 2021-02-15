@@ -184,7 +184,9 @@ export class ConfigService {
             (addresses.nodes || []).map(async (account) => {
                 const name = account.name;
                 const dataFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'data');
-                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, dataFolder);
+                await BootstrapUtils.mkdir(dataFolder);
+                const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
+                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, seedFolder);
             }),
         );
         return { presetData, addresses };

@@ -10,7 +10,7 @@ config-database.properties
     databaseUri; mongodb://db:27017
     databaseName; catapult
     maxWriterThreads; 8
-    maxDropBatchSize; 100
+    maxDropBatchSize; 10
     writeTimeout; 10m
     **plugins**;
     catapult.mongo.plugins.accountlink; true
@@ -695,6 +695,7 @@ config-node.properties
     enableSingleThreadPool; false; bool; Set to true if a single thread pool should be used, Set to false if multiple thread pools should be used.
     enableCacheDatabaseStorage; true; bool; Set to true if cache data should be saved in a database.
     enableAutoSyncCleanup; false; bool; Set to true if temporary sync files should be automatically cleaned up. Note: This should be Set to false if broker process is running.
+    fileDatabaseBatchSize; 1; ;
     enableTransactionSpamThrottling; true; bool; Set to true if transaction spam throttling should be enabled.
     transactionSpamThrottlingMaxBoostFee; 10'000'000; Amount; Maximum fee that will boost a transaction through the spam throttle when spam throttling is enabled.
     maxHashesPerSyncAttempt; 370; ;
@@ -723,8 +724,8 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 0.10.0.5; ;
-    maxPartnerNodeVersion; 0.10.0.6; ;
+    minPartnerNodeVersion; 0.10.0.6; ;
+    maxPartnerNodeVersion; 0.10.0.7; ;
     trustedHosts; 127.0.0.1, 172.20.0.25; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1, 172.20.0.25; unordered_set<string>; Networks that should be treated as local.
     listenInterface; 0.0.0.0; ;
@@ -739,7 +740,7 @@ config-node.properties
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-    version; 0.10.0.6; uint32_t; Node version.
+    version; 0.10.0.7; uint32_t; Node version.
     roles; Api; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
@@ -865,6 +866,7 @@ config-user.properties
     **account**;
     enableDelegatedHarvestersAutoDetection; true
     **storage**;
+    seedDirectory; ./seed
     certificateDirectory; ./userconfig/resources/cert
     dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib
