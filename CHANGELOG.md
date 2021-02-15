@@ -15,6 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added Core Dump files when `dockerComposeDebugMode: true`.
 -   Added autocomplete support. Try `symbol-bootstrap autocomplete` and follow the instructions (Thanks @44uk).
 -   Renamed `supernode` keywords for `rewardProgram` for clarification.  Supernode is a type of Reward Program.
+-   Voting is not required to enrol a program.
 -   Renamed command from `enrolSupernode` for `enrolRewardProgram`. 
 -   Added preset configurable `connectionPoolSize` to the Rest Gateway configuration.
 

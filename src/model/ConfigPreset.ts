@@ -89,7 +89,7 @@ export interface NodePreset extends DockerServicePreset {
     brokerCompose?: any;
     brokerDockerComposeDebugMode?: boolean;
     //super node
-    rewardProgram?: boolean | string;
+    rewardProgram?: string;
     rewardProgramAgentOpenPort?: boolean | number | string;
     agentUrl?: string; //calculated if not provided.
     restGatewayUrl?: string; // calculated if not provided;
