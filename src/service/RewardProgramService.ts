@@ -58,10 +58,7 @@ export class RewardProgramService implements TransactionFactory {
         this.configLoader = new ConfigLoader();
     }
 
-    public static getRewardProgram(value: string | true): RewardProgram {
-        if (value === true) {
-            return RewardProgram.SuperNode;
-        }
+    public static getRewardProgram(value: string): RewardProgram {
         const programs = Object.values(RewardProgram) as RewardProgram[];
         const program = programs.find((p) => p.toLowerCase() == value.toLowerCase());
         if (program) {
@@ -98,14 +95,10 @@ export class RewardProgramService implements TransactionFactory {
         const transactions: Transaction[] = [];
         const networkType = presetData.networkType;
         if (!nodePreset.rewardProgram) {
-            logger.warn(`Node ${nodeAccount.name} hasn't been configured as rewardProgram.`);
+            logger.warn(`Node ${nodeAccount.name} hasn't been configured with rewardProgram: preset property.`);
             return transactions;
         }
 
-        if (!nodePreset.voting) {
-            logger.warn(`Node ${nodeAccount.name} 'voting: true' custom preset flag wasn't provided!`);
-            return transactions;
-        }
         if (!presetData.rewardProgramControllerPublicKey) {
             return transactions;
         }
