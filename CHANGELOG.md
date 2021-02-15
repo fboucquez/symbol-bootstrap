@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.4.3] - NEXT
+## [0.4.3] - Feb-15-2021
 
-**Milestone**: Hippopotamus(0.10.0.6)
+**Milestone**: Hippopotamus(0.10.0.7)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
@@ -18,6 +18,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Voting is not required to enrol a program.
 -   Renamed command from `enrolSupernode` for `enrolRewardProgram`. 
 -   Added preset configurable `connectionPoolSize` to the Rest Gateway configuration.
+-   Removed Node Key Link transactions from nemesis and link `command`.
 
 ## [0.4.2] - Feb-2-2021
 
