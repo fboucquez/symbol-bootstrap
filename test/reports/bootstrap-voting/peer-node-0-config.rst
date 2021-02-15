@@ -462,7 +462,7 @@ config-user.properties
     **account**;
     enableDelegatedHarvestersAutoDetection; true
     **storage**;
-    seedDirectory; /seed
+    seedDirectory; ./seed
     certificateDirectory; ./userconfig/resources/cert
     dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib

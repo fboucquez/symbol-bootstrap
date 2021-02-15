@@ -33,7 +33,6 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         security_opt:
             - 'seccomp:unconfined'
         cap_add:
@@ -58,7 +57,6 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         security_opt:
             - 'seccomp:unconfined'
         cap_add:
@@ -79,7 +77,6 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
             - api-node-broker-0
@@ -107,7 +104,6 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
         security_opt:

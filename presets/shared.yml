@@ -77,7 +77,7 @@ logLevel: 'Info'
 # serverLogLevel: 'Info'
 transactionsDirectory: './transactions'
 binDirectory: ./seed
-seedDirectory: /seed
+seedDirectory: ./seed
 certificateDirectory: ./userconfig/resources/cert
 dataDirectory: ./data
 votingKeysDirectory: ./userconfig/votingkeys

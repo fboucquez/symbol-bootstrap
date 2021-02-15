@@ -69,7 +69,6 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         networks:
             default:
                 aliases:
@@ -88,7 +87,6 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         networks:
             default:
                 aliases:
@@ -107,7 +105,6 @@ services:
         volumes:
             - '../nodes/peer-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         networks:
             default:
                 aliases:
@@ -124,7 +121,6 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
             - api-node-broker-0
@@ -144,7 +140,6 @@ services:
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-1
             - api-node-broker-1
@@ -164,7 +159,6 @@ services:
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-2
             - api-node-broker-2
@@ -184,7 +178,6 @@ services:
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-3
             - api-node-broker-3
@@ -208,7 +201,6 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
     api-node-broker-1:
@@ -226,7 +218,6 @@ services:
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-1
     api-node-broker-2:
@@ -244,7 +235,6 @@ services:
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-2
     api-node-broker-3:
@@ -262,7 +252,6 @@ services:
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-3
     rest-gateway-0:

@@ -28,7 +28,6 @@ services:
         volumes:
             - '../nodes/api-node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db
             - api-broker
@@ -50,7 +49,6 @@ services:
         volumes:
             - '../nodes/api-node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db
     rest-gateway:
