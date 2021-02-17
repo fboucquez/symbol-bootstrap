@@ -23,6 +23,9 @@ OPTIONS
   --maxFee=maxFee         the max fee used when announcing (absolute). The node min multiplier will be used if it is not
                           provided.
 
+  --ready                 If --ready is provided, the command will not ask for confirmation when announcing
+                          transactions.
+
   --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
                           provided by the --url parameter.
 
@@ -33,4 +36,4 @@ EXAMPLE
   $ symbol-bootstrap enrolRewardProgram
 ```
 
-_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.3/src/commands/enrolRewardProgram.ts)_
+_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/enrolRewardProgram.ts)_

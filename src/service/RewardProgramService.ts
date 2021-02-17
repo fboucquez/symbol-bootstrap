@@ -25,10 +25,11 @@ const logger: Logger = LoggerFactory.getLogger();
 
 export type RewardProgramParams = {
     target: string;
-    readonly password?: string;
+    password?: string;
     url: string;
     maxFee?: number;
     useKnownRestGateways: boolean;
+    ready?: boolean;
 };
 
 export interface RewardProgramServiceTransactionFactoryParams {
@@ -78,6 +79,7 @@ export class RewardProgramService implements TransactionFactory {
             this.params.url,
             this.params.maxFee,
             this.params.useKnownRestGateways,
+            this.params.ready,
             presetData,
             addresses,
             this,
