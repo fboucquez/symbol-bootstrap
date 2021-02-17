@@ -29,11 +29,12 @@ import { ConfigLoader } from './ConfigLoader';
  */
 export type LinkParams = {
     target: string;
-    readonly password?: string;
+    password?: string;
     url: string;
     maxFee?: number | undefined;
     unlink: boolean;
     useKnownRestGateways: boolean;
+    ready?: boolean;
 };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -51,6 +52,7 @@ export class LinkService implements TransactionFactory {
     public static readonly defaultParams: LinkParams = {
         target: BootstrapUtils.defaultTargetFolder,
         useKnownRestGateways: false,
+        ready: false,
         url: 'http://localhost:3000',
         maxFee: 100000,
         unlink: false,
@@ -71,6 +73,7 @@ export class LinkService implements TransactionFactory {
             this.params.url,
             this.params.maxFee,
             this.params.useKnownRestGateways,
+            this.params.ready,
             presetData,
             addresses,
             this,
@@ -211,15 +214,19 @@ export class LinkService implements TransactionFactory {
         alreadyLinkedAccount: { publicKey: string },
     ): Promise<boolean> {
         if (removeOldLinked === undefined) {
-            const result = await prompt([
-                {
-                    name: 'value',
-                    message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
-                    type: 'confirm',
-                    default: false,
-                },
-            ]);
-            return result.value;
+            return (
+                this.params.ready ||
+                (
+                    await prompt([
+                        {
+                            name: 'value',
+                            message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
+                            type: 'confirm',
+                            default: false,
+                        },
+                    ])
+                ).value
+            );
         }
         return removeOldLinked;
     }
