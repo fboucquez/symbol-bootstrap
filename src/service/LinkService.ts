@@ -214,17 +214,19 @@ export class LinkService implements TransactionFactory {
         alreadyLinkedAccount: { publicKey: string },
     ): Promise<boolean> {
         if (removeOldLinked === undefined) {
-            const result =
+            return (
                 this.params.ready ||
-                (await prompt([
-                    {
-                        name: 'value',
-                        message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
-                        type: 'confirm',
-                        default: false,
-                    },
-                ]));
-            return result.value;
+                (
+                    await prompt([
+                        {
+                            name: 'value',
+                            message: `Do you want to unlink the old ${accountName} public key ${alreadyLinkedAccount.publicKey}?`,
+                            type: 'confirm',
+                            default: false,
+                        },
+                    ])
+                ).value
+            );
         }
         return removeOldLinked;
     }

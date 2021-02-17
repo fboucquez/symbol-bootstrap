@@ -180,7 +180,7 @@ export class AnnounceService {
                 logger.info(`There are not transactions to announce for node ${nodeAccount.name}`);
                 continue;
             }
-            const shouldAnnounce =
+            const shouldAnnounce: boolean =
                 ready ||
                 (
                     await prompt([
