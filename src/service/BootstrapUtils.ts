@@ -737,7 +737,7 @@ export class BootstrapUtils {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
     }
 
-    private static validatePassword(password: string): string {
+    public static validatePassword(password: string): string {
         const passwordMinSize = 4;
         if (password.length < passwordMinSize) {
             throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);

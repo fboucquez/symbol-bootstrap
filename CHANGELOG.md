@@ -13,6 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | Symbol Bootstrap | v0.4.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 -   Added `--ready` to `link` and `enrolRewardProgram` commands.
+-   Added `encrypt` and `decrypt` commands.
 
 ## [0.4.3] - Feb-15-2021
 
