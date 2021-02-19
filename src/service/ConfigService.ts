@@ -261,8 +261,9 @@ export class ConfigService {
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
             templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
-        } else {
-            excludeFiles.push('agent.properties');
+            const copyFrom = join(this.root, 'config', 'agent');
+            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
+            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder, excludeFiles);
