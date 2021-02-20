@@ -32,7 +32,7 @@ export class AgentCertificateService {
 
     public async run(symbolServerToolsImage: string, name: string, customCertFolder?: string): Promise<void> {
         const copyFrom = `${this.root}/config/agent-cert`;
-        const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig', 'agent');
+        const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
         await BootstrapUtils.mkdir(certFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);

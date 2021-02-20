@@ -14,6 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 -   Added `--ready` to `link` and `enrolRewardProgram` commands.
 -   Added `encrypt` and `decrypt` commands.
+-   Moved Reward Program Agent to its own service/container in docker-compose.yml.
 
 ## [0.4.3] - Feb-15-2021
 
