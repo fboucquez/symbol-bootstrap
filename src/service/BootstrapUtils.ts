@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { flags } from '@oclif/command';
 import { spawn } from 'child_process';
 import { textSync } from 'figlet';
 import {
@@ -79,20 +78,6 @@ export class BootstrapUtils {
     public static readonly VERSION = version;
 
     private static stopProcess = false;
-
-    public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
-
-    public static targetFlag = flags.string({
-        char: 't',
-        description: 'The target folder where the symbol-bootstrap network is generated',
-        default: BootstrapUtils.defaultTargetFolder,
-    });
-
-    public static passwordFlag = flags.string({
-        description: `A password used to encrypt and decrypted generated addresses.yml and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`,
-        default: '',
-        hidden: true,
-    });
 
     private static onProcessListener = (() => {
         process.on('SIGINT', () => {
@@ -445,12 +430,12 @@ export class BootstrapUtils {
             try {
                 return CryptoUtils.decrypt(object, password);
             } catch (e) {
-                throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right --password param?`);
+                throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right password?`);
             }
         } else {
             if (password !== false && CryptoUtils.encryptedCount(object) > 0) {
                 throw new KnownError(
-                    `File ${fileLocation} seems to be encrypted but no password has been provided. Have you used the --password param?`,
+                    `File ${fileLocation} seems to be encrypted but no password has been provided. Have you entered the right password?`,
                 );
             }
         }

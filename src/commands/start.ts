@@ -16,6 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { BootstrapService, BootstrapUtils } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -31,6 +32,7 @@ export default class Start extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Start);
         BootstrapUtils.showBanner();
+        flags.password = await CommandUtils.resolvePassword(flags.password, flags.noPassword, CommandUtils.passwordPromptDefaultMessage);
         await new BootstrapService(this.config.root).start(flags);
     }
 }

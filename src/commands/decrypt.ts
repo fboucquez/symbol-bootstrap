@@ -21,6 +21,7 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { BootstrapUtils, KnownError } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class Decrypt extends Command {
@@ -36,6 +37,18 @@ cat plain-addresses.yml
 cat plain-custom-preset.yml
 rm plain-addresses.yml
 rm plain-custom-preset.yml
+
+Example:
+symbol-bootstrap start --preset testnet --assembly dual --customPreset decrypted-custom-preset.yml --detached
+> password prompt
+symbol-bootstrap decrypt --source target/addresses.yml --destination plain-addresses.yml
+> password prompt (enter the same password)
+symbol-bootstrap decrypt --source encrypted-custom-preset.yml --destination plain-custom-preset.yml
+> password prompt (enter the same password)
+cat plain-addresses.yml
+cat plain-custom-preset.yml
+rm plain-addresses.yml
+rm plain-custom-preset.yml
 `;
 
     static examples = [
@@ -43,7 +56,7 @@ rm plain-custom-preset.yml
     ];
 
     static flags = {
-        help: BootstrapUtils.helpFlag,
+        help: CommandUtils.helpFlag,
         source: flags.string({
             description: `The source plain yml file to be decrypted. If this file is not decrypted, the command will raise an error.`,
             required: true,
@@ -52,11 +65,9 @@ rm plain-custom-preset.yml
             description: `The destination where the decrypted file will be stored. The destination file must not exist.`,
             required: true,
         }),
-        password: flags.string({
-            description: `The password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
-            hidden: true,
-            required: true,
-        }),
+        password: CommandUtils.getPasswordFlag(
+            `The password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+        ),
     };
 
     public async run(): Promise<void> {
@@ -68,8 +79,12 @@ rm plain-custom-preset.yml
         if (existsSync(flags.destination)) {
             throw new KnownError(`Destination file ${flags.destination} already exists!`);
         }
-        BootstrapUtils.validatePassword(flags.password);
-        const data = await BootstrapUtils.loadYaml(flags.source, flags.password);
+        const password = await CommandUtils.resolvePassword(
+            flags.password,
+            false,
+            `Enter the password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+        );
+        const data = await BootstrapUtils.loadYaml(flags.source, password);
         await BootstrapUtils.mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, '');
         logger.info(

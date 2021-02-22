@@ -9,6 +9,12 @@ Example:
 symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
 symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
 
+Example:
+symbol-bootstrap encrypt --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
+> password prompt
+symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+> password prompt (enter the same password)
+
 * [`symbol-bootstrap encrypt`](#symbol-bootstrap-encrypt)
 
 ## `symbol-bootstrap encrypt`
@@ -21,9 +27,7 @@ USAGE
 
 OPTIONS
   -h, --help                 It shows the help of this command.
-
-  --destination=destination  (required) The destination where the encrypted file will be stored. The destination file
-                             must not exist.
+  --destination=destination  (required) The destination encrypted file to create. The destination file must not exist.
 
   --source=source            (required) The source plain yml file to be encrypted. If this file is encrypted, the
                              command will raise an error.
@@ -35,6 +39,12 @@ DESCRIPTION
   Example:
   symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
   symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+
+  Example:
+  symbol-bootstrap encrypt --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
+  > password prompt
+  symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+  > password prompt (enter the same password)
 
 EXAMPLE
   $ symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml

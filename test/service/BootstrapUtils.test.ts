@@ -114,7 +114,7 @@ describe('BootstrapUtils', () => {
             BootstrapUtils.loadYaml('test/encrypted.yml', 'abcd');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq('Cannot decrypt file test/encrypted.yml. Have you used the right --password param?');
+            expect(e.message).eq('Cannot decrypt file test/encrypted.yml. Have you used the right password?');
         }
 
         try {

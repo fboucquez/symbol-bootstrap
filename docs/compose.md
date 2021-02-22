@@ -20,6 +20,8 @@ OPTIONS
   -u, --user=user      [default: current] User used to run the services in the docker-compose.yml file. "current" means
                        the current user.
 
+  --noPassword         When provided, Bootstrap will not ask for a password
+
   --upgrade            It regenerates the docker compose and utility files from the <target>/docker folder
 
 EXAMPLE

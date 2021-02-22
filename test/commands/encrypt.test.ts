@@ -38,15 +38,7 @@ describe('encrypt', () => {
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/encrypted.yml --password 1'.split(' '))
         .catch((ctx) => {
-            expect(ctx.message).to.contain('Password is too short. It should have at least 4 characters!');
-        })
-        .it('invalid password');
-
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
-        .stdout()
-        .command('encrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/encrypted.yml --password 1'.split(' '))
-        .catch((ctx) => {
-            expect(ctx.message).to.contain('Password is too short. It should have at least 4 characters!');
+            expect(ctx.message).to.contain('--password is invalid, Password must have at least 4 characters but got 1');
         })
         .it('password too short');
 
@@ -55,7 +47,7 @@ describe('encrypt', () => {
         .command('encrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/encrypted.yml --password 1111'.split(' '))
         .catch((ctx) => {
             expect(ctx.message).to.contain(
-                'Source file test/encrypt/encrypted.yml is encrypted already. Do you want to decrypt? Try the decrypt command.',
+                'Source file test/encrypt/encrypted.yml is already encrypted. If you want to decrypt it use the decrypt command.',
             );
         })
         .it('already encrypted');
@@ -64,7 +56,7 @@ describe('encrypt', () => {
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination test/encrypt/plain.yml --password 1111'.split(' '))
         .catch((ctx) => {
-            expect(ctx.message).to.contain('Destination file test/encrypt/plain.yml already exist!');
+            expect(ctx.message).to.contain('Destination file test/encrypt/plain.yml already exists!');
         })
         .it('same destination');
 });

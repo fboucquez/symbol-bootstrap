@@ -12,8 +12,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v0.4.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   Added `--ready` to `link` and `enrolRewardProgram` commands.
+-   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with --password.
+-   Added `--noPassword` to bypass the password validation. Private keys in generated addresses.yml and preset.yml will be in plain text!
 -   Added `encrypt` and `decrypt` commands.
+-   Added `--ready` to `link` and `enrolRewardProgram` commands.
 -   Moved Reward Program Agent to its own service/container in docker-compose.yml.
 
 ## [0.4.3] - Feb-15-2021

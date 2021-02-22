@@ -17,6 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { BootstrapService, BootstrapUtils, LinkService } from '../service';
 import { AnnounceService } from '../service/AnnounceService';
+import { CommandUtils } from '../service/CommandUtils';
 
 export default class Link extends Command {
     static description = `It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.`;
@@ -24,8 +25,8 @@ export default class Link extends Command {
     static examples = [`$ symbol-bootstrap link`];
 
     static flags = {
-        help: BootstrapUtils.helpFlag,
-        target: BootstrapUtils.targetFlag,
+        help: CommandUtils.helpFlag,
+        target: CommandUtils.targetFlag,
         unlink: flags.boolean({
             description: 'Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account',
             default: LinkService.defaultParams.unlink,

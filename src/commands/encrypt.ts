@@ -21,6 +21,7 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { BootstrapUtils, KnownError } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 import { CryptoUtils } from '../service/CryptoUtils';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -32,6 +33,12 @@ The main use case of this command is encrypting custom presets files. If your cu
 Example:
 symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
 symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+
+Example:
+symbol-bootstrap encrypt --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
+> password prompt
+symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+> password prompt (enter the same password)
 `;
 
     static examples = [
@@ -39,7 +46,7 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
     ];
 
     static flags = {
-        help: BootstrapUtils.helpFlag,
+        help: CommandUtils.helpFlag,
         source: flags.string({
             description: `The source plain yml file to be encrypted. If this file is encrypted, the command will raise an error.`,
             required: true,
@@ -48,11 +55,9 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
             description: `The destination encrypted file to create. The destination file must not exist.`,
             required: true,
         }),
-        password: flags.string({
-            description: `The password to use to encrypt the source file into the destination file. Keep this password in a secure place!`,
-            hidden: true,
-            required: true,
-        }),
+        password: CommandUtils.getPasswordFlag(
+            `The password to use to encrypt the source file into the destination file. Keep this password in a secure place!`,
+        ),
     };
 
     public async run(): Promise<void> {
@@ -64,13 +69,17 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
         if (existsSync(flags.destination)) {
             throw new KnownError(`Destination file ${flags.destination} already exists!`);
         }
-        BootstrapUtils.validatePassword(flags.password);
+        const password = await CommandUtils.resolvePassword(
+            flags.password,
+            false,
+            `Enter the password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+        );
         const data = await BootstrapUtils.loadYaml(flags.source, false);
         if (CryptoUtils.encryptedCount(data) > 0) {
             throw new KnownError(`Source file ${flags.source} is already encrypted. If you want to decrypt it use the decrypt command.`);
         }
         await BootstrapUtils.mkdir(dirname(flags.destination));
-        await BootstrapUtils.writeYaml(flags.destination, data, flags.password);
+        await BootstrapUtils.writeYaml(flags.destination, data, password);
         logger.info(`Encrypted file ${flags.destination} has been created!`);
     }
 }

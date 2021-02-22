@@ -30,6 +30,8 @@ OPTIONS
   -u, --user=user                   [default: current] User used to run docker images when creating configuration files
                                     like certificates or nemesis block. "current" means the current user.
 
+  --noPassword                      When provided, Bootstrap will not ask for a password
+
   --pullImages                      It pulls the utility images from DockerHub when running the configuration. It only
                                     affects alpha/dev docker images.
 

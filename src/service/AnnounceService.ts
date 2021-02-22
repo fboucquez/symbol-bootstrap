@@ -37,7 +37,7 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
+import { CommandUtils } from './CommandUtils';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -69,7 +69,7 @@ export class AnnounceService {
         });
     };
     public static flags = {
-        password: BootstrapUtils.passwordFlag,
+        password: CommandUtils.passwordFlag,
         url: flags.string({
             char: 'u',
             description: 'the network url',

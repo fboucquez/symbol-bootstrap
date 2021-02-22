@@ -52,7 +52,7 @@ describe('decrypt', () => {
         .stdout()
         .command('decrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/plain.yml --password 1'.split(' '))
         .catch((ctx) => {
-            expect(ctx.message).to.contain('Password is too short. It should have at least 4 characters!');
+            expect(ctx.message).to.contain('--password is invalid, Password must have at least 4 characters but got 1');
         })
         .it('password too short');
 
@@ -60,7 +60,7 @@ describe('decrypt', () => {
         .stdout()
         .command('decrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/plain.yml --password 222222'.split(' '))
         .catch((ctx) => {
-            expect(ctx.message).to.contain('Cannot decrypt file test/encrypt/encrypted.yml. Have you used the right --password param?');
+            expect(ctx.message).to.contain('Cannot decrypt file test/encrypt/encrypted.yml. Have you used the right password?');
         })
         .it('invalid password');
 
@@ -68,7 +68,7 @@ describe('decrypt', () => {
         .stdout()
         .command('decrypt --source test/encrypt/plain.yml --destination test/encrypt/plain.yml --password 1111'.split(' '))
         .catch((ctx) => {
-            expect(ctx.message).to.contain('Destination file test/encrypt/plain.yml already exist!');
+            expect(ctx.message).to.contain('Destination file test/encrypt/plain.yml already exists!');
         })
         .it('same destination');
 });
