@@ -49,7 +49,7 @@ rm plain-custom-preset.yml
             required: true,
         }),
         destination: flags.string({
-            description: `The destination where the decrypted file will be stored. The destination file must not exist.`,
+            description: `The destination decrypted file to create. The destination file must not exist.`,
             required: true,
         }),
         password: flags.string({
