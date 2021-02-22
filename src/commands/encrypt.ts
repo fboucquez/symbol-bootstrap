@@ -49,7 +49,7 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
             required: true,
         }),
         password: flags.string({
-            description: `The password used to encrypt the source file into the destination file. Keep this password in a secure place!`,
+            description: `The password to use to encrypt the source file into the destination file. Keep this password in a secure place!`,
             hidden: true,
             required: true,
         }),
