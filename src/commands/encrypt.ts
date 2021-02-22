@@ -62,7 +62,7 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
             throw new KnownError(`Source file ${flags.source} does not exist!`);
         }
         if (existsSync(flags.destination)) {
-            throw new KnownError(`Destination file ${flags.destination} already exist!`);
+            throw new KnownError(`Destination file ${flags.destination} already exists!`);
         }
         BootstrapUtils.validatePassword(flags.password);
         const data = await BootstrapUtils.loadYaml(flags.source, false);
