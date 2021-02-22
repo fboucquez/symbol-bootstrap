@@ -45,7 +45,7 @@ rm plain-custom-preset.yml
     static flags = {
         help: BootstrapUtils.helpFlag,
         source: flags.string({
-            description: `The source plain yml file to be decrypted. If this file is not decrypted, the command will raise an error.`,
+            description: `The source encrypted yml file to be decrypted. If this file is not encrypted, the command will raise an error.`,
             required: true,
         }),
         destination: flags.string({
