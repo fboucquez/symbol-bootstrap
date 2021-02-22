@@ -67,7 +67,7 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
         BootstrapUtils.validatePassword(flags.password);
         const data = await BootstrapUtils.loadYaml(flags.source, false);
         if (CryptoUtils.encryptedCount(data) > 0) {
-            throw new KnownError(`Source file ${flags.source} is encrypted already. Do you want to decrypt? Try the decrypt command.`);
+            throw new KnownError(`Source file ${flags.source} is already encrypted. If you want to decrypt it use the decrypt command.`);
         }
         await BootstrapUtils.mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, flags.password);
