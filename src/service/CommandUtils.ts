@@ -37,7 +37,7 @@ export class CommandUtils {
     );
 
     public static noPasswordFlag = flags.boolean({
-        description: 'When provided, Bootstrap will not ask for a password',
+        description: 'When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.',
         default: false,
     });
 

@@ -122,7 +122,7 @@ describe('BootstrapUtils', () => {
             expect(1).eq(0);
         } catch (e) {
             expect(e.message).eq(
-                'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you used the --password param?',
+                'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you entered the right password?',
             );
         }
 
@@ -131,7 +131,7 @@ describe('BootstrapUtils', () => {
             expect(1).eq(0);
         } catch (e) {
             expect(e.message).eq(
-                'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you used the --password param?',
+                'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you entered the right password?',
             );
         }
 

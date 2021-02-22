@@ -57,7 +57,7 @@ OPTIONS
       The health check process handles 'repeat' and custom 'openPort' services.
 
   --noPassword
-      When provided, Bootstrap will not ask for a password
+      When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.
 
   --pullImages
       It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.
