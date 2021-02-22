@@ -16,6 +16,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added `--noPassword` to bypass the password validation. Private keys in generated addresses.yml and preset.yml will be in plain text!
 -   Added `encrypt` and `decrypt` commands.
 -   Added `--ready` to `link` and `enrolRewardProgram` commands.
+-   Fixed how seed is copied to node folders when `--upgrade` and `resetData` are used
 -   Moved Reward Program Agent to its own service/container in docker-compose.yml.
 
 ## [0.4.3] - Feb-15-2021
