@@ -25,7 +25,7 @@ import { CommandUtils } from '../service/CommandUtils';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class Decrypt extends Command {
-    static description = `It decrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
+    static description = `It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
 
 The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or running a bootstrap command with a provided --password.
 
@@ -58,15 +58,15 @@ rm plain-custom-preset.yml
     static flags = {
         help: CommandUtils.helpFlag,
         source: flags.string({
-            description: `The source plain yml file to be decrypted. If this file is not decrypted, the command will raise an error.`,
+            description: `The source encrypted yml file to be decrypted. If this file is not encrypted, the command will raise an error.`,
             required: true,
         }),
         destination: flags.string({
-            description: `The destination where the decrypted file will be stored. The destination file must not exist.`,
+            description: `The destination decrypted file to create. The destination file must not exist.`,
             required: true,
         }),
         password: CommandUtils.getPasswordFlag(
-            `The password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+            `The password to use to decrypt the source file into the destination file. Keep this password in a secure place!`,
         ),
     };
 
@@ -88,7 +88,7 @@ rm plain-custom-preset.yml
         await BootstrapUtils.mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, '');
         logger.info(
-            `Decrypted file ${flags.destination} has been created! Private keys on this files are in plain text. Remember to remove the file!`,
+            `Decrypted file ${flags.destination} has been created! Any private keys on this file are now in plain text. Remember to remove the file!`,
         );
     }
 }
