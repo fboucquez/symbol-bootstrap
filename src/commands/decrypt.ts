@@ -73,7 +73,7 @@ rm plain-custom-preset.yml
         await BootstrapUtils.mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, '');
         logger.info(
-            `Decrypted file ${flags.destination} has been created! Private keys on this files are in plain text. Remember to remove the file!`,
+            `Decrypted file ${flags.destination} has been created! Any private keys on this file are now in plain text. Remember to remove the file!`,
         );
     }
 }
