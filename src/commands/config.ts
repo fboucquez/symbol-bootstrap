@@ -76,7 +76,12 @@ export default class Config extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Config);
         BootstrapUtils.showBanner();
-        flags.password = await CommandUtils.resolvePassword(flags.password, flags.noPassword, CommandUtils.passwordPromptDefaultMessage);
+        flags.password = await CommandUtils.resolvePassword(
+            flags.password,
+            flags.noPassword,
+            CommandUtils.passwordPromptDefaultMessage,
+            true,
+        );
         await new BootstrapService(this.config.root).config(flags);
     }
 }

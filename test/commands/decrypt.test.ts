@@ -25,7 +25,21 @@ describe('decrypt', () => {
         .command('decrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/plain.yml --password 1111'.split(' '))
         .it('runs decrypt and creates file', async (ctx) => {
             expect(ctx.stdout).to.contain(
-                'Decrypted file target/tests.encrypt/plain.yml has been created! Private keys on this files are in plain text. Remember to remove the file!',
+                'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
+            );
+            expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
+            expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
+                await BootstrapUtils.loadYaml('test/encrypt/plain.yml', false),
+            );
+            expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
+        });
+
+    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+        .stdout()
+        .command('decrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/plain.yml --password 1111'.split(' '))
+        .it('runs decrypt on plain and creates file', async (ctx) => {
+            expect(ctx.stdout).to.contain(
+                'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
             expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
             expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
@@ -39,7 +53,7 @@ describe('decrypt', () => {
         .command('decrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/plain.yml --password 1111'.split(' '))
         .it('runs decrypt on an plain file and creates file', async (ctx) => {
             expect(ctx.stdout).to.contain(
-                'Decrypted file target/tests.encrypt/plain.yml has been created! Private keys on this files are in plain text. Remember to remove the file!',
+                'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
             expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
             expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(

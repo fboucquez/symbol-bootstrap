@@ -65,10 +65,11 @@ export class CommandUtils {
         providedPassword: string | undefined,
         noPassword: boolean,
         message: string,
+        log: boolean,
     ): Promise<string | undefined> {
         if (!providedPassword) {
             if (noPassword) {
-                logger.warn(`Password has not been provided (--noPassword)! It's recommended to use one for security!`);
+                if (log) logger.warn(`Password has not been provided (--noPassword)! It's recommended to use one for security!`);
                 return undefined;
             }
             const responses = await prompt([
@@ -81,13 +82,13 @@ export class CommandUtils {
                 },
             ]);
             if (responses.password === '' || !responses.password) {
-                logger.warn(`Password has not been provided (empty text)! It's recommended to use one for security!`);
+                if (log) logger.warn(`Password has not been provided (empty text)! It's recommended to use one for security!`);
                 return undefined;
             }
-            logger.info(`Password has been provided`);
+            if (log) logger.info(`Password has been provided`);
             return responses.password;
         }
-        logger.info(`Password has been provided`);
+        if (log) logger.info(`Password has been provided`);
         return providedPassword;
     }
 }

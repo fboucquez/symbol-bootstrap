@@ -58,7 +58,7 @@ rm plain-custom-preset.yml
     static flags = {
         help: CommandUtils.helpFlag,
         source: flags.string({
-            description: `The source encrypted yml file to be decrypted. If this file is not encrypted, the command will raise an error.`,
+            description: `The source encrypted yml file to be decrypted.`,
             required: true,
         }),
         destination: flags.string({
@@ -82,7 +82,8 @@ rm plain-custom-preset.yml
         const password = await CommandUtils.resolvePassword(
             flags.password,
             false,
-            `Enter the password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+            `Enter the password to use to decrypt the source file into the destination file. Keep this password in a secure place!`,
+            false,
         );
         const data = await BootstrapUtils.loadYaml(flags.source, password);
         await BootstrapUtils.mkdir(dirname(flags.destination));

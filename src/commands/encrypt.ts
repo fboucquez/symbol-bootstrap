@@ -73,6 +73,7 @@ symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted
             flags.password,
             false,
             `Enter the password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+            false,
         );
         const data = await BootstrapUtils.loadYaml(flags.source, false);
         if (CryptoUtils.encryptedCount(data) > 0) {
