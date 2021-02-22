@@ -45,7 +45,7 @@ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --custom
             required: true,
         }),
         destination: flags.string({
-            description: `The destination where the encrypted file will be stored. The destination file must not exist.`,
+            description: `The destination encrypted file to create. The destination file must not exist.`,
             required: true,
         }),
         password: flags.string({
