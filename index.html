@@ -95,25 +95,25 @@
 				<p>This tool has been created to address the problems defined in Symbol&#39;s <a href="https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md">NIP11</a>.</p>
 				<p>It replaces:</p>
 				<ul>
-					<li><a href="https://github.com/nemtech/catapult-service-bootstrap">catapult-service-bootstrap</a></li>
-					<li><a href="https://github.com/nemgrouplimited/symbol-service-bootstrap">symbol-testnet-bootstrap</a></li>
+					<li>  <a href="https://github.com/nemtech/catapult-service-bootstrap">catapult-service-bootstrap</a></li>
+					<li>  <a href="https://github.com/nemgrouplimited/symbol-service-bootstrap">symbol-testnet-bootstrap</a></li>
 				</ul>
 				<a href="#key-benefits" id="key-benefits" style="color: inherit; text-decoration: none;">
 					<h1>Key benefits:</h1>
 				</a>
 				<ul>
-					<li>It&#39;s an installable cli tool. It&#39;s not a repo you need to clone and compile.</li>
-					<li>The configuration is parametrized via CLI commands and presets instead of by changing properties files.</li>
-					<li>The tools code is unique for any type of network, new networks or nodes in a network. It doesn&#39;t need to be copied and pasted in different projects or assemblies.</li>
-					<li>The config command runs on the host machine, not via docker making it easier to debug or tune</li>
-					<li>It&#39;s uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
-					<li>Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
-					<li>Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
-					<li>Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
-					<li>The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
-					<li>The used docker images versions can be changed via configuration/preset</li>
-					<li>It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
-					<li>It can be included as a npm dependency for clients&#39; e2e testing.</li>
+					<li>  It&#39;s an installable cli tool. It&#39;s not a repo you need to clone and compile.</li>
+					<li>  The configuration is parametrized via CLI commands and presets instead of by changing properties files.</li>
+					<li>  The tools code is unique for any type of network, new networks or nodes in a network. It doesn&#39;t need to be copied and pasted in different projects or assemblies.</li>
+					<li>  The config command runs on the host machine, not via docker making it easier to debug or tune</li>
+					<li>  It&#39;s uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
+					<li>  Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
+					<li>  Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
+					<li>  Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
+					<li>  The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
+					<li>  The used docker images versions can be changed via configuration/preset</li>
+					<li>  It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
+					<li>  It can be included as a npm dependency for clients&#39; e2e testing.</li>
 				</ul>
 				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
 					<h1>Concepts</h1>
@@ -124,22 +124,22 @@
 				<p>Yaml files that define the configuration and layout of the network and nodes. It defines how many nodes, database, rest gateways, the modes, keys, etc.</p>
 				<p>Presets are defined at 4 levels from general to specific:</p>
 				<ul>
-					<li>Shared: Default configurations for all the networks.</li>
-					<li>Network: It defines the main preset of a given network, example: <code>bootstrap</code> or <code>testnet</code>.</li>
-					<li>Assembly: It defines a modification of a network, example: <code>testnet peer</code>, <code>tesnet dual</code>, <code>testnet api</code>. Assembly is required for some networks (like <code>testnet</code>).</li>
-					<li>Custom: A user provided yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</li>
+					<li>  Shared: Default configurations for all the networks.</li>
+					<li>  Network: It defines the main preset of a given network, example: <code>bootstrap</code> or <code>testnet</code>.</li>
+					<li>  Assembly: It defines a modification of a network, example: <code>testnet peer</code>, <code>tesnet dual</code>, <code>testnet api</code>. Assembly is required for some networks (like <code>testnet</code>).</li>
+					<li>  Custom: A user provided yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</li>
 				</ul>
 				<p>Properties in each file override the previous values (by object deep merge).</p>
 				<a href="#out-of-the-box-presets" id="out-of-the-box-presets" style="color: inherit; text-decoration: none;">
 					<h3>Out-of-the-box presets:</h3>
 				</a>
 				<ul>
-					<li><code>-p bootstrap</code>: Default <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml">preset</a>. It&#39;s a private network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.</li>
-					<li><code>-p bootstrap -a light</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-light.yml">light</a> network. It&#39;s a version of bootstrap preset with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.</li>
-					<li><code>-p bootstrap -a full</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-full.yml">full</a> network. The default bootstrap preset plus 1 wallet, 1 explorer and 1 faucet. Great for demonstration purposes. Nemesis block is generated.</li>
-					<li><code>-p testnet -a peer</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml">harvesting</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a>. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
-					<li><code>-p testnet -a api</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml">api</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
-					<li><code>-p testnet -a dual</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml">dual</a> haversting peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+					<li>  <code>-p bootstrap</code>: Default <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml">preset</a>. It&#39;s a private network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.</li>
+					<li>  <code>-p bootstrap -a light</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-light.yml">light</a> network. It&#39;s a version of bootstrap preset with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.</li>
+					<li>  <code>-p bootstrap -a full</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-full.yml">full</a> network. The default bootstrap preset plus 1 wallet, 1 explorer and 1 faucet. Great for demonstration purposes. Nemesis block is generated.</li>
+					<li>  <code>-p testnet -a peer</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml">harvesting</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a>. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+					<li>  <code>-p testnet -a api</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml">api</a> peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
+					<li>  <code>-p testnet -a dual</code>: A <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml">dual</a> haversting peer node that connects to the current public <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml">testnet</a> running its own mongo database and rest gateway. <a href="https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000">Nemesis block</a> is copied over.</li>
 				</ul>
 				<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
 					<h3>Custom preset:</h3>
@@ -151,31 +151,34 @@
 				</a>
 				<p>The folder where the generated config, docker files and data are stored. The folder structure is:</p>
 				<ul>
-					<li><code>./preset.yml</code>: the final generated preset.yml that it&#39;s used to configure bootstrap, the nodes, docker, etc.</li>
-					<li><code>./addresses.yml</code>: randomly generated data that wasn&#39;t provided in the preset. e.g.: SSL keys, nodes&#39; keys, nemesis accounts, generation hash seed, etc.</li>
-					<li><code>./nodes</code>: it holds the configuration, data and logs for all the defined node instances.</li>
-					<li><code>./gateways</code>: it holds the configuration and logs for all the defined node rest gateways.</li>
-					<li><code>./nemesis</code>: The folder used to hold the nemesis block. Block 1 data is generated via <code>nemgen</code> tool for new networks. For existing network, it is copied over.</li>
-					<li><code>./databases</code>: the location where the mongo data is stored for the different database instances.</li>
-					<li><code>./docker</code>: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. </li>
-					<li><code>./reports</code>: the location of the generated reports.</li>
+					<li>  <code>./preset.yml</code>: the final generated preset.yml that it&#39;s used to configure bootstrap, the nodes, docker, etc.</li>
+					<li>  <code>./addresses.yml</code>: randomly generated data that wasn&#39;t provided in the preset. e.g.: SSL keys, nodes&#39; keys, nemesis accounts, generation hash seed, etc.</li>
+					<li>  <code>./nodes</code>: it holds the configuration, data and logs for all the defined node instances.</li>
+					<li>  <code>./gateways</code>: it holds the configuration and logs for all the defined node rest gateways.</li>
+					<li>  <code>./nemesis</code>: The folder used to hold the nemesis block. Block 1 data is generated via <code>nemgen</code> tool for new networks. For existing network, it is copied over.</li>
+					<li>  <code>./databases</code>: the location where the mongo data is stored for the different database instances.</li>
+					<li>  <code>./docker</code>: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. </li>
+					<li>  <code>./reports</code>: the location of the generated reports.</li>
 				</ul>
 				<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
 					<h1>Requirements</h1>
 				</a>
 				<ul>
-					<li>Node 10+</li>
-					<li>Docker</li>
-					<li>Docker Compose</li>
+					<li>  Node 10+</li>
+					<li>  Docker</li>
+					<li>  Docker Compose</li>
 				</ul>
 				<p>Validate your environment by running:</p>
 				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">-v</span>
 docker -v
-docker-compose -v</code></pre>
+docker-compose -v
+</code></pre>
 				<p>Check your user can run docker without sudo:</p>
-				<pre><code>docker <span class="hljs-keyword">run</span><span class="bash"> hello-world</span></code></pre>
+				<pre><code>docker <span class="hljs-keyword">run</span><span class="bash"> hello-world</span>
+</code></pre>
 				<p>If you see an error like:</p>
-				<pre><code>Got permission denied <span class="hljs-keyword">while</span> trying <span class="hljs-built_in">to</span> connect <span class="hljs-built_in">to</span> <span class="hljs-keyword">the</span> Docker daemon <span class="hljs-built_in">socket</span> <span class="hljs-keyword">at</span> unix:<span class="hljs-comment">///var/run/docker.sock</span></code></pre>
+				<pre><code>Got permission denied <span class="hljs-keyword">while</span> trying <span class="hljs-built_in">to</span> connect <span class="hljs-built_in">to</span> <span class="hljs-keyword">the</span> Docker daemon <span class="hljs-built_in">socket</span> <span class="hljs-keyword">at</span> unix:<span class="hljs-comment">///var/run/docker.sock</span>
+</code></pre>
 				<p>Please follow this <a href="https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket">guide</a>.</p>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h1>Usage</h1>
@@ -183,7 +186,8 @@ docker-compose -v</code></pre>
 				<p>It&#39;s recommended to run the commands from en empty working dir.</p>
 				<p>The network configuration, data and docker files will be created inside the target folder (&#39;./target&#39;) by default.</p>
 				<pre><code><span class="hljs-keyword">mkdir</span> <span class="hljs-keyword">my</span>-networks
-cd <span class="hljs-keyword">my</span>-networks</code></pre>
+cd <span class="hljs-keyword">my</span>-networks
+</code></pre>
 				<p>Once in the working dir:</p>
 				<!-- usage -->
 				<pre><code class="language-sh-session">$ npm install -g symbol-bootstrap
@@ -194,23 +198,28 @@ symbol-bootstrap/0.4.4 linux-x64 node-v12.18.4
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
-...</code></pre>
+...
+</code></pre>
 				<!-- usagestop -->
 				<p>The general usage would be:</p>
 				<pre><code>symbol-<span class="hljs-keyword">bootstrap </span><span class="hljs-built_in">config</span> -p <span class="hljs-keyword">bootstrap
 </span>symbol-<span class="hljs-keyword">bootstrap </span>compose
-symbol-<span class="hljs-keyword">bootstrap </span>run</code></pre>
+symbol-<span class="hljs-keyword">bootstrap </span>run
+</code></pre>
 				<p>You can aggregate all these commands with this one liner:</p>
-				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span></code></pre>
+				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span>
+</code></pre>
 				<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
-				<pre><code>sudo rm -rf <span class="hljs-string">./target</span></code></pre>
+				<pre><code>sudo rm -rf <span class="hljs-string">./target</span>
+</code></pre>
 				<a href="#e2e-testing-support" id="e2e-testing-support" style="color: inherit; text-decoration: none;">
 					<h1>E2E Testing support</h1>
 				</a>
 				<p>One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:</p>
 				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span> --detached
 YOUR <span class="hljs-keyword">TEST</span> (<span class="hljs-keyword">e</span>.<span class="hljs-keyword">g</span>: npm <span class="hljs-keyword">run</span> <span class="hljs-keyword">test</span>, gradle <span class="hljs-keyword">test</span>, selenium etc.)
-symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
+symbol-<span class="hljs-keyword">bootstrap</span> stop
+</code></pre>
 				<p><code>--detached</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
 				<p>You can also provide your own custom preset (<code>-c</code>) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)</p>
 				<a href="#node-client-e2e-via-cli" id="node-client-e2e-via-cli" style="color: inherit; text-decoration: none;">
@@ -233,9 +242,11 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop</code></pre>
     <span class="hljs-attr">&quot;integration-test&quot;:</span> <span class="hljs-string">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span>,
     <span class="hljs-attr">&quot;e2e&quot;:</span> <span class="hljs-string">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span>,
 <span class="hljs-string">...</span>
-}</code></pre>
+}
+</code></pre>
 				<p>Then, you, Jenkins, Travis or your CI tool can run;</p>
-				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> e2e</span></code></pre>
+				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> e2e</span>
+</code></pre>
 				<a href="#node-client-e2e-via-api" id="node-client-e2e-via-api" style="color: inherit; text-decoration: none;">
 					<h2>Node client E2E via API:</h2>
 				</a>
@@ -264,13 +275,15 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
     } <span class="hljs-keyword">finally</span> {
         <span class="hljs-keyword">await</span> service.stop(config);
     }
-});</code></pre>
+});
+</code></pre>
 				<p>It&#39;s recommended to reuse the same server for multiple tests by using <code>beforeAll</code>, <code>afterAll</code> kind of statements.</p>
 				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
 					<h1>Development</h1>
 				</a>
 				<p>If you want to contribute to this tool, clone this repo and run:</p>
-				<pre><code>npm <span class="hljs-keyword">install</span> -g</code></pre>
+				<pre><code>npm <span class="hljs-keyword">install</span> -g
+</code></pre>
 				<p>Then, <code>symbol-bootstrap</code> runs from the source code. You can now try your features after changing the code.</p>
 				<p>Pull Requests are appreciated! Please follow the contributing <a href="CONTRIBUTING.md">guidelines</a>.</p>
 				<p>Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
@@ -298,7 +311,8 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
 				</ul>
 				<!-- commandsstop -->
-				<pre><code></code></pre>
+				<pre><code>
+</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
