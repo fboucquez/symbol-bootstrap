@@ -6,14 +6,18 @@ It encrypts a yml file using the provided password. The source files would be a 
 The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.
 
 Example:
+````
 symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
 symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+````
 
 Example:
+````
 symbol-bootstrap encrypt --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
 > password prompt
 symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
 > password prompt (enter the same password)
+````
 
 * [`symbol-bootstrap encrypt`](#symbol-bootstrap-encrypt)
 
@@ -37,14 +41,18 @@ DESCRIPTION
   it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.
 
   Example:
+  ````
   symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
   symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+  ````
 
   Example:
+  ````
   symbol-bootstrap encrypt --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
   > password prompt
   symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
   > password prompt (enter the same password)
+  ````
 
 EXAMPLE
   $ symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
