@@ -53,7 +53,7 @@ rm plain-custom-preset.yml
             required: true,
         }),
         password: flags.string({
-            description: `The password used to decrypt the source file into the destination file. Keep this password in a secure place!`,
+            description: `The password to use to decrypt the source file into the destination file. Keep this password in a secure place!`,
             hidden: true,
             required: true,
         }),
