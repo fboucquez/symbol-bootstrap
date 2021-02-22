@@ -70,6 +70,7 @@ export class AnnounceService {
     };
     public static flags = {
         password: CommandUtils.passwordFlag,
+        noPassword: CommandUtils.noPasswordFlag,
         url: flags.string({
             char: 'u',
             description: 'the network url',

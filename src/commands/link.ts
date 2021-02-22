@@ -37,6 +37,12 @@ export default class Link extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Link);
         BootstrapUtils.showBanner();
+        flags.password = await CommandUtils.resolvePassword(
+            flags.password,
+            flags.noPassword,
+            CommandUtils.passwordPromptDefaultMessage,
+            true,
+        );
         return new BootstrapService(this.config.root).link(flags);
     }
 }

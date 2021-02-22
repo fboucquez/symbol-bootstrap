@@ -44,7 +44,6 @@ export class CommandUtils {
     public static getPasswordFlag(description: string): IOptionFlag<string | undefined> {
         return flags.string({
             description: description,
-            hidden: true,
             parse(input: string): string {
                 const result = !input || CommandUtils.isValidPassword(input);
                 if (result === true) return input;

@@ -23,6 +23,9 @@ OPTIONS
   --noPassword         When provided, Bootstrap will not use a password, so private keys will be stored in plain text.
                        Use with caution.
 
+  --password=password  A password used to encrypt and decrypted custom presets, addresses.yml, and preset.yml files.
+                       When providing a password, private keys would be encrypted. Keep this password in a secure place!
+
   --upgrade            It regenerates the docker compose and utility files from the <target>/docker folder
 
 EXAMPLE
