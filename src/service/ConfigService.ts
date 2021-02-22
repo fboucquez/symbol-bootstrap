@@ -587,12 +587,15 @@ export class ConfigService {
     }
 
     private cleanUpConfiguration(presetData: ConfigPreset) {
-        (presetData.nodes || []).forEach((gateway) => {
-            const configFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, gateway.name, 'userconfig');
+        const target = this.params.target;
+        (presetData.nodes || []).forEach(({ name }) => {
+            const configFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
             BootstrapUtils.deleteFolder(configFolder);
+            const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
+            BootstrapUtils.deleteFolder(seedFolder);
         });
-        (presetData.gateways || []).forEach((node) => {
-            const configFolder = BootstrapUtils.getTargetGatewayFolder(this.params.target, false, node.name);
+        (presetData.gateways || []).forEach(({ name }) => {
+            const configFolder = BootstrapUtils.getTargetGatewayFolder(target, false, name);
             BootstrapUtils.deleteFolder(configFolder);
         });
     }
