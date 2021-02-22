@@ -1,7 +1,7 @@
 `symbol-bootstrap decrypt`
 ==========================
 
-It decrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
+It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
 
 The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or running a bootstrap command with a provided --password.
 
@@ -30,7 +30,7 @@ rm plain-custom-preset.yml
 
 ## `symbol-bootstrap decrypt`
 
-It decrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
+It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
 
 ```
 USAGE
@@ -38,12 +38,8 @@ USAGE
 
 OPTIONS
   -h, --help                 It shows the help of this command.
-
-  --destination=destination  (required) The destination where the decrypted file will be stored. The destination file
-                             must not exist.
-
-  --source=source            (required) The source plain yml file to be decrypted. If this file is not decrypted, the
-                             command will raise an error.
+  --destination=destination  (required) The destination decrypted file to create. The destination file must not exist.
+  --source=source            (required) The source encrypted yml file to be decrypted.
 
 DESCRIPTION
   The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or 

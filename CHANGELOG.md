@@ -12,7 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v0.4.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with --password.
+-   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with `--password`.
 -   Added `--noPassword` to bypass the password validation. Private keys in generated addresses.yml and preset.yml will be in plain text!
 -   Added `encrypt` and `decrypt` commands.
 -   Added `--ready` to `link` and `enrolRewardProgram` commands.
