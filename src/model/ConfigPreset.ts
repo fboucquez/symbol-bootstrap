@@ -141,7 +141,6 @@ export interface FaucetPreset extends DockerServicePreset {
 export interface ConfigPreset {
     preset: Preset;
     votingKeysDirectory: string;
-    agentBinaryLocation: string;
     serverVersion: string;
     epochAdjustment: string;
     catapultAppFolder: string;
@@ -183,7 +182,7 @@ export interface ConfigPreset {
     symbolWalletImage: string;
     symbolFaucetImage: string;
     symbolServerImage: string;
-    symbolAgentBaseImage: string;
+    symbolAgentImage: string;
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
