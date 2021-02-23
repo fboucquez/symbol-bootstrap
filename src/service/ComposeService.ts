@@ -92,7 +92,7 @@ export class ComposeService {
             return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
         };
 
-        logger.info(`creating docker-compose.yml from last used profile.`);
+        logger.info(`Creating docker-compose.yml from last used profile.`);
 
         const services: (DockerComposeService | undefined)[] = [];
 
@@ -425,7 +425,7 @@ export class ComposeService {
 
         dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
-        logger.info(`docker-compose.yml file created ${dockerFile}`);
+        logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }
 
