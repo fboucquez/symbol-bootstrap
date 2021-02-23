@@ -51,16 +51,15 @@ services:
     api-node-agent:
         user: '1000:1000'
         container_name: api-node-agent
-        image: 'ubuntu:20.04'
+        image: 'symbolplatform/symbol-node-rewards-agent:0.1.0'
         working_dir: /symbol-workdir
-        command: /symbol-commands/agent-linux.bin --config agent.properties
+        entrypoint: /app/agent-linux.bin --config agent.properties
         ports:
             - '7880:7880'
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node/agent:/symbol-workdir:rw'
-            - './agent:/symbol-commands:ro'
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
