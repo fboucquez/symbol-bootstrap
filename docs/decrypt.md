@@ -50,6 +50,7 @@ EXAMPLES
   $ cat plain-custom-preset.yml
   $ rm plain-addresses.yml
   $ rm plain-custom-preset.yml
+
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap decrypt --source target/addresses.yml --destination 
   plain-addresses.yml
 ```
