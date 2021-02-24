@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.4] - Feb-24-2021
+
+**Milestone**: Hippopotamus(0.10.0.7)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v0.4.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Added `--ready` to `link` and `enrolRewardProgram` commands.
+-   Fixed how seed is copied to node folders when `--upgrade` and `resetData` are used
+-   Moved Reward Program Agent to its own service/container in docker-compose.yml.
+
 ## [0.4.3] - Feb-15-2021
 
 **Milestone**: Hippopotamus(0.10.0.7)

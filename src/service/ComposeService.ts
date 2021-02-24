@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { chmodSync, copyFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { LogType } from '../logger';
@@ -92,7 +92,7 @@ export class ComposeService {
             return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
         };
 
-        logger.info(`creating docker-compose.yml from last used profile.`);
+        logger.info(`Creating docker-compose.yml from last used profile.`);
 
         const services: (DockerComposeService | undefined)[] = [];
 
@@ -198,28 +198,10 @@ export class ComposeService {
                     const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : '';
                     const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
                     const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
-                    let serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
+                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
                     const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || 'broker'}${brokerDebugMode}`;
                     const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
-
-                    if (n.rewardProgram) {
-                        await BootstrapUtils.mkdir(join(targetDocker, 'server'));
-                        // Pull from cloud!!!!
-                        const rewardProgramAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config ./userconfig/agent/agent.properties`;
-                        const rootDestination = (await BootstrapUtils.download(presetData.agentBinaryLocation, 'agent-linux.bin'))
-                            .fileLocation;
-                        const localDestination = join(targetDocker, 'server', 'agent-linux.bin');
-                        logger.info(`Copying from ${rootDestination} to ${localDestination}`);
-                        copyFileSync(rootDestination, localDestination);
-                        chmodSync(localDestination, '755');
-
-                        portConfigurations.push({
-                            internalPort: 7880,
-                            openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
-                        });
-                        serverCommand += ' & ' + rewardProgramAgentCommand;
-                    }
 
                     const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [recoverServerCommand, serverCommand];
 
@@ -279,6 +261,43 @@ export class ComposeService {
                                     depends_on: brokerDependsOn,
                                     ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.brokerDockerComposeDebugMode),
                                     ...n.brokerCompose,
+                                },
+                            ),
+                        );
+                    }
+
+                    if (n.rewardProgram) {
+                        const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
+
+                        const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
+                        services.push(
+                            await resolveService(
+                                {
+                                    ipv4_address: n.rewardProgramAgentIpv4_address,
+                                    openPort: n.rewardProgramAgentOpenPort,
+                                    excludeDockerService: n.rewardProgramAgentExcludeDockerService,
+                                    host: n.rewardProgramAgentHost,
+                                },
+                                {
+                                    user: user,
+                                    container_name: n.name + '-agent',
+                                    image: presetData.symbolAgentImage,
+                                    working_dir: nodeWorkingDirectory,
+                                    entrypoint: rewardProgramAgentCommand,
+                                    ports: resolvePorts([
+                                        {
+                                            internalPort: 7880,
+                                            openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
+                                        },
+                                    ]),
+                                    stop_signal: 'SIGINT',
+                                    restart: restart,
+                                    volumes: volumes,
+                                    ...this.resolveDebugOptions(
+                                        presetData.dockerComposeDebugMode,
+                                        n.rewardProgramAgentDockerComposeDebugMode,
+                                    ),
+                                    ...n.rewardProgramAgentCompose,
                                 },
                             ),
                         );
@@ -406,7 +425,7 @@ export class ComposeService {
 
         dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
-        logger.info(`docker-compose.yml file created ${dockerFile}`);
+        logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }
 

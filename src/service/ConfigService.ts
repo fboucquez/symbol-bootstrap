@@ -15,6 +15,7 @@
  */
 
 import * as fs from 'fs';
+import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import {
@@ -143,15 +144,14 @@ export class ConfigService {
             await this.generateExplorers(presetData);
             await this.generateWallets(presetData);
             if (!oldPresetData && !oldAddresses) {
-                await this.generateNemesis(presetData, addresses);
+                await this.resolveNemesis(presetData, addresses);
             } else {
                 logger.info('Nemesis data cannot be generated or copied when upgrading...');
             }
-
+            await this.copyNemesis(addresses);
             if (this.params.report) {
                 await new ReportService(this.root, this.params).run(presetData);
             }
-
             await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, password);
             await BootstrapUtils.writeYaml(presetLocation, presetData, password);
             logger.info(`Configuration generated.`);
@@ -168,18 +168,10 @@ export class ConfigService {
         }
     }
 
-    private async generateNemesis(presetData: ConfigPreset, addresses: Addresses) {
+    private async copyNemesis(addresses: Addresses) {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
-
-        if (!presetData.nemesisSeedFolder && presetData.nemesis) {
-            await this.generateNemesisConfig(presetData, addresses);
-        } else {
-            const copyFrom = presetData.nemesisSeedFolder || join(this.root, 'presets', this.params.preset, 'seed');
-            await BootstrapUtils.generateConfiguration({}, copyFrom, nemesisSeedFolder);
-        }
-
-        BootstrapUtils.validateFolder(nemesisSeedFolder);
+        await this.validateSeedFolder(nemesisSeedFolder, `Invalid final seed folder ${nemesisSeedFolder}`);
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
                 const name = account.name;
@@ -189,7 +181,41 @@ export class ConfigService {
                 await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, seedFolder);
             }),
         );
-        return { presetData, addresses };
+    }
+
+    private async validateSeedFolder(nemesisSeedFolder: string, message: string) {
+        BootstrapUtils.validateFolder(nemesisSeedFolder);
+        const seedData = join(nemesisSeedFolder, '00000', '00001.dat');
+        if (!existsSync(seedData)) {
+            throw new KnownError(`File ${seedData} doesn't exist! ${message}`);
+        }
+        const seedIndex = join(nemesisSeedFolder, 'index.dat');
+        if (!existsSync(seedIndex)) {
+            throw new KnownError(`File ${seedIndex} doesn't exist! ${message}`);
+        }
+    }
+
+    private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses) {
+        const target = this.params.target;
+        const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
+        await BootstrapUtils.mkdir(nemesisSeedFolder);
+
+        if (presetData.nemesisSeedFolder) {
+            await this.validateSeedFolder(
+                presetData.nemesisSeedFolder,
+                `Is the provided preset nemesisSeedFolder: ${presetData.nemesisSeedFolder} a valid seed folder?`,
+            );
+            await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
+            return;
+        }
+
+        if (presetData.nemesis) {
+            await this.generateNemesisConfig(presetData, addresses);
+            await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
+            return;
+        }
+        await BootstrapUtils.generateConfiguration({}, join(this.root, 'presets', this.params.preset, 'seed'), nemesisSeedFolder);
+        await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
@@ -261,8 +287,9 @@ export class ConfigService {
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
             templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
-        } else {
-            excludeFiles.push('agent.properties');
+            const copyFrom = join(this.root, 'config', 'agent');
+            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
+            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, outputFolder, excludeFiles);
@@ -560,12 +587,15 @@ export class ConfigService {
     }
 
     private cleanUpConfiguration(presetData: ConfigPreset) {
-        (presetData.nodes || []).forEach((gateway) => {
-            const configFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, gateway.name, 'userconfig');
+        const target = this.params.target;
+        (presetData.nodes || []).forEach(({ name }) => {
+            const configFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
             BootstrapUtils.deleteFolder(configFolder);
+            const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
+            BootstrapUtils.deleteFolder(seedFolder);
         });
-        (presetData.gateways || []).forEach((node) => {
-            const configFolder = BootstrapUtils.getTargetGatewayFolder(this.params.target, false, node.name);
+        (presetData.gateways || []).forEach(({ name }) => {
+            const configFolder = BootstrapUtils.getTargetGatewayFolder(target, false, name);
             BootstrapUtils.deleteFolder(configFolder);
         });
     }

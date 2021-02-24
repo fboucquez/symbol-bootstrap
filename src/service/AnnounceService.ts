@@ -79,6 +79,10 @@ export class AnnounceService {
             description:
                 'Use the best NEM node available when announcing. Otherwise the command will use the node provided by the --url parameter.',
         }),
+
+        ready: flags.boolean({
+            description: 'If --ready is provided, the command will not ask for confirmation when announcing transactions.',
+        }),
         maxFee: flags.integer({
             description: 'the max fee used when announcing (absolute). The node min multiplier will be used if it is not provided.',
         }),
@@ -87,6 +91,7 @@ export class AnnounceService {
         providedUrl: string,
         providedMaxFee: number | undefined,
         useKnownRestGateways: boolean,
+        ready: boolean | undefined,
         presetData: ConfigPreset,
         addresses: Addresses,
         transactionFactory: TransactionFactory,
@@ -175,8 +180,9 @@ export class AnnounceService {
                 logger.info(`There are not transactions to announce for node ${nodeAccount.name}`);
                 continue;
             }
-            if (
-                !(
+            const shouldAnnounce: boolean =
+                ready ||
+                (
                     await prompt([
                         {
                             name: 'value',
@@ -185,8 +191,8 @@ export class AnnounceService {
                             default: true,
                         },
                     ])
-                ).value
-            ) {
+                ).value;
+            if (!shouldAnnounce) {
                 logger.info(`Ignoring transaction for node ${nodeAccount.name}`);
                 continue;
             }

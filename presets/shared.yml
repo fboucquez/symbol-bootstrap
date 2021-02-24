@@ -69,6 +69,7 @@ symbolRestImage: symbolplatform/symbol-rest:2.3.3
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
+symbolAgentImage: symbolplatform/symbol-node-rewards-agent:0.1.0
 mongoImage: mongo:4.4.3-bionic
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
 logLevel: 'Info'
@@ -83,7 +84,6 @@ dataDirectory: ./data
 votingKeysDirectory: ./userconfig/votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
-agentBinaryLocation: 'https://symbol-node-reward.s3-eu-west-1.amazonaws.com/agent_binary/agent-linux.bin'
 
 # config database
 databaseName: catapult

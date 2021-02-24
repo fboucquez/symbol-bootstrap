@@ -88,10 +88,17 @@ export interface NodePreset extends DockerServicePreset {
     brokerExcludeDockerService?: boolean;
     brokerCompose?: any;
     brokerDockerComposeDebugMode?: boolean;
-    //super node
+
+    //Reward program
     rewardProgram?: string;
+    rewardProgramAgentIpv4_address?: string;
     rewardProgramAgentOpenPort?: boolean | number | string;
+    rewardProgramAgentExcludeDockerService?: boolean;
+    rewardProgramAgentCompose?: any;
+    rewardProgramAgentHost?: string;
+    rewardProgramAgentDockerComposeDebugMode?: boolean;
     agentUrl?: string; //calculated if not provided.
+
     restGatewayUrl?: string; // calculated if not provided;
 }
 
@@ -134,7 +141,6 @@ export interface FaucetPreset extends DockerServicePreset {
 export interface ConfigPreset {
     preset: Preset;
     votingKeysDirectory: string;
-    agentBinaryLocation: string;
     serverVersion: string;
     epochAdjustment: string;
     catapultAppFolder: string;
@@ -176,6 +182,7 @@ export interface ConfigPreset {
     symbolWalletImage: string;
     symbolFaucetImage: string;
     symbolServerImage: string;
+    symbolAgentImage: string;
     symbolRestImage: string;
     votingKeyStartEpoch: number;
     votingKeyEndEpoch: number;
