@@ -60,7 +60,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
+        command: /bin/bash /symbol-commands/startServer.sh peer-node-0 NORMAL false
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -78,7 +78,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
+        command: /bin/bash /symbol-commands/startServer.sh peer-node-1 NORMAL false
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -96,7 +96,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-2
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-2 && /bin/bash /symbol-commands/startServer.sh peer-node-2"
+        command: /bin/bash /symbol-commands/startServer.sh peer-node-2 NORMAL false
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -114,7 +114,7 @@ services:
         user: '1000:1000'
         container_name: api-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-0"
+        command: /bin/bash /symbol-commands/startServer.sh api-node-0 NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -133,7 +133,7 @@ services:
         user: '1000:1000'
         container_name: api-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-1"
+        command: /bin/bash /symbol-commands/startServer.sh api-node-1 NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -152,7 +152,7 @@ services:
         user: '1000:1000'
         container_name: api-node-2
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-2"
+        command: /bin/bash /symbol-commands/startServer.sh api-node-2 NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -171,7 +171,7 @@ services:
         user: '1000:1000'
         container_name: api-node-3
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/wait.sh ./data/broker.started && /bin/bash /symbol-commands/startServer.sh api-node-3"
+        command: /bin/bash /symbol-commands/startServer.sh api-node-3 NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -191,9 +191,7 @@ services:
         container_name: api-node-broker-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
         working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-0"
+        command: /bin/bash /symbol-commands/startBroker.sh api-node-broker-0 NORMAL
         ports:
             - '8002:7902'
         stop_signal: SIGINT
@@ -208,9 +206,7 @@ services:
         container_name: api-node-broker-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
         working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-1 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-1"
+        command: /bin/bash /symbol-commands/startBroker.sh api-node-broker-1 NORMAL
         ports:
             - '8003:7902'
         stop_signal: SIGINT
@@ -225,9 +221,7 @@ services:
         container_name: api-node-broker-2
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
         working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-2 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-2"
+        command: /bin/bash /symbol-commands/startBroker.sh api-node-broker-2 NORMAL
         ports:
             - '8004:7902'
         stop_signal: SIGINT
@@ -242,9 +236,7 @@ services:
         container_name: api-node-broker-3
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
         working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-3 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-3"
+        command: /bin/bash /symbol-commands/startBroker.sh api-node-broker-3 NORMAL
         ports:
             - '8005:7902'
         stop_signal: SIGINT

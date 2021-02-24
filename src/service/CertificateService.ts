@@ -76,8 +76,7 @@ export class CertificateService {
         customCertFolder?: string,
     ): Promise<void> {
         const copyFrom = `${this.root}/config/cert`;
-        const certFolder =
-            customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig', 'resources', 'cert');
+        const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
         await BootstrapUtils.mkdir(certFolder);
         const newCertsFolder = join(certFolder, 'new_certs');
         await BootstrapUtils.mkdir(newCertsFolder);

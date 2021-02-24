@@ -79,9 +79,9 @@ logLevel: 'Info'
 transactionsDirectory: './transactions'
 binDirectory: ./seed
 seedDirectory: ./seed
-certificateDirectory: ./userconfig/resources/cert
+certificateDirectory: ./cert
 dataDirectory: ./data
-votingKeysDirectory: ./userconfig/votingkeys
+votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 
