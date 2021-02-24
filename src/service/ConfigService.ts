@@ -309,7 +309,7 @@ export class ConfigService {
             hashcacheRecovery: true,
         };
 
-        logger.info('Generating server configuration');
+        logger.info(`Generating ${name} server configuration`);
         await BootstrapUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
         await this.generateP2PFile(
             presetData,
@@ -329,7 +329,7 @@ export class ConfigService {
         );
 
         if (nodePreset.brokerName) {
-            logger.info('Generating broker configuration');
+            logger.info(`Generating ${nodePreset.brokerName} broker configuration`);
             await BootstrapUtils.generateConfiguration(
                 { ...brokerRecoveryConfig, ...templateContext },
                 copyFrom,
