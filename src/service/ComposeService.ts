@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { chmodSync, copyFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { LogType } from '../logger';
@@ -92,7 +92,7 @@ export class ComposeService {
             return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
         };
 
-        logger.info(`creating docker-compose.yml from last used profile.`);
+        logger.info(`Creating docker-compose.yml from last used profile.`);
 
         const services: (DockerComposeService | undefined)[] = [];
 
@@ -267,22 +267,9 @@ export class ComposeService {
                     }
 
                     if (n.rewardProgram) {
-                        await BootstrapUtils.mkdir(join(targetDocker, 'agent'));
-                        // Pull from cloud!!!!
+                        const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
 
-                        const rootDestination = (await BootstrapUtils.download(presetData.agentBinaryLocation, 'agent-linux.bin'))
-                            .fileLocation;
-                        const localDestination = join(targetDocker, 'agent', 'agent-linux.bin');
-                        logger.info(`Copying from ${rootDestination} to ${localDestination}`);
-                        copyFileSync(rootDestination, localDestination);
-                        chmodSync(localDestination, '755');
-
-                        const volumes = [
-                            vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false),
-                            vol(`./agent`, nodeCommandsDirectory, true),
-                        ];
-
-                        const rewardProgramAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config agent.properties`;
+                        const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
                         services.push(
                             await resolveService(
                                 {
@@ -294,9 +281,9 @@ export class ComposeService {
                                 {
                                     user: user,
                                     container_name: n.name + '-agent',
-                                    image: presetData.symbolAgentBaseImage,
+                                    image: presetData.symbolAgentImage,
                                     working_dir: nodeWorkingDirectory,
-                                    command: rewardProgramAgentCommand,
+                                    entrypoint: rewardProgramAgentCommand,
                                     ports: resolvePorts([
                                         {
                                             internalPort: 7880,
@@ -438,7 +425,7 @@ export class ComposeService {
 
         dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
-        logger.info(`docker-compose.yml file created ${dockerFile}`);
+        logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }
 
