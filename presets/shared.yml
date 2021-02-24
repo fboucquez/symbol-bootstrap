@@ -71,7 +71,7 @@ symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
 symbolAgentImage: symbolplatform/symbol-node-rewards-agent:0.1.0
 mongoImage: mongo:4.4.3-bionic
-mongoComposeRunParam: --wiredTigerCacheSizeGB 2
+mongoComposeRunParam: --wiredTigerCacheSizeGB 2 --quiet
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
 # recoveryLogLevel: 'Info'
@@ -79,9 +79,9 @@ logLevel: 'Info'
 transactionsDirectory: './transactions'
 binDirectory: ./seed
 seedDirectory: ./seed
-certificateDirectory: ./userconfig/resources/cert
+certificateDirectory: ./cert
 dataDirectory: ./data
-votingKeysDirectory: ./userconfig/votingkeys
+votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 

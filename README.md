@@ -265,6 +265,7 @@ General users should install this tool like any other node module.
 # Command Topics
 
 * [`symbol-bootstrap autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
+* [`symbol-bootstrap backup`](docs/backup.md) - The command backs up the Mongo and RocksDb data folder into a Zip file that can then be used by the `--backupSync` feature. Bootstrap compose services must be stopped before calling this command.
 * [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder deleting the generated configuration and data
 * [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network

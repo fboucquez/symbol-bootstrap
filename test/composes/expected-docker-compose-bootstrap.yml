@@ -6,7 +6,7 @@ services:
             MONGO_INITDB_DATABASE: catapult
         container_name: db-0
         image: 'mongo:4.4.3-bionic'
-        command: mongod --dbpath=/dbdata --bind_ip=db-0 --wiredTigerCacheSizeGB 2
+        command: mongod --dbpath=/dbdata --bind_ip=db-0 --wiredTigerCacheSizeGB 2 --quiet
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
         ports:
@@ -18,7 +18,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-0 && /bin/bash /symbol-commands/startServer.sh peer-node-0"
+        command: bash -c "/bin/bash /symbol-commands/startServer.sh peer-node-0"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -27,6 +27,7 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         networks:
             default:
                 aliases:
@@ -36,7 +37,7 @@ services:
         user: '1000:1000'
         container_name: peer-node-1
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh peer-node-1 && /bin/bash /symbol-commands/startServer.sh peer-node-1"
+        command: bash -c "/bin/bash /symbol-commands/startServer.sh peer-node-1"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
@@ -45,6 +46,7 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         networks:
             default:
                 aliases:
@@ -61,6 +63,7 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
             - api-node-broker-0
@@ -74,9 +77,7 @@ services:
         container_name: api-node-broker-0
         image: 'symbolplatform/symbol-server:gcc-0.10.0.7'
         working_dir: /symbol-workdir
-        command: >-
-            bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-node-broker-0 && /bin/bash /symbol-commands/startBroker.sh
-            api-node-broker-0"
+        command: bash -c "/bin/bash /symbol-commands/startBroker.sh api-node-broker-0"
         ports:
             - '8002:7902'
         stop_signal: SIGINT
@@ -84,6 +85,7 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db-0
     rest-gateway-0:

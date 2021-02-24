@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.4.3] - NEXT
+## [0.4.4] - NEXT
 
 **Milestone**: Hippopotamus(0.10.0.7)
 
@@ -12,6 +12,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v0.4.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Added `--backupSync` to `config` and `start` commands. It downloads a backup with the Mongo and RocksDb databases for faster synchronization.
+-   Added `backup` command. The command backups the Mongo and RocksDb data folder into a Zip file that can be used for `--backupSync` feature.
+-   Splitting `userconfig` into `server-config` and `broker-config` for each service. 
 -   Added `--ready` to `link` and `enrolRewardProgram` commands.
 -   Fixed how seed is copied to node folders when `--upgrade` and `resetData` are used
 -   Moved Reward Program Agent to its own service/container in docker-compose.yml.

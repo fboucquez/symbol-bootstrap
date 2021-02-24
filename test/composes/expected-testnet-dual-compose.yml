@@ -6,7 +6,7 @@ services:
             MONGO_INITDB_DATABASE: catapult
         container_name: db
         image: 'mongo:4.4.3-bionic'
-        command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2
+        command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2 --quiet
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
         volumes:
@@ -25,6 +25,7 @@ services:
         volumes:
             - '../nodes/api-node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db
             - api-broker
@@ -33,7 +34,7 @@ services:
         container_name: api-broker
         image: 'symbolplatform/symbol-server:gcc-0.10.1.7'
         working_dir: /symbol-workdir
-        command: bash -c "/bin/bash /symbol-commands/runServerRecover.sh api-broker && /bin/bash /symbol-commands/startBroker.sh api-broker"
+        command: bash -c "/bin/bash /symbol-commands/startBroker.sh api-broker"
         ports:
             - '7902:7902'
         stop_signal: SIGINT
@@ -41,6 +42,7 @@ services:
         volumes:
             - '../nodes/api-node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/seed:ro'
         depends_on:
             - db
     rest-gateway:
