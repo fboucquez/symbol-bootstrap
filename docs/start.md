@@ -84,6 +84,8 @@ EXAMPLES
   $ symbol-bootstrap start
   $ symbol-bootstrap start -p bootstrap
   $ symbol-bootstrap start -p testnet -a dual
+  $ symbol-bootstrap start -p testnet -a dual --password 1234
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```
 
 _See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/start.ts)_

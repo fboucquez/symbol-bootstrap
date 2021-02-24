@@ -36,8 +36,9 @@ OPTIONS
   --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
                           provided by the --url parameter.
 
-EXAMPLE
+EXAMPLES
   $ symbol-bootstrap link
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap link --unlink --useKnownRestGateways
 ```
 
 _See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/link.ts)_

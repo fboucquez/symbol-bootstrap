@@ -21,7 +21,11 @@ import { CommandUtils } from '../service/CommandUtils';
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
 
-    static examples = [`$ symbol-bootstrap config -p bootstrap`];
+    static examples = [
+        `$ symbol-bootstrap config -p bootstrap`,
+        `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
+        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
+    ];
 
     static flags = {
         help: CommandUtils.helpFlag,

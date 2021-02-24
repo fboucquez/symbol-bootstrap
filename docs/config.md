@@ -48,8 +48,10 @@ OPTIONS
                                     local data. The original preset (-t), assembly (-a), and custom preset (-a) must be
                                     used. Backup the target folder before upgrading.
 
-EXAMPLE
+EXAMPLES
   $ symbol-bootstrap config -p bootstrap
+  $ symbol-bootstrap config -p testnet -a dual --password 1234
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual
 ```
 
 _See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/config.ts)_
