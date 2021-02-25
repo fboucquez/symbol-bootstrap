@@ -56,6 +56,14 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+  --noPassword
+      When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.
+
+  --password=password
+      A password used to encrypt and decrypt private keys in preset files like addresses.yml and preset.yml. Bootstrap 
+      prompts for a password by default, can be provided in the command line (--password=XXXX) or disabled in the command 
+      line (--noPassword).
+
   --pullImages
       It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.
 
@@ -77,6 +85,8 @@ EXAMPLES
   $ symbol-bootstrap start
   $ symbol-bootstrap start -p bootstrap
   $ symbol-bootstrap start -p testnet -a dual
+  $ symbol-bootstrap start -p testnet -a dual --password 1234
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/start.ts)_

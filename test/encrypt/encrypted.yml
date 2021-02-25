@@ -1,0 +1,14 @@
+nodes:
+    - voting: true
+      rewardProgram: supernode
+      host: fboucquez-agent-symbollocal.ngrok.io
+      agentUrl: 'https://fboucquez-agent-symbollocal.ngrok.io'
+      restGatewayUrl: 'http://fboucquez-rest-gateway-symbollocal.ngrok.io'
+      mainPrivateKey: >-
+          ENCRYPTED:f9afc36baf705c11e7296b30e19c93ba8804aaf1992919fe8028f5ee177ecae96pdL7NWppSmu8HQb0oVtPEAsjeH1OhgaTQuoNgX1xZrYoIOOhcI895nmkfzZBOJ8K0bNZT2oEiSn9iSksbhWHcVY6Paho71zyVTuTRG1tkI=
+      transportPrivateKey: >-
+          ENCRYPTED:4fe672f728980473b66af22cc85dc92c1942b8bd8f481497a75c47e00f34a6838xJpOIZvjyRiiBK6SznEYo0qnVVmhqZY8IfFcfjp3hMi21CugLdkgWF3nizrQh5JPC+yp0cXCem/GySr2TCVBn43DqxstxGRELQPm1kGqB8=
+      vrfPrivateKey: >-
+          ENCRYPTED:17fdd94aa3f04102762929d2c3216892ea9fe5b0102299411123e77a8b29f840Ji1YkoDgCs0W87ygrEHO0zjcGtYJ56r6o4GIRfnVE2Z+FZ1T0K1TGI6qHPGl9YS7jskmY749EwvvOYSWdMk6vIcRKZCw2DyGYUMGnVasUZE=
+      votingPrivateKey: >-
+          ENCRYPTED:135e98098b501a0e96be8976e006646212ff0028851ac6f883ad8b0605683d20tjpMhhpHVFGSm+GH1/BoT/n8oWsc2YsSCKKcaWFB2wjLUzeZlYi+JrRDeUVcoEh61lG7KRVY81JlnFiY967qFzFFDERcMRDd1pAsk0J2I7o=
