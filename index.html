@@ -194,7 +194,7 @@ cd <span class="hljs-keyword">my</span>-networks
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/0.4.4 linux-x64 node-v10.24.0
+symbol-bootstrap/0.4.5 linux-x64 node-v12.18.4
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -300,6 +300,8 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder deleting the generated configuration and data</li>
 					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
 					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
+					<li><a href="docs/decrypt.md"><code>symbol-bootstrap decrypt</code></a> - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.</li>
+					<li><a href="docs/encrypt.md"><code>symbol-bootstrap encrypt</code></a> - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.</li>
 					<li><a href="docs/enrolRewardProgram.md"><code>symbol-bootstrap enrolRewardProgram</code></a> - It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.</li>
 					<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
@@ -329,6 +331,12 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_config_.html">&quot;commands/config&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_decrypt_.html">&quot;commands/decrypt&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_encrypt_.html">&quot;commands/encrypt&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_commands_enrolrewardprogram_.html">&quot;commands/enrol<wbr>Reward<wbr>Program&quot;</a>
@@ -398,6 +406,9 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_certificateservice_.html">&quot;service/<wbr>Certificate<wbr>Service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_service_commandutils_.html">&quot;service/<wbr>Command<wbr>Utils&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_service_composeservice_.html">&quot;service/<wbr>Compose<wbr>Service&quot;</a>
