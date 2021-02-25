@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.5] - NEXT
+
+**Milestone**: Hippopotamus(0.10.0.7)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v0.4.5  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with `--password`.
+-   Added `encrypt` and `decrypt` commands.
+
 ## [0.4.4] - Feb-24-2021
 
 **Milestone**: Hippopotamus(0.10.0.7)

@@ -19,8 +19,9 @@ OPTIONS
   -h, --help                 It shows the help of this command.
   --destination=destination  (required) The destination decrypted file to create. The destination file must not exist.
 
-  --password=password        The password to use to decrypt the source file into the destination file. Keep this
-                             password in a secure place!
+  --password=password        The password to use to decrypt the source file into the destination file. Bootstrap prompts
+                             for a password by default, can be provided in the command line (--password=XXXX) or
+                             disabled in the command line (--noPassword).
 
   --source=source            (required) The source encrypted yml file to be decrypted.
 
@@ -55,4 +56,4 @@ EXAMPLES
   plain-addresses.yml
 ```
 
-_See code: [src/commands/decrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/decrypt.ts)_
+_See code: [src/commands/decrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/decrypt.ts)_

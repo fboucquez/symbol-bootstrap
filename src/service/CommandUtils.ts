@@ -33,7 +33,7 @@ export class CommandUtils {
     });
 
     public static passwordFlag = CommandUtils.getPasswordFlag(
-        `A password used to encrypt and decrypted custom presets, addresses.yml, and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`,
+        `A password used to encrypt and decrypt private keys in preset files like addresses.yml and preset.yml. Bootstrap prompts for a password by default, can be provided in the command line (--password=XXXX) or disabled in the command line (--noPassword).`,
     );
 
     public static noPasswordFlag = flags.boolean({

@@ -19,8 +19,9 @@ OPTIONS
   -h, --help                 It shows the help of this command.
   --destination=destination  (required) The destination encrypted file to create. The destination file must not exist.
 
-  --password=password        The password to use to encrypt the source file into the destination file. Keep this
-                             password in a secure place!
+  --password=password        The password to use to encrypt the source file into the destination file. Bootstrap prompts
+                             for a password by default, can be provided in the command line (--password=XXXX) or
+                             disabled in the command line (--noPassword).
 
   --source=source            (required) The source plain yml file to be encrypted. If this file is encrypted, the
                              command will raise an error.
@@ -45,4 +46,4 @@ EXAMPLES
   encrypted-custom-preset.yml
 ```
 
-_See code: [src/commands/encrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/encrypt.ts)_
+_See code: [src/commands/encrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/encrypt.ts)_

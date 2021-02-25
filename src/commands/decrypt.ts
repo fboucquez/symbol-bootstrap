@@ -67,7 +67,7 @@ $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap decrypt --source target/address
             required: true,
         }),
         password: CommandUtils.getPasswordFlag(
-            `The password to use to decrypt the source file into the destination file. Keep this password in a secure place!`,
+            `The password to use to decrypt the source file into the destination file. Bootstrap prompts for a password by default, can be provided in the command line (--password=XXXX) or disabled in the command line (--noPassword).`,
         ),
     };
 
