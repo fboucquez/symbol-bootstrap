@@ -16,6 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { BootstrapService, BootstrapUtils } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -24,13 +25,25 @@ import Run from './run';
 export default class Start extends Command {
     static description = 'Single command that aggregates config, compose and run in one line!';
 
-    static examples = [`$ symbol-bootstrap start`, `$ symbol-bootstrap start -p bootstrap`, `$ symbol-bootstrap start -p testnet -a dual`];
+    static examples = [
+        `$ symbol-bootstrap start`,
+        `$ symbol-bootstrap start -p bootstrap`,
+        `$ symbol-bootstrap start -p testnet -a dual`,
+        `$ symbol-bootstrap start -p testnet -a dual --password 1234`,
+        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual`,
+    ];
 
     static flags = { ...Compose.flags, ...Run.flags, ...Clean.flags, ...Config.flags };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Start);
         BootstrapUtils.showBanner();
+        flags.password = await CommandUtils.resolvePassword(
+            flags.password,
+            flags.noPassword,
+            CommandUtils.passwordPromptDefaultMessage,
+            true,
+        );
         await new BootstrapService(this.config.root).start(flags);
     }
 }

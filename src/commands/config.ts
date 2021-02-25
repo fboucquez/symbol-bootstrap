@@ -16,16 +16,22 @@
 
 import { Command, flags } from '@oclif/command';
 import { BootstrapService, BootstrapUtils, ConfigService, Preset } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
 
-    static examples = [`$ symbol-bootstrap config -p bootstrap`];
+    static examples = [
+        `$ symbol-bootstrap config -p bootstrap`,
+        `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
+        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
+    ];
 
     static flags = {
-        help: BootstrapUtils.helpFlag,
-        target: BootstrapUtils.targetFlag,
-        password: BootstrapUtils.passwordFlag,
+        help: CommandUtils.helpFlag,
+        target: CommandUtils.targetFlag,
+        password: CommandUtils.passwordFlag,
+        noPassword: CommandUtils.noPasswordFlag,
         preset: flags.enum({
             char: 'p',
             description: 'the network preset',
@@ -74,6 +80,12 @@ export default class Config extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Config);
         BootstrapUtils.showBanner();
+        flags.password = await CommandUtils.resolvePassword(
+            flags.password,
+            flags.noPassword,
+            CommandUtils.passwordPromptDefaultMessage,
+            true,
+        );
         await new BootstrapService(this.config.root).config(flags);
     }
 }

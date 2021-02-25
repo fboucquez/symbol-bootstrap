@@ -16,6 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { BootstrapService, BootstrapUtils, RunService } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 import HealthCheck from './healthCheck';
 
 export default class Run extends Command {
@@ -25,8 +26,8 @@ export default class Run extends Command {
     static examples = [`$ symbol-bootstrap run`];
 
     static flags = {
-        help: BootstrapUtils.helpFlag,
-        target: BootstrapUtils.targetFlag,
+        help: CommandUtils.helpFlag,
+        target: CommandUtils.targetFlag,
         detached: flags.boolean({
             char: 'd',
             description:

@@ -132,6 +132,14 @@ Usage examples:
 
 Keep the generated `addresses.yml` and `preset.yml` in the target folder privately!
 
+**Note:** If your custom preset contains private keys, it's highly recommended to `encrypt` it and provide --password when starting or configuring the node with Bootstrap.
+
+````
+symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
+rm plain-custom-preset.yml
+symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
+````
+
 ### Specify the Network's keys.
 
 If you want to replicate the nemesis block and generation hash of your private bootstrap network, you can specify the nemesis keys:
