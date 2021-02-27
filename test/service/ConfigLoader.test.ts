@@ -21,14 +21,14 @@ import { PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
 
 class ConfigLoaderMocked extends ConfigLoader {
-    public generateAccount(networkType: NetworkType, privateKey: string | undefined): Account {
-        return super.generateAccount(
-            networkType,
-            PrivateKeySecurityMode.ENCRYPT,
-            KeyName.Remote,
-            privateKey || 'a'.repeat(64),
-            undefined,
-        ) as Account;
+    public generateAccount(
+        networkType: NetworkType,
+        securityMode: PrivateKeySecurityMode,
+        keyName: KeyName,
+        privateKey: string | undefined,
+        publicKey: string | undefined,
+    ): Account {
+        return super.generateAccount(networkType, securityMode, keyName, privateKey || 'a'.repeat(64), publicKey) as Account;
     }
 }
 
