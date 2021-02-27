@@ -648,6 +648,10 @@ export class ConfigService {
             const brokerConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'broker-config');
             BootstrapUtils.deleteFolder(brokerConfigFolder);
 
+            // Remove old user configs when upgrading.
+            const userConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
+            BootstrapUtils.deleteFolder(userConfigFolder);
+
             const certConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'cert');
             BootstrapUtils.deleteFolder(certConfigFolder);
 
