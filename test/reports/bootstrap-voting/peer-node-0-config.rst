@@ -461,7 +461,7 @@ config-user.properties
     enableDelegatedHarvestersAutoDetection; true
     **storage**;
     seedDirectory; ./seed
-    certificateDirectory; ./userconfig/resources/cert
+    certificateDirectory; ./cert
     dataDirectory; ./data
     pluginsDirectory; /usr/catapult/lib
-    votingKeysDirectory; ./userconfig/votingkeys
+    votingKeysDirectory; ./votingkeys

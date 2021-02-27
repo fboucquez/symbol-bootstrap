@@ -12,8 +12,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v0.4.5  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with `--password`.
--   Added `encrypt` and `decrypt` commands.
+-   Added `privateKeySecurityMode`. It defines which private keys can be encrypted and stored in the `target/addresses.yml`:
+    - `ENCRYPT`: All private keys are encrypted and stored in the target's `addresses.yml` file. Bootstrap will have them to be used when required.
+    - `PROMPT_MAIN`: Main private keys not stored in the target's `addresses.yml` file. Bootstrap will prompt for the main private key when certificates are generated, or transactions need to be signed in the `link` and `enrolProgram` commands.
+    - `PROMPT_ALL`: No private key is stored in the in the target's `addresses.yml` file. Bootstrap will prompt for the private keys when they are required in the different commands.
+-   The `preset.yml` doesn't contain any (encrypted) private key anymore. 
+-   Certificates are not re-generated if not needed when running `--upgrade`. In this case, Main account Private Key will not be prompted on the `PROMPT` security mode.
+-   Voting Key files are not re-generated if not needed when running `--upgrade`. In this case, Voting account Private Key will not be prompted on the `PROMPT_ALL` security mode.
+-   Public Keys can be used in custom presets in addition to encrypted Private Keys. If Public Keys are used, Bootstrap will prompt for the private keys when required.
+-   Added `encrypt` and `decrypt` commands to encrypt custom preset and decrypt generated `target/addresses.yml` files:
 
 ## [0.4.4] - Feb-24-2021
 
@@ -23,9 +30,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v0.4.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with `--password`.
--   Added `--noPassword` to bypass the password validation. Private keys in generated addresses.yml and preset.yml will be in plain text!
--   Added `encrypt` and `decrypt` commands.
 -   Added `--ready` to `link` and `enrolRewardProgram` commands.
 -   Fixed how seed is copied to node folders when `--upgrade` and `resetData` are used
 -   Moved Reward Program Agent to its own service/container in docker-compose.yml.

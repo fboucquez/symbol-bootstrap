@@ -16,10 +16,13 @@
 import { flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
 import { prompt } from 'inquirer';
+import { Account, Convert, NetworkType, PublicAccount } from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
+import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
+import { KeyName } from './ConfigService';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class CommandUtils {
@@ -58,6 +61,52 @@ export class CommandUtils {
         }
         if (input.length >= 4) return true;
         return `Password must have at least 4 characters but got ${input.length}`;
+    }
+
+    public static isValidPrivateKey(input: string): boolean | string {
+        return Convert.isHexString(input, 64) ? true : 'Invalid private key. It must have 64 hex characters.';
+    }
+
+    public static async resolvePrivateKey(
+        networkType: NetworkType,
+        account: CertificatePair | undefined,
+        keyName: KeyName,
+        nodeName: string,
+    ): Promise<string> {
+        if (!account) {
+            return '';
+        }
+        if (!account.privateKey) {
+            while (true) {
+                const address = PublicAccount.createFromPublicKey(account.publicKey, networkType).address.plain();
+                const nodeDescription = nodeName === '' ? `of` : `of the Node's '${nodeName}'`;
+                const responses = await prompt([
+                    {
+                        name: 'value',
+                        message: `Enter the 64 HEX private key ${nodeDescription} ${keyName} account with Address: ${address} and Public Key: ${account.publicKey}:`,
+                        type: 'password',
+                        mask: '*',
+                        validate: CommandUtils.isValidPrivateKey,
+                    },
+                ]);
+                const privateKey = responses.value === '' ? undefined : responses.value;
+                if (!privateKey) {
+                    console.log('Please provide the private key.');
+                } else {
+                    const enteredAccount = Account.createFromPrivateKey(privateKey, networkType);
+                    if (enteredAccount.publicKey.toUpperCase() !== account.publicKey.toUpperCase()) {
+                        console.log(
+                            `Invalid private key. Expected address is ${address} but you provided the private key for address ${enteredAccount.address.plain()}.\n`,
+                        );
+                        console.log(`Please re-enter private key.`);
+                    } else {
+                        account.privateKey = privateKey;
+                        return privateKey;
+                    }
+                }
+            }
+        }
+        return account.privateKey;
     }
 
     public static async resolvePassword(

@@ -73,7 +73,7 @@ describe('CertificateService', () => {
             main: ConfigLoader.toConfig(main),
             transport: ConfigLoader.toConfig(transport),
         };
-        await service.run(presetData.symbolServerToolsImage, 'test-node', keys, target);
+        await service.run(networkType, presetData.symbolServerToolsImage, 'test-node', keys, target);
 
         const files = await fsPromises.readdir(target);
         expect(files).deep.eq([

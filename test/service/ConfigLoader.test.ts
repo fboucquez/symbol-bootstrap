@@ -17,11 +17,18 @@
 import { expect } from '@oclif/test';
 import 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
+import { PrivateKeySecurityMode } from '../../src/model';
+import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
 
 class ConfigLoaderMocked extends ConfigLoader {
     public generateAccount(networkType: NetworkType, privateKey: string | undefined): Account {
-        return super.generateAccount(networkType, privateKey || 'a'.repeat(64));
+        return super.generateAccount(
+            networkType,
+            PrivateKeySecurityMode.ENCRYPT,
+            KeyName.Remote,
+            privateKey || 'a'.repeat(64),
+            undefined,
+        ) as Account;
     }
 }
 

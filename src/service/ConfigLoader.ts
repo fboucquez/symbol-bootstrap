@@ -16,13 +16,15 @@
 import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
-import { Account, Address, MosaicId, MosaicNonce, NetworkType } from 'symbol-sdk';
+import { Account, Address, Convert, Crypto, MosaicId, MosaicNonce, NetworkType, PublicAccount } from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset } from '../model';
-import { BootstrapUtils, Migration, Password } from './BootstrapUtils';
-import { Preset } from './ConfigService';
+import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset, PrivateKeySecurityMode } from '../model';
+import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
+import { CommandUtils } from './CommandUtils';
+import { KeyName, Preset } from './ConfigService';
+import { CryptoUtils } from './CryptoUtils';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -34,8 +36,7 @@ export class ConfigLoader {
         const addresses: Addresses = {
             version: this.getAddressesMigration(presetData.networkType).length + 1,
             networkType: networkType,
-            nemesisGenerationHashSeed:
-                presetData.nemesisGenerationHashSeed || Account.generateNewAccount(networkType).publicAccount.publicKey,
+            nemesisGenerationHashSeed: presetData.nemesisGenerationHashSeed || Convert.uint8ToHex(Crypto.randomBytes(32)),
         };
 
         if (presetData.nodes) {
@@ -59,16 +60,24 @@ export class ConfigLoader {
         if (!presetData.nemesisGenerationHashSeed) {
             presetData.nemesisGenerationHashSeed = addresses.nemesisGenerationHashSeed;
         }
-
+        const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
         if (presetData.nemesis) {
-            addresses.nemesisSigner = ConfigLoader.toConfig(this.generateAccount(networkType, presetData.nemesis.nemesisSignerPrivateKey));
-            if (!presetData.nemesis.nemesisSignerPrivateKey && addresses.nemesisSigner) {
-                presetData.nemesis.nemesisSignerPrivateKey = addresses.nemesisSigner.privateKey;
-            }
-        }
-
-        if (!presetData.nemesisSignerPublicKey && addresses.nemesisSigner) {
+            addresses.nemesisSigner = ConfigLoader.toConfig(
+                this.generateAccount(
+                    networkType,
+                    privateKeySecurityMode,
+                    KeyName.NemesisSigner,
+                    presetData.nemesis.nemesisSignerPrivateKey,
+                    presetData.nemesisSignerPublicKey,
+                ),
+            );
             presetData.nemesisSignerPublicKey = addresses.nemesisSigner.publicKey;
+            presetData.nemesis.nemesisSignerPrivateKey = await CommandUtils.resolvePrivateKey(
+                presetData.networkType,
+                addresses.nemesisSigner,
+                KeyName.NemesisSigner,
+                '',
+            );
         }
 
         const nemesisSignerAddress = Address.createFromPublicKey(presetData.nemesisSignerPublicKey, networkType);
@@ -94,7 +103,7 @@ export class ConfigLoader {
             if (presetData.nemesis.mosaics) {
                 const mosaics: MosaicAccounts[] = [];
                 presetData.nemesis.mosaics.forEach((m, index) => {
-                    const accounts = this.generateAddresses(networkType, m.accounts);
+                    const accounts = this.generateAddresses(networkType, privateKeySecurityMode, m.accounts);
                     mosaics.push({
                         id: index ? presetData.currencyMosaicId : presetData.harvestingMosaicId,
                         name: m.name,
@@ -128,29 +137,105 @@ export class ConfigLoader {
         return addresses;
     }
 
-    public generateAddresses(networkType: NetworkType, size: number): ConfigAccount[] {
-        return ConfigLoader.getArray(size).map(() => ConfigLoader.toConfig(Account.generateNewAccount(networkType)));
+    public generateAddresses(networkType: NetworkType, privateKeySecurityMode: PrivateKeySecurityMode, size: number): ConfigAccount[] {
+        return ConfigLoader.getArray(size).map(() => {
+            const generatedAccount = this.generateAccount(
+                networkType,
+                privateKeySecurityMode,
+                KeyName.NemesisAccount,
+                undefined,
+                undefined,
+            );
+            return ConfigLoader.toConfig(generatedAccount);
+        });
     }
 
-    public generateAccount(networkType: NetworkType, privateKey: string | undefined): Account {
-        return privateKey ? Account.createFromPrivateKey(privateKey, networkType) : Account.generateNewAccount(networkType);
+    public generateAccount(
+        networkType: NetworkType,
+        privateKeySecurityMode: PrivateKeySecurityMode,
+        keyName: KeyName,
+        privateKey: string | undefined,
+        publicKey: string | undefined,
+    ): Account | PublicAccount {
+        if (privateKey) {
+            logger.info(`${keyName} Private Key has been provided...`);
+            return Account.createFromPrivateKey(privateKey, networkType);
+        }
+        if (publicKey) {
+            logger.info(`${keyName} Public Key has been provided...`);
+            return PublicAccount.createFromPublicKey(publicKey, networkType);
+        }
+        if (
+            keyName === KeyName.Main &&
+            (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL || privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN)
+        ) {
+            throw new KnownError(
+                `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere!. Please use ${PrivateKeySecurityMode.ENCRYPT} or provider your ${keyName} account with custom presets!`,
+            );
+        } else {
+            if (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL) {
+                throw new KnownError(
+                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN} or provider your ${keyName} account with custom presets!`,
+                );
+            }
+        }
+
+        logger.info(`Generating ${keyName} account...`);
+        return Account.generateNewAccount(networkType);
     }
 
     public generateNodeAccount(presetData: ConfigPreset, index: number, nodePreset: NodePreset, networkType: NetworkType): NodeAccount {
+        const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
         const name = nodePreset.name || `node-${index}`;
-        const ca = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.mainPrivateKey));
-        const node = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.transportPrivateKey));
+        const main = ConfigLoader.toConfig(
+            this.generateAccount(networkType, privateKeySecurityMode, KeyName.Main, nodePreset.mainPrivateKey, nodePreset.mainPublicKey),
+        );
+        const transport = ConfigLoader.toConfig(
+            this.generateAccount(
+                networkType,
+                privateKeySecurityMode,
+                KeyName.Transport,
+                nodePreset.transportPrivateKey,
+                nodePreset.transportPublicKey,
+            ),
+        );
 
-        const friendlyName = nodePreset.friendlyName || ca.publicKey.substr(0, 7);
+        const friendlyName = nodePreset.friendlyName || main.publicKey.substr(0, 7);
 
-        const nodeAccount: NodeAccount = { name, friendlyName, roles: nodePreset.roles, main: ca, transport: node };
+        const nodeAccount: NodeAccount = {
+            name,
+            friendlyName,
+            roles: nodePreset.roles,
+            main: main,
+            transport: transport,
+        };
 
         const useRemoteAccount = nodePreset.nodeUseRemoteAccount || presetData.nodeUseRemoteAccount;
 
         if (useRemoteAccount && (nodePreset.harvesting || nodePreset.voting))
-            nodeAccount.remote = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.remotePrivateKey));
-        if (nodePreset.voting) nodeAccount.voting = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.votingPrivateKey));
-        if (nodePreset.harvesting) nodeAccount.vrf = ConfigLoader.toConfig(this.generateAccount(networkType, nodePreset.vrfPrivateKey));
+            nodeAccount.remote = ConfigLoader.toConfig(
+                this.generateAccount(
+                    networkType,
+                    privateKeySecurityMode,
+                    KeyName.Remote,
+                    nodePreset.remotePrivateKey,
+                    nodePreset.remotePublicKey,
+                ),
+            );
+        if (nodePreset.voting)
+            nodeAccount.voting = ConfigLoader.toConfig(
+                this.generateAccount(
+                    networkType,
+                    privateKeySecurityMode,
+                    KeyName.Voting,
+                    nodePreset.votingPrivateKey,
+                    nodePreset.votingPublicKey,
+                ),
+            );
+        if (nodePreset.harvesting)
+            nodeAccount.vrf = ConfigLoader.toConfig(
+                this.generateAccount(networkType, privateKeySecurityMode, KeyName.VRF, nodePreset.vrfPrivateKey, nodePreset.vrfPublicKey),
+            );
         return nodeAccount;
     }
 
@@ -258,6 +343,7 @@ export class ConfigLoader {
             throw new Error('A node must have at least one harvesting: true or api: true');
         });
     }
+
     private resolveRoles(nodePreset: NodePreset): string {
         if (nodePreset.roles) {
             return nodePreset.roles;
@@ -274,12 +360,20 @@ export class ConfigLoader {
         }
         return roles.join(',');
     }
-    public static toConfig(account: Account): ConfigAccount {
-        return {
-            privateKey: account.privateKey,
-            publicKey: account.publicAccount.publicKey,
-            address: account.address.plain(),
-        };
+
+    public static toConfig(account: Account | PublicAccount): ConfigAccount {
+        if (account instanceof Account) {
+            return {
+                privateKey: account.privateKey,
+                publicKey: account.publicAccount.publicKey,
+                address: account.address.plain(),
+            };
+        } else {
+            return {
+                publicKey: account.publicKey,
+                address: account.address.plain(),
+            };
+        }
     }
 
     public expandRepeat(presetData: ConfigPreset): ConfigPreset {
@@ -377,7 +471,15 @@ export class ConfigLoader {
                                 );
                             }
                         }
-                        nodeAddresses.transport = ConfigLoader.toConfig(generateAccount(networkType, nodeAddresses?.node?.privateKey));
+                        nodeAddresses.transport = ConfigLoader.toConfig(
+                            generateAccount(
+                                networkType,
+                                PrivateKeySecurityMode.ENCRYPT,
+                                KeyName.Transport,
+                                nodeAddresses?.node?.privateKey,
+                                undefined,
+                            ),
+                        );
                         delete nodeAddresses.node;
                         delete nodeAddresses.signing;
                         delete nodeAddresses.ssl;

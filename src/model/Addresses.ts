@@ -17,7 +17,7 @@
 import { NetworkType } from 'symbol-sdk';
 
 export interface CertificatePair {
-    privateKey: string;
+    privateKey?: string;
     publicKey: string;
 }
 
