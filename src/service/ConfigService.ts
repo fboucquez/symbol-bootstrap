@@ -135,10 +135,7 @@ export class ConfigService {
                 logger.info('Upgrading configuration...');
             }
 
-            const presetData: ConfigPreset = _.merge(
-                oldPresetData || {},
-                this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }),
-            );
+            const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
 
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
 
@@ -182,6 +179,10 @@ export class ConfigService {
             }
             throw e;
         }
+    }
+
+    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
+        return _.merge(oldPresetData || {}, this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }));
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -364,7 +365,7 @@ export class ConfigService {
                 return {
                     publicKey: node.main.publicKey,
                     endpoint: {
-                        host: nodePresetData.host,
+                        host: nodePresetData.host || '',
                         port: 7900,
                     },
                     metadata: {
