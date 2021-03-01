@@ -334,6 +334,8 @@ When using the `PROMPT` security modes Bootstrap may ask for private keys when r
 
 Bootstrap will reject `PROMPT` security modes when an account is being randomly generated. Otherwise, the generated account wouldn't be stored anywhere.
 
+**NOTE:** It is important that the main account's private key is protected, either with a password (`ENCRYPT`) or by not storing it at all (`PROMPT_MAIN`). `PROMPT_ALL` is not so critical as the VRF, voting and remote keys are not as dangerous and they are stored in the server configuration files anyway.
+
 ### Never stored Main Private Key.
 
 A useful combination is enabling `PROMPT_MAIN`, which stores the main account public key in the preset, but encrypts the rest of the private keys. 
