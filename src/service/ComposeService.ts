@@ -196,12 +196,12 @@ export class ComposeService {
                     const debugFlag = 'DEBUG';
                     const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : 'NORMAL';
                     const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : 'NORMAL';
-                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${
-                        n.name
-                    } ${serverDebugMode} ${!!n.brokerName}`;
-                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${
-                        n.brokerName || 'broker'
-                    } ${brokerDebugMode}`;
+                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/start.sh ${presetData.catapultAppFolder} ${
+                        presetData.dataDirectory
+                    } server broker ${n.name} ${serverDebugMode} ${!!n.brokerName}`;
+                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/start.sh ${presetData.catapultAppFolder} ${
+                        presetData.dataDirectory
+                    } broker server ${n.brokerName || 'broker'} ${brokerDebugMode}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
 
                     const serverDependsOn: string[] = [];
