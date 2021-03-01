@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>NodeCertificates | symbol-bootstrap</title>
+	<title>VotingMetadata | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_service_certificateservice_.html">&quot;service/CertificateService&quot;</a>
+					<a href="../modules/_service_votingservice_.html">&quot;service/VotingService&quot;</a>
 				</li>
 				<li>
-					<a href="_service_certificateservice_.nodecertificates.html">NodeCertificates</a>
+					<a href="_service_votingservice_.votingmetadata.html">VotingMetadata</a>
 				</li>
 			</ul>
-			<h1>Interface NodeCertificates</h1>
+			<h1>Interface VotingMetadata</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">NodeCertificates</span>
+						<span class="target">VotingMetadata</span>
 					</li>
 				</ul>
 			</section>
@@ -84,8 +84,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_certificateservice_.nodecertificates.html#main" class="tsd-kind-icon">main</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_certificateservice_.nodecertificates.html#transport" class="tsd-kind-icon">transport</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_votingservice_.votingmetadata.html#version" class="tsd-kind-icon">version</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_votingservice_.votingmetadata.html#votingpublickey" class="tsd-kind-icon">voting<wbr>Public<wbr>Key</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,22 +94,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="main" class="tsd-anchor"></a>
-					<h3>main</h3>
-					<div class="tsd-signature tsd-kind-icon">main<span class="tsd-signature-symbol">:</span> <a href="_model_addresses_.certificatepair.html" class="tsd-signature-type">CertificatePair</a></div>
+					<a name="version" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> version</h3>
+					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CertificateService.ts#L41">src/service/CertificateService.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/VotingService.ts#L30">src/service/VotingService.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="transport" class="tsd-anchor"></a>
-					<h3>transport</h3>
-					<div class="tsd-signature tsd-kind-icon">transport<span class="tsd-signature-symbol">:</span> <a href="_model_addresses_.certificatepair.html" class="tsd-signature-type">CertificatePair</a></div>
+					<a name="votingpublickey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> voting<wbr>Public<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">voting<wbr>Public<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CertificateService.ts#L42">src/service/CertificateService.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/VotingService.ts#L29">src/service/VotingService.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,38 +122,35 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_service_certificateservice_.html">&quot;service/<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="../modules/_service_votingservice_.html">&quot;service/<wbr>Voting<wbr>Service&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_service_certificateservice_.certificateservice.html" class="tsd-kind-icon">Certificate<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_certificateservice_.certificatemetadata.html" class="tsd-kind-icon">Certificate<wbr>Metadata</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_certificateservice_.certificateparams.html" class="tsd-kind-icon">Certificate<wbr>Params</a>
+						<a href="../classes/_service_votingservice_.votingservice.html" class="tsd-kind-icon">Voting<wbr>Service</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_certificateservice_.nodecertificates.html" class="tsd-kind-icon">Node<wbr>Certificates</a>
+						<a href="_service_votingservice_.votingmetadata.html" class="tsd-kind-icon">Voting<wbr>Metadata</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_certificateservice_.nodecertificates.html#main" class="tsd-kind-icon">main</a>
+								<a href="_service_votingservice_.votingmetadata.html#version" class="tsd-kind-icon">version</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_certificateservice_.nodecertificates.html#transport" class="tsd-kind-icon">transport</a>
+								<a href="_service_votingservice_.votingmetadata.html#votingpublickey" class="tsd-kind-icon">voting<wbr>Public<wbr>Key</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_service_votingservice_.html#votingparams" class="tsd-kind-icon">Voting<wbr>Params</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_service_certificateservice_.html#logger" class="tsd-kind-icon">logger</a>
+						<a href="../modules/_service_votingservice_.html#logger" class="tsd-kind-icon">logger</a>
 					</li>
 				</ul>
 			</nav>

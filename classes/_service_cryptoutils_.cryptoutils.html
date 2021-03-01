@@ -93,6 +93,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#decrypt" class="tsd-kind-icon">decrypt</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#encrypt" class="tsd-kind-icon">encrypt</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#encryptedcount" class="tsd-kind-icon">encrypted<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#getprivatekeysecuritymode" class="tsd-kind-icon">get<wbr>Private<wbr>Key<wbr>Security<wbr>Mode</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#isprivatekeyfield" class="tsd-kind-icon">is<wbr>Private<wbr>Key<wbr>Field</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#removeprivatekeys" class="tsd-kind-icon">remove<wbr>Private<wbr>Keys</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_service_cryptoutils_.cryptoutils.html#removeprivatekeysaccordingtosecuritymode" class="tsd-kind-icon">remove<wbr>Private<wbr>Keys<wbr>According<wbr>ToSecurity<wbr>Mode</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,7 +110,7 @@
 					<div class="tsd-signature tsd-kind-icon">ENCRYPT_<wbr>PREFIX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"ENCRYPTED:"</span><span class="tsd-signature-symbol"> = &quot;ENCRYPTED:&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/dae7b48/src/service/CryptoUtils.ts#L20">src/service/CryptoUtils.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L22">src/service/CryptoUtils.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -123,7 +127,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/dae7b48/src/service/CryptoUtils.ts#L42">src/service/CryptoUtils.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L92">src/service/CryptoUtils.ts:92</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -152,7 +156,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/dae7b48/src/service/CryptoUtils.ts#L23">src/service/CryptoUtils.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L25">src/service/CryptoUtils.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -181,7 +185,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/dae7b48/src/service/CryptoUtils.ts#L75">src/service/CryptoUtils.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L120">src/service/CryptoUtils.ts:120</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -194,6 +198,107 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getprivatekeysecuritymode" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Private<wbr>Key<wbr>Security<wbr>Mode</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Private<wbr>Key<wbr>Security<wbr>Mode<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../enums/_model_configpreset_.privatekeysecuritymode.html" class="tsd-signature-type">PrivateKeySecurityMode</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L43">src/service/CryptoUtils.ts:43</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../enums/_model_configpreset_.privatekeysecuritymode.html" class="tsd-signature-type">PrivateKeySecurityMode</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+					<a name="isprivatekeyfield" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> is<wbr>Private<wbr>Key<wbr>Field</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Private<wbr>Key<wbr>Field<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">""</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L137">src/service/CryptoUtils.ts:137</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>fieldName: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">""</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="removeprivatekeys" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> remove<wbr>Private<wbr>Keys</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Private<wbr>Keys<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, blacklistNames<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L64">src/service/CryptoUtils.ts:64</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> blacklistNames: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="removeprivatekeysaccordingtosecuritymode" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> remove<wbr>Private<wbr>Keys<wbr>According<wbr>ToSecurity<wbr>Mode</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Private<wbr>Keys<wbr>According<wbr>ToSecurity<wbr>Mode<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, securityMode<span class="tsd-signature-symbol">: </span><a href="../enums/_model_configpreset_.privatekeysecuritymode.html" class="tsd-signature-type">PrivateKeySecurityMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/89e0931/src/service/CryptoUtils.ts#L53">src/service/CryptoUtils.ts:53</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>securityMode: <a href="../enums/_model_configpreset_.privatekeysecuritymode.html" class="tsd-signature-type">PrivateKeySecurityMode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -228,6 +333,18 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_service_cryptoutils_.cryptoutils.html#encryptedcount" class="tsd-kind-icon">encrypted<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_service_cryptoutils_.cryptoutils.html#getprivatekeysecuritymode" class="tsd-kind-icon">get<wbr>Private<wbr>Key<wbr>Security<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+								<a href="_service_cryptoutils_.cryptoutils.html#isprivatekeyfield" class="tsd-kind-icon">is<wbr>Private<wbr>Key<wbr>Field</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_service_cryptoutils_.cryptoutils.html#removeprivatekeys" class="tsd-kind-icon">remove<wbr>Private<wbr>Keys</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_service_cryptoutils_.cryptoutils.html#removeprivatekeysaccordingtosecuritymode" class="tsd-kind-icon">remove<wbr>Private<wbr>Keys<wbr>According<wbr>ToSecurity<wbr>Mode</a>
 							</li>
 						</ul>
 					</li>
