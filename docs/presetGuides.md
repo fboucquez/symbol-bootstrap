@@ -260,7 +260,7 @@ The following sections describes the different ways you can encrypt and protect 
 
 ### Specify the Nodes' Private Keys.
 
-If you know the Private Keys of your node, you can provide them in a custom preset:
+If you know the private keys of your node, you can provide them in a custom preset:
 
 #### **`plain-custom-preset.yml`**
 ```yaml
