@@ -336,7 +336,7 @@ Bootstrap will reject `PROMPT` security modes when an account is being randomly 
 
 ### Never stored Main Private Key.
 
-A useful combination is enabling `PROMPT_MAIN`, providing the Main Account Public Key in the preset, and encrypt the rest of the Private Keys. 
+A useful combination is enabling `PROMPT_MAIN`, which stores the main account public key in the preset, but encrypts the rest of the private keys. 
 
 #### **`plain-custom-preset.yml`**
 ```yaml
