@@ -49,6 +49,7 @@ export class CryptoUtils {
         throw new KnownError(`${value} is not a valid Security Mode. Please use one of ${securityModes.join(', ')}`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static removePrivateKeysAccordingToSecurityMode(value: any, securityMode: PrivateKeySecurityMode): any {
         if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN) {
             return this.removePrivateKeys(value, ['main']);
