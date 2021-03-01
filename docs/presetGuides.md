@@ -290,9 +290,9 @@ Remember to always keep your custom preset, the target's `addresses.yml`, and `p
 
 ### Specify the Nodes' Public Keys.
 
-In addition to the above, you can provide the accounts Public Keys instead of Private keys in your custom preset.
-This adds a level of security as the private keys aren't in the custom preset. 
-Bootstrap will prompt for them when performing the different operations requiring user intervention when running the commands.
+In addition to the above, you can provide the accounts public keys instead of the private keys in your custom preset.
+This adds a level of security as the private keys aren't present in the custom preset. 
+Bootstrap will request them when performing the different operations requiring user intervention when running the commands.
 
 Example:
 
