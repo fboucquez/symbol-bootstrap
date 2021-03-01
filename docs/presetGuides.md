@@ -315,7 +315,7 @@ symbol-bootstrap start --preset testnet --assembly dual --customPreset plain-cus
 
 **Hint:**
 
-You can provide some Private Keys, and some Public Keys in your custom preset. Remember to encrypt when Private Keys are provided!
+You can mix private and public keys in your custom presets. Remember to encrypt the file when private keys are provided!
 
 ### Private Key Security Mode.
 
