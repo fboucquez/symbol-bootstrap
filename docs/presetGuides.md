@@ -330,9 +330,9 @@ The `privateKeySecurityMode` defines which Private Keys can be encrypted and sto
 -   `PROMPT_MAIN`: Main Private Keys are not stored in the target's `addresses.yml` file. Bootstrap will prompt for the Main Private Key when generating certificates, or transactions need to be signed in the `link` and `enrolProgram` commands.
 -   `PROMPT_ALL`: No Private Key is stored in the target's `addresses.yml` file. Bootstrap will prompt for the Private Keys when they are required in the different commands.
 
-When using the `PROMPT_*` security mode, Bootstrap may ask for Private Keys when running the different commands. It may not be suitable for automatic scripting.  
+When using the `PROMPT` security modes Bootstrap may ask for private keys when running the different commands. This may not be suitable for automatic scripting.
 
-Bootstrap will reject `PROMPT_*` security mode when an account is randomly generated. Otherwise, the generated account won't be stored anywhere.
+Bootstrap will reject `PROMPT` security modes when an account is being randomly generated. Otherwise, the generated account wouldn't be stored anywhere.
 
 ### Never stored Main Private Key.
 
