@@ -256,7 +256,7 @@ nodes:
 
 ## Private Keys and Security 
 
-The following sections describes the different ways you can encrypt and protect your nodes's keys. 
+The following sections describe the different ways you can protect your nodes' keys. 
 
 ### Specify the Nodes' Private Keys.
 
