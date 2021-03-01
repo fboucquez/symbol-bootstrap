@@ -36,7 +36,9 @@ import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../m
 import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
+import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { CryptoUtils } from './CryptoUtils';
 import { NemgenService } from './NemgenService';
 import { ReportService } from './ReportService';
 import { RewardProgramService } from './RewardProgramService';
@@ -48,6 +50,16 @@ import { VotingService } from './VotingService';
 export enum Preset {
     bootstrap = 'bootstrap',
     testnet = 'testnet',
+}
+
+export enum KeyName {
+    Main = 'Main',
+    Remote = 'Remote',
+    Transport = 'Transport',
+    Voting = 'Voting',
+    VRF = 'VRF',
+    NemesisSigner = 'Nemesis Signer',
+    NemesisAccount = 'Nemesis Account',
 }
 
 export interface ConfigParams {
@@ -105,8 +117,6 @@ export class ConfigService {
                 if (this.params.report) {
                     await new ReportService(this.root, this.params).run(presetData);
                 }
-                await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, password);
-                await BootstrapUtils.writeYaml(presetLocation, presetData, password);
                 return { presetData, addresses };
             }
 
@@ -125,18 +135,14 @@ export class ConfigService {
                 logger.info('Upgrading configuration...');
             }
 
-            const presetData: ConfigPreset = _.merge(
-                oldPresetData || {},
-                this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }),
-            );
+            const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
+            const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
             if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
-            const addresses = oldAddresses || (await this.configLoader.generateRandomConfiguration(presetData));
-
+            const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
             this.cleanUpConfiguration(presetData);
-
             await this.generateNodeCertificates(presetData, addresses);
             await this.generateAgentCertificates(presetData);
             await this.generateNodes(presetData, addresses);
@@ -152,8 +158,12 @@ export class ConfigService {
             if (this.params.report) {
                 await new ReportService(this.root, this.params).run(presetData);
             }
-            await BootstrapUtils.writeYaml(this.configLoader.getGeneratedAddressLocation(target), addresses, password);
-            await BootstrapUtils.writeYaml(presetLocation, presetData, password);
+            await BootstrapUtils.writeYaml(
+                addressesLocation,
+                CryptoUtils.removePrivateKeysAccordingToSecurityMode(addresses, privateKeySecurityMode),
+                password,
+            );
+            await BootstrapUtils.writeYaml(presetLocation, CryptoUtils.removePrivateKeys(presetData), password);
             logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {
@@ -166,6 +176,10 @@ export class ConfigService {
             }
             throw e;
         }
+    }
+
+    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
+        return _.merge(oldPresetData || {}, this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }));
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -228,10 +242,15 @@ export class ConfigService {
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
-                return await new CertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name, {
-                    main: account.main,
-                    transport: account.transport,
-                });
+                return await new CertificateService(this.root, this.params).run(
+                    presetData.networkType,
+                    presetData.symbolServerToolsImage,
+                    account.name,
+                    {
+                        main: account.main,
+                        transport: account.transport,
+                    },
+                );
             }),
         );
     }
@@ -253,12 +272,26 @@ export class ConfigService {
         const outputFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'userconfig');
         const nodePreset = (presetData.nodes || [])[index];
 
+        const nodePrivateKey = await CommandUtils.resolvePrivateKey(
+            presetData.networkType,
+            account.transport,
+            KeyName.Transport,
+            account.name,
+        );
+        const harvesterSigningPrivateKey = await CommandUtils.resolvePrivateKey(
+            presetData.networkType,
+            account.remote || account.main,
+            account.remote ? KeyName.Remote : KeyName.Main,
+            account.name,
+        );
+        const harvesterVrfPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, account.vrf, KeyName.VRF, account.name);
+
         const generatedContext = {
             name: name,
-            nodePrivateKey: account.transport.privateKey,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
-            harvesterSigningPrivateKey: (account.remote || account.main)?.privateKey || '',
-            harvesterVrfPrivateKey: account.vrf?.privateKey || '',
+            nodePrivateKey: nodePrivateKey,
+            harvesterSigningPrivateKey: harvesterSigningPrivateKey,
+            harvesterVrfPrivateKey: harvesterVrfPrivateKey,
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];
@@ -329,7 +362,7 @@ export class ConfigService {
                 return {
                     publicKey: node.main.publicKey,
                     endpoint: {
-                        host: nodePresetData.host,
+                        host: nodePresetData.host || '',
                         port: 7900,
                     },
                     metadata: {
@@ -451,7 +484,8 @@ export class ConfigService {
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
-        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
+        const mainPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, node.main, KeyName.Main, node.name);
+        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
     }
@@ -475,7 +509,8 @@ export class ConfigService {
             presetData.networkType,
             UInt64.fromUint(0),
         );
-        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
+        const mainPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, node.main, KeyName.Main, node.name);
+        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(akl, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
@@ -499,7 +534,8 @@ export class ConfigService {
             Deadline.createFromDTO('1'),
             UInt64.fromUint(0),
         );
-        const account = Account.createFromPrivateKey(node.main.privateKey, presetData.networkType);
+        const mainPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, node.main, KeyName.Main, node.name);
+        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
     }
@@ -525,12 +561,20 @@ export class ConfigService {
                     'userconfig',
                     'resources',
                 );
+                const apiNodeCertFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, gatewayPreset.apiNodeName, 'cert');
                 await BootstrapUtils.generateConfiguration(
                     {},
                     apiNodeConfigFolder,
                     join(moveTo, 'api-node-config'),
                     [],
-                    ['node.crt.pem', 'node.key.pem', 'ca.cert.pem', 'config-network.properties', 'config-node.properties'],
+                    ['config-network.properties', 'config-node.properties'],
+                );
+                await BootstrapUtils.generateConfiguration(
+                    {},
+                    apiNodeCertFolder,
+                    join(moveTo, 'api-node-config', 'cert'),
+                    [],
+                    ['node.crt.pem', 'node.key.pem', 'ca.cert.pem'],
                 );
             }),
         );
@@ -589,8 +633,9 @@ export class ConfigService {
     private cleanUpConfiguration(presetData: ConfigPreset) {
         const target = this.params.target;
         (presetData.nodes || []).forEach(({ name }) => {
-            const configFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
-            BootstrapUtils.deleteFolder(configFolder);
+            const serverConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
+            BootstrapUtils.deleteFolder(serverConfigFolder);
+
             const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
             BootstrapUtils.deleteFolder(seedFolder);
         });

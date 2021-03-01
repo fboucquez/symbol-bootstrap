@@ -15,6 +15,8 @@
  */
 import * as _ from 'lodash';
 import { Crypto } from 'symbol-sdk';
+import { PrivateKeySecurityMode } from '../model';
+import { KnownError } from './BootstrapUtils';
 
 export class CryptoUtils {
     private static readonly ENCRYPT_PREFIX = 'ENCRYPTED:';
@@ -32,8 +34,56 @@ export class CryptoUtils {
             return _.mapValues(value, (value: any, name: string) => CryptoUtils.encrypt(value, password, name));
         }
 
-        if (_.isString(value) && fieldName && fieldName.toLowerCase().indexOf('privatekey') > -1) {
+        if (this.isPrivateKeyField(value, fieldName)) {
             return CryptoUtils.ENCRYPT_PREFIX + Crypto.encrypt(value, password);
+        }
+        return value;
+    }
+
+    public static getPrivateKeySecurityMode(value: string): PrivateKeySecurityMode {
+        const securityModes = Object.values(PrivateKeySecurityMode) as PrivateKeySecurityMode[];
+        const securityMode = securityModes.find((p) => p.toLowerCase() == value.toLowerCase());
+        if (securityMode) {
+            return securityMode;
+        }
+        throw new KnownError(`${value} is not a valid Security Mode. Please use one of ${securityModes.join(', ')}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static removePrivateKeysAccordingToSecurityMode(value: any, securityMode: PrivateKeySecurityMode): any {
+        if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN) {
+            return this.removePrivateKeys(value, ['main']);
+        }
+        if (securityMode === PrivateKeySecurityMode.PROMPT_ALL) {
+            return this.removePrivateKeys(value);
+        }
+        return value;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static removePrivateKeys(value: any, blacklistNames: string[] = []): any {
+        if (!value) {
+            return value;
+        }
+        if (_.isArray(value)) {
+            return value.map((v) => this.removePrivateKeys(v, blacklistNames));
+        }
+
+        if (_.isObject(value)) {
+            return _.mapValues(
+                _.pickBy(value, (value: any, name: string) => {
+                    const isBlacklisted =
+                        !blacklistNames.length ||
+                        blacklistNames.find((blacklistName) => name.toLowerCase().indexOf(blacklistName.toLowerCase()) > -1);
+                    return !isBlacklisted || !this.isPrivateKeyField(value, name);
+                }),
+                (value: any, name: string) => {
+                    const isBlacklisted =
+                        !blacklistNames.length ||
+                        blacklistNames.find((blacklistName) => name.toLowerCase().indexOf(blacklistName.toLowerCase()) > -1);
+                    return CryptoUtils.removePrivateKeys(value, isBlacklisted ? [] : blacklistNames);
+                },
+            );
         }
         return value;
     }
@@ -50,12 +100,7 @@ export class CryptoUtils {
         if (_.isObject(value)) {
             return _.mapValues(value, (value: any, name: string) => CryptoUtils.decrypt(value, password, name));
         }
-        if (
-            _.isString(value) &&
-            fieldName &&
-            fieldName.toLowerCase().indexOf('privatekey') > -1 &&
-            value.startsWith(CryptoUtils.ENCRYPT_PREFIX)
-        ) {
+        if (this.isPrivateKeyField(value, fieldName) && value.startsWith(CryptoUtils.ENCRYPT_PREFIX)) {
             let decryptedValue;
             try {
                 const encryptedValue = value.substring(CryptoUtils.ENCRYPT_PREFIX.length);
@@ -83,14 +128,13 @@ export class CryptoUtils {
         if (_.isObject(value)) {
             return _.sum(Object.entries(value).map(([fieldName, value]) => this.encryptedCount(value, fieldName)));
         }
-        if (
-            _.isString(value) &&
-            fieldName &&
-            fieldName.toLowerCase().indexOf('privatekey') > -1 &&
-            value.startsWith(CryptoUtils.ENCRYPT_PREFIX)
-        ) {
+        if (this.isPrivateKeyField(value, fieldName) && value.startsWith(CryptoUtils.ENCRYPT_PREFIX)) {
             return 1;
         }
         return 0;
+    }
+
+    private static isPrivateKeyField(value: any, fieldName: string | undefined) {
+        return _.isString(value) && fieldName && fieldName.toLowerCase().endsWith('privatekey');
     }
 }

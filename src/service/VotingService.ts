@@ -18,15 +18,23 @@ import { join } from 'path';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { ConfigPreset, NodeAccount, NodePreset } from '../model';
+import { ConfigAccount, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigParams } from './ConfigService';
+import { CommandUtils } from './CommandUtils';
+import { ConfigParams, KeyName } from './ConfigService';
 
 type VotingParams = ConfigParams;
+
+export interface VotingMetadata {
+    readonly votingPublicKey: string;
+    readonly version: number;
+}
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class VotingService {
+    private static readonly METADATA_VERSION = 1;
+
     constructor(protected readonly params: VotingParams) {}
 
     public async run(presetData: ConfigPreset, nodeAccount: NodeAccount, nodePreset: NodePreset | undefined): Promise<void> {
@@ -39,16 +47,27 @@ export class VotingService {
                 BootstrapUtils.getTargetNodesFolder(target, true, nodeAccount.name),
                 presetData.votingKeysDirectory,
             );
+            const metadataFile = join(votingKeysFolder, 'metadata.yml');
+            if (!(await this.shouldGenerateVoting(metadataFile, nodeAccount.voting))) {
+                logger.info(`Voting File for node ${nodePreset.name} has been previously generated. Reusing...`);
+                return;
+            }
+
+            const votingPrivateKey = await CommandUtils.resolvePrivateKey(
+                presetData.networkType,
+                nodeAccount.voting,
+                KeyName.Voting,
+                nodeAccount.name,
+            );
             const cmd = [
                 `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
-                `--secret=${nodeAccount.voting.privateKey}`,
+                `--secret=${votingPrivateKey}`,
                 `--startEpoch=${presetData.votingKeyStartEpoch}`,
                 `--endEpoch=${presetData.votingKeyEndEpoch}`,
                 `--output=/votingKeys/${privateKeyTreeFileName}`,
             ];
-
+            await BootstrapUtils.deleteFolder(votingKeysFolder);
             await BootstrapUtils.mkdir(votingKeysFolder);
-            await BootstrapUtils.deleteFile(join(votingKeysFolder, privateKeyTreeFileName));
             const binds = [`${votingKeysFolder}:/votingKeys:rw`];
 
             const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
@@ -66,8 +85,23 @@ export class VotingService {
                 throw new Error('Voting key failed. Check the logs!');
             }
             logger.info(`Voting key executed for node ${nodeAccount.name}!`);
+
+            const metadata: VotingMetadata = {
+                version: VotingService.METADATA_VERSION,
+                votingPublicKey: nodeAccount.voting.publicKey,
+            };
+            await BootstrapUtils.writeYaml(metadataFile, metadata, undefined);
         } else {
             logger.info(`Non-voting node ${nodeAccount.name}.`);
+        }
+    }
+
+    private async shouldGenerateVoting(metadataFile: string, votingAccount: ConfigAccount): Promise<boolean> {
+        try {
+            const metadata = BootstrapUtils.loadYaml(metadataFile, false) as VotingMetadata;
+            return metadata.votingPublicKey !== votingAccount.publicKey || metadata.version !== VotingService.METADATA_VERSION;
+        } catch (e) {
+            return true;
         }
     }
 }
