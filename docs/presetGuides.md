@@ -256,11 +256,11 @@ nodes:
 
 ## Private Keys and Security 
 
-The following sections describes the different ways you can encrypt and protect your nodes's keys. 
+The following sections describe the different ways you can protect your nodes' keys. 
 
 ### Specify the Nodes' Private Keys.
 
-If you know the Private Keys of your node, you can provide them in a custom preset:
+If you know the private keys of your node, you can provide them in a custom preset:
 
 #### **`plain-custom-preset.yml`**
 ```yaml
@@ -290,9 +290,9 @@ Remember to always keep your custom preset, the target's `addresses.yml`, and `p
 
 ### Specify the Nodes' Public Keys.
 
-In addition to the above, you can provide the accounts Public Keys instead of Private keys in your custom preset.
-This adds a level of security as the private keys aren't in the custom preset. 
-Bootstrap will prompt for them when performing the different operations requiring user intervention when running the commands.
+In addition to the above, you can provide the accounts public keys instead of the private keys in your custom preset.
+This adds a level of security as the private keys aren't present in the custom preset. 
+Bootstrap will request them when performing the different operations requiring user intervention when running the commands.
 
 Example:
 
@@ -315,7 +315,7 @@ symbol-bootstrap start --preset testnet --assembly dual --customPreset plain-cus
 
 **Hint:**
 
-You can provide some Private Keys, and some Public Keys in your custom preset. Remember to encrypt when Private Keys are provided!
+You can mix private and public keys in your custom presets. Remember to encrypt the file when private keys are provided!
 
 ### Private Key Security Mode.
 
@@ -330,13 +330,13 @@ The `privateKeySecurityMode` defines which Private Keys can be encrypted and sto
 -   `PROMPT_MAIN`: Main Private Keys are not stored in the target's `addresses.yml` file. Bootstrap will prompt for the Main Private Key when generating certificates, or transactions need to be signed in the `link` and `enrolProgram` commands.
 -   `PROMPT_ALL`: No Private Key is stored in the target's `addresses.yml` file. Bootstrap will prompt for the Private Keys when they are required in the different commands.
 
-When using the `PROMPT_*` security mode, Bootstrap may ask for Private Keys when running the different commands. It may not be suitable for automatic scripting.  
+When using the `PROMPT` security modes Bootstrap may ask for private keys when running the different commands. This may not be suitable for automatic scripting.
 
-Bootstrap will reject `PROMPT_*` security mode when an account is randomly generated. Otherwise, the generated account won't be stored anywhere.
+Bootstrap will reject `PROMPT` security modes when an account is being randomly generated. Otherwise, the generated account wouldn't be stored anywhere.
 
 ### Never stored Main Private Key.
 
-A useful combination is enabling `PROMPT_MAIN`, providing the Main Account Public Key in the preset, and encrypt the rest of the Private Keys. 
+A useful combination is enabling `PROMPT_MAIN`, which stores the main account public key in the preset, but encrypts the rest of the private keys. 
 
 #### **`plain-custom-preset.yml`**
 ```yaml
@@ -359,9 +359,9 @@ symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted
 > main account private key prompt
 ```
 
-In this case, Bootstrap will ask for the Main Account Private Key when creating the configuration or running the node for the first time but not when using --upgrade. 
+In this case, Bootstrap will ask for the main account private key when creating the configuration or running the node for the first time but not when using `--upgrade`.
 
-If the main account is a single account, Bootstrap will ask for the Main Account Private key when signing and announcing transaction using the `link` and `enrolProgram` commands. 
+If the main account is a single account, Bootstrap will ask for the main account private key when signing and announcing transactions using the `link` and `enrolProgram` commands. 
 If the main account is multisig, Bootstrap will ask for the cosigner(s) private key(s) to announce the transactions.
 
 ### Specify the Network's keys.

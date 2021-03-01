@@ -93,7 +93,7 @@ export class CertificateService {
         const metadataFile = join(certFolder, 'metadata.yml');
 
         if (!(await this.shouldGenerateCertificate(metadataFile, providedCertificates))) {
-            logger.info(`Certificates for node ${name} has been previously generated. Reusing...`);
+            logger.info(`Certificates for node ${name} have been previously generated. Reusing...`);
             return;
         }
         await BootstrapUtils.deleteFolder(certFolder);
