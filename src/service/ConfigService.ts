@@ -136,16 +136,13 @@ export class ConfigService {
             }
 
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
-
-            const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
+            const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
             if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
-            const addresses = oldAddresses || (await this.configLoader.generateRandomConfiguration(presetData));
-
+            const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
             this.cleanUpConfiguration(presetData);
-
             await this.generateNodeCertificates(presetData, addresses);
             await this.generateAgentCertificates(presetData);
             await this.generateNodes(presetData, addresses);

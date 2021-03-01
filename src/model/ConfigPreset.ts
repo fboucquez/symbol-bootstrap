@@ -158,6 +158,7 @@ export interface ConfigPreset {
     privateKeySecurityMode: string;
     votingKeysDirectory: string;
     serverVersion: string;
+    sinkAddress?: string;
     epochAdjustment: string;
     catapultAppFolder: string;
     subnet?: string;

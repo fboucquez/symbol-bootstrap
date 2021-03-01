@@ -21,6 +21,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Voting Key files are not re-generated if not needed when running `--upgrade`. In this case, Voting account Private Key will not be prompted on the `PROMPT_ALL` security mode.
 -   Public Keys can be used in custom presets in addition to encrypted Private Keys. If Public Keys are used, Bootstrap will prompt for the private keys when required.
 -   Added `encrypt` and `decrypt` commands to encrypt custom preset and decrypt generated `target/addresses.yml` files:
+-   The `--upgrade` param can be used to change the server keys without dropping the data.
 
 ## [0.4.4] - Feb-24-2021
 

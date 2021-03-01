@@ -53,6 +53,7 @@ export interface Addresses {
     version: number;
     nodes?: NodeAccount[];
     nemesisGenerationHashSeed: string;
+    sinkAddress: string;
     nemesisSigner?: ConfigAccount;
     networkType: NetworkType;
     mosaics?: MosaicAccounts[];
