@@ -359,7 +359,7 @@ symbol-bootstrap start --preset testnet --assembly dual --customPreset encrypted
 > main account private key prompt
 ```
 
-In this case, Bootstrap will ask for the Main Account Private Key when creating the configuration or running the node for the first time but not when using --upgrade. 
+In this case, Bootstrap will ask for the main account private key when creating the configuration or running the node for the first time but not when using `--upgrade`.
 
 If the main account is a single account, Bootstrap will ask for the main account private key when signing and announcing transactions using the `link` and `enrolProgram` commands. 
 If the main account is multisig, Bootstrap will ask for the cosigner(s) private key(s) to announce the transactions.
