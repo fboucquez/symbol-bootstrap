@@ -5,4 +5,3 @@ nodes:
       api: false
       name: 'peer-node'
       openPort: true
-      host: ''

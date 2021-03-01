@@ -12,9 +12,16 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v0.4.5  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   **A valid password is required by default**. Bootstrap will ask for the password, or you can provide one with `--password`.
--   Added `--noPassword` to bypass the password validation. Private keys in generated addresses.yml and preset.yml will be in plain text!
--   Added `encrypt` and `decrypt` commands.
+-   Added `privateKeySecurityMode`. It defines which private keys can be encrypted and stored in the `target/addresses.yml`:
+    - `ENCRYPT`: All private keys are encrypted and stored in the target's `addresses.yml` file. Bootstrap will require a password to operate.
+    - `PROMPT_MAIN`: Main private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` and `enrolProgram` commands.
+    - `PROMPT_ALL`: No private keys are stored in the in the target's `addresses.yml` file. Bootstrap will request the private keys when they are required by the different commands.
+-   The `preset.yml` doesn't contain any private key anymore, encrypted or otherwise.
+-   Certificates are not re-generated if not needed when running `--upgrade`. In this case, the main account private key is not required and will not be requested with the `PROMPT` security modes.
+-   Voting key files are not re-generated if not needed when running `--upgrade`. In this case, the voting account private key is not required and will not be requested with the `PROMPT_ALL` security mode.
+-   Public keys can be used in custom presets in addition to encrypted private keys. If public keys are used, Bootstrap will prompt for the private keys when required.
+-   Added `encrypt` and `decrypt` commands to encrypt custom presets and decrypt generated `target/addresses.yml` files:
+-   The `--upgrade` param can be used to change the server keys without dropping the data.
 -   Splitting `userconfig` into `server-config` and `broker-config` for each service. 
 
 ## [0.4.4] - Feb-24-2021
