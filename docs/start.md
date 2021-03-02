@@ -65,7 +65,7 @@ OPTIONS
       line (--noPassword).
 
   --pullImages
-      It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.
+      It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.
 
   --report
       It generates reStructuredText (.rst) reports describing the configuration of each node.

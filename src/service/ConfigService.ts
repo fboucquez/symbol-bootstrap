@@ -70,7 +70,6 @@ export interface ConfigParams {
     target: string;
     password?: string;
     user: string;
-    pullImages?: boolean;
     assembly?: string;
     customPreset?: string;
     customPresetObject?: any;
@@ -90,7 +89,6 @@ export class ConfigService {
         preset: Preset.bootstrap,
         reset: false,
         upgrade: false,
-        pullImages: false,
         user: BootstrapUtils.CURRENT_USER,
     };
     private readonly configLoader: ConfigLoader;
@@ -138,7 +136,6 @@ export class ConfigService {
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
             const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
-            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
