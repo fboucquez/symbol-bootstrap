@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { ConfigAccount, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
+import { CommandUtils } from './CommandUtils';
+import { ConfigParams, KeyName } from './ConfigService';
+import { VotingUtils } from './VotingUtils';
 import { ConfigParams } from './ConfigService';
 
 type VotingParams = ConfigParams;
@@ -39,9 +43,8 @@ export class VotingService {
     constructor(protected readonly params: VotingParams) {}
 
     public async run(presetData: ConfigPreset, nodeAccount: NodeAccount, nodePreset: NodePreset | undefined): Promise<void> {
-        const symbolServerToolsImage = presetData.symbolServerToolsImage;
-
-        if (nodePreset?.voting && nodeAccount.voting) {
+      const symbolServerToolsImage = presetData.symbolServerToolsImage;
+      if (nodePreset?.voting && nodeAccount.voting) {
             const privateKeyTreeFileName = 'private_key_tree1.dat';
             const target = this.params.target;
             const votingKeysFolder = join(
@@ -68,10 +71,25 @@ export class VotingService {
                 `--endEpoch=${presetData.votingKeyEndEpoch}`,
                 `--output=/votingKeys/${privateKeyTreeFileName}`,
             ];
+            const epochs = presetData.votingKeyEndEpoch - presetData.votingKeyStartEpoch + 1;
+            logger.info(`Creating Voting key file of ${epochs} epochs for node ${nodeAccount.name}. This could take a while!`);
+            const votingPrivateKey = await CommandUtils.resolvePrivateKey(
+                presetData.networkType,
+                nodeAccount.voting,
+                KeyName.Voting,
+                nodeAccount.name,
+            );
+            const votingUtils = new VotingUtils();
+            const votingFile = await votingUtils.createVotingFile(
+                votingPrivateKey,
+                presetData.votingKeyStartEpoch,
+                presetData.votingKeyEndEpoch,
+            );
             await BootstrapUtils.deleteFolder(votingKeysFolder);
             await BootstrapUtils.mkdir(votingKeysFolder);
-            const binds = [`${votingKeysFolder}:/votingKeys:rw`];
 
+            writeFileSync(join(votingKeysFolder, privateKeyTreeFileName), votingFile);
+            logger.info(`Voting key file of ${epochs} epochs created for node ${nodeAccount.name}!`);
             const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
             const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
                 catapultAppFolder: presetData.catapultAppFolder,

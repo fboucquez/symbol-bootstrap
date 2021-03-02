@@ -13,20 +13,84 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { Convert, Crypto, KeyPair } from 'symbol-sdk';
+import * as noble from 'noble-ed25519';
+import * as forge from 'node-forge';
+import { Convert, Crypto } from 'symbol-sdk';
+import * as nacl from 'tweetnacl';
+const ed25519 = forge.pki.ed25519;
+export interface KeyPair {
+    privateKey: Uint8Array;
+    publicKey: Uint8Array;
+}
+export interface CryptoImplementation {
+    name: string;
+    createKeyPairFromPrivateKey: (privateKey: Uint8Array) => Promise<KeyPair>;
+    sign: (keyPair: KeyPair, data: Uint8Array) => Promise<Uint8Array>;
+}
 
 export class VotingUtils {
-    public static insert(result: Uint8Array, value: Uint8Array, index: number): number {
+    public static nobleImplementation: CryptoImplementation = {
+        name: 'Noble',
+        createKeyPairFromPrivateKey: async (privateKey: Uint8Array): Promise<KeyPair> => {
+            const publicKey = await noble.getPublicKey(privateKey);
+            return { privateKey, publicKey: publicKey };
+        },
+        sign: async (keyPair: KeyPair, data: Uint8Array): Promise<Uint8Array> => {
+            return await noble.sign(data, keyPair.privateKey);
+        },
+    };
+
+    public static forgeImplementation: CryptoImplementation = {
+        name: 'Froge',
+        createKeyPairFromPrivateKey: async (privateKey: Uint8Array): Promise<KeyPair> => {
+            const keyPair = ed25519.generateKeyPair({ seed: privateKey });
+            return { privateKey, publicKey: keyPair.publicKey };
+        },
+
+        sign: async (keyPair: KeyPair, data: Uint8Array): Promise<Uint8Array> => {
+            const secretKey = new Uint8Array(64);
+            secretKey.set(keyPair.privateKey);
+            secretKey.set(keyPair.publicKey, 32);
+            const signature = ed25519.sign({
+                // also accepts a forge ByteBuffer or Uint8Array
+                message: data,
+                privateKey: secretKey,
+            });
+            return new Uint8Array(signature);
+        },
+    };
+
+    public static tweetNaClImplementation: CryptoImplementation = {
+        name: 'TweetNaCl',
+        createKeyPairFromPrivateKey: async (privateKey: Uint8Array): Promise<KeyPair> => {
+            const { publicKey } = nacl.sign.keyPair.fromSeed(privateKey);
+            return { privateKey, publicKey };
+        },
+
+        sign: async (keyPair: KeyPair, data: Uint8Array): Promise<Uint8Array> => {
+            const secretKey = new Uint8Array(64);
+            secretKey.set(keyPair.privateKey);
+            secretKey.set(keyPair.publicKey, 32);
+            return nacl.sign.detached(data, secretKey);
+        },
+    };
+    constructor(private readonly implementation: CryptoImplementation = VotingUtils.nobleImplementation) {}
+    public insert(result: Uint8Array, value: Uint8Array, index: number): number {
         result.set(value, index);
         return index + value.length;
     }
-    public static createVotingFile(secret: string, votingKeyStartEpoch: number, votingKeyEndEpoch: number): Uint8Array {
+
+    public async createVotingFile(
+        secret: string,
+        votingKeyStartEpoch: number,
+        votingKeyEndEpoch: number,
+        unitTestPrivateKeys: Uint8Array[] | undefined = undefined,
+    ): Promise<Uint8Array> {
         const items = votingKeyEndEpoch - votingKeyStartEpoch + 1;
         const headerSize = 64 + 16;
         const itemSize = 32 + 64;
         const totalSize = headerSize + items * itemSize;
-        const rootPrivateKey = KeyPair.createKeyPairFromPrivateKeyString(secret);
+        const rootPrivateKey = await this.implementation.createKeyPairFromPrivateKey(Convert.hexToUint8(secret));
         const result = new Uint8Array(totalSize);
         //start-epoch (8b),
         let index = 0;
@@ -54,8 +118,11 @@ export class VotingUtils {
         // each key is:
         for (let i = 0; i < items; i++) {
             // random PRIVATE key (32b)
-            const randomPrivateKey = Crypto.randomBytes(32);
-            const randomKeyPar = KeyPair.createKeyPairFromPrivateKeyString(Convert.uint8ToHex(randomPrivateKey));
+            const randomPrivateKey = unitTestPrivateKeys ? unitTestPrivateKeys[i] : Crypto.randomBytes(32);
+            if (randomPrivateKey.length != 32) {
+                throw new Error(`Invalid private key size ${randomPrivateKey.length}!`);
+            }
+            const randomKeyPar = await this.implementation.createKeyPairFromPrivateKey(randomPrivateKey);
             index = this.insert(result, randomPrivateKey, index);
             // signature (64b)
             // now the signature is usual signature done using ROOT private key on a following data:
@@ -65,7 +132,7 @@ export class VotingUtils {
             //
             //   i.e. say your start-epoch = 2, end-epoch = 42
             const identifier = Convert.numberToUint8Array(votingKeyEndEpoch - i, 8);
-            const signature = KeyPair.sign(rootPrivateKey, Uint8Array.from([...randomKeyPar.publicKey, ...identifier]));
+            const signature = await this.implementation.sign(rootPrivateKey, Uint8Array.from([...randomKeyPar.publicKey, ...identifier]));
             index = this.insert(result, signature, index);
         }
         //
