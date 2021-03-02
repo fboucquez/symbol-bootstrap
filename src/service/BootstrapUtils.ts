@@ -53,6 +53,10 @@ export type Password = string | false | undefined;
 export class KnownError extends Error {
     public readonly known = true;
 }
+export interface ExecOutput {
+    stdout: string;
+    stderr: string;
+}
 
 /**
  * The operation to migrate the data.
@@ -269,7 +273,7 @@ export class BootstrapUtils {
         workdir?: string;
         cmds: string[];
         binds: string[];
-    }): Promise<{ stdout: string; stderr: string }> {
+    }): Promise<ExecOutput> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
@@ -471,9 +475,9 @@ export class BootstrapUtils {
         return (await this.exec(runCommand)).stdout;
     }
 
-    public static async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
+    public static async exec(runCommand: string, extraParams: any = undefined): Promise<ExecOutput> {
         logger.debug(`Exec command: ${runCommand}`);
-        const { stdout, stderr } = await exec(runCommand);
+        const { stdout, stderr } = await exec(runCommand, extraParams);
         return { stdout, stderr };
     }
 
