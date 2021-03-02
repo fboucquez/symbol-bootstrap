@@ -96,7 +96,7 @@ export class CertificateService {
             return;
         }
         await this.exec(networkType, symbolServerToolsImage, name, providedCertificates, certFolder);
-        logger.info(`Certificate for node ${name} created`);
+        logger.info(`Certificates for node ${name} created`);
         const metadata: CertificateMetadata = {
             version: CertificateService.METADATA_VERSION,
             transportPublicKey: providedCertificates.transport.publicKey,
@@ -134,14 +134,14 @@ export class CertificateService {
         BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
         BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
         try {
-            logger.info('Creating certificate using exec and local openssl');
+            logger.info('Creating Node Certificates using exec and local openssl');
             const execOutput = await BootstrapUtils.exec(cmd.join(' '), {
                 cwd: certFolder,
             });
             await this.validateOutput(execOutput, providedCertificates, mainAccountPrivateKey, transportPrivateKey);
             return execOutput;
         } catch (e) {
-            logger.warn('Certificate could not be created using local openssl. Falling back to docker run...');
+            logger.warn('Node Certificates could not be created using local openssl. Falling back to docker run...');
         }
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
