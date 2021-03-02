@@ -94,7 +94,6 @@ export applicationPid=$!
 
 cleanup() {
   echo "Shutting down $application"
-  echo "kill -s SIGTERM $applicationPid"
   kill -s SIGTERM $applicationPid
   wait $applicationPid
   exitStatus=$?
@@ -118,7 +117,6 @@ while sleep 5; do
 
   if [ -e $otherApplicationRecoveryFile ]; then
     echo "Other process waiting for recovery. Shutting down $application"
-    echo "kill -s SIGTERM $applicationPid"
     kill -s SIGTERM $applicationPid
     wait $applicationPid
     rm -f "./data/$application.started"
