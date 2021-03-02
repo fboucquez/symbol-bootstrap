@@ -26,7 +26,7 @@ export class VotingUtils {
         const headerSize = 64 + 16;
         const itemSize = 32 + 64;
         const totalSize = headerSize + items * itemSize;
-        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(secret);
+        const rootPrivateKey = KeyPair.createKeyPairFromPrivateKeyString(secret);
         const result = new Uint8Array(totalSize);
         //start-epoch (8b),
         let index = 0;
@@ -43,7 +43,7 @@ export class VotingUtils {
         index = this.insert(result, Convert.hexToUint8('FFFFFFFFFFFFFFFF'), index);
 
         // root public key (32b) - this is root public key that is getting announced via vote link tx
-        index = this.insert(result, keyPair.publicKey, index);
+        index = this.insert(result, rootPrivateKey.publicKey, index);
         // start-epoch (8b), \ those two are exactly same one, as top level, reason is this was earlier a tree,
         index = this.insert(result, Convert.numberToUint8Array(votingKeyStartEpoch, 8), index);
 
@@ -65,7 +65,7 @@ export class VotingUtils {
             //
             //   i.e. say your start-epoch = 2, end-epoch = 42
             const identifier = Convert.numberToUint8Array(votingKeyEndEpoch - i, 8);
-            const signature = KeyPair.sign(randomKeyPar, Uint8Array.from([...randomKeyPar.publicKey, ...identifier]));
+            const signature = KeyPair.sign(rootPrivateKey, Uint8Array.from([...randomKeyPar.publicKey, ...identifier]));
             index = this.insert(result, signature, index);
         }
         //
