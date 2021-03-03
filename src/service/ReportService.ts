@@ -102,7 +102,7 @@ export class ReportService {
         const target = join(workingDir, this.params.target);
         const descriptions = await BootstrapUtils.loadYaml(join(this.root, 'presets', 'descriptions.yml'), false);
         const promises: Promise<ReportNode>[] = (presetData.nodes || []).map(async (n) => {
-            const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'userconfig', 'resources');
+            const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'server-config', 'resources');
             const files = await fsPromises.readdir(resourcesFolder);
             const reportFiles = files
                 .filter((fileName) => fileName.indexOf('.properties') > -1)

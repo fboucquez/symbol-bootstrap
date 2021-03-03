@@ -23,6 +23,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added `encrypt` and `decrypt` commands to encrypt custom presets and decrypt generated `target/addresses.yml` files:
 -   The `--upgrade` param can be used to change the server keys without dropping the data.
 -   Native and offline ready voting key file generation.
+-   Splitting `userconfig` into `server-config` and `broker-config` for each service. 
+-   Fixed recovery process.
 
 ## [0.4.4] - Feb-24-2021
 

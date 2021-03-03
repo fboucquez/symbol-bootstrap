@@ -161,6 +161,7 @@ export interface ConfigPreset {
     sinkAddress?: string;
     epochAdjustment: string;
     catapultAppFolder: string;
+    dataDirectory: string;
     subnet?: string;
     transactionsDirectory: string;
     faucetUrl?: string;

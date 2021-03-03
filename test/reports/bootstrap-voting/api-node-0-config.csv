@@ -32,9 +32,10 @@ extension.hashcache; true
 
 config-extensions-recovery.properties
 extensions
-extension.addressextraction; true
-extension.mongo; true
-extension.zeromq; true
+extension.addressextraction; false
+extension.mongo; false
+extension.zeromq; false
+extension.filespooling; true
 extension.hashcache; true
 
 

@@ -193,20 +193,16 @@ export class ComposeService {
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
-                    const debugFlag = ' DEBUG';
-                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : '';
-                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : '';
-                    const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
-                    const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
-                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
-                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || 'broker'}${brokerDebugMode}`;
-                    const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
+                    const debugFlag = 'DEBUG';
+                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : 'NORMAL';
+                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : 'NORMAL';
+                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/start.sh ${presetData.catapultAppFolder} ${
+                        presetData.dataDirectory
+                    } server broker ${n.name} ${serverDebugMode} ${!!n.brokerName}`;
+                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/start.sh ${presetData.catapultAppFolder} ${
+                        presetData.dataDirectory
+                    } broker server ${n.brokerName || 'broker'} ${brokerDebugMode}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
-
-                    const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [recoverServerCommand, serverCommand];
-
-                    const serverServiceCommand = `bash -c "${serverServiceCommands.join(' && ')}"`;
-                    const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
 
                     const serverDependsOn: string[] = [];
                     const brokerDependsOn: string[] = [];
@@ -218,7 +214,6 @@ export class ComposeService {
                     if (n.brokerName) {
                         serverDependsOn.push(n.brokerName);
                     }
-
                     const volumes = [
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
@@ -227,7 +222,7 @@ export class ComposeService {
                         user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
                         container_name: n.name,
                         image: presetData.symbolServerImage,
-                        command: serverServiceCommand,
+                        command: serverCommand,
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         restart: restart,
@@ -253,7 +248,7 @@ export class ComposeService {
                                     container_name: n.brokerName,
                                     image: nodeService.image,
                                     working_dir: nodeWorkingDirectory,
-                                    command: brokerServiceCommand,
+                                    command: brokerCommand,
                                     ports: resolvePorts([{ internalPort: 7902, openPort: n.brokerOpenPort }]),
                                     stop_signal: 'SIGINT',
                                     restart: restart,

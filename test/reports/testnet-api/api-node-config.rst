@@ -44,9 +44,10 @@ config-extensions-recovery.properties
     :delim: ;
 
     **extensions**;
-    extension.addressextraction; true
-    extension.mongo; true
-    extension.zeromq; true
+    extension.addressextraction; false
+    extension.mongo; false
+    extension.zeromq; false
+    extension.filespooling; true
     extension.hashcache; true
 
 config-extensions-server.properties
