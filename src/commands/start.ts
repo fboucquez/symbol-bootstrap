@@ -23,7 +23,13 @@ import Config from './config';
 import Run from './run';
 
 export default class Start extends Command {
-    static description = 'Single command that aggregates config, compose and run in one line!';
+    static description = `Single command that aggregates config, compose and run in one line!
+
+This is an ONLINE command. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
+
+Note: If you require your setup to be OFFLINE, you can run \`config\`, and \`compose\` in your offline machine,
+zip and copy the target folder into the online machine, and execute \`run\` or \`start\` there.
+`;
 
     static examples = [
         `$ symbol-bootstrap start`,

@@ -3,6 +3,8 @@
 
 It removes the target folder deleting the generated configuration and data
 
+This is an OFFLINE command.
+
 * [`symbol-bootstrap clean`](#symbol-bootstrap-clean)
 
 ## `symbol-bootstrap clean`
@@ -16,6 +18,9 @@ USAGE
 OPTIONS
   -h, --help           It shows the help of this command.
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
+
+DESCRIPTION
+  This is an OFFLINE command.
 
 EXAMPLE
   $ symbol-bootstrap clean

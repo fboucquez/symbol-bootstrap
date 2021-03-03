@@ -70,6 +70,7 @@ export interface ConfigParams {
     target: string;
     password?: string;
     user: string;
+    offline?: boolean;
     pullImages?: boolean;
     assembly?: string;
     customPreset?: string;
@@ -89,6 +90,7 @@ export class ConfigService {
         report: false,
         preset: Preset.bootstrap,
         reset: false,
+        offline: false,
         upgrade: false,
         pullImages: false,
         user: BootstrapUtils.CURRENT_USER,

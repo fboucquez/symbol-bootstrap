@@ -19,8 +19,10 @@ import { BootstrapUtils, RunService } from '../service';
 import { CommandUtils } from '../service/CommandUtils';
 
 export default class Stop extends Command {
-    static description =
-        'It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.';
+    static description = `It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the \`docker-compose down\` bash call.
+
+Although it's highly possible your node is connected to the internet, this is an OFFLINE command as it just stops the docker services.
+`;
     static examples = [`$ symbol-bootstrap stop`];
 
     static flags = {

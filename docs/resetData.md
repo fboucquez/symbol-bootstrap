@@ -3,6 +3,8 @@
 
 It removes the data keeping the generated configuration, certificates, keys and block 1.
 
+This is an OFFLINE command.
+
 * [`symbol-bootstrap resetData`](#symbol-bootstrap-resetdata)
 
 ## `symbol-bootstrap resetData`
@@ -16,6 +18,9 @@ USAGE
 OPTIONS
   -h, --help           It shows the help of this command.
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
+
+DESCRIPTION
+  This is an OFFLINE command.
 
 EXAMPLE
   $ symbol-bootstrap resetData

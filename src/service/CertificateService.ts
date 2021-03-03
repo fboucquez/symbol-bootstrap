@@ -20,13 +20,14 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { CertificatePair } from '../model';
-import { BootstrapUtils, ExecOutput } from './BootstrapUtils';
+import { BootstrapUtils, ExecOutput, KnownError } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
 
 export interface CertificateParams {
     readonly target: string;
     readonly user: string;
+    readonly offline?: boolean;
 }
 
 export interface CertificateMetadata {
@@ -131,29 +132,43 @@ export class CertificateService {
             KeyName.Transport,
             name,
         );
-        BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
+        const caDerFile = join(certFolder, 'ca.der');
+        const nodeDerFile = join(certFolder, 'node.der');
         try {
-            logger.info('Creating Node Certificates using exec and local openssl');
-            const execOutput = await BootstrapUtils.exec(cmd.join(' '), {
-                cwd: certFolder,
+            BootstrapUtils.createDerFile(mainAccountPrivateKey, caDerFile);
+            BootstrapUtils.createDerFile(transportPrivateKey, nodeDerFile);
+            try {
+                logger.info('Creating Node Certificates using exec and local openssl');
+                const execOutput = await BootstrapUtils.exec(cmd.join(' '), {
+                    cwd: certFolder,
+                });
+                await this.validateOutput(execOutput, providedCertificates, mainAccountPrivateKey, transportPrivateKey);
+                return execOutput;
+            } catch (e) {
+                if (this.params.offline) {
+                    throw new KnownError(
+                        `Node Certificates could not be created using local openssl. Do you have openssl installed? Remove --offline to fallback to docker. Error: ${e.message}`,
+                    );
+                }
+                logger.warn('Node Certificates could not be created using local openssl. Falling back to docker run...');
+            }
+            const binds = [`${resolve(certFolder)}:/data:rw`];
+            const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+            const execOutput = await BootstrapUtils.runImageUsingExec({
+                image: symbolServerToolsImage,
+                userId: userId,
+                workdir: '/data',
+                cmds: cmd,
+                binds: binds,
             });
             await this.validateOutput(execOutput, providedCertificates, mainAccountPrivateKey, transportPrivateKey);
             return execOutput;
-        } catch (e) {
-            logger.warn('Node Certificates could not be created using local openssl. Falling back to docker run...');
+        } finally {
+            //To be sure we are not keeping any private file
+            BootstrapUtils.deleteFile(join(certFolder, 'ca.key.pem'));
+            BootstrapUtils.deleteFile(caDerFile);
+            BootstrapUtils.deleteFile(nodeDerFile);
         }
-        const binds = [`${resolve(certFolder)}:/data:rw`];
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const execOutput = await BootstrapUtils.runImageUsingExec({
-            image: symbolServerToolsImage,
-            userId: userId,
-            workdir: '/data',
-            cmds: cmd,
-            binds: binds,
-        });
-        await this.validateOutput(execOutput, providedCertificates, mainAccountPrivateKey, transportPrivateKey);
-        return execOutput;
     }
 
     private async validateOutput(

@@ -18,11 +18,12 @@ import { join, resolve } from 'path';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { BootstrapUtils } from './BootstrapUtils';
+import { BootstrapUtils, KnownError } from './BootstrapUtils';
 
 export interface AgentCertificateParams {
     readonly target: string;
     readonly user: string;
+    readonly offline?: boolean;
 }
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -49,6 +50,11 @@ export class AgentCertificateService {
                 throw new Error('Certificate creation failed. Check the logs!');
             }
         } catch (e) {
+            if (this.params.offline) {
+                throw new KnownError(
+                    `Agent Certificates could not be created using local openssl. Do you have openssl installed? Remove --offline to fallback to docker. Error: ${e.message}`,
+                );
+            }
             logger.warn('Agent certificate could not be created using local openssl. Falling back to docker run...');
             const binds = [`${resolve(certFolder)}:/data:rw`];
             const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);

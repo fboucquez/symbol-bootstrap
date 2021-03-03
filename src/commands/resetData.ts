@@ -19,7 +19,10 @@ import { BootstrapService, BootstrapUtils } from '../service';
 import { CommandUtils } from '../service/CommandUtils';
 
 export default class ResetData extends Command {
-    static description = 'It removes the data keeping the generated configuration, certificates, keys and block 1.';
+    static description = `It removes the data keeping the generated configuration, certificates, keys and block 1.
+
+This is an OFFLINE command.
+`;
 
     static examples = [`$ symbol-bootstrap resetData`];
 
