@@ -46,7 +46,7 @@ OPTIONS
       the local nodes and services.
 
   --pullImages
-      It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.
+      It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.
 
   --resetData
       It reset the database and node data but keeps the generated configuration, keys, voting tree files and block 1

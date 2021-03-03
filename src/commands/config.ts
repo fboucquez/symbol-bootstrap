@@ -75,12 +75,6 @@ the nemesis seed needs to be provided with a \`nemesisSeedFolder\` preset proper
 
         offline: flags.boolean({
             description: 'If --offline is used, Bootstrap rejects any offline operation when generating the configuration.',
-            default: ConfigService.defaultParams.pullImages,
-        }),
-
-        pullImages: flags.boolean({
-            description:
-                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
             default: ConfigService.defaultParams.offline,
         }),
 

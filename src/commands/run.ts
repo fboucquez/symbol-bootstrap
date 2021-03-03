@@ -45,7 +45,8 @@ This is an ONLINE command. It uses docker, docker compose, and images must be pu
         }),
 
         pullImages: flags.boolean({
-            description: 'It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
+            description:
+                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
             default: RunService.defaultParams.pullImages,
         }),
 
