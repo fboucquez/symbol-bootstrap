@@ -22,6 +22,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Public keys can be used in custom presets in addition to encrypted private keys. If public keys are used, Bootstrap will prompt for the private keys when required.
 -   Added `encrypt` and `decrypt` commands to encrypt custom presets and decrypt generated `target/addresses.yml` files:
 -   The `--upgrade` param can be used to change the server keys without dropping the data.
+-   Splitting `userconfig` into `server-config` and `broker-config` for each service. 
+-   Fixed recovery process.
 
 ## [0.4.4] - Feb-24-2021
 

@@ -47,6 +47,7 @@ config-extensions-recovery.properties
     extension.addressextraction; false
     extension.mongo; false
     extension.zeromq; false
+    extension.filespooling; true
     extension.hashcache; true
 
 config-extensions-server.properties
