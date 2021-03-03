@@ -32,7 +32,7 @@
 import { expect } from '@oclif/test';
 import { readFileSync } from 'fs';
 import 'mocha';
-import { Convert, KeyPair } from 'symbol-sdk';
+import { Convert } from 'symbol-sdk';
 import { VotingUtils } from '../../src/service/VotingUtils';
 describe('VotingUtils', () => {
     async function assertVotingKey(
@@ -71,7 +71,6 @@ describe('VotingUtils', () => {
     }
 
     it('createVotingFile voting key 1', async () => {
-        // 114 s
         const votingKeyStartEpoch = 5;
         const votingKeyEndEpoch = 10;
         const privateKey = 'EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1';
@@ -79,8 +78,7 @@ describe('VotingUtils', () => {
         await assertVotingKey(testFile, privateKey, votingKeyStartEpoch, votingKeyEndEpoch);
     });
 
-    it('createVotingFile voting key 2', async () => {
-        // 4 Minutes 25 seconds
+    it.skip('createVotingFile voting key 2', async () => {
         // TOO SLOW! I had to disable it.
         const votingKeyStartEpoch = 1;
         const votingKeyEndEpoch = 26280;
@@ -90,7 +88,6 @@ describe('VotingUtils', () => {
     });
 
     it('createVotingFile voting key 3', async () => {
-        // 50 ms
         const votingKeyStartEpoch = 10;
         const votingKeyEndEpoch = 10;
         const privateKey = 'EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1';
@@ -99,7 +96,6 @@ describe('VotingUtils', () => {
     });
 
     it('createVotingFile voting key 4', async () => {
-        // 10 seconds
         const votingKeyStartEpoch = 1;
         const votingKeyEndEpoch = 1000;
         const privateKey = 'EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1';
@@ -108,9 +104,6 @@ describe('VotingUtils', () => {
     });
 
     it('createVotingFile voting key 5', async () => {
-        // 1 minutes 41 seconds PRETTY SLOW!!!
-        // 54 seconds
-        // 52 seconds
         const votingKeyStartEpoch = 1;
         const votingKeyEndEpoch = 10000;
         const privateKey = 'AAAAF0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1';
@@ -118,9 +111,6 @@ describe('VotingUtils', () => {
         await assertVotingKey(testFile, privateKey, votingKeyStartEpoch, votingKeyEndEpoch);
     });
     it('createVotingFile voting key gimre 1', async () => {
-        // 1 minutes 41 seconds PRETTY SLOW!!!
-        // 54 seconds
-        // 52 seconds
         const votingKeyStartEpoch = 13;
         const votingKeyEndEpoch = 34;
         const privateKey = '0000000000000000000000000000000000000000000000000000000000000001';
@@ -130,9 +120,6 @@ describe('VotingUtils', () => {
         await assertVotingKey(testFile, privateKey, votingKeyStartEpoch, votingKeyEndEpoch);
     });
     it('createVotingFile voting key gimre 2', async () => {
-        // 1 minutes 41 seconds PRETTY SLOW!!!
-        // 54 seconds
-        // 52 seconds
         const votingKeyStartEpoch = 1482;
         const votingKeyEndEpoch = 1500;
         const privateKey = '4CB5ABF6AD79FBF5ABBCCAFCC269D85CD2651ED4B885B5869F241AEDF0A5BA29';
@@ -143,9 +130,6 @@ describe('VotingUtils', () => {
     });
 
     it('createVotingFile voting key gimre 3', async () => {
-        // 1 minutes 41 seconds PRETTY SLOW!!!
-        // 54 seconds
-        // 52 seconds
         const votingKeyStartEpoch = 4294967293;
         const votingKeyEndEpoch = 4294967295;
         const privateKey = '201552D1EC8F3FD62B3D03C09CD083E381BE6C3AED72FB21852298913CAAAFB1';
@@ -155,39 +139,27 @@ describe('VotingUtils', () => {
         await assertVotingKey(testFile, privateKey, votingKeyStartEpoch, votingKeyEndEpoch);
     });
 
-    it('same private key', async () => {
-        const privateKeyHex = '201552D1EC8F3FD62B3D03C09CD083E381BE6C3AED72FB21852298913CAAAFB1';
-        const privateKey = Convert.hexToUint8(privateKeyHex);
-        const sdkKeyPair = KeyPair.createKeyPairFromPrivateKeyString(privateKeyHex);
-        const nobleKeyPair = await VotingUtils.nobleImplementation.createKeyPairFromPrivateKey(privateKey);
-        const forgetKeyPair = await VotingUtils.forgeImplementation.createKeyPairFromPrivateKey(privateKey);
-        const tweetNaClKeyPair = await VotingUtils.tweetNaClImplementation.createKeyPairFromPrivateKey(privateKey);
-        expect(sdkKeyPair).deep.eq(forgetKeyPair);
-        expect(sdkKeyPair).deep.eq(tweetNaClKeyPair);
-        expect(tweetNaClKeyPair).deep.eq(forgetKeyPair);
-        expect(nobleKeyPair).deep.eq(forgetKeyPair);
-        expect(nobleKeyPair).deep.eq(tweetNaClKeyPair);
-    });
+    type VectorData = {
+        privateKey: string;
+        publicKey: string;
+        length: number;
+        data: string;
+        signature: string;
+    };
 
-    it('same signature', async () => {
-        const data = Convert.hexToUint8('ffffffffffffffffff089b5ce0f9f9c951c783751b0511cafa1a');
-        const privateKeyHex = '201552D1EC8F3FD62B3D03C09CD083E381BE6C3AED72FB21852298913CAAAFB1';
-        const privateKey = Convert.hexToUint8(privateKeyHex);
-        const sdkSignature = KeyPair.sign(KeyPair.createKeyPairFromPrivateKeyString(privateKeyHex), data);
-        const nobleSignature = await VotingUtils.nobleImplementation.sign(
-            await VotingUtils.nobleImplementation.createKeyPairFromPrivateKey(privateKey),
-            data,
-        );
-        const forgeSignature = await VotingUtils.forgeImplementation.sign(
-            await VotingUtils.forgeImplementation.createKeyPairFromPrivateKey(privateKey),
-            data,
-        );
-        const tweetNaClSignature = await VotingUtils.tweetNaClImplementation.sign(
-            await VotingUtils.tweetNaClImplementation.createKeyPairFromPrivateKey(privateKey),
-            data,
-        );
-        expect(sdkSignature).deep.eq(forgeSignature);
-        expect(tweetNaClSignature).deep.eq(forgeSignature);
-        expect(nobleSignature).deep.eq(forgeSignature);
-    });
+    const testSignVectorList: VectorData[] = JSON.parse(readFileSync('./test/votingkeys/2.test-sign.json', 'utf8'));
+    VotingUtils.implementations.forEach((implementation) =>
+        it(`2.test-sign.json ${implementation.name} `, async () => {
+            for (const vector of testSignVectorList) {
+                const keyPair = {
+                    privateKey: Convert.hexToUint8(vector.privateKey),
+                    publicKey: Convert.hexToUint8(vector.publicKey),
+                };
+                const privateKey = keyPair.privateKey;
+                expect(await implementation.createKeyPairFromPrivateKey(privateKey)).deep.eq(keyPair);
+                const resolvedSignature = await implementation.sign(keyPair, Convert.hexToUint8(vector.data));
+                expect(Convert.uint8ToHex(resolvedSignature)).eq(vector.signature);
+            }
+        }),
+    );
 });

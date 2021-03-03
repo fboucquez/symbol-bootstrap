@@ -74,6 +74,9 @@ export class VotingUtils {
             return nacl.sign.detached(data, secretKey);
         },
     };
+
+    public static implementations = [VotingUtils.nobleImplementation, VotingUtils.tweetNaClImplementation, VotingUtils.forgeImplementation];
+
     constructor(private readonly implementation: CryptoImplementation = VotingUtils.nobleImplementation) {}
     public insert(result: Uint8Array, value: Uint8Array, index: number): number {
         result.set(value, index);
