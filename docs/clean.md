@@ -3,7 +3,7 @@
 
 It removes the target folder deleting the generated configuration and data
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 
 * [`symbol-bootstrap clean`](#symbol-bootstrap-clean)
 
@@ -20,7 +20,7 @@ OPTIONS
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
 DESCRIPTION
-  This is an OFFLINE command.
+  This command can be used in OFFLINE mode.
 
 EXAMPLE
   $ symbol-bootstrap clean

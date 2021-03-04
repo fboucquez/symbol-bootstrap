@@ -30,7 +30,7 @@ export default class Encrypt extends Command {
 
 The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 `;
 
     static examples = [

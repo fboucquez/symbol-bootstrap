@@ -3,7 +3,7 @@
 
 it generates reStructuredText (.rst) reports describing the configuration of each node.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 
 * [`symbol-bootstrap report`](#symbol-bootstrap-report)
 
@@ -20,7 +20,7 @@ OPTIONS
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
 DESCRIPTION
-  This is an OFFLINE command.
+  This command can be used in OFFLINE mode.
 
 EXAMPLE
   $ symbol-bootstrap report

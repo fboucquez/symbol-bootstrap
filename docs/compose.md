@@ -3,7 +3,7 @@
 
 It generates the `docker-compose.yml` file from the configured network.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 
 * [`symbol-bootstrap compose`](#symbol-bootstrap-compose)
 
@@ -32,7 +32,7 @@ OPTIONS
   --upgrade            It regenerates the docker compose and utility files from the <target>/docker folder
 
 DESCRIPTION
-  This is an OFFLINE command.
+  This command can be used in OFFLINE mode.
 
 EXAMPLE
   $ symbol-bootstrap compose

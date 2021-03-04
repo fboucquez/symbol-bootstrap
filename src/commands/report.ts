@@ -21,7 +21,7 @@ import { CommandUtils } from '../service/CommandUtils';
 export default class Clean extends Command {
     static description = `it generates reStructuredText (.rst) reports describing the configuration of each node.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 `;
 
     static examples = [`$ symbol-bootstrap report`];

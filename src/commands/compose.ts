@@ -21,7 +21,7 @@ import { CommandUtils } from '../service/CommandUtils';
 export default class Compose extends Command {
     static description = `It generates the \`docker-compose.yml\` file from the configured network.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 `;
 
     static examples = [`$ symbol-bootstrap compose`];

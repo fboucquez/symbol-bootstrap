@@ -21,7 +21,7 @@ import { CommandUtils } from '../service/CommandUtils';
 export default class ResetData extends Command {
     static description = `It removes the data keeping the generated configuration, certificates, keys and block 1.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 `;
 
     static examples = [`$ symbol-bootstrap resetData`];

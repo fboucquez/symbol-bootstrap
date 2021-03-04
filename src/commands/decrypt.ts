@@ -29,7 +29,7 @@ export default class Decrypt extends Command {
 
 The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or running a bootstrap command with a provided --password.
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
 `;
 
     static examples = [

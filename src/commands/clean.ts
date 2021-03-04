@@ -21,7 +21,7 @@ import { CommandUtils } from '../service/CommandUtils';
 export default class Clean extends Command {
     static description = `It removes the target folder deleting the generated configuration and data
 
-This is an OFFLINE command.
+This command can be used in OFFLINE mode.
     `;
 
     static examples = [`$ symbol-bootstrap clean`];

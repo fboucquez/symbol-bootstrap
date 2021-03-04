@@ -22,7 +22,7 @@ import HealthCheck from './healthCheck';
 export default class Run extends Command {
     static description = `It boots the network via docker using the generated \`docker-compose.yml\` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the \`docker-compose up\` bash call.
 
-This is an ONLINE command. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
+This command can only be used in ONLINE mode. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
 `;
 
     static examples = [`$ symbol-bootstrap run`];

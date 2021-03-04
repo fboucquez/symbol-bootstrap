@@ -3,9 +3,9 @@
 
 Single command that aggregates config, compose and run in one line!
 
-This is an ONLINE command. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
+This command is typically run in ONLINE mode. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
 
-Note: If you require your setup to be OFFLINE, you can run `config`, and `compose` in your offline machine,
+However, if you require your setup to be OFFLINE, you can run `config`, and `compose` in your offline machine,
 zip and copy the target folder into the online machine, and execute `run` or `start` there.
 
 * [`symbol-bootstrap start`](#symbol-bootstrap-start)
@@ -68,7 +68,7 @@ OPTIONS
       When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.
 
   --offline
-      If --offline is used, Bootstrap rejects any offline operation when generating the configuration.
+      If --offline is used, Bootstrap rejects any online operation when generating the configuration.
 
   --password=password
       A password used to encrypt and decrypt private keys in preset files like addresses.yml and preset.yml. Bootstrap 
@@ -93,10 +93,10 @@ OPTIONS
       preset (-a) must be used. Backup the target folder before upgrading.
 
 DESCRIPTION
-  This is an ONLINE command. It uses docker, docker compose, and images must be pulled from the internet. It's expected 
-  for a mainnet/testnet node to be connected to the internet.
+  This command is typically run in ONLINE mode. It uses docker, docker compose, and images must be pulled from the 
+  internet. It's expected for a mainnet/testnet node to be connected to the internet.
 
-  Note: If you require your setup to be OFFLINE, you can run `config`, and `compose` in your offline machine,
+  However, if you require your setup to be OFFLINE, you can run `config`, and `compose` in your offline machine,
   zip and copy the target folder into the online machine, and execute `run` or `start` there.
 
 EXAMPLES

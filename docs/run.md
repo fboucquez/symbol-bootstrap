@@ -3,7 +3,7 @@
 
 It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 
-This is an ONLINE command. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
+This command can only be used in ONLINE mode. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
 
 * [`symbol-bootstrap run`](#symbol-bootstrap-run)
 
@@ -55,8 +55,8 @@ OPTIONS
       [default: 60000] If running in detached mode, how long before timing out (in milliseconds)
 
 DESCRIPTION
-  This is an ONLINE command. It uses docker, docker compose, and images must be pulled from the internet. It's expected 
-  for a mainnet/testnet node to be connected to the internet.
+  This command can only be used in ONLINE mode. It uses docker, docker compose, and images must be pulled from the 
+  internet. It's expected for a mainnet/testnet node to be connected to the internet.
 
 EXAMPLE
   $ symbol-bootstrap run
