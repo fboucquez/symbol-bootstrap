@@ -157,8 +157,8 @@ export interface PeerInfo {
     publicKey: string;
     endpoint: {
         host: string;
+        port: number;
     };
-    port: number;
     metadata: {
         name: string;
         roles: string;

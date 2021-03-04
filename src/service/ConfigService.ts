@@ -32,7 +32,7 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType, PeerInfo } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
@@ -397,7 +397,7 @@ export class ConfigService {
         nodePresetDataFunction: (nodePresetData: NodePreset) => boolean,
         jsonFileName: string,
     ) {
-        const thisNetworkKnownPeers = (presetData.nodes || [])
+        const thisNetworkKnownPeers: PeerInfo[] = (presetData.nodes || [])
             .map((nodePresetData, index) => {
                 if (!nodePresetDataFunction(nodePresetData)) {
                     return undefined;
@@ -415,7 +415,8 @@ export class ConfigService {
                     },
                 };
             })
-            .filter((i) => i);
+            .filter((i) => i)
+            .map((i) => i as PeerInfo);
         const globalKnownPeers = presetData.knownPeers?.[type] || [];
         const data = {
             _info: `this file contains a list of ${type} peers`,
