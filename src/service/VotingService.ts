@@ -26,6 +26,8 @@ import { ConfigParams, KeyName } from './ConfigService';
 type VotingParams = ConfigParams;
 
 export interface VotingMetadata {
+    readonly votingKeyStartEpoch: number;
+    readonly votingKeyEndEpoch: number;
     readonly votingPublicKey: string;
     readonly version: number;
 }
@@ -48,7 +50,7 @@ export class VotingService {
                 presetData.votingKeysDirectory,
             );
             const metadataFile = join(votingKeysFolder, 'metadata.yml');
-            if (!(await this.shouldGenerateVoting(metadataFile, nodeAccount.voting))) {
+            if (!(await this.shouldGenerateVoting(presetData, metadataFile, nodeAccount.voting))) {
                 logger.info(`Voting File for node ${nodePreset.name} has been previously generated. Reusing...`);
                 return;
             }
@@ -87,6 +89,8 @@ export class VotingService {
             logger.info(`Voting key executed for node ${nodeAccount.name}!`);
 
             const metadata: VotingMetadata = {
+                votingKeyStartEpoch: presetData.votingKeyStartEpoch,
+                votingKeyEndEpoch: presetData.votingKeyEndEpoch,
                 version: VotingService.METADATA_VERSION,
                 votingPublicKey: nodeAccount.voting.publicKey,
             };
@@ -96,10 +100,15 @@ export class VotingService {
         }
     }
 
-    private async shouldGenerateVoting(metadataFile: string, votingAccount: ConfigAccount): Promise<boolean> {
+    private async shouldGenerateVoting(presetData: ConfigPreset, metadataFile: string, votingAccount: ConfigAccount): Promise<boolean> {
         try {
             const metadata = BootstrapUtils.loadYaml(metadataFile, false) as VotingMetadata;
-            return metadata.votingPublicKey !== votingAccount.publicKey || metadata.version !== VotingService.METADATA_VERSION;
+            return (
+                metadata.votingPublicKey !== votingAccount.publicKey ||
+                metadata.version !== VotingService.METADATA_VERSION ||
+                metadata.votingKeyStartEpoch !== presetData.votingKeyStartEpoch ||
+                metadata.votingKeyEndEpoch !== presetData.votingKeyEndEpoch
+            );
         } catch (e) {
             return true;
         }

@@ -209,15 +209,26 @@ export class ConfigLoader {
         //Generation validation.
         if (
             keyName === KeyName.Main &&
-            (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL || privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN)
+            (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL ||
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING ||
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN)
         ) {
             throw new KnownError(
-                `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere!. Please use ${PrivateKeySecurityMode.ENCRYPT} or provider your ${keyName} account with custom presets!`,
+                `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere!. Please use ${PrivateKeySecurityMode.ENCRYPT}, or provider your ${keyName} account with custom presets!`,
+            );
+        }
+        if (
+            keyName === KeyName.Voting &&
+            (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL ||
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING)
+        ) {
+            throw new KnownError(
+                `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere!. Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, or provider your ${keyName} account with custom presets!`,
             );
         } else {
             if (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL) {
                 throw new KnownError(
-                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN} or provider your ${keyName} account with custom presets!`,
+                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, ${PrivateKeySecurityMode.PROMPT_MAIN_VOTING}, or provider your ${keyName} account with custom presets!`,
                 );
             }
         }
