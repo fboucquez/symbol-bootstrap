@@ -92,7 +92,7 @@
         "lint": "eslint --cache src/ test/ --ext .ts",
         "lint:fix": "eslint src/ test/ --ext .ts --fix",
         "prettier": "prettier --write ./src ./test",
-        "style:fix": "npm run prettier && npm run lint:fix && npm run oclif-doc",
+        "style:fix": "npm run create-index-files && npm run prettier && npm run lint:fix && npm run oclif-doc",
         "create-index-files": "cti create ./src -b -n -e commands",
         "postpack": "shx rm -f oclif.manifest.json",
         "posttest": "eslint src/ test/ --ext .ts",

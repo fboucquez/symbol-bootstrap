@@ -54,6 +54,9 @@ export class CryptoUtils {
         if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN) {
             return this.removePrivateKeys(value, ['main']);
         }
+        if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING) {
+            return this.removePrivateKeys(value, ['main', 'voting']);
+        }
         if (securityMode === PrivateKeySecurityMode.PROMPT_ALL) {
             return this.removePrivateKeys(value);
         }

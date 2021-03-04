@@ -1,4 +1,4 @@
-privateKeySecurityMode: PROMPT_MAIN
+privateKeySecurityMode: PROMPT_MAIN_VOTING
 nodes:
     - voting: true
       rewardProgram: 'supernode'

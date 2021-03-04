@@ -21,6 +21,7 @@ import { NodeType } from './NodeType';
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
     PROMPT_MAIN = 'PROMPT_MAIN',
+    PROMPT_MAIN_VOTING = 'PROMPT_MAIN_VOTING',
     PROMPT_ALL = 'PROMPT_ALL',
 }
 
