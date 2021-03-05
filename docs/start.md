@@ -30,7 +30,7 @@ OPTIONS
   -h, --help
       It shows the help of this command.
 
-  -p, --preset=(bootstrap|testnet)
+  -p, --preset=(bootstrap|testnet|mainnet)
       [default: bootstrap] the network preset
 
   -r, --reset
@@ -89,4 +89,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.6/src/commands/start.ts)_
