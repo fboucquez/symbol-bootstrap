@@ -28,8 +28,11 @@ harvestNetworkFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 mosaicRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 namespaceRentalFeeSinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
 faucetUrl: 'http://faucet.testnet.symboldev.network'
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.1.7
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.1.7
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.1.8
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.1.8
+minPartnerNodeVersion: 0.10.0.7
+maxPartnerNodeVersion: 0.10.1.8
+serverVersion: 0.10.1.8
 knownRestGateways:
     - 'http://api-01.ap-northeast-1.testnet.symboldev.network:3000'
     - 'http://api-01.ap-southeast-1.testnet.symboldev.network:3000'
