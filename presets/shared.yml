@@ -1,4 +1,5 @@
 nodeUseRemoteAccount: true
+privateKeySecurityMode: ENCRYPT
 nodePort: 7900
 enableCacheDatabaseStorage: true
 enableVerifiableState: true
@@ -79,9 +80,9 @@ logLevel: 'Info'
 transactionsDirectory: './transactions'
 binDirectory: ./seed
 seedDirectory: ./seed
-certificateDirectory: ./userconfig/resources/cert
+certificateDirectory: ./cert
 dataDirectory: ./data
-votingKeysDirectory: ./userconfig/votingkeys
+votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 
@@ -139,10 +140,10 @@ socketWorkingBufferSize: 16KB
 socketWorkingBufferSensitivity: 1
 maxPacketDataSize: 150MB
 blockDisruptorSlotCount: 4096
-blockDisruptorMaxMemorySize : 300MB
+blockDisruptorMaxMemorySize: 300MB
 blockElementTraceInterval: 1
 transactionDisruptorSlotCount: 8192
-transactionDisruptorMaxMemorySize : 20MB
+transactionDisruptorMaxMemorySize: 20MB
 transactionElementTraceInterval: 10
 enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
@@ -207,5 +208,5 @@ connectionPoolSize: 10
 
 #voting
 votingKeyStartEpoch: 1
-votingKeyEndEpoch: 26280
+votingKeyEndEpoch: 1460
 enableRevoteOnBoot: true

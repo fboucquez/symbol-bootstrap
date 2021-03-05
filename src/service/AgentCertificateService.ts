@@ -37,8 +37,8 @@ export class AgentCertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
         const command = this.createCertCommands('/data');
-        await BootstrapUtils.writeTextFile(join(certFolder, 'createCertificate.sh'), command);
-        const cmd = ['bash', 'createCertificate.sh'];
+        await BootstrapUtils.writeTextFile(join(certFolder, 'createAgentCertificate.sh'), command);
+        const cmd = ['bash', 'createAgentCertificate.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
@@ -64,8 +64,7 @@ openssl genrsa -out agent-key.pem 4096
 openssl req -new -config agent.cnf -key agent-key.pem -out agent-csr.pem
 openssl x509 -req -extfile agent.cnf -days 999 -in agent-csr.pem -out agent-crt.pem -signkey agent-key.pem
 
-
-rm createCertificate.sh
+rm createAgentCertificate.sh
 rm agent-csr.pem
 rm agent.cnf
 
