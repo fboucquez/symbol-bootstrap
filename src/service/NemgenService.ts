@@ -44,18 +44,18 @@ export class NemgenService {
         await BootstrapUtils.mkdir(nemesisSeedFolder);
         await promises.copyFile(join(this.root, `config`, `hashes.dat`), join(nemesisSeedFolder, `hashes.dat`));
         const name = presetData.nodes[0].name;
-        const userConfigWorkingDir = BootstrapUtils.getTargetNodesFolder(target, true, name, 'userconfig');
+        const serverConfigWorkingDir = BootstrapUtils.getTargetNodesFolder(target, true, name, 'server-config');
 
         BootstrapUtils.validateFolder(nemesisWorkingDir);
-        BootstrapUtils.validateFolder(userConfigWorkingDir);
+        BootstrapUtils.validateFolder(serverConfigWorkingDir);
 
         const cmd = [
             `${presetData.catapultAppFolder}/bin/catapult.tools.nemgen`,
-            '--resources=/userconfig',
-            '--nemesisProperties=./userconfig/block-properties-file.properties',
+            '--resources=/server-config',
+            '--nemesisProperties=./server-config/block-properties-file.properties',
         ];
 
-        const binds = [`${userConfigWorkingDir}:/userconfig`, `${nemesisWorkingDir}:/nemesis`];
+        const binds = [`${serverConfigWorkingDir}:/server-config`, `${nemesisWorkingDir}:/nemesis`];
 
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({

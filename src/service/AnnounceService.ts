@@ -27,6 +27,7 @@ import {
     MosaicId,
     MultisigAccountInfo,
     NetworkType,
+    PublicAccount,
     RepositoryFactory,
     RepositoryFactoryHttp,
     Transaction,
@@ -37,7 +38,8 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
+import { CommandUtils } from './CommandUtils';
+import { KeyName } from './ConfigService';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -46,7 +48,7 @@ export interface TransactionFactoryParams {
     nodePreset: NodePreset;
     nodeAccount: NodeAccount;
     mainAccountInfo: AccountInfo;
-    mainAccount: Account;
+    mainAccount: PublicAccount;
     deadline: Deadline;
     maxFee: UInt64;
 }
@@ -69,7 +71,8 @@ export class AnnounceService {
         });
     };
     public static flags = {
-        password: BootstrapUtils.passwordFlag,
+        password: CommandUtils.passwordFlag,
+        noPassword: CommandUtils.noPasswordFlag,
         url: flags.string({
             char: 'u',
             description: 'the network url',
@@ -148,11 +151,11 @@ export class AnnounceService {
                 throw new Error('CA/Main account is required!');
             }
             const nodePreset = (presetData.nodes || [])[index];
-            const mainAccount = Account.createFromPrivateKey(nodeAccount.main.privateKey, presetData.networkType);
+            const mainAccount = PublicAccount.createFromPublicKey(nodeAccount.main.publicKey, presetData.networkType);
             const noFundsMessage = faucetUrl
                 ? `Does your node signing address have any network coin? Send ${tokenAmount} tokens to ${mainAccount.address.plain()} via ${faucetUrl}/?recipient=${mainAccount.address.plain()}`
                 : `Does your node signing address have any network coin? Send ${tokenAmount} tokens to ${mainAccount.address.plain()} .`;
-            const mainAccountInfo = await this.getAccountInfo(repositoryFactory, mainAccount);
+            const mainAccountInfo = await this.getAccountInfo(repositoryFactory, mainAccount.address);
 
             if (!mainAccountInfo) {
                 logger.error(`Node signing account ${mainAccount.address.plain()} is not valid. \n\n${noFundsMessage}`);
@@ -165,7 +168,7 @@ export class AnnounceService {
                 continue;
             }
             const defaultMaxFee = UInt64.fromUint(providedMaxFee || 0);
-            const multisigAccountInfo = await this.getMultisigAccount(repositoryFactory, mainAccount);
+            const multisigAccountInfo = await this.getMultisigAccount(repositoryFactory, mainAccount.address);
             const params: TransactionFactoryParams = {
                 presetData,
                 nodePreset,
@@ -199,7 +202,7 @@ export class AnnounceService {
 
             if (multisigAccountInfo) {
                 logger.info(
-                    `The node's main account is a multig account with ${
+                    `The node's main account is a multig account with Address: ${
                         multisigAccountInfo.minApproval
                     } min approval. Cosigners are: ${multisigAccountInfo.cosignatoryAddresses
                         .map((a) => a.plain())
@@ -225,7 +228,7 @@ export class AnnounceService {
                 if (cosigners.length >= multisigAccountInfo.minApproval) {
                     let aggregateTransaction = AggregateTransaction.createComplete(
                         deadline,
-                        transactions.map((t) => t.toAggregate(mainAccount.publicAccount)),
+                        transactions.map((t) => t.toAggregate(mainAccount)),
                         networkType,
                         [],
                         defaultMaxFee,
@@ -252,7 +255,7 @@ export class AnnounceService {
                 } else {
                     let aggregateTransaction = AggregateTransaction.createBonded(
                         deadline,
-                        transactions.map((t) => t.toAggregate(mainAccount.publicAccount)),
+                        transactions.map((t) => t.toAggregate(mainAccount)),
                         networkType,
                         [],
                         defaultMaxFee,
@@ -294,12 +297,16 @@ export class AnnounceService {
                     }
                 }
             } else {
+                const signerAccount = Account.createFromPrivateKey(
+                    await CommandUtils.resolvePrivateKey(networkType, nodeAccount.main, KeyName.Main, nodeAccount.name),
+                    networkType,
+                );
                 if (transactions.length == 1) {
                     let transaction = transactions[0];
                     if (!providedMaxFee) {
                         transaction = transaction.setMaxFee(minFeeMultiplier);
                     }
-                    const signedTransaction = mainAccount.sign(transactions[0], generationHash);
+                    const signedTransaction = signerAccount.sign(transactions[0], generationHash);
                     try {
                         logger.info(`Announcing Simple Transaction hash ${signedTransaction.hash}`);
                         await transactionService.announce(signedTransaction, listener).toPromise();
@@ -314,7 +321,7 @@ export class AnnounceService {
                 } else {
                     let aggregateTransaction = AggregateTransaction.createComplete(
                         deadline,
-                        transactions.map((t) => t.toAggregate(mainAccount.publicAccount)),
+                        transactions.map((t) => t.toAggregate(mainAccount)),
                         networkType,
                         [],
                         defaultMaxFee,
@@ -322,7 +329,7 @@ export class AnnounceService {
                     if (!providedMaxFee) {
                         aggregateTransaction = aggregateTransaction.setMaxFeeForAggregate(minFeeMultiplier, 0);
                     }
-                    const signedAggregateTransaction = mainAccount.sign(aggregateTransaction, generationHash);
+                    const signedAggregateTransaction = signerAccount.sign(aggregateTransaction, generationHash);
                     try {
                         logger.info(`Announcing Aggregate Complete Transaction hash ${signedAggregateTransaction.hash}`);
                         await transactionService.announce(signedAggregateTransaction, listener).toPromise();
@@ -400,17 +407,20 @@ export class AnnounceService {
         return Convert.isHexString(input, 64) ? true : 'Invalid private key. It must be has 64 hex characters!';
     }
 
-    private async getAccountInfo(repositoryFactory: RepositoryFactory, account: Account): Promise<AccountInfo | undefined> {
+    private async getAccountInfo(repositoryFactory: RepositoryFactory, mainAccountAddress: Address): Promise<AccountInfo | undefined> {
         try {
-            return await repositoryFactory.createAccountRepository().getAccountInfo(account.address).toPromise();
+            return await repositoryFactory.createAccountRepository().getAccountInfo(mainAccountAddress).toPromise();
         } catch (e) {
             return undefined;
         }
     }
 
-    private async getMultisigAccount(repositoryFactory: RepositoryFactory, account: Account): Promise<MultisigAccountInfo | undefined> {
+    private async getMultisigAccount(
+        repositoryFactory: RepositoryFactory,
+        mainAccountAddress: Address,
+    ): Promise<MultisigAccountInfo | undefined> {
         try {
-            const info = await repositoryFactory.createMultisigRepository().getMultisigAccountInfo(account.address).toPromise();
+            const info = await repositoryFactory.createMultisigRepository().getMultisigAccountInfo(mainAccountAddress).toPromise();
             return info.isMultisig() ? info : undefined;
         } catch (e) {
             return undefined;

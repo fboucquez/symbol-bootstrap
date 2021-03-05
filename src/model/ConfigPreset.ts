@@ -18,6 +18,13 @@ import { NetworkType } from 'symbol-sdk';
 import { Preset } from '../service';
 import { NodeType } from './NodeType';
 
+export enum PrivateKeySecurityMode {
+    ENCRYPT = 'ENCRYPT',
+    PROMPT_MAIN = 'PROMPT_MAIN',
+    PROMPT_MAIN_VOTING = 'PROMPT_MAIN_VOTING',
+    PROMPT_ALL = 'PROMPT_ALL',
+}
+
 export interface DockerServicePreset {
     ipv4_address?: string;
     openPort?: boolean | number | string;
@@ -75,10 +82,19 @@ export interface NodePreset extends DockerServicePreset {
 
     // Optional private keys. If not provided, bootstrap will generate random ones.
     mainPrivateKey?: string;
+    mainPublicKey?: string;
+
     transportPrivateKey?: string;
+    transportPublicKey?: string;
+
     remotePrivateKey?: string;
+    remotePublicKey?: string;
+
     vrfPrivateKey?: string;
+    vrfPublicKey?: string;
+
     votingPrivateKey?: string;
+    votingPublicKey?: string;
 
     //Broker specific
     brokerName?: string;
@@ -140,10 +156,13 @@ export interface FaucetPreset extends DockerServicePreset {
 
 export interface ConfigPreset {
     preset: Preset;
+    privateKeySecurityMode: string;
     votingKeysDirectory: string;
     serverVersion: string;
+    sinkAddress?: string;
     epochAdjustment: string;
     catapultAppFolder: string;
+    dataDirectory: string;
     subnet?: string;
     transactionsDirectory: string;
     faucetUrl?: string;

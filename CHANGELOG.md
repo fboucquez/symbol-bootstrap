@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.5] - Mar-5-2021
+
+**Milestone**: Hippopotamus(0.10.0.8)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v0.4.5  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Added `privateKeySecurityMode`. It defines which private keys can be encrypted and stored in the `target/addresses.yml`:
+    - `ENCRYPT`: All private keys are encrypted and stored in the target's `addresses.yml` file. Bootstrap will require a password to operate.
+    - `PROMPT_MAIN`: Main private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` and `enrolProgram` commands.
+    - `PROMPT_MAIN_VOTING`: Main and voting private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` and `enrolProgram` commands. The voting private key will be requested when generating the voting key file.
+    - `PROMPT_ALL`: No private keys are stored in the in the target's `addresses.yml` file. Bootstrap will request the private keys when they are required by the different commands.
+-   The `preset.yml` doesn't contain any private key anymore, encrypted or otherwise.
+-   Certificates are not re-generated if not needed when running `--upgrade`. In this case, the main account private key is not required and will not be requested with the `PROMPT` security modes.
+-   Voting key files are not re-generated if not needed when running `--upgrade`. In this case, the voting account private key is not required and will not be requested with the `PROMPT_ALL` or `PROMPT_MAIN_VOTING` security modes.
+-   Public keys can be used in custom presets in addition to encrypted private keys. If public keys are used, Bootstrap will prompt for the private keys when required.
+-   Added `encrypt` and `decrypt` commands to encrypt custom presets and decrypt generated `target/addresses.yml` files:
+-   The `--upgrade` param can be used to change the server keys without dropping the data.
+-   Splitting `userconfig` into `server-config` and `broker-config` for each service. 
+-   Fixed recovery process.
+
 ## [0.4.4] - Feb-24-2021
 
 **Milestone**: Hippopotamus(0.10.0.7)

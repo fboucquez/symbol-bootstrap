@@ -6,7 +6,6 @@ nodes:
       voting: false
       api: true
       name: 'api-node'
-      host: ''
       databaseHost: 'db'
       brokerName: 'api-broker'
       openPort: true

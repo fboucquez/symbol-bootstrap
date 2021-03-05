@@ -23,6 +23,13 @@ OPTIONS
   --maxFee=maxFee         the max fee used when announcing (absolute). The node min multiplier will be used if it is not
                           provided.
 
+  --noPassword            When provided, Bootstrap will not use a password, so private keys will be stored in plain
+                          text. Use with caution.
+
+  --password=password     A password used to encrypt and decrypt private keys in preset files like addresses.yml and
+                          preset.yml. Bootstrap prompts for a password by default, can be provided in the command line
+                          (--password=XXXX) or disabled in the command line (--noPassword).
+
   --ready                 If --ready is provided, the command will not ask for confirmation when announcing
                           transactions.
 
@@ -32,8 +39,12 @@ OPTIONS
 DESCRIPTION
   Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
-EXAMPLE
+EXAMPLES
   $ symbol-bootstrap enrolRewardProgram
+  $ symbol-bootstrap enrolRewardProgram --noPassword
+  $ symbol-bootstrap enrolRewardProgram --useKnownRestGateways
+  $ symbol-bootstrap enrolRewardProgram --password 1234 --url http://external-rest:3000
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap enrolRewardProgram --url http://external-rest:3000
 ```
 
-_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/enrolRewardProgram.ts)_
+_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/enrolRewardProgram.ts)_

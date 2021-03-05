@@ -17,7 +17,7 @@
 import { NetworkType } from 'symbol-sdk';
 
 export interface CertificatePair {
-    privateKey: string;
+    privateKey?: string;
     publicKey: string;
 }
 
@@ -53,6 +53,7 @@ export interface Addresses {
     version: number;
     nodes?: NodeAccount[];
     nemesisGenerationHashSeed: string;
+    sinkAddress: string;
     nemesisSigner?: ConfigAccount;
     networkType: NetworkType;
     mosaics?: MosaicAccounts[];

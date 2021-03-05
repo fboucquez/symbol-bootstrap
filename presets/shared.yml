@@ -1,4 +1,5 @@
 nodeUseRemoteAccount: true
+privateKeySecurityMode: ENCRYPT
 nodePort: 7900
 enableCacheDatabaseStorage: true
 enableVerifiableState: true
@@ -63,9 +64,9 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.7
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.7
-symbolRestImage: symbolplatform/symbol-rest:2.3.3
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.8
+symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.8
+symbolRestImage: symbolplatform/symbol-rest:2.3.4
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
 symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
@@ -79,9 +80,9 @@ logLevel: 'Info'
 transactionsDirectory: './transactions'
 binDirectory: ./seed
 seedDirectory: ./seed
-certificateDirectory: ./userconfig/resources/cert
+certificateDirectory: ./cert
 dataDirectory: ./data
-votingKeysDirectory: ./userconfig/votingkeys
+votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 
@@ -120,7 +121,7 @@ timeSynchronizationMinImportance: 3750
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
 nodeListenInterface: 0.0.0.0
-serverVersion: 0.10.0.7
+serverVersion: 0.10.0.8
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 370
@@ -139,10 +140,10 @@ socketWorkingBufferSize: 16KB
 socketWorkingBufferSensitivity: 1
 maxPacketDataSize: 150MB
 blockDisruptorSlotCount: 4096
-blockDisruptorMaxMemorySize : 300MB
+blockDisruptorMaxMemorySize: 300MB
 blockElementTraceInterval: 1
 transactionDisruptorSlotCount: 8192
-transactionDisruptorMaxMemorySize : 20MB
+transactionDisruptorMaxMemorySize: 20MB
 transactionElementTraceInterval: 10
 enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
@@ -156,8 +157,8 @@ dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
 
-minPartnerNodeVersion: 0.10.0.6
-maxPartnerNodeVersion: 0.10.0.7
+minPartnerNodeVersion: 0.10.0.7
+maxPartnerNodeVersion: 0.10.0.8
 
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
@@ -207,5 +208,5 @@ connectionPoolSize: 10
 
 #voting
 votingKeyStartEpoch: 1
-votingKeyEndEpoch: 26280
+votingKeyEndEpoch: 1460
 enableRevoteOnBoot: true
