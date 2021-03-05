@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { chmodSync, copyFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { LogType } from '../logger';
@@ -92,7 +92,7 @@ export class ComposeService {
             return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
         };
 
-        logger.info(`creating docker-compose.yml from last used profile.`);
+        logger.info(`Creating docker-compose.yml from last used profile.`);
 
         const services: (DockerComposeService | undefined)[] = [];
 
@@ -193,20 +193,16 @@ export class ComposeService {
             (presetData.nodes || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
-                    const debugFlag = ' DEBUG';
-                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : '';
-                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : '';
-                    const waitForBroker = `/bin/bash ${nodeCommandsDirectory}/wait.sh ./data/broker.started`;
-                    const recoverServerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.name}`;
-                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/startServer.sh ${n.name}${serverDebugMode}`;
-                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/startBroker.sh ${n.brokerName || 'broker'}${brokerDebugMode}`;
-                    const recoverBrokerCommand = `/bin/bash ${nodeCommandsDirectory}/runServerRecover.sh ${n.brokerName || ''}`;
+                    const debugFlag = 'DEBUG';
+                    const serverDebugMode = presetData.dockerComposeDebugMode || n.dockerComposeDebugMode ? debugFlag : 'NORMAL';
+                    const brokerDebugMode = presetData.dockerComposeDebugMode || n.brokerDockerComposeDebugMode ? debugFlag : 'NORMAL';
+                    const serverCommand = `/bin/bash ${nodeCommandsDirectory}/start.sh ${presetData.catapultAppFolder} ${
+                        presetData.dataDirectory
+                    } server broker ${n.name} ${serverDebugMode} ${!!n.brokerName}`;
+                    const brokerCommand = `/bin/bash ${nodeCommandsDirectory}/start.sh ${presetData.catapultAppFolder} ${
+                        presetData.dataDirectory
+                    } broker server ${n.brokerName || 'broker'} ${brokerDebugMode}`;
                     const portConfigurations = [{ internalPort: 7900, openPort: n.openPort }];
-
-                    const serverServiceCommands = n.brokerName ? [waitForBroker, serverCommand] : [recoverServerCommand, serverCommand];
-
-                    const serverServiceCommand = `bash -c "${serverServiceCommands.join(' && ')}"`;
-                    const brokerServiceCommand = `bash -c "${[recoverBrokerCommand, brokerCommand].join(' && ')}"`;
 
                     const serverDependsOn: string[] = [];
                     const brokerDependsOn: string[] = [];
@@ -218,7 +214,6 @@ export class ComposeService {
                     if (n.brokerName) {
                         serverDependsOn.push(n.brokerName);
                     }
-
                     const volumes = [
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
@@ -227,7 +222,7 @@ export class ComposeService {
                         user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
                         container_name: n.name,
                         image: presetData.symbolServerImage,
-                        command: serverServiceCommand,
+                        command: serverCommand,
                         stop_signal: 'SIGINT',
                         working_dir: nodeWorkingDirectory,
                         restart: restart,
@@ -253,7 +248,7 @@ export class ComposeService {
                                     container_name: n.brokerName,
                                     image: nodeService.image,
                                     working_dir: nodeWorkingDirectory,
-                                    command: brokerServiceCommand,
+                                    command: brokerCommand,
                                     ports: resolvePorts([{ internalPort: 7902, openPort: n.brokerOpenPort }]),
                                     stop_signal: 'SIGINT',
                                     restart: restart,
@@ -267,22 +262,9 @@ export class ComposeService {
                     }
 
                     if (n.rewardProgram) {
-                        await BootstrapUtils.mkdir(join(targetDocker, 'agent'));
-                        // Pull from cloud!!!!
+                        const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
 
-                        const rootDestination = (await BootstrapUtils.download(presetData.agentBinaryLocation, 'agent-linux.bin'))
-                            .fileLocation;
-                        const localDestination = join(targetDocker, 'agent', 'agent-linux.bin');
-                        logger.info(`Copying from ${rootDestination} to ${localDestination}`);
-                        copyFileSync(rootDestination, localDestination);
-                        chmodSync(localDestination, '755');
-
-                        const volumes = [
-                            vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false),
-                            vol(`./agent`, nodeCommandsDirectory, true),
-                        ];
-
-                        const rewardProgramAgentCommand = `${nodeCommandsDirectory}/agent-linux.bin --config agent.properties`;
+                        const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
                         services.push(
                             await resolveService(
                                 {
@@ -294,9 +276,9 @@ export class ComposeService {
                                 {
                                     user: user,
                                     container_name: n.name + '-agent',
-                                    image: presetData.symbolAgentBaseImage,
+                                    image: presetData.symbolAgentImage,
                                     working_dir: nodeWorkingDirectory,
-                                    command: rewardProgramAgentCommand,
+                                    entrypoint: rewardProgramAgentCommand,
                                     ports: resolvePorts([
                                         {
                                             internalPort: 7880,
@@ -438,7 +420,7 @@ export class ComposeService {
 
         dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
-        logger.info(`docker-compose.yml file created ${dockerFile}`);
+        logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }
 

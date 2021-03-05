@@ -18,9 +18,18 @@ import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
 import { promises as fsPromises } from 'fs';
 import 'mocha';
+import { join } from 'path';
 import * as sshpk from 'sshpk';
 import { Account, Convert, NetworkType } from 'symbol-sdk';
-import { BootstrapUtils, CertificateService, ConfigLoader, ForgeCertificateService, NodeCertificates, Preset } from '../../src/service';
+import {
+    BootstrapUtils,
+    CertificateMetadata,
+    CertificateService,
+    ConfigLoader,
+    ForgeCertificateService,
+    NodeCertificates,
+    Preset,
+} from '../../src/service';
 
 describe('CertificateService', () => {
     it('forge create certificate', async () => {
@@ -73,7 +82,14 @@ describe('CertificateService', () => {
             main: ConfigLoader.toConfig(main),
             transport: ConfigLoader.toConfig(transport),
         };
-        await service.run(presetData.symbolServerToolsImage, 'test-node', keys, target);
+        await service.run(networkType, presetData.symbolServerToolsImage, 'test-node', keys, target);
+
+        const expectedMetadata: CertificateMetadata = {
+            version: 1,
+            transportPublicKey: keys.transport.publicKey,
+            mainPublicKey: keys.main.publicKey,
+        };
+        expect(expectedMetadata).deep.eq(BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
 
         const files = await fsPromises.readdir(target);
         expect(files).deep.eq([
@@ -84,6 +100,7 @@ describe('CertificateService', () => {
             'index.txt.attr',
             'index.txt.attr.old',
             'index.txt.old',
+            'metadata.yml',
             'new_certs',
             'node.cnf',
             'node.crt.pem',

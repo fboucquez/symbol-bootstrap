@@ -16,6 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { BootstrapService, BootstrapUtils } from '../service';
+import { CommandUtils } from '../service/CommandUtils';
 
 export default class HealthCheck extends Command {
     static description = `It checks if the services created with docker compose are up and running.
@@ -31,8 +32,8 @@ The health check process handles 'repeat' and custom 'openPort' services.
     static examples = [`$ symbol-bootstrap healthCheck`];
 
     static flags = {
-        help: BootstrapUtils.helpFlag,
-        target: BootstrapUtils.targetFlag,
+        help: CommandUtils.helpFlag,
+        target: CommandUtils.targetFlag,
     };
 
     public async run(): Promise<void> {

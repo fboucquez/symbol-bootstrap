@@ -21,6 +21,13 @@ OPTIONS
   --maxFee=maxFee         the max fee used when announcing (absolute). The node min multiplier will be used if it is not
                           provided.
 
+  --noPassword            When provided, Bootstrap will not use a password, so private keys will be stored in plain
+                          text. Use with caution.
+
+  --password=password     A password used to encrypt and decrypt private keys in preset files like addresses.yml and
+                          preset.yml. Bootstrap prompts for a password by default, can be provided in the command line
+                          (--password=XXXX) or disabled in the command line (--noPassword).
+
   --ready                 If --ready is provided, the command will not ask for confirmation when announcing
                           transactions.
 
@@ -29,8 +36,9 @@ OPTIONS
   --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
                           provided by the --url parameter.
 
-EXAMPLE
+EXAMPLES
   $ symbol-bootstrap link
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap link --unlink --useKnownRestGateways
 ```
 
-_See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.4/src/commands/link.ts)_
+_See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/link.ts)_

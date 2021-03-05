@@ -1,7 +1,7 @@
 {
     "name": "symbol-bootstrap",
     "description": "Symbol tool that allows you creating, configuring and running Symbol's networks",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "author": "Fernando Boucquez <fboucquez@gmail.com>",
     "bin": {
         "symbol-bootstrap": "bin/run"
@@ -34,6 +34,7 @@
         "@types/chai": "^4.2.12",
         "@types/figlet": "^1.2.0",
         "@types/handlebars": "^4.1.0",
+        "@types/inquirer": "^7.3.1",
         "@types/js-yaml": "^3.12.5",
         "@types/lodash": "^4.14.165",
         "@types/memorystream": "^0.3.0",
@@ -42,7 +43,6 @@
         "@types/node-forge": "^0.9.4",
         "@types/sshpk": "^1.10.5",
         "@types/winston": "^2.4.4",
-        "@types/inquirer": "^7.3.1",
         "@typescript-eslint/eslint-plugin": "^3.7.1",
         "@typescript-eslint/parser": "^3.7.1",
         "chai": "^4.2.0",
@@ -52,6 +52,7 @@
         "eslint-config-prettier": "^6.10.1",
         "eslint-plugin-prettier": "^3.1.3",
         "globby": "^10.0.2",
+        "marked": ">=2.0.0",
         "mocha": "^5.2.0",
         "mocha-lcov-reporter": "^1.3.0",
         "nyc": "^14.1.1",
@@ -92,7 +93,7 @@
         "lint": "eslint --cache src/ test/ --ext .ts",
         "lint:fix": "eslint src/ test/ --ext .ts --fix",
         "prettier": "prettier --write ./src ./test",
-        "style:fix": "npm run prettier && npm run lint:fix && npm run oclif-doc",
+        "style:fix": "npm run create-index-files && npm run prettier && npm run lint:fix && npm run oclif-doc",
         "create-index-files": "cti create ./src -b -n -e commands",
         "postpack": "shx rm -f oclif.manifest.json",
         "posttest": "eslint src/ test/ --ext .ts",
