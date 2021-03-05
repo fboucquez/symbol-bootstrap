@@ -1,3 +1,4 @@
+privateKeySecurityMode: PROMPT_MAIN_VOTING
 nemesisSeedFolder: ./privateSeeds/seed
 nodes:
     - voting: true

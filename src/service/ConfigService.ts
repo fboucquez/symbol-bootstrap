@@ -221,6 +221,7 @@ export class ConfigService {
                 presetData.nemesisSeedFolder,
                 `Is the provided preset nemesisSeedFolder: ${presetData.nemesisSeedFolder} a valid seed folder?`,
             );
+            logger.info(`Using custom nemesis seed folder in ${presetData.nemesisSeedFolder}`);
             await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
             return;
         }
