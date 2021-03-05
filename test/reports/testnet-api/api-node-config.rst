@@ -725,8 +725,8 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 0.10.0.6; ;
-    maxPartnerNodeVersion; 0.10.0.7; ;
+    minPartnerNodeVersion; 0.10.0.7; ;
+    maxPartnerNodeVersion; 0.10.1.8; ;
     trustedHosts; 127.0.0.1, 172.20.0.25; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1, 172.20.0.25; unordered_set<string>; Networks that should be treated as local.
     listenInterface; 0.0.0.0; ;
@@ -741,7 +741,7 @@ config-node.properties
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-    version; 0.10.0.7; uint32_t; Node version.
+    version; 0.10.1.8; uint32_t; Node version.
     roles; Api; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
