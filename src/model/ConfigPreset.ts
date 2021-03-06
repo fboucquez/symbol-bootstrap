@@ -154,6 +154,18 @@ export interface FaucetPreset extends DockerServicePreset {
     name: string;
 }
 
+export interface PeerInfo {
+    publicKey: string;
+    endpoint: {
+        host: string;
+        port: number;
+    };
+    metadata: {
+        name: string;
+        roles: string;
+    };
+}
+
 export interface ConfigPreset {
     preset: Preset;
     privateKeySecurityMode: string;
@@ -192,7 +204,7 @@ export interface ConfigPreset {
     harvestingMosaicId: string;
     baseNamespace: string;
     databases?: DatabasePreset[];
-    knownPeers?: Record<NodeType, any[]>;
+    knownPeers?: Record<NodeType, PeerInfo[]>;
     knownRestGateways?: string[];
     mongoComposeRunParam: string;
     mongoImage: string;

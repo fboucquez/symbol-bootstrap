@@ -19,7 +19,10 @@ import { BootstrapService, BootstrapUtils } from '../service';
 import { CommandUtils } from '../service/CommandUtils';
 
 export default class Clean extends Command {
-    static description = 'it generates reStructuredText (.rst) reports describing the configuration of each node.';
+    static description = `it generates reStructuredText (.rst) reports describing the configuration of each node.
+
+This command can be used in OFFLINE mode.
+`;
 
     static examples = [`$ symbol-bootstrap report`];
 

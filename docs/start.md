@@ -3,6 +3,11 @@
 
 Single command that aggregates config, compose and run in one line!
 
+This command is typically run in ONLINE mode. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
+
+However, if you require your setup to be OFFLINE, you can run `config`, and `compose` in your offline machine,
+zip and copy the target folder into the online machine, and execute `run` or `start` there.
+
 * [`symbol-bootstrap start`](#symbol-bootstrap-start)
 
 ## `symbol-bootstrap start`
@@ -56,8 +61,14 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+      Although it's highly possible your node is connected to the internet, this is an OFFLINE command as it health checks 
+      the local nodes and services.
+
   --noPassword
       When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.
+
+  --offline
+      If --offline is used, Bootstrap rejects any online operation when generating the configuration.
 
   --password=password
       A password used to encrypt and decrypt private keys in preset files like addresses.yml and preset.yml. Bootstrap 
@@ -80,6 +91,13 @@ OPTIONS
       It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to 
       keep your node up to date without dropping the local data. The original preset (-t), assembly (-a), and custom 
       preset (-a) must be used. Backup the target folder before upgrading.
+
+DESCRIPTION
+  This command is typically run in ONLINE mode. It uses docker, docker compose, and images must be pulled from the 
+  internet. It's expected for a mainnet/testnet node to be connected to the internet.
+
+  However, if you require your setup to be OFFLINE, you can run `config`, and `compose` in your offline machine,
+  zip and copy the target folder into the online machine, and execute `run` or `start` there.
 
 EXAMPLES
   $ symbol-bootstrap start

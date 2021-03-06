@@ -10,6 +10,8 @@ This command checks:
 
 The health check process handles 'repeat' and custom 'openPort' services.
 
+Although it's highly possible your node is connected to the internet, this is an OFFLINE command as it health checks the local nodes and services.
+
 * [`symbol-bootstrap healthCheck`](#symbol-bootstrap-healthcheck)
 
 ## `symbol-bootstrap healthCheck`
@@ -31,6 +33,9 @@ DESCRIPTION
   - Whether the rest gateways' /node/health are OK.
 
   The health check process handles 'repeat' and custom 'openPort' services.
+
+  Although it's highly possible your node is connected to the internet, this is an OFFLINE command as it health checks 
+  the local nodes and services.
 
 EXAMPLE
   $ symbol-bootstrap healthCheck

@@ -19,7 +19,10 @@ import { BootstrapService, BootstrapUtils, ComposeService } from '../service';
 import { CommandUtils } from '../service/CommandUtils';
 
 export default class Compose extends Command {
-    static description = 'It generates the `docker-compose.yml` file from the configured network.';
+    static description = `It generates the \`docker-compose.yml\` file from the configured network.
+
+This command can be used in OFFLINE mode.
+`;
 
     static examples = [`$ symbol-bootstrap compose`];
 

@@ -18,11 +18,12 @@ import { join, resolve } from 'path';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { BootstrapUtils } from './BootstrapUtils';
+import { BootstrapUtils, KnownError } from './BootstrapUtils';
 
 export interface AgentCertificateParams {
     readonly target: string;
     readonly user: string;
+    readonly offline?: boolean;
 }
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -36,29 +37,45 @@ export class AgentCertificateService {
         await BootstrapUtils.mkdir(certFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
-        const command = this.createCertCommands('/data');
+        const command = this.createCertCommands();
         await BootstrapUtils.writeTextFile(join(certFolder, 'createAgentCertificate.sh'), command);
         const cmd = ['bash', 'createAgentCertificate.sh'];
-        const binds = [`${resolve(certFolder)}:/data:rw`];
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
-            image: symbolServerToolsImage,
-            userId: userId,
-            workdir: '/data',
-            cmds: cmd,
-            binds: binds,
-        });
-        if (stdout.indexOf('Certificate Created') < 0) {
-            logger.info(BootstrapUtils.secureString(stdout));
-            logger.error(BootstrapUtils.secureString(stderr));
-            throw new Error('Certificate creation failed. Check the logs!');
+
+        try {
+            logger.info('Creating Agent Certificate using exec and local openssl');
+            const { stdout, stderr } = await BootstrapUtils.exec(cmd.join(' '), { cwd: certFolder });
+            if (stdout.indexOf('Certificate Created') < 0) {
+                logger.info(BootstrapUtils.secureString(stdout));
+                logger.error(BootstrapUtils.secureString(stderr));
+                throw new Error('Certificate creation failed. Check the logs!');
+            }
+        } catch (e) {
+            if (this.params.offline) {
+                throw new KnownError(
+                    `Agent Certificates could not be created using local openssl. Do you have openssl installed? Remove --offline to fallback to docker. Error: ${e.message}`,
+                );
+            }
+            logger.warn('Agent certificate could not be created using local openssl. Falling back to docker run...');
+            const binds = [`${resolve(certFolder)}:/data:rw`];
+            const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+                image: symbolServerToolsImage,
+                userId: userId,
+                workdir: '/data',
+                cmds: cmd,
+                binds: binds,
+            });
+            if (stdout.indexOf('Certificate Created') < 0) {
+                logger.info(BootstrapUtils.secureString(stdout));
+                logger.error(BootstrapUtils.secureString(stderr));
+                throw new Error('Certificate creation failed. Check the logs!');
+            }
         }
         logger.info(`Agent Certificate for node ${name} created`);
     }
 
-    private createCertCommands(target: string): string {
+    private createCertCommands(): string {
         return `set -e
-        cd ${target}
 # Creating a self signed certificate for the agent. This will be created by bootstrap when setting up a supernode
 openssl genrsa -out agent-key.pem 4096
 openssl req -new -config agent.cnf -key agent-key.pem -out agent-csr.pem

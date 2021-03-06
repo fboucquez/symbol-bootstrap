@@ -16,11 +16,11 @@
 
 import { promises } from 'fs';
 import { join } from 'path';
+import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
 import { ConfigPreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
+import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { ConfigParams } from './ConfigService';
 
 type NemgenParams = ConfigParams;
@@ -34,7 +34,9 @@ export class NemgenService {
         const networkIdentifier = presetData.networkIdentifier;
         const symbolServerToolsImage = presetData.symbolServerToolsImage;
         const target = this.params.target;
-
+        if (this.params.offline) {
+            throw new KnownError(`Nemesis generation is not an offline feature. It requires catapult.tools.nemgen via Docker images.`);
+        }
         if (!presetData.nodes || !presetData.nodes.length) {
             throw new Error('Nodes must be defined in preset when running nemgen');
         }

@@ -5,6 +5,8 @@ It enrols the nodes in the rewards program by announcing the enrol transaction t
 
 Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
+This is an ONLINE command as it creates the transaction depending on the main account type (simple or multisig), and it announces the transaction to the network.
+
 * [`symbol-bootstrap enrolRewardProgram`](#symbol-bootstrap-enrolrewardprogram)
 
 ## `symbol-bootstrap enrolRewardProgram`
@@ -38,6 +40,9 @@ OPTIONS
 
 DESCRIPTION
   Currently, the only program that can be enrolled post-launch is 'SuperNode'.
+
+  This is an ONLINE command as it creates the transaction depending on the main account type (simple or multisig), and 
+  it announces the transaction to the network.
 
 EXAMPLES
   $ symbol-bootstrap enrolRewardProgram

@@ -3,6 +3,8 @@
 
 It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
 
+This is an ONLINE command as it creates the transactions depending on the main account type (simple or multisig), the main account link status, and it announces the transactions to the network.
+
 * [`symbol-bootstrap link`](#symbol-bootstrap-link)
 
 ## `symbol-bootstrap link`
@@ -35,6 +37,10 @@ OPTIONS
 
   --useKnownRestGateways  Use the best NEM node available when announcing. Otherwise the command will use the node
                           provided by the --url parameter.
+
+DESCRIPTION
+  This is an ONLINE command as it creates the transactions depending on the main account type (simple or multisig), the 
+  main account link status, and it announces the transactions to the network.
 
 EXAMPLES
   $ symbol-bootstrap link

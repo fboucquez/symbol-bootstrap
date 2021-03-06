@@ -20,8 +20,10 @@ import { CommandUtils } from '../service/CommandUtils';
 import HealthCheck from './healthCheck';
 
 export default class Run extends Command {
-    static description =
-        'It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.';
+    static description = `It boots the network via docker using the generated \`docker-compose.yml\` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the \`docker-compose up\` bash call.
+
+This command can only be used in ONLINE mode. It uses docker, docker compose, and images must be pulled from the internet. It's expected for a mainnet/testnet node to be connected to the internet.
+`;
 
     static examples = [`$ symbol-bootstrap run`];
 
@@ -43,7 +45,8 @@ export default class Run extends Command {
         }),
 
         pullImages: flags.boolean({
-            description: 'It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
+            description:
+                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
             default: RunService.defaultParams.pullImages,
         }),
 

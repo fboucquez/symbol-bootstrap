@@ -19,10 +19,19 @@ import { BootstrapService, BootstrapUtils, ConfigService, Preset } from '../serv
 import { CommandUtils } from '../service/CommandUtils';
 
 export default class Config extends Command {
-    static description = 'Command used to set up the configuration files and the nemesis block for the current network';
+    static description = `Command used to set up the configuration files and the nemesis block for the current network.
+
+This command is by default an ONLINE tool, as it may use docker to run some operations like nemesis or certificate generation.
+It's possible to run this command in OFFLINE mode, without using docker, by providing the --offline parameter.
+
+Note: OFFLINE requires Linux/Mac OS, and the openssl command installed. If you are creating a new network (bootstrap preset),
+the nemesis seed needs to be provided with a \`nemesisSeedFolder\` preset property. Nemesis generation is an online feature that requires catapult tools and docker.
+
+    `;
 
     static examples = [
         `$ symbol-bootstrap config -p bootstrap`,
+        `$ symbol-bootstrap config -p testnet -a dual --customPreset my-encrypted-custom-preset.yml --offline`,
         `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
     ];
@@ -64,10 +73,9 @@ export default class Config extends Command {
             default: ConfigService.defaultParams.report,
         }),
 
-        pullImages: flags.boolean({
-            description:
-                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
-            default: ConfigService.defaultParams.pullImages,
+        offline: flags.boolean({
+            description: 'If --offline is used, Bootstrap rejects any online operation when generating the configuration.',
+            default: ConfigService.defaultParams.offline,
         }),
 
         user: flags.string({

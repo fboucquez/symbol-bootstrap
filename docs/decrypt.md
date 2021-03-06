@@ -5,6 +5,8 @@ It decrypts a yml file using the provided password. The source file can be a cus
 
 The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or running a bootstrap command with a provided --password.
 
+This command can be used in OFFLINE mode.
+
 * [`symbol-bootstrap decrypt`](#symbol-bootstrap-decrypt)
 
 ## `symbol-bootstrap decrypt`
@@ -28,6 +30,8 @@ OPTIONS
 DESCRIPTION
   The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or 
   running a bootstrap command with a provided --password.
+
+  This command can be used in OFFLINE mode.
 
 EXAMPLES
 

@@ -32,7 +32,7 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType, PeerInfo } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
@@ -70,7 +70,7 @@ export interface ConfigParams {
     target: string;
     password?: string;
     user: string;
-    pullImages?: boolean;
+    offline?: boolean;
     assembly?: string;
     customPreset?: string;
     customPresetObject?: any;
@@ -89,8 +89,8 @@ export class ConfigService {
         report: false,
         preset: Preset.bootstrap,
         reset: false,
+        offline: false,
         upgrade: false,
-        pullImages: false,
         user: BootstrapUtils.CURRENT_USER,
     };
     private readonly configLoader: ConfigLoader;
@@ -138,7 +138,6 @@ export class ConfigService {
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
             const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
-            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
@@ -398,7 +397,7 @@ export class ConfigService {
         nodePresetDataFunction: (nodePresetData: NodePreset) => boolean,
         jsonFileName: string,
     ) {
-        const thisNetworkKnownPeers = (presetData.nodes || [])
+        const thisNetworkKnownPeers: PeerInfo[] = (presetData.nodes || [])
             .map((nodePresetData, index) => {
                 if (!nodePresetDataFunction(nodePresetData)) {
                     return undefined;
@@ -416,7 +415,8 @@ export class ConfigService {
                     },
                 };
             })
-            .filter((i) => i);
+            .filter((i) => i)
+            .map((i) => i as PeerInfo);
         const globalKnownPeers = presetData.knownPeers?.[type] || [];
         const data = {
             _info: `this file contains a list of ${type} peers`,

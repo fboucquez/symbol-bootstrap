@@ -28,7 +28,10 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 export default class Encrypt extends Command {
     static description = `It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
 
-The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.`;
+The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.
+
+This command can be used in OFFLINE mode.
+`;
 
     static examples = [
         `

@@ -5,6 +5,8 @@ It encrypts a yml file using the provided password. The source files would be a 
 
 The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.
 
+This command can be used in OFFLINE mode.
+
 * [`symbol-bootstrap encrypt`](#symbol-bootstrap-encrypt)
 
 ## `symbol-bootstrap encrypt`
@@ -29,6 +31,8 @@ OPTIONS
 DESCRIPTION
   The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, 
   it's highly recommended to encrypt it and use provide --password when starting or configuring the node with Bootstrap.
+
+  This command can be used in OFFLINE mode.
 
 EXAMPLES
 
