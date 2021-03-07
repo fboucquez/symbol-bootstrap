@@ -391,21 +391,6 @@ export class ConfigLoader {
                     roles,
                 };
             }
-            if (node.harvesting) {
-                return {
-                    sinkType: 'Sync',
-                    enableSingleThreadPool: true,
-                    addressextraction: false,
-                    mongo: false,
-                    zeromq: false,
-                    syncsource: true,
-                    filespooling: false,
-                    enableAutoSyncCleanup: true,
-                    partialtransaction: false,
-                    ...node,
-                    roles,
-                };
-            }
             if (node.api) {
                 return {
                     sinkType: 'Async',
@@ -421,7 +406,21 @@ export class ConfigLoader {
                     roles,
                 };
             }
-            throw new Error('A node must have at least one harvesting: true or api: true');
+
+            //peer only (harvesting or not).
+            return {
+                sinkType: 'Sync',
+                enableSingleThreadPool: true,
+                addressextraction: false,
+                mongo: false,
+                zeromq: false,
+                syncsource: true,
+                filespooling: false,
+                enableAutoSyncCleanup: true,
+                partialtransaction: false,
+                ...node,
+                roles,
+            };
         });
     }
 
