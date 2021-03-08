@@ -118,7 +118,7 @@ export class RewardProgramService implements TransactionFactory {
             );
             return transactions;
         }
-        const agentUrl = nodePreset.agentUrl || `https://${nodePreset.host}:7880`;
+        const agentUrl = nodePreset.agentUrl || `https://${nodePreset.host}:${nodePreset.agentPort || presetData.agentPort}`;
         const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
         const message = PlainMessage.create(plainMessage);
         logger.info(`Creating enrolment transfer with message '${plainMessage}'`);

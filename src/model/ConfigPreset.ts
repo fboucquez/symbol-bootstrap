@@ -68,6 +68,7 @@ export interface NemesisPreset {
 export interface NodePreset extends DockerServicePreset {
     // At least these properties.
     // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
+    agentPort?: number;
     serverVersion?: string;
     nodeUseRemoteAccount?: boolean;
     repeat?: number;
@@ -108,7 +109,6 @@ export interface NodePreset extends DockerServicePreset {
     //Reward program
     rewardProgram?: string;
     rewardProgramAgentIpv4_address?: string;
-    rewardProgramAgentOpenPort?: boolean | number | string;
     rewardProgramAgentExcludeDockerService?: boolean;
     rewardProgramAgentCompose?: any;
     rewardProgramAgentHost?: string;
@@ -207,4 +207,5 @@ export interface ConfigPreset {
     votingKeyEndEpoch: number;
     rewardProgramControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
+    agentPort: number;
 }

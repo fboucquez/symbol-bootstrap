@@ -210,3 +210,6 @@ connectionPoolSize: 10
 votingKeyStartEpoch: 1
 votingKeyEndEpoch: 1460
 enableRevoteOnBoot: true
+
+#Agent
+agentPort: 7880

@@ -239,7 +239,6 @@ export class ComposeService {
                             await resolveService(
                                 {
                                     ipv4_address: n.brokerIpv4_address,
-                                    openPort: n.brokerOpenPort,
                                     excludeDockerService: n.brokerExcludeDockerService,
                                     host: n.brokerHost,
                                 },
@@ -265,11 +264,11 @@ export class ComposeService {
                         const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
 
                         const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
+                        const agentPort = n.agentPort || presetData.agentPort;
                         services.push(
                             await resolveService(
                                 {
                                     ipv4_address: n.rewardProgramAgentIpv4_address,
-                                    openPort: n.rewardProgramAgentOpenPort,
                                     excludeDockerService: n.rewardProgramAgentExcludeDockerService,
                                     host: n.rewardProgramAgentHost,
                                 },
@@ -281,8 +280,8 @@ export class ComposeService {
                                     entrypoint: rewardProgramAgentCommand,
                                     ports: resolvePorts([
                                         {
-                                            internalPort: 7880,
-                                            openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
+                                            internalPort: agentPort,
+                                            openPort: agentPort,
                                         },
                                     ]),
                                     stop_signal: 'SIGINT',
