@@ -59,7 +59,7 @@ export interface DatabasePreset extends DockerServicePreset {
 export interface NemesisPreset {
     binDirectory: string;
     mosaics?: MosaicPreset[];
-    balances?: Record<string, number>;
+    balances?: Record<string, number | string>;
     transactions?: Record<string, string>;
     nemesisSignerPrivateKey: string;
     transactionsDirectory: string;
