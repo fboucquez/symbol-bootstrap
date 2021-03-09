@@ -3,8 +3,8 @@ nodes:
     - voting: true
       rewardProgram: 'supernode'
       host: fboucquez-agent-symbollocal.ngrok.io
-      agentUrl: https://fboucquez-agent-symbollocal.ngrok.io
-      restGatewayUrl: http://fboucquez-rest-gateway-symbollocal.ngrok.io
+      agentUrl: https://fboucquez-agent-symbollocal.ngrok.io:7881
+      rewardProgramAgentOpenPort: 7881
       mainPrivateKey: CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD
       #      mainPublicKey: 93F9D99300DD04B66E727CA72667E5A2F6549A28AB8676B69ECAF30455C332E6
       transportPrivateKey: 6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B

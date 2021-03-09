@@ -216,6 +216,11 @@ export class ConfigService {
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await BootstrapUtils.mkdir(nemesisSeedFolder);
 
+        if (presetData.nemesis) {
+            await this.generateNemesisConfig(presetData, addresses);
+            await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
+            return;
+        }
         if (presetData.nemesisSeedFolder) {
             await this.validateSeedFolder(
                 presetData.nemesisSeedFolder,
@@ -251,12 +256,6 @@ export class ConfigService {
                     await BootstrapUtils.sleep(10000);
                 }
             }
-        }
-
-        if (presetData.nemesis) {
-            await this.generateNemesisConfig(presetData, addresses);
-            await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
-            return;
         }
         await BootstrapUtils.generateConfiguration({}, join(this.root, 'presets', this.params.preset, 'seed'), nemesisSeedFolder);
         await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
