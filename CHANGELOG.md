@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.5] - NEXT
+
+**Milestone**: Hippopotamus(0.10.0.8)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v0.4.6  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Removed node from its own `peers-p2p.json` and `peers-api.json` files.
+
 ## [0.4.5] - Mar-5-2021
 
 **Milestone**: Hippopotamus(0.10.0.8)
