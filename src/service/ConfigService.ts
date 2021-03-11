@@ -514,8 +514,8 @@ export class ConfigService {
             let totalOptedInBalance = 0;
             if (presetData.nemesis.balances) {
                 Object.entries(presetData.nemesis.balances || {}).forEach(([address, amount]) => {
-                    totalOptedInBalance += parseInt(amount + '');
-                    currencyMosaic.currencyDistributions.push({ address, amount: parseInt(amount + '') });
+                    totalOptedInBalance += amount;
+                    currencyMosaic.currencyDistributions.push({ address, amount });
                 });
                 logger.info(
                     `Removing ${
