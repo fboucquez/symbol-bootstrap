@@ -26,7 +26,7 @@ import { KeyName } from './ConfigService';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class CommandUtils {
-    public static passwordPromptDefaultMessage = `Enter the password used to encrypt and decrypted custom presets, addresses.yml, and preset.yml files. When providing a password, private keys would be encrypted. Keep this password in a secure place!`;
+    public static passwordPromptDefaultMessage = `Enter password to use to encrypt and decrypt custom presets, addresses.yml, and preset.yml files. When providing a password, private keys will be encrypted. Keep this password in a secure place!`;
     public static helpFlag = flags.help({ char: 'h', description: 'It shows the help of this command.' });
 
     public static targetFlag = flags.string({
