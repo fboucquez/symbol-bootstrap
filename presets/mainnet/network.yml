@@ -6,13 +6,13 @@ harvestingName: xym
 ccurrencyMosaicId: 4F8E3FB75C77C83E
 harvestingMosaicId: 4F8E3FB75C77C83E
 harvestBeneficiaryPercentage: 25
-harvestNetworkFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
 #nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/mainnet/seed.zip'
 maxHarvesterBalance: 50000000000000
 maxMosaicAtomicUnits: 9000000000000000
 minHarvesterBalance: 10000000000
 minNamespaceDuration: 30d
 minVoterBalance: 3000000000000
+harvestNetworkFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
 mosaicRentalFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
 namespaceRentalFeeSinkAddress: NAMV77WU2EUFC6FBDFBQCDQARAGUTCRFDN7YLVA
 nemesisGenerationHashSeed: 57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6

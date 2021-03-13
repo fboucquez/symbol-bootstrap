@@ -231,6 +231,13 @@ export class ConfigService {
             await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
             return;
         }
+        const finalNemesisSeed = join(this.root, 'presets', this.params.preset, 'seed');
+        if (existsSync(finalNemesisSeed)) {
+            await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
+            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
+            return;
+        }
+        logger.warn(`Seed for preset ${this.params.preset} could not be found in ${finalNemesisSeed}`);
 
         if (presetData.nemesisSeedUrl) {
             let downloading = true;
@@ -258,11 +265,7 @@ export class ConfigService {
                 }
             }
         }
-        const finalNemesisSeed = join(this.root, 'presets', this.params.preset, 'seed');
-        // if (existsSync(finalNemesisSeed)) {
-        await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
-        await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
-        // }
+        throw new Error('Seed could not be found!!!!');
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {

@@ -32,7 +32,7 @@ import * as Handlebars from 'handlebars';
 import { get } from 'https';
 import * as _ from 'lodash';
 import { platform, totalmem } from 'os';
-import { basename, join } from 'path';
+import { basename, join, resolve } from 'path';
 import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
@@ -253,6 +253,14 @@ export class BootstrapUtils {
         } catch (e) {
             logger.warn(`Image ${image} could not be pulled!`);
         }
+    }
+
+    public static resolveRootFolder() {
+        const rootFolder = resolve(__dirname, '../..');
+        if (!existsSync(join(rootFolder, 'presets', 'shared.yml'))) {
+            throw new Error(`Root Folder ${rootFolder} does not look right!`);
+        }
+        return rootFolder;
     }
 
     public static async runImageUsingExec({
