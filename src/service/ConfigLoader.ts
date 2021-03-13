@@ -267,7 +267,7 @@ export class ConfigLoader {
         const nodeAccount: NodeAccount = {
             name,
             friendlyName,
-            roles: nodePreset.roles,
+            roles: nodePreset.roles || '',
             main: main,
             transport: transport,
         };

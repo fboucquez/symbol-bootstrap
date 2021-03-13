@@ -221,6 +221,7 @@ export class ConfigService {
             await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
             return;
         }
+
         if (presetData.nemesisSeedFolder) {
             await this.validateSeedFolder(
                 presetData.nemesisSeedFolder,
@@ -257,8 +258,11 @@ export class ConfigService {
                 }
             }
         }
-        await BootstrapUtils.generateConfiguration({}, join(this.root, 'presets', this.params.preset, 'seed'), nemesisSeedFolder);
+        const finalNemesisSeed = join(this.root, 'presets', this.params.preset, 'seed');
+        // if (existsSync(finalNemesisSeed)) {
+        await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
         await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
+        // }
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {

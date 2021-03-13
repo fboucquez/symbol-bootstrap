@@ -21,7 +21,7 @@ maxSecretLockDuration: 365d
 maxNamespaceDuration: 1825d
 namespaceGracePeriodDuration: 1d
 blockGenerationTargetTime: 30s
-nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/testnet/seed.zip'
+#nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/testnet/seed.zip'
 nemesisGenerationHashSeed: 45FBCF2F0EA36EFA7923C9BC923D6503169651F7FA4EFC46A8EAF5AE09057EBD
 nemesisSignerPublicKey: 071964D3C040D62DE905EAE978E2119BFC8E70489BFDF45A85B3D7ED5A517AA8
 sinkAddress: TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q
