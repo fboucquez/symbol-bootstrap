@@ -373,6 +373,7 @@ export class BootstrapUtils {
                         } else {
                             await fsPromises.copyFile(fromPath, destinationFile);
                         }
+                        await fsPromises.chmod(destinationFile, 0o600);
                     }
                 } else if (stat.isDirectory()) {
                     await fsPromises.mkdir(toPath, { recursive: true });
