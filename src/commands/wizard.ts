@@ -19,7 +19,7 @@ import { IOptionFlag } from '@oclif/command/lib/flags';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
 import { ExtendedKey, MnemonicPassPhrase, Network as SeedNetwork, Wallet } from 'symbol-hd-wallets';
-import { Account, NetworkType } from 'symbol-sdk';
+import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { PrivateKeySecurityMode } from '../model';
 import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, KeyName, Preset, RewardProgram, ZipUtils } from '../service';
 
@@ -144,6 +144,17 @@ export default class Wizard extends Command {
         const voting = await Wizard.isVoting();
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
         const accounts = await this.resolveAccounts(networkType, voting);
+
+        console.log();
+        console.log(`These are your node's accounts:`);
+        Wizard.logAccount(accounts.main, KeyName.Main, false);
+        Wizard.logAccount(accounts.vrf, KeyName.VRF, false);
+        Wizard.logAccount(accounts.voting, KeyName.Voting, false);
+        Wizard.logAccount(accounts.remote, KeyName.Remote, false);
+        Wizard.logAccount(accounts.transport, KeyName.Transport, false);
+        console.log();
+        console.log();
+
         const rewardProgram = await Wizard.resolveRewardProgram();
         const symbolHostRequired = !!rewardProgram;
         const host = await Wizard.resolveHost(
@@ -256,6 +267,14 @@ export default class Wizard extends Command {
         }
         console.log();
         console.log('Symbol bootstrap will ask for password or you can provide them using the  --password ***** parameter');
+    }
+    public static logAccount<T extends Account | PublicAccount | undefined>(account: T, keyName: KeyName, showPrivateKeys: boolean): T {
+        if (account === undefined) {
+            return account;
+        }
+        const privateKeyText = showPrivateKeys && account instanceof Account ? `\n\tPrivate Key: ${account.privateKey}` : '';
+        console.log(` - ${keyName}:\n\tAddress:     ${account.address.pretty()}\n\tPublic Key:  ${account.publicKey}${privateKeyText}`);
+        return account as T;
     }
 
     private async resolveAccounts(networkType: NetworkType, voting: boolean): Promise<ProvidedAccounts> {
