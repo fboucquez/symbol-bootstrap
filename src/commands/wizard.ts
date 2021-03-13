@@ -112,7 +112,17 @@ export default class Wizard extends Command {
         console.log(' - Guide you through the configuration process.');
         console.log(' - Import Paper Wallet seeds.');
         console.log(` - Create a custom preset and show you the way to launch your node!`);
-
+        console.log();
+        const defaultParams = ConfigService.defaultParams;
+        const file = `custom-preset.yml`;
+        if (existsSync(file)) {
+            throw new Error(`${file} already exist!!! You should move the file somewhere else before overwriting it!`);
+        }
+        if (existsSync(defaultParams.target)) {
+            throw new Error(
+                'There is currently a ./target folder here!!!! Have you executed bootstrap already? You should move the folder somewhere else before overwriting it!',
+            );
+        }
         const network = await Wizard.resolveNetwork(flags.network);
         const preset = networkToPreset[network];
         const assembly = await Wizard.resolveAssembly(preset);
@@ -128,6 +138,9 @@ export default class Wizard extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             false,
         );
+
+        const targetZip = `${network}-${assembly}-node.zip`;
+
         const voting = await Wizard.isVoting();
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
         const accounts = await this.resolveAccounts(networkType, voting);
@@ -160,10 +173,7 @@ export default class Wizard extends Command {
                 },
             ],
         };
-        const file = `custom-${password ? 'encrypted' : 'plain-text'}-${network}-preset.yml`;
-        if (existsSync(file)) {
-            throw new Error(`${file} already exist!!! you may want to move it somewhere else before overwriting it!`);
-        }
+
         await BootstrapUtils.writeYaml(file, presetContent, password);
         console.log(`Symbol Bootstrap preset file '${file}' created. Keep this safe!`);
         console.log();
@@ -176,47 +186,40 @@ export default class Wizard extends Command {
             'Hint: You can change the configuration of an already created node by proving a new custom preset. This is an experimental feature, backup the target folder before!',
         );
         console.log();
-        const targetZip = `${network}-${assembly}-node.zip`;
-        const defaultParams = ConfigService.defaultParams;
-        if (!existsSync(defaultParams.target)) {
-            console.log(`If you like you can generate the node's configuration now.`);
-            console.log(`The configuration would be zipped without the custom preset and it can be deployed into your real node.`);
-            console.log(`Only the required private keys for upgrades would be stored in the encrypted addresses.yml`);
-            console.log(
-                `Note: This next step requires docker access to download the server docker image if it hasn\`t been pulled already.`,
-            );
-            console.log();
-            const { generateConfigurationNow } = await prompt([
+
+        console.log(`If you like you can generate the node's configuration now.`);
+        console.log(`The configuration would be zipped without the custom preset and it can be deployed into your real node.`);
+        console.log(`Only the required private keys for upgrades would be stored in the encrypted addresses.yml`);
+        console.log(`Note: This next step requires docker access to download the server docker image if it hasn\`t been pulled already.`);
+        console.log();
+        const { generateConfigurationNow } = await prompt([
+            {
+                name: 'generateConfigurationNow',
+                message: `Would you like to generate the configuration now?`,
+                type: 'confirm',
+                default: false,
+            },
+        ]);
+        if (generateConfigurationNow) {
+            const service = new BootstrapService(this.config.root);
+            await service.config({
+                ...defaultParams,
+                preset: preset,
+                assembly: assembly,
+                password: password,
+                customPresetObject: presetContent,
+            });
+            await service.compose({
+                ...defaultParams,
+                password: password,
+            });
+            await ZipUtils.zip(targetZip, [
                 {
-                    name: 'generateConfigurationNow',
-                    message: `Would you like to generate the configuration now?`,
-                    type: 'confirm',
-                    default: false,
+                    from: defaultParams.target,
+                    to: 'target',
+                    directory: true,
                 },
             ]);
-            if (generateConfigurationNow) {
-                const service = new BootstrapService(this.config.root);
-                await service.config({
-                    ...defaultParams,
-                    preset: preset,
-                    assembly: assembly,
-                    password: password,
-                    customPresetObject: presetContent,
-                });
-                await service.compose({
-                    ...defaultParams,
-                    password: password,
-                });
-                await ZipUtils.zip(targetZip, [
-                    {
-                        from: defaultParams.target,
-                        to: 'target',
-                        directory: true,
-                    },
-                ]);
-            }
-        } else {
-            console.log(`WARNING: The target folder ${defaultParams.target} already exist. Are you sure you want to run the wizard?`);
         }
 
         console.log();
@@ -301,48 +304,51 @@ export default class Wizard extends Command {
         keyName: KeyName,
         changeIndex: number,
     ): Promise<Account> {
-        const keyCreationChoices = [];
-        if (derivedAccount && !derivedAccount.optinMode) {
-            keyCreationChoices.push({ name: 'Derived from Symbol Paper Wallet seed', value: 'seed' });
+        while (true) {
+            const keyCreationChoices = [];
+            if (derivedAccount && !derivedAccount.optinMode) {
+                keyCreationChoices.push({ name: 'Deriving it from Symbol Paper Wallet seed', value: 'seed' });
+            }
+            keyCreationChoices.push({ name: 'Generating a brand account', value: 'generate' });
+            keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
+            const { keyCreationMode } = await prompt([
+                {
+                    name: 'keyCreationMode',
+                    message: `How do you want to create the ${keyName} account:`,
+                    type: 'list',
+                    default: keyCreationChoices[0].name,
+                    choices: keyCreationChoices,
+                },
+            ]);
+            const log = (account: Account, message: string): Account => {
+                console.log(`Using account ${account.address.pretty()} for ${keyName} key. ${message}`);
+                return account;
+            };
+            if (keyCreationMode == 'generate') {
+                return log(Account.generateNewAccount(networkType), 'It will be stored in your custom preset. Keep file safe!');
+            }
+            if (keyCreationMode == 'seed' && derivedAccount) {
+                const seedAccount = Wizard.toAccountFromMnemonicPhrase(
+                    derivedAccount.mnemonicPassPhrase,
+                    networkType,
+                    derivedAccount.optinMode,
+                    derivedAccount.accountIndex,
+                    changeIndex,
+                );
+                return log(
+                    Account.createFromPrivateKey(seedAccount.privateKey, networkType),
+                    'It will be stored in your custom preset. Can be derived from the paper wallet if lost!',
+                );
+            }
+            // manual
+            const account = await Wizard.resolveAccount(networkType, keyName);
+            if (account) {
+                return log(
+                    account,
+                    'It will be stored in your custom preset. You can recreate the account by providing the private key again!',
+                );
+            }
         }
-        keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
-        keyCreationChoices.push({ name: 'Generating a brand generated account', value: 'generate' });
-        const { keyCreationMode } = await prompt([
-            {
-                name: 'keyCreationMode',
-                message: `How do you want to create the ${keyName} account:`,
-                type: 'list',
-                default: keyCreationChoices[0].name,
-                choices: keyCreationChoices,
-            },
-        ]);
-        const log = (account: Account, message: string): Account => {
-            console.log(`Using account ${account.address.pretty()} for ${keyName} key. ${message}`);
-            return account;
-        };
-        if (keyCreationMode == 'generate') {
-            return log(Account.generateNewAccount(networkType), 'It will be stored in your custom preset. Keep file safe!');
-        }
-        if (keyCreationMode == 'seed' && derivedAccount) {
-            const seedAccount = Wizard.toAccountFromMnemonicPhrase(
-                derivedAccount.mnemonicPassPhrase,
-                networkType,
-                derivedAccount.optinMode,
-                derivedAccount.accountIndex,
-                changeIndex,
-            );
-            return log(
-                Account.createFromPrivateKey(seedAccount.privateKey, networkType),
-                'It will be stored in your custom preset. Can be derived from the paper wallet if lost!',
-            );
-        }
-
-        // manual
-        const account = await Wizard.resolveAccount(networkType, keyName);
-        if (!account) {
-            return this.resolveAccount(networkType, derivedAccount, keyName, changeIndex);
-        }
-        return log(account, 'It will be stored in your custom preset. You can recreate the account by providing the private key again!');
     }
 
     public static async resolveAccount(networkType: NetworkType, keyName: KeyName): Promise<Account | undefined> {
