@@ -166,12 +166,21 @@ export default class Wizard extends Command {
         }
         await BootstrapUtils.writeYaml(file, presetContent, password);
         console.log(`Symbol Bootstrap preset file '${file}' created. Keep this safe!`);
+        console.log();
+        console.log(`Note: The custom preset is only required the first time you call the start, config or compose commands.`);
+        console.log(`After that, Bootstrap will use the protected and encrypted addresses.yml, and preset.yml in the target folder.`);
+        console.log(
+            `You can keep the custom preset outside the node once deployed. Regular --upgrade calls should not require the custom preset either.`,
+        );
+        console.log(
+            'Hint: You can change the configuration of an already created node by proving a new custom preset. This is an experimental feature, backup the target folder before!',
+        );
+        console.log();
         const targetZip = `${network}-${assembly}-node.zip`;
         const defaultParams = ConfigService.defaultParams;
         if (!existsSync(defaultParams.target)) {
-            console.log();
             console.log(`If you like you can generate the node's configuration now.`);
-            console.log(`The configuration would be zipped and it can be deployed into your real node.`);
+            console.log(`The configuration would be zipped without the custom preset and it can be deployed into your real node.`);
             console.log(`Only the required private keys for upgrades would be stored in the encrypted addresses.yml`);
             console.log(
                 `Note: This next step requires docker access to download the server docker image if it hasn\`t been pulled already.`,
@@ -226,16 +235,15 @@ export default class Wizard extends Command {
         console.log();
         console.log('To run your node use:');
         console.log(`$ symbol-bootstrap start -p ${network} -a ${assembly} -c ${file}`);
+        console.log();
 
         if (existsSync(targetZip)) {
-            console.log();
-            console.log();
             console.log(`Alternately, you can copy the zip file ${targetZip} into your node machine, unzip it and run:`);
             console.log();
             console.log(`$ symbol-bootstrap start -p ${network} -a ${assembly}`);
+            console.log();
         }
 
-        console.log();
         console.log('To link your accounts use:');
         console.log(`$ symbol-bootstrap link --useKnownRestGateways`);
         if (rewardProgram == RewardProgram.SuperNode) {
@@ -293,13 +301,12 @@ export default class Wizard extends Command {
         keyName: KeyName,
         changeIndex: number,
     ): Promise<Account> {
-        const keyCreationChoices = [
-            { name: 'Generating a brand generated account', value: 'generate' },
-            { name: 'Entering a private key', value: 'manual' },
-        ];
+        const keyCreationChoices = [];
         if (derivedAccount && !derivedAccount.optinMode) {
             keyCreationChoices.push({ name: 'Derived from Symbol Paper Wallet seed', value: 'seed' });
         }
+        keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
+        keyCreationChoices.push({ name: 'Generating a brand generated account', value: 'generate' });
         const { keyCreationMode } = await prompt([
             {
                 name: 'keyCreationMode',
