@@ -32,6 +32,7 @@ echo "RUNNING $application $name $mode"
 export LD_LIBRARY_PATH=$catapultAppFolder/lib:$catapultAppFolder/deps
 
 ulimit -c unlimited
+umask 077
 
 rm -f "$dataDirectory/$application.started"
 rm -f "$dataDirectory/$application-recovery.started"

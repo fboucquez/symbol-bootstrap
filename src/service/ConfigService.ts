@@ -458,7 +458,9 @@ export class ConfigService {
             _info: `this file contains a list of ${type} peers`,
             knownPeers: [...thisNetworkKnownPeers, ...globalKnownPeers],
         };
-        await fs.promises.writeFile(join(outputFolder, `resources`, jsonFileName), JSON.stringify(data, null, 2));
+        const peerFile = join(outputFolder, `resources`, jsonFileName);
+        await fs.promises.writeFile(peerFile, JSON.stringify(data, null, 2));
+        await fs.promises.chmod(peerFile, 0o600);
     }
 
     private async generateNemesisConfig(presetData: ConfigPreset, addresses: Addresses) {
