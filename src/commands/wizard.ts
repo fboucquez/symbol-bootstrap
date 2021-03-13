@@ -129,18 +129,17 @@ export default class Wizard extends Command {
             false,
         );
         const voting = await Wizard.isVoting();
-        const importMode = await Wizard.resolveImportMode();
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await this.resolveAccounts(importMode, networkType, voting);
+        const accounts = await this.resolveAccounts(networkType, voting);
         const rewardProgram = await Wizard.resolveRewardProgram();
         const symbolHostRequired = !!rewardProgram;
         const host = await Wizard.resolveHost(
-            `Enter the Symbol host of your future node. ${
-                symbolHostRequired ? 'Hostname is required when you are in a reward program' : ''
+            `Enter the public hostname or IP of your future node. ${
+                symbolHostRequired ? 'This value is required when you are in a reward program!' : ''
             }`,
             symbolHostRequired,
         );
-        const friendlyName = await Wizard.resolveFriendlyName();
+        const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
 
         const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
         const presetContent: BootstrapPresetContent = {
@@ -199,14 +198,14 @@ export default class Wizard extends Command {
                     ...defaultParams,
                     password: password,
                 });
+                await ZipUtils.zip(targetZip, [
+                    {
+                        from: defaultParams.target,
+                        to: 'target',
+                        directory: true,
+                    },
+                ]);
             }
-            await ZipUtils.zip(targetZip, [
-                {
-                    from: defaultParams.target,
-                    to: 'target',
-                    directory: true,
-                },
-            ]);
         } else {
             console.log(`WARNING: The target folder ${defaultParams.target} already exist. Are you sure you want to run the wizard?`);
         }
@@ -248,18 +247,27 @@ export default class Wizard extends Command {
         console.log('Symbol bootstrap will ask for password or you can provide them using the  --password ***** parameter');
     }
 
-    private async resolveAccounts(importMode: ImportType, networkType: NetworkType, voting: boolean): Promise<ProvidedAccounts> {
-        switch (importMode) {
-            case ImportType.OPTIN_PAPER_WALLET: {
-                const derivedAccount = await this.resolveDerivedAccount(networkType, true);
-                return await this.resolveAllAccount(networkType, derivedAccount, voting);
-            }
-            case ImportType.SYMBOL_PAPER_WALLET: {
-                const derivedAccount = await this.resolveDerivedAccount(networkType, false);
-                return await this.resolveAllAccount(networkType, derivedAccount, voting);
-            }
-            case ImportType.PRIVATE_KEYS: {
-                return await this.resolveAllAccount(networkType, undefined, voting);
+    private async resolveAccounts(networkType: NetworkType, voting: boolean): Promise<ProvidedAccounts> {
+        while (true) {
+            const importMode = await Wizard.resolveImportMode();
+            if (importMode === ImportType.OPTIN_PAPER_WALLET) {
+                {
+                    const derivedAccount = await this.resolveDerivedAccount(networkType, true);
+                    if (derivedAccount) {
+                        return await this.resolveAllAccount(networkType, derivedAccount, voting);
+                    }
+                }
+            } else if (importMode === ImportType.SYMBOL_PAPER_WALLET) {
+                {
+                    const derivedAccount = await this.resolveDerivedAccount(networkType, false);
+                    if (derivedAccount) {
+                        return await this.resolveAllAccount(networkType, derivedAccount, voting);
+                    }
+                }
+            } else if (importMode === ImportType.PRIVATE_KEYS) {
+                {
+                    return await this.resolveAllAccount(networkType, undefined, voting);
+                }
             }
         }
     }
@@ -324,23 +332,30 @@ export default class Wizard extends Command {
 
         // manual
         const account = await Wizard.resolveAccount(networkType, keyName);
+        if (!account) {
+            return this.resolveAccount(networkType, derivedAccount, keyName, changeIndex);
+        }
         return log(account, 'It will be stored in your custom preset. You can recreate the account by providing the private key again!');
     }
 
-    public static async resolveAccount(networkType: NetworkType, keyName: KeyName): Promise<Account> {
+    public static async resolveAccount(networkType: NetworkType, keyName: KeyName): Promise<Account | undefined> {
         while (true) {
-            const responses = await prompt([
+            const { privateKey } = await prompt([
                 {
                     name: 'value',
-                    message: `Enter the 64 HEX private key of the ${keyName} account.`,
+                    message: `Enter the 64 HEX private key of the ${keyName} account (or press enter to select the option again).`,
                     type: 'password',
                     mask: '*',
-                    validate: CommandUtils.isValidPrivateKey,
+                    validate: (value) => {
+                        if (!value) {
+                            return true;
+                        }
+                        return CommandUtils.isValidPrivateKey(value);
+                    },
                 },
             ]);
-            const privateKey = responses.value === '' ? undefined : responses.value;
             if (!privateKey) {
-                console.log('Please provide the private key.');
+                return undefined;
             } else {
                 const enteredAccount = Account.createFromPrivateKey(privateKey, networkType);
                 const { ok } = await prompt([
@@ -471,11 +486,14 @@ export default class Wizard extends Command {
     }
 
     public static isValidPhrase(input: string): boolean | string {
+        if (!input) {
+            return true;
+        }
         const words = input.trim().split(' ').length;
         return words === 24 ? true : `Invalid phrase. It must have 24 words but got ${words}.`;
     }
 
-    async resolveDerivedAccount(networkType: NetworkType, optinMode: boolean): Promise<DerivedAccount> {
+    async resolveDerivedAccount(networkType: NetworkType, optinMode: boolean): Promise<DerivedAccount | undefined> {
         try {
             console.log(
                 'To generate the keys, enter the 24 words of the mnemonic phrase created when you opted in.\nYou can find them in the Paper Wallet. They will not be stored anywhere by this tool.\n',
@@ -485,12 +503,15 @@ export default class Wizard extends Command {
                 const phraseResponse = await prompt([
                     {
                         name: 'value',
-                        message: `Mnemonic Phrase for you main account.`,
+                        message: `Enter the mnemonic phrase for you Main account (or press enter to select the option again).`,
                         type: 'input',
                         default: lastEnteredPhrase || undefined,
                         validate: (input) => Wizard.isValidPhrase(input),
                     },
                 ]);
+                if (!phraseResponse.value) {
+                    return undefined;
+                }
                 lastEnteredPhrase = phraseResponse.value.trim();
                 const mnemonicPassPhrase = new MnemonicPassPhrase(lastEnteredPhrase);
                 const derivedAccounts = this.findDerivedAccounts(mnemonicPassPhrase, networkType, optinMode, undefined, 0);
@@ -627,12 +648,13 @@ export default class Wizard extends Command {
         }
         return true;
     }
-    public static async resolveFriendlyName(): Promise<string> {
+    public static async resolveFriendlyName(defaultFriendlyName: string): Promise<string> {
         const { friendlyName } = await prompt([
             {
                 name: 'friendlyName',
                 message: `Enter the friendly name of your node.`,
                 type: 'input',
+                default: defaultFriendlyName,
                 validate: Wizard.isValidFriendlyName,
             },
         ]);
