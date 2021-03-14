@@ -13,21 +13,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import * as archiver from 'archiver';
+import { createWriteStream } from 'fs';
 import * as StreamZip from 'node-stream-zip';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { BootstrapUtils } from './BootstrapUtils';
 
+export interface ZipItem {
+    from: string;
+    directory: boolean;
+    to: string;
+    blacklist?: string[];
+}
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
+
 export class ZipUtils {
-    public static unzip(zipFile: string, innerFolder: string, targetFolder: string): Promise<void> {
+    public static async zip(destination: string, items: ZipItem[]): Promise<void> {
+        const output = createWriteStream(destination);
+        const archive = archiver('zip', {
+            zlib: { level: 9 }, // Sets the compression level.
+        });
+        archive.pipe(output);
+        return new Promise<void>(async (resolve, reject) => {
+            output.on('close', () => {
+                console.log('');
+                console.info(`Zip file ${destination} size ${Math.floor(archive.pointer() / 1024)} MB has been created.`);
+                resolve();
+            });
+
+            output.on('end', () => {
+                console.log('');
+                console.log('Data has been drained');
+            });
+
+            // good practice to catch warnings (ie stat failures and other non-blocking errors)
+            archive.on('warning', (err: any) => {
+                console.log('');
+                if (err.code === 'ENOENT') {
+                    // log warning
+                    console.log(`There has been an warning creating ZIP file '${destination}' ${err.message || err}`);
+                } else {
+                    // throw error
+                    console.log(`There has been an error creating ZIP file '${destination}' ${err.message || err}`);
+                    reject(err);
+                }
+            });
+
+            // good practice to catch this error explicitly
+            archive.on('error', function (err: any) {
+                console.log(`There has been an error creating ZIP file '${destination}' ${err.message || err}`);
+                reject(err);
+            });
+
+            for (const item of items) {
+                if (item.directory) {
+                    archive.directory(item.from, item.to || false, (entry) => {
+                        if (item.blacklist?.find((s) => entry.name === s)) {
+                            return false;
+                        }
+                        return entry;
+                    });
+                } else {
+                    archive.file(item.from, { name: item.to });
+                }
+            }
+            archive.on('progress', (progress) => {
+                const message = `${progress.entries.processed} entries zipped!`;
+                BootstrapUtils.logSameLineMessage(message);
+            });
+            await archive.finalize();
+        });
+    }
+
+    public static async unzip(zipFile: string, innerFolder: string | null, targetFolder: string): Promise<void> {
         const zip = new StreamZip({
             file: zipFile,
             storeEntries: true,
         });
-        logger.info(`Unzipping Backup Sync's '${innerFolder}' into '${targetFolder}'. This could take a while!`);
+        await BootstrapUtils.mkdir(targetFolder);
+        logger.info(`Unzipping '${innerFolder || 'ALL'}' into '${targetFolder}'. This could take a while!`);
         let totalFiles = 0;
         let process = 0;
         return new Promise<void>((resolve, reject) => {

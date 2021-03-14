@@ -151,11 +151,8 @@ export class ConfigService {
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData);
             await this.generateWallets(presetData);
-            if (!oldPresetData && !oldAddresses) {
-                await this.resolveNemesis(presetData, addresses);
-            } else {
-                logger.info('Nemesis data cannot be generated or copied when upgrading...');
-            }
+            const isUpgrade = !!oldPresetData || !!oldAddresses;
+            await this.resolveNemesis(presetData, addresses, isUpgrade);
             await this.copyNemesis(addresses);
             if (this.params.report) {
                 await new ReportService(this.root, this.params).run(presetData);
@@ -181,7 +178,10 @@ export class ConfigService {
     }
 
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
-        return _.merge(oldPresetData || {}, this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }));
+        return _.merge(
+            _.omit(oldPresetData || {}, 'inflation'),
+            this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }),
+        );
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -211,17 +211,24 @@ export class ConfigService {
         }
     }
 
-    private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses) {
+    private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses, isUpgrade: boolean) {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await BootstrapUtils.mkdir(nemesisSeedFolder);
-
         if (presetData.nemesis) {
-            await this.generateNemesisConfig(presetData, addresses);
-            await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
+            if (isUpgrade) {
+                logger.info('Nemesis data cannot be generated or copied when upgrading...');
+            } else {
+                await this.generateNemesisConfig(presetData, addresses);
+                await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
+            }
             return;
         }
-
+        if (isUpgrade) {
+            logger.info('Upgrading genesis on upgrade!');
+        }
+        await BootstrapUtils.deleteFolder(nemesisSeedFolder);
+        await BootstrapUtils.mkdir(nemesisSeedFolder);
         if (presetData.nemesisSeedFolder) {
             await this.validateSeedFolder(
                 presetData.nemesisSeedFolder,
