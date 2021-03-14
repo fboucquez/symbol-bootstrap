@@ -48,10 +48,10 @@ maxNamespaceDuration: 1825d
 minNamespaceDuration: 30d
 namespaceGracePeriodDuration: 30d
 blockGenerationTargetTime: 30s
-defaultDynamicFeeMultiplier: 1000
-rootNamespaceRentalFeePerBlock: 1
-childNamespaceRentalFee: 100
-mosaicRentalFee: 500
+defaultDynamicFeeMultiplier: 100
+rootNamespaceRentalFeePerBlock: 100
+childNamespaceRentalFee: 100000
+mosaicRentalFee: 1000000
 throttlingBurst: 80
 throttlingRate: 60
 symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-1.0.0.0
@@ -60,6 +60,11 @@ symbolRestImage: symbolplatform/symbol-rest:2.3.5
 minPartnerNodeVersion: 1.0.0.0
 maxPartnerNodeVersion: 1.0.255.255
 serverVersion: 1.0.0.0
+fileDatabaseBatchSize: 100
+minProofSize: 0
+syncTimeout: 5m
+maxChildNamespaces: 100
+timeSynchronizationMinImportance: 10000000000
 #nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/mainnet/seed.zip'
 
 inflation:
