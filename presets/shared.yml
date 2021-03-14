@@ -151,7 +151,7 @@ maxTrackedNodes: 5'000
 beneficiaryAddress: ''
 enableAutoHarvesting: true
 fileDatabaseBatchSize: 1
-maxUnlockedAccounts: 5
+maxUnlockedAccounts: 10
 delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
