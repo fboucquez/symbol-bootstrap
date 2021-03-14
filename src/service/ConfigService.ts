@@ -322,12 +322,14 @@ export class ConfigService {
             KeyName.Transport,
             account.name,
         );
-        const harvesterSigningPrivateKey = await CommandUtils.resolvePrivateKey(
-            presetData.networkType,
-            account.remote || account.main,
-            account.remote ? KeyName.Remote : KeyName.Main,
-            account.name,
-        );
+        const harvesterSigningPrivateKey = nodePreset.harvesting
+            ? await CommandUtils.resolvePrivateKey(
+                  presetData.networkType,
+                  account.remote || account.main,
+                  account.remote ? KeyName.Remote : KeyName.Main,
+                  account.name,
+              )
+            : '';
         const harvesterVrfPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, account.vrf, KeyName.VRF, account.name);
 
         const generatedContext = {
