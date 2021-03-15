@@ -2,8 +2,8 @@ privateKeySecurityMode: PROMPT_MAIN_VOTING
 nemesisSeedFolder: ./privateSeeds/seed
 nodes:
     - voting: false
-#      rewardProgram: 'supernode'
-#      host: my-mainnet-supernode
+      #      rewardProgram: 'supernode'
+      #      host: my-mainnet-supernode
       harvesting: false
       mainPrivateKey: 787D4DB0E6639FF2142BBA5DC9B1AE5CA40EBA92BCC7C9E839BC2526B00A0A9C
       transportPrivateKey: 2062F6096F938E27B104D11B0DD79E12A60E2F65148FE51B0F4006C8E8E50C48
