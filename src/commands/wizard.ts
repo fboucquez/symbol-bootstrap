@@ -175,7 +175,7 @@ export default class Wizard extends Command {
             symbolHostRequired,
         );
         const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
-        const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
+        const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode(rewardProgram);
         const voting = await Wizard.isVoting();
         const presetContent: BootstrapPresetContent = {
             assembly: assembly,
@@ -416,7 +416,6 @@ export default class Wizard extends Command {
                     },
                 ]);
                 if (ok) {
-                    console.log(`HERE! 4 ${privateKey}`);
                     return enteredAccount;
                 }
             }
@@ -444,23 +443,23 @@ export default class Wizard extends Command {
         return providedNetwork;
     }
 
-    public static async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {
+    public static async resolvePrivateKeySecurityMode(rewardProgram: RewardProgram | undefined): Promise<PrivateKeySecurityMode> {
         const { mode } = await prompt([
             {
                 name: 'mode',
                 message: 'Select the type of security you want to use:',
                 type: 'list',
-                default: PrivateKeySecurityMode.PROMPT_MAIN_VOTING,
+                default: rewardProgram ? PrivateKeySecurityMode.PROMPT_MAIN : PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                 choices: [
-                    // {
-                    //     name:
-                    //         'PROMPT_MAIN_VOTING: Bootstrap may ask for Main and Voting private keys when doing certificates and voting key file upgrades. Other keys are encrypted.',
-                    //     value: PrivateKeySecurityMode.PROMPT_MAIN_VOTING,
-                    // },
                     {
                         name:
-                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
+                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted. Recommended for Supernodes.',
                         value: PrivateKeySecurityMode.PROMPT_MAIN,
+                    },
+                    {
+                        name:
+                            'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates and agent configuration. Other keys are encrypted. Recommended for regular nodes',
+                        value: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                     },
                     { name: 'ENCRYPT: All keys are encrypted, only password would be asked', value: PrivateKeySecurityMode.ENCRYPT },
                 ],

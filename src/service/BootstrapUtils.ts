@@ -32,7 +32,7 @@ import * as Handlebars from 'handlebars';
 import { get } from 'https';
 import * as _ from 'lodash';
 import { platform, totalmem } from 'os';
-import { basename, join, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
@@ -401,9 +401,14 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
+    public static async writeYaml(fileName: string, object: any, password: string | undefined): Promise<void> {
+        const parentFolder = dirname(fileName);
+        console.log(parentFolder);
+        if (parentFolder) {
+            await BootstrapUtils.mkdir(parentFolder);
+        }
         const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
-        await BootstrapUtils.writeTextFile(path, yamlString);
+        await BootstrapUtils.writeTextFile(fileName, yamlString);
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
