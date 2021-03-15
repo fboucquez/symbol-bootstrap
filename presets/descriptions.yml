@@ -425,9 +425,6 @@ extension.filespooling:
 extension.partialtransaction:
     type: ''
     description: ''
-extension.eventsource:
-    type: ''
-    description: ''
 extension.harvesting:
     type: ''
     description: ''
