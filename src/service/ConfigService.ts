@@ -316,26 +316,26 @@ export class ConfigService {
         const brokerConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'broker-config');
         const nodePreset = (presetData.nodes || [])[index];
 
-        const nodePrivateKey = await CommandUtils.resolvePrivateKey(
-            presetData.networkType,
-            account.transport,
-            KeyName.Transport,
-            account.name,
-        );
         const harvesterSigningPrivateKey = nodePreset.harvesting
             ? await CommandUtils.resolvePrivateKey(
                   presetData.networkType,
                   account.remote || account.main,
                   account.remote ? KeyName.Remote : KeyName.Main,
                   account.name,
+                  'storing the harvesterSigningPrivateKey in the server properties',
               )
             : '';
-        const harvesterVrfPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, account.vrf, KeyName.VRF, account.name);
+        const harvesterVrfPrivateKey = await CommandUtils.resolvePrivateKey(
+            presetData.networkType,
+            account.vrf,
+            KeyName.VRF,
+            account.name,
+            'storing the harvesterVrfPrivateKey in the server properties',
+        );
 
         const generatedContext = {
             name: name,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
-            nodePrivateKey: nodePrivateKey,
             harvesterSigningPrivateKey: harvesterSigningPrivateKey,
             harvesterVrfPrivateKey: harvesterVrfPrivateKey,
         };
@@ -362,13 +362,24 @@ export class ConfigService {
                     `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
                 );
             }
+
+            const copyFrom = join(this.root, 'config', 'agent');
+            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
+            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
+
+            const nodePrivateKey = await CommandUtils.resolvePrivateKey(
+                presetData.networkType,
+                account.transport,
+                KeyName.Transport,
+                account.name,
+                'creating the agent properties',
+            );
+
             const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
             templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
-            const copyFrom = join(this.root, 'config', 'agent');
-            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
-            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
+            templateContext.nodePrivateKey = nodePrivateKey;
         }
 
         const serverRecoveryConfig = {
@@ -576,7 +587,13 @@ export class ConfigService {
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
-        const mainPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, node.main, KeyName.Main, node.name);
+        const mainPrivateKey = await CommandUtils.resolvePrivateKey(
+            presetData.networkType,
+            node.main,
+            KeyName.Main,
+            node.name,
+            'creating the vrf key link transactions',
+        );
         const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
@@ -601,7 +618,13 @@ export class ConfigService {
             presetData.networkType,
             UInt64.fromUint(0),
         );
-        const mainPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, node.main, KeyName.Main, node.name);
+        const mainPrivateKey = await CommandUtils.resolvePrivateKey(
+            presetData.networkType,
+            node.main,
+            KeyName.Main,
+            node.name,
+            'creating the account link transactions',
+        );
         const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(akl, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
@@ -626,7 +649,13 @@ export class ConfigService {
             Deadline.createFromDTO('1'),
             UInt64.fromUint(0),
         );
-        const mainPrivateKey = await CommandUtils.resolvePrivateKey(presetData.networkType, node.main, KeyName.Main, node.name);
+        const mainPrivateKey = await CommandUtils.resolvePrivateKey(
+            presetData.networkType,
+            node.main,
+            KeyName.Main,
+            node.name,
+            'creating the voting key link transactions',
+        );
         const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
         return await this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);

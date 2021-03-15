@@ -52,15 +52,15 @@ export class CryptoUtils {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static removePrivateKeysAccordingToSecurityMode(value: any, securityMode: PrivateKeySecurityMode): any {
         if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN) {
-            return this.removePrivateKeys(value, ['main']);
-        }
-        if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING) {
             return this.removePrivateKeys(value, ['main', 'voting']);
+        }
+        if (securityMode === PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT) {
+            return this.removePrivateKeys(value, ['main', 'transport', 'voting']);
         }
         if (securityMode === PrivateKeySecurityMode.PROMPT_ALL) {
             return this.removePrivateKeys(value);
         }
-        return value;
+        return this.removePrivateKeys(value, ['voting']);
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
