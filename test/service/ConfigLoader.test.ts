@@ -507,7 +507,7 @@ describe('ConfigLoader', () => {
     it('should generateAccount brand new on remote', () => {
         const configLoader = new ConfigLoader();
         const networkType = NetworkType.MIJIN_TEST;
-        const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_VOTING;
+        const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined);
         expect(account.address).not.undefined;
         expect(account.privateKey).not.undefined;
@@ -534,8 +534,8 @@ describe('ConfigLoader', () => {
     it('should generateAccount raise error new', () => {
         const configLoader = new ConfigLoader();
         const networkType = NetworkType.MIJIN_TEST;
-        const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_VOTING;
-        expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Voting, undefined, undefined, undefined)).throw;
+        const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
+        expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Transport, undefined, undefined, undefined)).throw;
     });
 
     it('should generateAccount raise error new', () => {

@@ -263,6 +263,7 @@ The following sections describe the different ways you can protect your nodes' k
 If you know the private keys of your node, you can provide them in a custom preset:
 
 #### **`plain-custom-preset.yml`**
+
 ```yaml
 nodes:
     - voting: true
@@ -270,7 +271,6 @@ nodes:
       transportPrivateKey: 6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B
       remotePrivateKey: E27AD508907524E2143EF2A3A272DDBEE7558B92550ABA5B82AD65D66B57BD00
       vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
-      votingPrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
 ```
 
 Usage examples:
@@ -279,6 +279,9 @@ Usage examples:
 -   Create a new node from migrated opted in accounts.
 
 If your custom preset contains private keys, it's highly recommended to `encrypt` it and provide `--password` when starting or configuring the node with Bootstrap.
+
+Note: Voting keys are ephemeral. They cannot be provided, bootstrap will always generate a new one when resetting the configuration. Bootstrap will only store the public key of the voting key for reference and linking.
+If the voting key file in the target folder gets lost, bootstrap will generate a new voting key file a new random key, and you would need to relink it to your main account.
 
 ```
 symbol-bootstrap encrypt --password 1234 --source plain-custom-preset.yml --destination encrypted-custom-preset.yml
@@ -297,6 +300,7 @@ Bootstrap will request them when performing the different operations requiring u
 Example:
 
 #### **`plain-custom-preset.yml`**
+
 ```yaml
 nodes:
     - voting: true
@@ -304,7 +308,6 @@ nodes:
       transportPublicKey: C9767496987222790518114049299DD52114BF2A8F7E5F4B70BB2B6365FAFD34
       remotePublicKey: 2350F44F043DB9290390C59F1E1C2F06FCC1675E8B5F4CBDC00DD9DF4428E8FE
       vrfPublicKey: 7834C8AAEFB09402DA32B22768D7CF9DCAC78A7774392E4452F07DDF776E088D
-      votingPublicKey: 4558724BE79FD0FD08A279878AF92F999B28D5622D3531CE9EFBC06466CDDF9C
 ```
 
 In this case, this custom preset does not need to be encrypted as it doesn't contain any private information. Bootstrap will prompt for all private keys.
@@ -328,7 +331,7 @@ If this is you case, you can tell Bootstrap to not store these keys with the `pr
 The `privateKeySecurityMode` defines which Private Keys can be encrypted and stored in the `target/addresses.yml`:
 -   `ENCRYPT`: All private Keys are encrypted and stored in the target's `addresses.yml` file. Bootstrap will have them to be used when required. This is Bootstrap's default behaviour.
 -   `PROMPT_MAIN`: Main Private Keys are not stored in the target's `addresses.yml` file. Bootstrap will prompt for the Main Private Key when generating certificates, or transactions need to be signed in the `link` and `enrolProgram` commands.
--   `PROMPT_MAIN_VOTING`: Main and voting private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` and `enrolProgram` commands. The voting private key will be requested when generating the voting key file.
+-   `PROMPT_MAIN_TRANSPORT`: Main and transport private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` and `enrolProgram` commands. The transport private key would be asked when upgrading supernode agents.
 -   `PROMPT_ALL`: No Private Key is stored in the target's `addresses.yml` file. Bootstrap will prompt for the Private Keys when they are required in the different commands.
 
 When using the `PROMPT` security modes Bootstrap may ask for private keys when running the different commands. This may not be suitable for automatic scripting.
@@ -342,6 +345,7 @@ Bootstrap will reject `PROMPT` security modes when an account is being randomly 
 A useful combination is enabling `PROMPT_MAIN`, which stores the main account public key in the preset, but encrypts the rest of the private keys. 
 
 #### **`plain-custom-preset.yml`**
+
 ```yaml
 privateKeySecurityMode: PROMPT_MAIN
 nodes:
@@ -350,7 +354,6 @@ nodes:
       transportPrivateKey: 6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B
       remotePrivateKey: E27AD508907524E2143EF2A3A272DDBEE7558B92550ABA5B82AD65D66B57BD00
       vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
-      votingPrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
 ```
 
 ```

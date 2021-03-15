@@ -375,7 +375,7 @@ describe('CryptoUtils', () => {
         const noPrivateKeyObject = CryptoUtils.removePrivateKeysAccordingToSecurityMode(object, PrivateKeySecurityMode.PROMPT_MAIN);
         expect(noPrivateKeyObject).deep.eq(restrictedObject);
     });
-    it('it removes private keys PROMPT_MAIN_VOTING', () => {
+    it('it removes private keys PROMPT_MAIN_TRANSPORT', () => {
         const object = {
             version: 2,
             networkType: 152,
@@ -455,7 +455,10 @@ describe('CryptoUtils', () => {
             ],
         };
 
-        const noPrivateKeyObject = CryptoUtils.removePrivateKeysAccordingToSecurityMode(object, PrivateKeySecurityMode.PROMPT_MAIN_VOTING);
+        const noPrivateKeyObject = CryptoUtils.removePrivateKeysAccordingToSecurityMode(
+            object,
+            PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
+        );
         expect(noPrivateKeyObject).deep.eq(restrictedObject);
     });
 });

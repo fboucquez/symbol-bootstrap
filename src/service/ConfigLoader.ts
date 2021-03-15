@@ -78,6 +78,7 @@ export class ConfigLoader {
                 addresses.nemesisSigner,
                 KeyName.NemesisSigner,
                 '',
+                'creating the network nemesis seed and configuration',
             );
         }
 
@@ -210,7 +211,7 @@ export class ConfigLoader {
         if (
             keyName === KeyName.Main &&
             (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL ||
-                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING ||
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT ||
                 privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN)
         ) {
             throw new KnownError(
@@ -218,9 +219,9 @@ export class ConfigLoader {
             );
         }
         if (
-            keyName === KeyName.Voting &&
+            keyName === KeyName.Transport &&
             (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL ||
-                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING)
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT)
         ) {
             throw new KnownError(
                 `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere!. Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, or provider your ${keyName} account with custom presets!`,
@@ -228,7 +229,7 @@ export class ConfigLoader {
         } else {
             if (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL) {
                 throw new KnownError(
-                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, ${PrivateKeySecurityMode.PROMPT_MAIN_VOTING}, or provider your ${keyName} account with custom presets!`,
+                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, ${PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT}, or provider your ${keyName} account with custom presets!`,
                 );
             }
         }
@@ -283,15 +284,7 @@ export class ConfigLoader {
                 nodePreset.remotePrivateKey,
                 nodePreset.remotePublicKey,
             );
-        if (nodePreset.voting)
-            nodeAccount.voting = this.generateAccount(
-                networkType,
-                privateKeySecurityMode,
-                KeyName.Voting,
-                oldNodeAccount?.voting,
-                nodePreset.votingPrivateKey,
-                nodePreset.votingPublicKey,
-            );
+        if (nodePreset.voting) nodeAccount.voting = this.toConfig(Account.generateNewAccount(networkType));
         if (nodePreset.harvesting)
             nodeAccount.vrf = this.generateAccount(
                 networkType,
