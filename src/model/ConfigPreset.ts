@@ -21,7 +21,7 @@ import { NodeType } from './NodeType';
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
     PROMPT_MAIN = 'PROMPT_MAIN',
-    PROMPT_MAIN_VOTING = 'PROMPT_MAIN_VOTING',
+    PROMPT_MAIN_TRANSPORT = 'PROMPT_MAIN_TRANSPORT',
     PROMPT_ALL = 'PROMPT_ALL',
 }
 
@@ -92,9 +92,6 @@ export interface NodePreset extends DockerServicePreset {
 
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
-
-    votingPrivateKey?: string;
-    votingPublicKey?: string;
 
     //Broker specific
     brokerName?: string;
