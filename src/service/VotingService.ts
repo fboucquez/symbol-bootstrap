@@ -54,8 +54,11 @@ export class VotingService {
                 return;
             }
             const votingPrivateKey = nodeAccount?.voting.privateKey;
+
             if (!votingPrivateKey) {
-                throw new Error('Voting key should have been previously generated!!!');
+                throw new Error(
+                    'Voting key should have been previously generated!!! You need to reset your target folder. Please run --reset using your original custom preset.',
+                );
             }
 
             const cmd = [
