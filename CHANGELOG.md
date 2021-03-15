@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.0  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Removed node from its own `peers-p2p.json` and `peers-api.json` files.
 -   Voting keys are ephemeral. They cannot be provided, bootstrap will always generate a new one when resetting the configuration. Bootstrap will never store the voting private key in addresses.yml.
 -   Dropped `PROMPT_MAIN_VOTING` from `privateKeySecurityMode`. 
 -   Added `PROMPT_MAIN_TRANSPORT` to `privateKeySecurityMode`: The transport/node key will be asked when regenerating the certificates or when upgrading a supernode.

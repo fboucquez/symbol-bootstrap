@@ -403,7 +403,7 @@ export class ConfigService {
             addresses,
             serverConfig,
             NodeType.PEER_NODE,
-            (nodePresetData) => nodePresetData.harvesting,
+            (nodePresetData) => nodePresetData.harvesting && nodePresetData != nodePreset,
             'peers-p2p.json',
         );
         await this.generateP2PFile(
@@ -411,7 +411,7 @@ export class ConfigService {
             addresses,
             serverConfig,
             NodeType.API_NODE,
-            (nodePresetData) => nodePresetData.api,
+            (nodePresetData) => nodePresetData.api && nodePresetData != nodePreset,
             'peers-api.json',
         );
 
@@ -428,7 +428,7 @@ export class ConfigService {
                 addresses,
                 brokerConfig,
                 NodeType.PEER_NODE,
-                (nodePresetData) => nodePresetData.harvesting,
+                (nodePresetData) => nodePresetData.harvesting && nodePresetData != nodePreset,
                 'peers-p2p.json',
             );
             await this.generateP2PFile(
@@ -436,7 +436,7 @@ export class ConfigService {
                 addresses,
                 brokerConfig,
                 NodeType.API_NODE,
-                (nodePresetData) => nodePresetData.api,
+                (nodePresetData) => nodePresetData.api && nodePresetData != nodePreset,
                 'peers-api.json',
             );
         }
