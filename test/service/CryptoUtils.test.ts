@@ -359,7 +359,6 @@ describe('CryptoUtils', () => {
                         address: 'TAJUGHLVMRJL6YMBLWOSOOLZGN73CGIRKI3SR5I',
                     },
                     voting: {
-                        privateKey: 'B161B7E2205F0FB577594A47566FA735582997682D99C67B780DB45BD805A4A0',
                         publicKey: 'DB15D252786AE741CF2DD4B07D0BFC2E26999804B4EAE0075407AD1D7AF8F7F3',
                         address: 'TA37ECJGSNMSCKCPK5KW4UH74QBWZU24QZRUWNA',
                     },
@@ -433,7 +432,6 @@ describe('CryptoUtils', () => {
                         address: 'TAEAUXUZOFODY2ZQZGV5DUVQ2TN3HBSXKGBEH5Q',
                     },
                     transport: {
-                        privateKey: 'E07C107F25DE9CBBC301683F527EBE05A47572EE810DB91D5C4FA6A7E0B9D5BF',
                         publicKey: '41470F3A43095F493319A2241C3059B5EA0ECC89318E6ED32381A4AAEC4D13D1',
                         address: 'TCZARKJGP4RXWWTUZRRYW4X5Z7UQFUXQ5K2VIJQ',
                     },
