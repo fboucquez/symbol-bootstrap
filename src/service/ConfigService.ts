@@ -362,11 +362,6 @@ export class ConfigService {
                     `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
                 );
             }
-
-            const copyFrom = join(this.root, 'config', 'agent');
-            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
-            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
-
             const nodePrivateKey = await CommandUtils.resolvePrivateKey(
                 presetData.networkType,
                 account.transport,
@@ -380,6 +375,9 @@ export class ConfigService {
             templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
             templateContext.nodePrivateKey = nodePrivateKey;
+            const copyFrom = join(this.root, 'config', 'agent');
+            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
+            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
         }
 
         const serverRecoveryConfig = {

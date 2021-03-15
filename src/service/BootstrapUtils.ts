@@ -255,7 +255,7 @@ export class BootstrapUtils {
         }
     }
 
-    public static resolveRootFolder() {
+    public static resolveRootFolder(): string {
         const rootFolder = resolve(__dirname, '../..');
         if (!existsSync(join(rootFolder, 'presets', 'shared.yml'))) {
             throw new Error(`Root Folder ${rootFolder} does not look right!`);
