@@ -72,12 +72,15 @@ export class CommandUtils {
         account: CertificatePair | undefined,
         keyName: KeyName,
         nodeName: string,
+        operationDescription: string,
     ): Promise<string> {
         if (!account) {
             return '';
         }
         if (!account.privateKey) {
             while (true) {
+                console.log();
+                console.log(`${keyName} private key is required when ${operationDescription}.`);
                 const address = PublicAccount.createFromPublicKey(account.publicKey, networkType).address.plain();
                 const nodeDescription = nodeName === '' ? `of` : `of the Node's '${nodeName}'`;
                 const responses = await prompt([
