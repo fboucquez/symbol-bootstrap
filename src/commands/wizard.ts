@@ -74,7 +74,6 @@ export interface BootstrapPresetContent {
         transportPrivateKey: string;
         remotePrivateKey: string;
         vrfPrivateKey: string;
-        votingPrivateKey?: string;
     }[];
 }
 
@@ -83,7 +82,6 @@ export interface ProvidedAccounts {
     main: Account;
     remote: Account;
     vrf: Account;
-    voting?: Account;
     transport: Account;
 }
 
@@ -103,22 +101,37 @@ export default class Wizard extends Command {
         password: CommandUtils.passwordFlag,
         noPassword: CommandUtils.noPasswordFlag,
         network: Wizard.getNetworkIdFlag(),
+        customPresetFile: Wizard.getCustomPresetFile(),
     };
 
     public async run(): Promise<void> {
-        const { flags } = this.parse(Wizard);
+        const flags = this.parse(Wizard).flags;
+        return Wizard.execute(this.config.root, flags);
+    }
+
+    public static async execute(
+        root: string,
+        flags: {
+            noPassword: boolean;
+            target: string;
+            password: string | undefined;
+            network: Network | undefined;
+            customPresetFile: string;
+        },
+    ): Promise<void> {
         BootstrapUtils.showBanner();
         console.log('Welcome to the Symbol Bootstrap wizard! This command will:');
         console.log(' - Guide you through the configuration process.');
         console.log(' - Import Paper Wallet seeds.');
         console.log(` - Create a custom preset and show you the way to launch your node!`);
         console.log();
-        const defaultParams = ConfigService.defaultParams;
-        const file = `custom-preset.yml`;
+        const target = flags.target;
+
+        const file = flags.customPresetFile;
         if (existsSync(file)) {
             throw new Error(`${file} already exist!!! You should move the file somewhere else before overwriting it!`);
         }
-        if (existsSync(defaultParams.target)) {
+        if (existsSync(target)) {
             throw new Error(
                 'There is currently a ./target folder here!!!! Have you executed bootstrap already? You should move the folder somewhere else before overwriting it!',
             );
@@ -141,15 +154,13 @@ export default class Wizard extends Command {
 
         const targetZip = `${network}-${assembly}-node.zip`;
 
-        const voting = await Wizard.isVoting();
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await this.resolveAccounts(networkType, voting);
+        const accounts = await Wizard.resolveAccounts(networkType);
 
         console.log();
         console.log(`These are your node's accounts:`);
         Wizard.logAccount(accounts.main, KeyName.Main, false);
         Wizard.logAccount(accounts.vrf, KeyName.VRF, false);
-        Wizard.logAccount(accounts.voting, KeyName.Voting, false);
         Wizard.logAccount(accounts.remote, KeyName.Remote, false);
         Wizard.logAccount(accounts.transport, KeyName.Transport, false);
         console.log();
@@ -164,8 +175,8 @@ export default class Wizard extends Command {
             symbolHostRequired,
         );
         const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
-
         const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
+        const voting = await Wizard.isVoting();
         const presetContent: BootstrapPresetContent = {
             assembly: assembly,
             preset: preset,
@@ -180,7 +191,6 @@ export default class Wizard extends Command {
                     vrfPrivateKey: accounts.vrf.privateKey,
                     remotePrivateKey: accounts.remote.privateKey,
                     transportPrivateKey: accounts.transport.privateKey,
-                    votingPrivateKey: accounts.voting?.privateKey,
                 },
             ],
         };
@@ -211,22 +221,25 @@ export default class Wizard extends Command {
                 default: false,
             },
         ]);
+        const defaultParams = ConfigService.defaultParams;
         if (generateConfigurationNow) {
-            const service = new BootstrapService(this.config.root);
+            const service = new BootstrapService(root);
             await service.config({
                 ...defaultParams,
                 preset: preset,
+                target,
                 assembly: assembly,
                 password: password,
                 customPresetObject: presetContent,
             });
             await service.compose({
                 ...defaultParams,
+                target,
                 password: password,
             });
             await ZipUtils.zip(targetZip, [
                 {
-                    from: defaultParams.target,
+                    from: target,
                     to: 'target',
                     directory: true,
                 },
@@ -248,7 +261,9 @@ export default class Wizard extends Command {
         console.log('You can edit this file to further customize it.');
         console.log();
         console.log('To run your node use:');
-        console.log(`$ symbol-bootstrap start -p ${network} -a ${assembly} -c ${file}`);
+        console.log(
+            `$ symbol-bootstrap start -p ${network} -a ${assembly} -c ${file} ${target !== defaultParams.target ? `-t ${target}` : ''}`,
+        );
         console.log();
 
         if (existsSync(targetZip)) {
@@ -277,47 +292,47 @@ export default class Wizard extends Command {
         return account as T;
     }
 
-    private async resolveAccounts(networkType: NetworkType, voting: boolean): Promise<ProvidedAccounts> {
+    private static async resolveAccounts(networkType: NetworkType): Promise<ProvidedAccounts> {
         while (true) {
             const importMode = await Wizard.resolveImportMode();
             if (importMode === ImportType.OPTIN_PAPER_WALLET) {
                 {
-                    const derivedAccount = await this.resolveDerivedAccount(networkType, true);
+                    const derivedAccount = await Wizard.resolveDerivedAccount(networkType, true);
                     if (derivedAccount) {
-                        return await this.resolveAllAccount(networkType, derivedAccount, voting);
+                        return await Wizard.resolveAllAccount(networkType, derivedAccount);
                     }
                 }
             } else if (importMode === ImportType.SYMBOL_PAPER_WALLET) {
                 {
-                    const derivedAccount = await this.resolveDerivedAccount(networkType, false);
+                    const derivedAccount = await Wizard.resolveDerivedAccount(networkType, false);
                     if (derivedAccount) {
-                        return await this.resolveAllAccount(networkType, derivedAccount, voting);
+                        return await Wizard.resolveAllAccount(networkType, derivedAccount);
                     }
                 }
             } else if (importMode === ImportType.PRIVATE_KEYS) {
                 {
-                    return await this.resolveAllAccount(networkType, undefined, voting);
+                    return await Wizard.resolveAllAccount(networkType, undefined);
                 }
             }
         }
     }
 
-    private async resolveAllAccount(
+    private static async resolveAllAccount(
         networkType: NetworkType,
         derivedAccount: DerivedAccount | undefined,
-        voting: boolean,
     ): Promise<ProvidedAccounts> {
         return {
             seeded: true,
-            main: derivedAccount ? derivedAccount.account : await this.resolveAccount(networkType, derivedAccount, KeyName.Main, 0),
-            vrf: await this.resolveAccount(networkType, derivedAccount, KeyName.VRF, 1),
-            voting: voting ? await this.resolveAccount(networkType, derivedAccount, KeyName.Voting, 2) : undefined,
-            remote: await this.resolveAccount(networkType, derivedAccount, KeyName.Remote, 3),
-            transport: await this.resolveAccount(networkType, derivedAccount, KeyName.Transport, 4),
+            main: derivedAccount
+                ? derivedAccount.account
+                : await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.Main, 0),
+            transport: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.Transport, 1),
+            vrf: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.VRF, 2),
+            remote: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.Remote, 3),
         };
     }
 
-    public async resolveAccount(
+    public static async resolveAccountFromSelection(
         networkType: NetworkType,
         derivedAccount: DerivedAccount | undefined,
         keyName: KeyName,
@@ -328,7 +343,7 @@ export default class Wizard extends Command {
             if (derivedAccount && !derivedAccount.optinMode) {
                 keyCreationChoices.push({ name: 'Deriving it from Symbol Paper Wallet seed', value: 'seed' });
             }
-            keyCreationChoices.push({ name: 'Generating a brand account', value: 'generate' });
+            keyCreationChoices.push({ name: 'Generating a new account', value: 'generate' });
             keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
             const { keyCreationMode } = await prompt([
                 {
@@ -340,7 +355,9 @@ export default class Wizard extends Command {
                 },
             ]);
             const log = (account: Account, message: string): Account => {
+                console.log();
                 console.log(`Using account ${account.address.pretty()} for ${keyName} key. ${message}`);
+                console.log();
                 return account;
             };
             if (keyCreationMode == 'generate') {
@@ -374,7 +391,7 @@ export default class Wizard extends Command {
         while (true) {
             const { privateKey } = await prompt([
                 {
-                    name: 'value',
+                    name: 'privateKey',
                     message: `Enter the 64 HEX private key of the ${keyName} account (or press enter to select the option again).`,
                     type: 'password',
                     mask: '*',
@@ -399,6 +416,7 @@ export default class Wizard extends Command {
                     },
                 ]);
                 if (ok) {
+                    console.log(`HERE! 4 ${privateKey}`);
                     return enteredAccount;
                 }
             }
@@ -434,11 +452,11 @@ export default class Wizard extends Command {
                 type: 'list',
                 default: PrivateKeySecurityMode.PROMPT_MAIN_VOTING,
                 choices: [
-                    {
-                        name:
-                            'PROMPT_MAIN_VOTING: Bootstrap may ask for Main and Voting private keys when doing certificates and voting key file upgrades. Other keys are encrypted.',
-                        value: PrivateKeySecurityMode.PROMPT_MAIN_VOTING,
-                    },
+                    // {
+                    //     name:
+                    //         'PROMPT_MAIN_VOTING: Bootstrap may ask for Main and Voting private keys when doing certificates and voting key file upgrades. Other keys are encrypted.',
+                    //     value: PrivateKeySecurityMode.PROMPT_MAIN_VOTING,
+                    // },
                     {
                         name:
                             'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
@@ -517,6 +535,13 @@ export default class Wizard extends Command {
         }) as IOptionFlag<Network | undefined>;
     }
 
+    public static getCustomPresetFile(): IOptionFlag<string> {
+        return flags.string({
+            description: 'The custom preset to be created.',
+            default: 'custom-preset.yml',
+        });
+    }
+
     public static isValidPhrase(input: string): boolean | string {
         if (!input) {
             return true;
@@ -525,7 +550,7 @@ export default class Wizard extends Command {
         return words === 24 ? true : `Invalid phrase. It must have 24 words but got ${words}.`;
     }
 
-    async resolveDerivedAccount(networkType: NetworkType, optinMode: boolean): Promise<DerivedAccount | undefined> {
+    public static async resolveDerivedAccount(networkType: NetworkType, optinMode: boolean): Promise<DerivedAccount | undefined> {
         try {
             console.log(
                 'To generate the keys, enter the 24 words of the mnemonic phrase created when you opted in.\nYou can find them in the Paper Wallet. They will not be stored anywhere by this tool.\n',
@@ -546,7 +571,7 @@ export default class Wizard extends Command {
                 }
                 lastEnteredPhrase = phraseResponse.value.trim();
                 const mnemonicPassPhrase = new MnemonicPassPhrase(lastEnteredPhrase);
-                const derivedAccounts = this.findDerivedAccounts(mnemonicPassPhrase, networkType, optinMode, undefined, 0);
+                const derivedAccounts = Wizard.findDerivedAccounts(mnemonicPassPhrase, networkType, optinMode, undefined, 0);
 
                 const choices = derivedAccounts.map((derivedAccounts) => ({
                     value: derivedAccounts.account.address.plain(),
@@ -577,7 +602,7 @@ export default class Wizard extends Command {
         }
     }
 
-    private findDerivedAccounts(
+    private static findDerivedAccounts(
         mnemonicPassPhrase: MnemonicPassPhrase,
         networkType: NetworkType,
         optinMode: boolean,

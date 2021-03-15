@@ -19,6 +19,8 @@ OPTIONS
   -t, --target=target                       [default: target] The target folder where the symbol-bootstrap network is
                                             generated
 
+  --customPresetFile=customPresetFile       [default: custom-preset.yml] The custom preset to be created.
+
   --network=mainnet|testnet|privateNetwork  The node or network you want to create
 
   --noPassword                              When provided, Bootstrap will not use a password, so private keys will be
