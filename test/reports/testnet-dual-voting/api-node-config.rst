@@ -62,7 +62,6 @@ config-extensions-server.properties
     extension.addressextraction; false
     extension.mongo; false
     extension.zeromq; false
-    extension.eventsource; false
     extension.harvesting; true
     extension.syncsource; true
     extension.diagnostics; true
@@ -105,7 +104,7 @@ config-harvesting.properties
     harvesterSigningPrivateKey; ****************************************************************; string; Harvester signing private key.
     harvesterVrfPrivateKey; ****************************************************************; string; Harvester vrf private key.
     enableAutoHarvesting; true; bool; Set to true if auto harvesting is enabled.
-    maxUnlockedAccounts; 5; uint32_t; Maximum number of unlocked accounts.
+    maxUnlockedAccounts; 10; uint32_t; Maximum number of unlocked accounts.
     delegatePrioritizationPolicy; Importance; harvesting::DelegatePrioritizationPolicy; Delegate harvester prioritization policy.
     beneficiaryAddress; ; Address; Address of the account receiving part of the harvested fee.
 
