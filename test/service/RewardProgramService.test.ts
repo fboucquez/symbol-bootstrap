@@ -66,7 +66,7 @@ describe('RewardProgramService', () => {
         const transaction = transactions[0] as TransferTransaction;
         expect(transaction.type).eq(TransactionType.TRANSFER);
         expect(transaction.message.payload).eq(
-            'enrol C9767496987222790518114049299DD52114BF2A8F7E5F4B70BB2B6365FAFD34 https://fboucquez-agent-symbollocal.ngrok.io',
+            'enrol C9767496987222790518114049299DD52114BF2A8F7E5F4B70BB2B6365FAFD34 https://fboucquez-agent-symbollocal.ngrok.io:7881',
         );
     });
 

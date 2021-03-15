@@ -209,5 +209,5 @@ maxSubscriptions: 300
 
 #voting
 votingKeyStartEpoch: 1
-votingKeyEndEpoch: 1460
+votingKeyEndEpoch: 360
 enableRevoteOnBoot: true
