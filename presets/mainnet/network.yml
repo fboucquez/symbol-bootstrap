@@ -6,7 +6,8 @@ currencyName: xym
 harvestBeneficiaryPercentage: 25
 harvestingName: xym
 harvestingMosaicId: 3F67F648FD5DCCCE
-epochAdjustment: 1615540625s
+epochAdjustment: 1615853185s
+enableRevoteOnBoot: false
 maxHarvesterBalance: 50000000000000
 maxMosaicAtomicUnits: 8999999999000000
 minHarvesterBalance: 10000000000
