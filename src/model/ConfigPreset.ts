@@ -66,18 +66,19 @@ export interface NemesisPreset {
 }
 
 export interface NodePreset extends DockerServicePreset {
+    name: string;
+    harvesting: boolean;
+    api: boolean;
+    voting: boolean;
+
     // At least these properties.
     // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
     serverVersion?: string;
     nodeUseRemoteAccount?: boolean;
     repeat?: number;
-    harvesting: boolean;
-    api: boolean;
-    voting: boolean;
-    databaseHost: string;
+    databaseHost?: string;
     host?: string;
-    name: string;
-    roles: string;
+    roles?: string;
     friendlyName?: string;
 
     // Optional private keys. If not provided, bootstrap will generate random ones.
