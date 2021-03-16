@@ -55,7 +55,7 @@ services:
         working_dir: /symbol-workdir
         entrypoint: /app/agent-linux.bin --config agent.properties
         ports:
-            - '7881:7880'
+            - '7880:7880'
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
