@@ -284,7 +284,12 @@ export class ConfigLoader {
                 nodePreset.remotePrivateKey,
                 nodePreset.remotePublicKey,
             );
-        if (nodePreset.voting) nodeAccount.voting = this.toConfig(Account.generateNewAccount(networkType));
+        if (nodePreset.voting)
+            nodeAccount.voting = this.toConfig(
+                oldNodeAccount?.voting
+                    ? PublicAccount.createFromPublicKey(oldNodeAccount.voting.publicKey, networkType)
+                    : Account.generateNewAccount(networkType),
+            );
         if (nodePreset.harvesting)
             nodeAccount.vrf = this.generateAccount(
                 networkType,
