@@ -268,7 +268,7 @@ export class ConfigLoader {
         const nodeAccount: NodeAccount = {
             name,
             friendlyName,
-            roles: nodePreset.roles,
+            roles: nodePreset.roles || '',
             main: main,
             transport: transport,
         };
@@ -284,7 +284,12 @@ export class ConfigLoader {
                 nodePreset.remotePrivateKey,
                 nodePreset.remotePublicKey,
             );
-        if (nodePreset.voting) nodeAccount.voting = this.toConfig(Account.generateNewAccount(networkType));
+        if (nodePreset.voting)
+            nodeAccount.voting = this.toConfig(
+                oldNodeAccount?.voting
+                    ? PublicAccount.createFromPublicKey(oldNodeAccount.voting.publicKey, networkType)
+                    : Account.generateNewAccount(networkType),
+            );
         if (nodePreset.harvesting)
             nodeAccount.vrf = this.generateAccount(
                 networkType,
@@ -333,7 +338,15 @@ export class ConfigLoader {
         const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false) : {};
         const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
+        const inflation =
+            customPresetObject?.inflation ||
+            customPresetFileObject?.inflation ||
+            assemblyPreset?.inflation ||
+            networkPreset?.inflation ||
+            sharedPreset?.inflation ||
+            [];
         const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
+        presetData.inflation = inflation;
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
@@ -376,21 +389,6 @@ export class ConfigLoader {
                     roles,
                 };
             }
-            if (node.harvesting) {
-                return {
-                    sinkType: 'Sync',
-                    enableSingleThreadPool: true,
-                    addressextraction: false,
-                    mongo: false,
-                    zeromq: false,
-                    syncsource: true,
-                    filespooling: false,
-                    enableAutoSyncCleanup: true,
-                    partialtransaction: false,
-                    ...node,
-                    roles,
-                };
-            }
             if (node.api) {
                 return {
                     sinkType: 'Async',
@@ -406,7 +404,21 @@ export class ConfigLoader {
                     roles,
                 };
             }
-            throw new Error('A node must have at least one harvesting: true or api: true');
+
+            //peer only (harvesting or not).
+            return {
+                sinkType: 'Sync',
+                enableSingleThreadPool: true,
+                addressextraction: false,
+                mongo: false,
+                zeromq: false,
+                syncsource: true,
+                filespooling: false,
+                enableAutoSyncCleanup: true,
+                partialtransaction: false,
+                ...node,
+                roles,
+            };
         });
     }
 

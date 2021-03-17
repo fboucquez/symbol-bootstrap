@@ -60,6 +60,10 @@ describe('BootstrapUtils', () => {
         expect(await download()).eq(false);
     });
 
+    it('BootstrapUtils.resolveRootFolder', async () => {
+        expect(BootstrapUtils.resolveRootFolder()).to.not.undefined;
+    });
+
     it('BootstrapUtils.download when invalid', async () => {
         BootstrapUtils.deleteFile('boat.png');
         try {

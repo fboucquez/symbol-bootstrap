@@ -62,7 +62,6 @@ config-extensions-server.properties
     extension.addressextraction; false
     extension.mongo; false
     extension.zeromq; false
-    extension.eventsource; false
     extension.harvesting; false
     extension.syncsource; false
     extension.diagnostics; true
