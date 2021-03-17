@@ -128,7 +128,7 @@ describe('ReportService', () => {
         const params = {
             ...ConfigService.defaultParams,
             reset: false,
-            preset: Preset.testnet,
+            preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'peer',
             target: target,
@@ -151,7 +151,7 @@ describe('ReportService', () => {
         const params = {
             ...ConfigService.defaultParams,
             reset: false,
-            preset: Preset.testnet,
+            preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'dual',
             target: target,
