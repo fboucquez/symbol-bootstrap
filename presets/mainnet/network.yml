@@ -50,7 +50,8 @@ fileDatabaseBatchSize: 100
 minProofSize: 0
 syncTimeout: 5m
 maxChildNamespaces: 100
-unfinalizedBlocksDuration: 10m
+unfinalizedBlocksDuration: 0m
+votingUnfinalizedBlocksDuration: 10m
 timeSynchronizationMinImportance: 10000000000
 #nemesisSeedUrl: 'https://symbol-bootstrap.s3-eu-west-1.amazonaws.com/mainnet/seed.zip'
 knownRestGateways:

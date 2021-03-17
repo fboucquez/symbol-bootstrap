@@ -311,6 +311,9 @@ export class ConfigService {
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
             harvesterSigningPrivateKey: harvesterSigningPrivateKey,
             harvesterVrfPrivateKey: harvesterVrfPrivateKey,
+            unfinalizedBlocksDuration: nodePreset.voting
+                ? presetData.votingUnfinalizedBlocksDuration || presetData.unfinalizedBlocksDuration
+                : presetData.unfinalizedBlocksDuration,
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];

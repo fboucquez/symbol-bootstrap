@@ -92,7 +92,7 @@ config-finalization.properties
     messageSynchronizationMaxResponseSize; 20MB
     maxHashesPerPoint; 256
     prevoteBlocksMultiple; 4
-    unfinalizedBlocksDuration; 0m
+    unfinalizedBlocksDuration; 8m
 
 config-harvesting.properties
 ============================
