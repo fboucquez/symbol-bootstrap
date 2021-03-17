@@ -103,12 +103,19 @@ export class CertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(networkType, providedCertificates.main, KeyName.Main, name);
+        const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
+            networkType,
+            providedCertificates.main,
+            KeyName.Main,
+            name,
+            'generating the server CA certificates',
+        );
         const transportPrivateKey = await CommandUtils.resolvePrivateKey(
             networkType,
             providedCertificates.transport,
             KeyName.Transport,
             name,
+            'generating the server Node certificates',
         );
         BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
         BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));

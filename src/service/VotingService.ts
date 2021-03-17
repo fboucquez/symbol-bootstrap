@@ -20,8 +20,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { ConfigAccount, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
-import { ConfigParams, KeyName } from './ConfigService';
+import { ConfigParams } from './ConfigService';
 
 type VotingParams = ConfigParams;
 
@@ -54,13 +53,14 @@ export class VotingService {
                 logger.info(`Voting File for node ${nodePreset.name} has been previously generated. Reusing...`);
                 return;
             }
+            const votingPrivateKey = nodeAccount?.voting.privateKey;
 
-            const votingPrivateKey = await CommandUtils.resolvePrivateKey(
-                presetData.networkType,
-                nodeAccount.voting,
-                KeyName.Voting,
-                nodeAccount.name,
-            );
+            if (!votingPrivateKey) {
+                throw new Error(
+                    'Voting key should have been previously generated!!! You need to reset your target folder. Please run --reset using your original custom preset.',
+                );
+            }
+
             const cmd = [
                 `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
                 `--secret=${votingPrivateKey}`,
@@ -86,7 +86,12 @@ export class VotingService {
                 logger.error(stderr);
                 throw new Error('Voting key failed. Check the logs!');
             }
-            logger.info(`Voting key executed for node ${nodeAccount.name}!`);
+            logger.warn(`A new Voting File for the node ${nodeAccount.name} has been regenerated! `);
+            logger.warn(
+                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key ${nodeAccount.voting.publicKey}`,
+            );
+            logger.warn('For linking, you can use symbol-bootstrap link command, the symbol cli, or the symbol desktop wallet. ');
+            logger.warn('The voting public key is stored in the target`s addresses.yml for reference');
 
             const metadata: VotingMetadata = {
                 votingKeyStartEpoch: presetData.votingKeyStartEpoch,

@@ -1,0 +1,24 @@
+databases:
+    - name: 'db'
+      openPort: false
+nodes:
+    - harvesting: true
+      voting: false
+      api: true
+      name: 'node'
+      host: ''
+      databaseHost: 'db'
+      brokerName: 'broker'
+      openPort: true
+      brokerOpenPort: true
+      trustedHosts: 127.0.0.1, 172.20.0.25
+      localNetworks: 127.0.0.1, 172.20.0.25
+gateways:
+    - name: 'rest-gateway'
+      apiNodeName: 'node'
+      apiNodeHost: 'node'
+      apiNodeBrokerHost: 'broker'
+      description: 'catapult public main network'
+      databaseHost: 'db'
+      openPort: true
+      ipv4_address: 172.20.0.25

@@ -66,11 +66,11 @@ maxNamespaceDepth: 3
 batchVerificationRandomSource:
 symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.8
 symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.8
-symbolRestImage: symbolplatform/symbol-rest:2.3.4
+symbolRestImage: symbolplatform/symbol-rest:2.3.5
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
-symbolFaucetImage: symbolplatform/symbol-faucet:0.4.0
-symbolAgentImage: symbolplatform/symbol-node-rewards-agent:0.1.0
+symbolFaucetImage: symbolplatform/symbol-faucet:0.5.0-alpha
+symbolAgentImage: symbolplatform/symbol-node-rewards-agent:1.0.1
 mongoImage: mongo:4.4.3-bionic
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
 logLevel: 'Info'
@@ -151,7 +151,7 @@ maxTrackedNodes: 5'000
 beneficiaryAddress: ''
 enableAutoHarvesting: true
 fileDatabaseBatchSize: 1
-maxUnlockedAccounts: 5
+maxUnlockedAccounts: 10
 delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
@@ -205,8 +205,9 @@ apiNodeBrokerMonitorLoggingThrottle: 60000
 maxConnectionAttempts: 15
 baseRetryDelay: 750
 connectionPoolSize: 10
+maxSubscriptions: 300
 
 #voting
 votingKeyStartEpoch: 1
-votingKeyEndEpoch: 1460
+votingKeyEndEpoch: 360
 enableRevoteOnBoot: true

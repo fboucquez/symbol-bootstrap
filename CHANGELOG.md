@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.0] - Mar-16-2021
+
+**Milestone**: Mainnet(1.0.0.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.0  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   **New `mainnet` preset!!!**
+-   Removed node from its own `peers-p2p.json` and `peers-api.json` files.
+-   Voting keys are ephemeral. They cannot be provided, bootstrap will always generate a new one when resetting the configuration. Bootstrap will never store the voting private key in addresses.yml.
+-   Dropped `PROMPT_MAIN_VOTING` from `privateKeySecurityMode`. 
+-   Added `PROMPT_MAIN_TRANSPORT` to `privateKeySecurityMode`: The transport/node key will be asked when regenerating the certificates or when upgrading a supernode.
+-   Changed server file permission to 0o600
+
 ## [0.4.5] - Mar-5-2021
 
 **Milestone**: Hippopotamus(0.10.0.8)

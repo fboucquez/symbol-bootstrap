@@ -78,6 +78,7 @@ export class ConfigLoader {
                 addresses.nemesisSigner,
                 KeyName.NemesisSigner,
                 '',
+                'creating the network nemesis seed and configuration',
             );
         }
 
@@ -210,7 +211,7 @@ export class ConfigLoader {
         if (
             keyName === KeyName.Main &&
             (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL ||
-                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING ||
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT ||
                 privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN)
         ) {
             throw new KnownError(
@@ -218,9 +219,9 @@ export class ConfigLoader {
             );
         }
         if (
-            keyName === KeyName.Voting &&
+            keyName === KeyName.Transport &&
             (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL ||
-                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_VOTING)
+                privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT)
         ) {
             throw new KnownError(
                 `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere!. Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, or provider your ${keyName} account with custom presets!`,
@@ -228,7 +229,7 @@ export class ConfigLoader {
         } else {
             if (privateKeySecurityMode === PrivateKeySecurityMode.PROMPT_ALL) {
                 throw new KnownError(
-                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, ${PrivateKeySecurityMode.PROMPT_MAIN_VOTING}, or provider your ${keyName} account with custom presets!`,
+                    `Account ${keyName} cannot be generated when Private Key Security Mode is ${privateKeySecurityMode}. Account won't be stored anywhere! Please use ${PrivateKeySecurityMode.ENCRYPT}, ${PrivateKeySecurityMode.PROMPT_MAIN}, ${PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT}, or provider your ${keyName} account with custom presets!`,
                 );
             }
         }
@@ -267,7 +268,7 @@ export class ConfigLoader {
         const nodeAccount: NodeAccount = {
             name,
             friendlyName,
-            roles: nodePreset.roles,
+            roles: nodePreset.roles || '',
             main: main,
             transport: transport,
         };
@@ -284,13 +285,10 @@ export class ConfigLoader {
                 nodePreset.remotePublicKey,
             );
         if (nodePreset.voting)
-            nodeAccount.voting = this.generateAccount(
-                networkType,
-                privateKeySecurityMode,
-                KeyName.Voting,
-                oldNodeAccount?.voting,
-                nodePreset.votingPrivateKey,
-                nodePreset.votingPublicKey,
+            nodeAccount.voting = this.toConfig(
+                oldNodeAccount?.voting
+                    ? PublicAccount.createFromPublicKey(oldNodeAccount.voting.publicKey, networkType)
+                    : Account.generateNewAccount(networkType),
             );
         if (nodePreset.harvesting)
             nodeAccount.vrf = this.generateAccount(
@@ -340,7 +338,15 @@ export class ConfigLoader {
         const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false) : {};
         const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
+        const inflation =
+            customPresetObject?.inflation ||
+            customPresetFileObject?.inflation ||
+            assemblyPreset?.inflation ||
+            networkPreset?.inflation ||
+            sharedPreset?.inflation ||
+            [];
         const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
+        presetData.inflation = inflation;
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
             if (assembly) {
@@ -383,21 +389,6 @@ export class ConfigLoader {
                     roles,
                 };
             }
-            if (node.harvesting) {
-                return {
-                    sinkType: 'Sync',
-                    enableSingleThreadPool: true,
-                    addressextraction: false,
-                    mongo: false,
-                    zeromq: false,
-                    syncsource: true,
-                    filespooling: false,
-                    enableAutoSyncCleanup: true,
-                    partialtransaction: false,
-                    ...node,
-                    roles,
-                };
-            }
             if (node.api) {
                 return {
                     sinkType: 'Async',
@@ -413,7 +404,21 @@ export class ConfigLoader {
                     roles,
                 };
             }
-            throw new Error('A node must have at least one harvesting: true or api: true');
+
+            //peer only (harvesting or not).
+            return {
+                sinkType: 'Sync',
+                enableSingleThreadPool: true,
+                addressextraction: false,
+                mongo: false,
+                zeromq: false,
+                syncsource: true,
+                filespooling: false,
+                enableAutoSyncCleanup: true,
+                partialtransaction: false,
+                ...node,
+                roles,
+            };
         });
     }
 

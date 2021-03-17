@@ -298,7 +298,13 @@ export class AnnounceService {
                 }
             } else {
                 const signerAccount = Account.createFromPrivateKey(
-                    await CommandUtils.resolvePrivateKey(networkType, nodeAccount.main, KeyName.Main, nodeAccount.name),
+                    await CommandUtils.resolvePrivateKey(
+                        networkType,
+                        nodeAccount.main,
+                        KeyName.Main,
+                        nodeAccount.name,
+                        'signing a transaction',
+                    ),
                     networkType,
                 );
                 if (transactions.length == 1) {

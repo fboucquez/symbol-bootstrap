@@ -56,4 +56,4 @@ EXAMPLES
   plain-addresses.yml
 ```
 
-_See code: [src/commands/decrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v0.4.5/src/commands/decrypt.ts)_
+_See code: [src/commands/decrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.0/src/commands/decrypt.ts)_
