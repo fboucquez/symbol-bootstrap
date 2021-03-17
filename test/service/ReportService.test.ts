@@ -115,6 +115,52 @@ describe('ReportService', () => {
         await assertReport(params, 'testnet-api');
     });
 
+    it('ReportService mainnet peer', async () => {
+        const target = 'target/tests/ReportService.mainnet.peer.report';
+        const customPresetObject = {
+            nodes: [
+                {
+                    voting: false,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.testnet,
+            customPresetObject: customPresetObject,
+            assembly: 'peer',
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'mainnet-peer');
+    });
+
+    it('ReportService mainnet dual', async () => {
+        const target = 'target/tests/ReportService.mainnet.dual.report';
+        const customPresetObject = {
+            nodes: [
+                {
+                    voting: false,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.testnet,
+            customPresetObject: customPresetObject,
+            assembly: 'dual',
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'mainnet-dual');
+    });
+
     it('ReportService bootstrap report', async () => {
         const target = 'target/tests/ReportService.bootstrap.voting.report';
         const customPresetObject = {
