@@ -312,8 +312,8 @@ export class ConfigService {
             harvesterSigningPrivateKey: harvesterSigningPrivateKey,
             harvesterVrfPrivateKey: harvesterVrfPrivateKey,
             unfinalizedBlocksDuration: nodePreset.voting
-                ? presetData.votingUnfinalizedBlocksDuration || presetData.unfinalizedBlocksDuration
-                : presetData.unfinalizedBlocksDuration,
+                ? presetData.votingUnfinalizedBlocksDuration
+                : presetData.nonVotingUnfinalizedBlocksDuration,
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];

@@ -168,7 +168,7 @@ export interface ConfigPreset {
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
     assemblies?: string;
     databaseName: string;
-    unfinalizedBlocksDuration: string;
+    nonVotingUnfinalizedBlocksDuration: string;
     votingUnfinalizedBlocksDuration?: string;
     nemesisSignerPublicKey: string;
     nemesisGenerationHashSeed: string;
