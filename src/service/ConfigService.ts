@@ -216,7 +216,7 @@ export class ConfigService {
         await BootstrapUtils.mkdir(nemesisSeedFolder);
         if (presetData.nemesis) {
             if (isUpgrade) {
-                logger.info('Nemesis data cannot be generated or copied when upgrading...');
+                logger.info('Nemesis data cannot be generated when upgrading...');
             } else {
                 await this.generateNemesisConfig(presetData, addresses);
                 await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
