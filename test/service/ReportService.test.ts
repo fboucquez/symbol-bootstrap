@@ -70,7 +70,7 @@ describe('ReportService', () => {
     });
 
     it('ReportService testnet peer voting report', async () => {
-        const target = 'target/tests/ReportService.testnet.peer.report';
+        const target = 'target/tests/ReportService.testnet.peer.voting.report';
         const customPresetObject = {
             nodes: [
                 {
@@ -89,7 +89,7 @@ describe('ReportService', () => {
             report: true,
         };
 
-        await assertReport(params, 'testnet-peer');
+        await assertReport(params, 'testnet-peer-voting');
     });
 
     it('ReportService testnet api', async () => {
@@ -128,7 +128,7 @@ describe('ReportService', () => {
         const params = {
             ...ConfigService.defaultParams,
             reset: false,
-            preset: Preset.testnet,
+            preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'peer',
             target: target,
@@ -151,7 +151,7 @@ describe('ReportService', () => {
         const params = {
             ...ConfigService.defaultParams,
             reset: false,
-            preset: Preset.testnet,
+            preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'dual',
             target: target,
@@ -159,6 +159,29 @@ describe('ReportService', () => {
         };
 
         await assertReport(params, 'mainnet-dual');
+    });
+
+    it('ReportService mainnet dual voting', async () => {
+        const target = 'target/tests/ReportService.mainnet.dual.voting.report';
+        const customPresetObject = {
+            nodes: [
+                {
+                    voting: true,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.mainnet,
+            customPresetObject: customPresetObject,
+            assembly: 'dual',
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'mainnet-dual-voting');
     });
 
     it('ReportService bootstrap report', async () => {

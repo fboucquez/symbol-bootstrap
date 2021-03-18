@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.1] - Next
+
+**Milestone**: Mainnet(1.0.0.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.1  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-  Custom `votingUnfinalizedBlocksDuration` and `nonVotingUnfinalizedBlocksDuration` preset properties.
+
 ## [1.0.0] - Mar-16-2021
 
 **Milestone**: Mainnet(1.0.0.0)

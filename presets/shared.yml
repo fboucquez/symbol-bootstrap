@@ -99,7 +99,8 @@ finalizationSize: 10000
 finalizationThreshold: 7000
 maxHashesPerPoint: 256
 prevoteBlocksMultiple: 4
-unfinalizedBlocksDuration: 0m
+nonVotingUnfinalizedBlocksDuration: 8m
+votingUnfinalizedBlocksDuration: 0m
 
 # config messages:
 subscriberPort: 7902
