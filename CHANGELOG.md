@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.1  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Random and limited peer/api list.
 -  Custom `votingUnfinalizedBlocksDuration` and `nonVotingUnfinalizedBlocksDuration` preset properties.
 
 ## [1.0.0] - Mar-16-2021
