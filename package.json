@@ -103,6 +103,8 @@
         "coveralls-report": "cat ./coverage/lcov.info | coveralls",
         "version": "echo $npm_package_version",
         "install-cli": "npm pack && npm i -g",
+        "publish": "aws s3 cp --recursive ./dist/symbol-bootstrap-* s3://symbol-bootstrap/dist/v$npm_package_version --acl public-read",
+        "dist": "oclif-dev pack",
         "clean-network": "symbol-bootstrap clean -t target/bootstrap-test",
         "start-network": "symbol-bootstrap start -t target/bootstrap-test -u 'current'"
     },
