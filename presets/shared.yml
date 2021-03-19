@@ -92,6 +92,10 @@ maxWriterThreads: 8
 maxDropBatchSize: 10
 writeTimeout: 10m
 
+#Peer List configuration
+peersP2PListLimit: 10
+peersApiListLimit: 10
+
 # config finalization
 shortLivedCacheMessageDuration: 10m
 messageSynchronizationMaxResponseSize: 20MB
