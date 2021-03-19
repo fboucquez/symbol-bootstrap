@@ -261,7 +261,7 @@ export class ComposeService {
                         );
                     }
 
-                    if (n.rewardProgram) {
+                    if (n.rewardProgram && false) {
                         const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
 
                         const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
