@@ -80,6 +80,7 @@ export interface NodePreset extends DockerServicePreset {
     host?: string;
     roles?: string;
     friendlyName?: string;
+    beneficiaryAddress?: string;
 
     // Optional private keys. If not provided, bootstrap will generate random ones.
     mainPrivateKey?: string;
@@ -175,6 +176,7 @@ export interface ConfigPreset {
     harvestNetworkFeeSinkAddress?: string;
     mosaicRentalFeeSinkAddress?: string;
     namespaceRentalFeeSinkAddress?: string;
+    beneficiaryAddress?: string;
     nodeUseRemoteAccount: boolean;
     networkheight: boolean;
     dockerComposeVersion: number | string;
