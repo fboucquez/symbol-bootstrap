@@ -92,6 +92,10 @@ maxWriterThreads: 8
 maxDropBatchSize: 10
 writeTimeout: 10m
 
+#Peer List configuration
+peersP2PListLimit: 10
+peersApiListLimit: 10
+
 # config finalization
 shortLivedCacheMessageDuration: 10m
 messageSynchronizationMaxResponseSize: 20MB
@@ -99,7 +103,8 @@ finalizationSize: 10000
 finalizationThreshold: 7000
 maxHashesPerPoint: 256
 prevoteBlocksMultiple: 4
-unfinalizedBlocksDuration: 0m
+nonVotingUnfinalizedBlocksDuration: 8m
+votingUnfinalizedBlocksDuration: 0m
 
 # config messages:
 subscriberPort: 7902

@@ -63,7 +63,7 @@ extension.unbondedpruning; true
 
 config-finalization.properties
 finalization
-enableVoting; false
+enableVoting; true
 enableRevoteOnBoot; true
 size; 10'000
 threshold; 7'000
@@ -726,7 +726,7 @@ localnode
 host; ; string; Node host (leave empty to auto-detect IP).
 friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
 version; 0.10.1.8; uint32_t; Node version.
-roles; Peer; ionet::NodeRoles; Node roles.
+roles; Peer,Voting; ionet::NodeRoles; Node roles.
 
 outgoing_connections
 maxConnections; 10; uint16_t; Maximum number of active connections.

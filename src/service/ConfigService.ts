@@ -15,7 +15,7 @@
  */
 
 import * as fs from 'fs';
-import { existsSync } from 'fs';
+import { copyFileSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import {
@@ -311,6 +311,9 @@ export class ConfigService {
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
             harvesterSigningPrivateKey: harvesterSigningPrivateKey,
             harvesterVrfPrivateKey: harvesterVrfPrivateKey,
+            unfinalizedBlocksDuration: nodePreset.voting
+                ? presetData.votingUnfinalizedBlocksDuration
+                : presetData.nonVotingUnfinalizedBlocksDuration,
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];
@@ -371,17 +374,19 @@ export class ConfigService {
 
         logger.info(`Generating ${name} server configuration`);
         await BootstrapUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
-        await this.generateP2PFile(
+        const peersP2PFile = await this.generateP2PFile(
             presetData,
             addresses,
+            presetData.peersP2PListLimit,
             serverConfig,
             NodeType.PEER_NODE,
             (nodePresetData) => nodePresetData.harvesting && nodePresetData != nodePreset,
             'peers-p2p.json',
         );
-        await this.generateP2PFile(
+        const peersApiFile = await this.generateP2PFile(
             presetData,
             addresses,
+            presetData.peersApiListLimit,
             serverConfig,
             NodeType.API_NODE,
             (nodePresetData) => nodePresetData.api && nodePresetData != nodePreset,
@@ -396,22 +401,8 @@ export class ConfigService {
                 brokerConfig,
                 excludeFiles,
             );
-            await this.generateP2PFile(
-                presetData,
-                addresses,
-                brokerConfig,
-                NodeType.PEER_NODE,
-                (nodePresetData) => nodePresetData.harvesting && nodePresetData != nodePreset,
-                'peers-p2p.json',
-            );
-            await this.generateP2PFile(
-                presetData,
-                addresses,
-                brokerConfig,
-                NodeType.API_NODE,
-                (nodePresetData) => nodePresetData.api && nodePresetData != nodePreset,
-                'peers-api.json',
-            );
+            copyFileSync(peersP2PFile, join(join(brokerConfig, 'resources', 'peers-p2p.json')));
+            copyFileSync(peersApiFile, join(join(brokerConfig, 'resources', 'peers-api.json')));
         }
 
         await new VotingService(this.params).run(presetData, account, nodePreset);
@@ -420,6 +411,7 @@ export class ConfigService {
     private async generateP2PFile(
         presetData: ConfigPreset,
         addresses: Addresses,
+        listLimit: number,
         outputFolder: string,
         type: NodeType,
         nodePresetDataFunction: (nodePresetData: NodePreset) => boolean,
@@ -447,11 +439,12 @@ export class ConfigService {
         const globalKnownPeers = presetData.knownPeers?.[type] || [];
         const data = {
             _info: `this file contains a list of ${type} peers`,
-            knownPeers: [...thisNetworkKnownPeers, ...globalKnownPeers],
+            knownPeers: _.sampleSize([...thisNetworkKnownPeers, ...globalKnownPeers], listLimit),
         };
         const peerFile = join(outputFolder, `resources`, jsonFileName);
         await fs.promises.writeFile(peerFile, JSON.stringify(data, null, 2));
         await fs.promises.chmod(peerFile, 0o600);
+        return peerFile;
     }
 
     private async generateNemesisConfig(presetData: ConfigPreset, addresses: Addresses) {
