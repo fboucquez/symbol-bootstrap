@@ -315,7 +315,7 @@ export class ConfigService {
             unfinalizedBlocksDuration: nodePreset.voting
                 ? presetData.votingUnfinalizedBlocksDuration
                 : presetData.nonVotingUnfinalizedBlocksDuration,
-            beneficiaryAddress: beneficiaryAddress == undefined ? account.remote?.address || account.main.address : beneficiaryAddress,
+            beneficiaryAddress: beneficiaryAddress == undefined ? account.main.address : beneficiaryAddress,
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];

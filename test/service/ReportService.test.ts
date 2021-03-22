@@ -51,7 +51,7 @@ describe('ReportService', () => {
         const customPresetObject = {
             nodes: [
                 {
-                    remotePrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
                     voting: true,
                     friendlyName: 'myFriendlyName',
                 },
@@ -75,7 +75,7 @@ describe('ReportService', () => {
         const customPresetObject = {
             nodes: [
                 {
-                    remotePrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
                     voting: true,
                     friendlyName: 'myFriendlyName',
                 },
@@ -99,7 +99,7 @@ describe('ReportService', () => {
         const customPresetObject = {
             nodes: [
                 {
-                    remotePrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
                     voting: false,
                     friendlyName: 'myFriendlyName',
                 },
@@ -123,7 +123,7 @@ describe('ReportService', () => {
         const customPresetObject = {
             nodes: [
                 {
-                    remotePrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
                     voting: false,
                     friendlyName: 'myFriendlyName',
                 },
@@ -147,7 +147,7 @@ describe('ReportService', () => {
         const customPresetObject = {
             nodes: [
                 {
-                    remotePrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
                     voting: false,
                     friendlyName: 'myFriendlyName',
                 },
@@ -171,7 +171,7 @@ describe('ReportService', () => {
         const customPresetObject = {
             nodes: [
                 {
-                    remotePrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
                     voting: true,
                     friendlyName: 'myFriendlyName',
                 },
