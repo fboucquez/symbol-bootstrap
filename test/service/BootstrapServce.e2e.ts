@@ -74,7 +74,7 @@ describe('BootstrapService', () => {
     }
 
     it(' bootstrap start', async () => {
-        const service = new BootstrapService('.');
+        const service = new BootstrapService();
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.bootstrap,
@@ -98,7 +98,7 @@ describe('BootstrapService', () => {
     });
 
     it(' bootstrap light', async () => {
-        const service = new BootstrapService('.');
+        const service = new BootstrapService();
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.bootstrap,
