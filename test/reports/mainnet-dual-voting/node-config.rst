@@ -106,7 +106,7 @@ config-harvesting.properties
     enableAutoHarvesting; true; bool; Set to true if auto harvesting is enabled.
     maxUnlockedAccounts; 10; uint32_t; Maximum number of unlocked accounts.
     delegatePrioritizationPolicy; Importance; harvesting::DelegatePrioritizationPolicy; Delegate harvester prioritization policy.
-    beneficiaryAddress; ; Address; Address of the account receiving part of the harvested fee.
+    beneficiaryAddress; NDQ32MTJICEPJDU45KVN7BAM4A4GI7OARNBUUFY; Address; Address of the account receiving part of the harvested fee.
 
 config-inflation.properties
 ===========================

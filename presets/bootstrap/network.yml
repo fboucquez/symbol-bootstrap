@@ -10,6 +10,7 @@ currencyName: 'currency'
 harvestingName: 'harvest'
 explorerUrl: http://localhost:90/
 faucetUrl: http://localhost:100/
+beneficiaryAddress: ''
 nemesis:
     mosaics:
         - name: '{{currencyName}}'
