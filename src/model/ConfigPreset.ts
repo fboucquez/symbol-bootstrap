@@ -209,4 +209,6 @@ export interface ConfigPreset {
     votingKeyEndEpoch: number;
     rewardProgramControllerPublicKey?: string;
     votingKeyLinkV2: number | undefined;
+    peersP2PListLimit: number;
+    peersApiListLimit: number;
 }
