@@ -15,6 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Random and limited peer/api list.
 -   Custom `votingUnfinalizedBlocksDuration` and `nonVotingUnfinalizedBlocksDuration` preset properties.
 -   Agent service is disabled until supernode program resumes. 
+-   The default `beneficiaryAddress` is the node's main address. Use `beneficiaryAddress: ''` in a custom preset to override the new default.
 
 ## [1.0.0] - Mar-16-2021
 
