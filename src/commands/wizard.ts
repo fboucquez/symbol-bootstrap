@@ -18,21 +18,10 @@ import { Command, flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
-import { dirname, join } from 'path';
 import { ExtendedKey, MnemonicPassPhrase, Network as SeedNetwork, Wallet } from 'symbol-hd-wallets';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
-import { ConfigPreset, PrivateKeySecurityMode } from '../model';
-import {
-    BootstrapService,
-    BootstrapUtils,
-    CommandUtils,
-    ConfigService,
-    CryptoUtils,
-    KeyName,
-    Preset,
-    RewardProgram,
-    ZipUtils,
-} from '../service';
+import { CustomPreset, PrivateKeySecurityMode } from '../model';
+import { BootstrapUtils, CommandUtils, ConfigService, KeyName, Preset, RewardProgram } from '../service';
 
 export const assemblies: Record<Preset, { value: string; description: string }[]> = {
     [Preset.bootstrap]: [
@@ -58,9 +47,9 @@ export enum Network {
 }
 
 export enum ImportType {
+    PRIVATE_KEYS = 'privateKeys',
     OPTIN_PAPER_WALLET = 'optinPaperWallet',
     SYMBOL_PAPER_WALLET = 'symbolPaperWallet',
-    PRIVATE_KEYS = 'privateKeys',
 }
 
 export interface DerivedAccount {
@@ -71,14 +60,6 @@ export interface DerivedAccount {
     changeIndex: number;
     mnemonicPassPhrase: MnemonicPassPhrase;
 }
-
-type DeepPartial<T> = {
-    [P in keyof T]?: DeepPartial<T[P]>;
-};
-
-// TODO, move to top level!
-export type CustomPreset = DeepPartial<ConfigPreset>;
-
 export interface ProvidedAccounts {
     seeded: boolean;
     main: Account;
@@ -103,7 +84,7 @@ export default class Wizard extends Command {
         password: CommandUtils.passwordFlag,
         noPassword: CommandUtils.noPasswordFlag,
         network: Wizard.getNetworkIdFlag(),
-        customPresetFile: Wizard.getCustomPresetFile(),
+        customPreset: Wizard.getCustomPresetFile(),
     };
 
     public async run(): Promise<void> {
@@ -118,7 +99,7 @@ export default class Wizard extends Command {
             target: string;
             password: string | undefined;
             network: Network | undefined;
-            customPresetFile: string;
+            customPreset: string;
         },
     ): Promise<void> {
         BootstrapUtils.showBanner();
@@ -129,7 +110,7 @@ export default class Wizard extends Command {
         console.log();
         const target = flags.target;
 
-        const customPresetFile = flags.customPresetFile;
+        const customPresetFile = flags.customPreset;
         if (existsSync(customPresetFile)) {
             throw new Error(`${customPresetFile} already exist!!! You should move the file somewhere else before overwriting it!`);
         }
@@ -138,6 +119,7 @@ export default class Wizard extends Command {
                 'There is currently a ./target folder here!!!! Have you executed bootstrap already? You should move the folder somewhere else before overwriting it!',
             );
         }
+
         const network = await Wizard.resolveNetwork(flags.network);
         const preset = networkToPreset[network];
         const assembly = await Wizard.resolveAssembly(preset);
@@ -147,14 +129,27 @@ export default class Wizard extends Command {
             console.log(`$ symbol-bootstrap start -b ${preset}${assembly ? ` -a ${assembly}` : ''}`);
             return;
         }
+
+        const { offlineNow } = await prompt([
+            {
+                name: 'offlineNow',
+                message: `Bootstrap is going to ask and/or generate private keys and mnemonic phrases. This machine should no be connected to internet. Are you offline?`,
+                type: 'confirm',
+                default: true,
+            },
+        ]);
+
+        if (!offlineNow) {
+            console.log('Come back when you are offline...');
+            return;
+        }
+
         const password = await CommandUtils.resolvePassword(
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             false,
         );
-
-        const targetZip = join(dirname(target), `${network}-${assembly}-node.zip`);
 
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
         const accounts = await Wizard.resolveAccounts(networkType);
@@ -168,7 +163,7 @@ export default class Wizard extends Command {
         console.log();
         console.log();
 
-        const rewardProgram = await Wizard.resolveRewardProgram();
+        const rewardProgram = assembly === 'dual' ? await Wizard.resolveRewardProgram() : undefined;
         const symbolHostRequired = !!rewardProgram;
         const host = await Wizard.resolveHost(
             `Enter the public hostname or IP of your future node. ${
@@ -196,119 +191,54 @@ export default class Wizard extends Command {
                 },
             ],
         };
-
-        await BootstrapUtils.writeYaml(customPresetFile, presetContent, password);
-        console.log(`Symbol Bootstrap preset file '${customPresetFile}' created. Keep this safe!`);
-        console.log();
-        console.log(`Note: The custom preset is only required the first time you call the start, config or compose commands.`);
-        console.log(`After that, Bootstrap will use the protected and encrypted addresses.yml, and preset.yml in the target folder.`);
-        console.log(
-            `You can keep the custom preset outside the node once deployed. Regular --upgrade calls should not require the custom preset either.`,
-        );
-        console.log(
-            'Hint: You can change the configuration of an already created node by proving a new custom preset. This is an experimental feature, backup the target folder before!',
-        );
-        console.log();
-
-        console.log(`If you like you can generate the node's configuration now.`);
-        console.log(
-            `The configuration would be zipped with a custom preset that doesn't have any private key and it can be deployed into your real node.`,
-        );
-        console.log(`Only the required private keys for upgrades would be stored in the encrypted addresses.yml. `);
-        console.log(
-            `The custom preset stored in the zip is only for reference or if you want to change a configuration in the node with --upgrade, like the friendly name for example.`,
-        );
-        console.log(`Note: This next step requires docker access to download the server docker image if it hasn\`t been pulled already.`);
-        console.log();
-        const { generateConfigurationNow } = await prompt([
-            {
-                name: 'generateConfigurationNow',
-                message: `Would you like to generate the configuration now?`,
-                type: 'confirm',
-                default: false,
-            },
-        ]);
-        const noPrivateKeyCustomPresetFile = 'no-private-keys-custom-preset.yml';
         const defaultParams = ConfigService.defaultParams;
-        if (generateConfigurationNow) {
-            const service = new BootstrapService(root);
-            await service.config({
-                ...defaultParams,
-                preset: preset,
-                target,
-                assembly: assembly,
-                password: password,
-                customPresetObject: presetContent,
-            });
-            await service.compose({
-                ...defaultParams,
-                target,
-                password: password,
-            });
-            const noPrivateKeyTempFile = customPresetFile + '.temp';
-            await BootstrapUtils.writeYaml(noPrivateKeyTempFile, CryptoUtils.removePrivateKeys(presetContent), password);
-            await ZipUtils.zip(targetZip, [
-                {
-                    from: target,
-                    to: 'target',
-                    directory: true,
-                },
-                {
-                    from: noPrivateKeyTempFile,
-                    to: noPrivateKeyCustomPresetFile,
-                    directory: false,
-                },
-            ]);
-            await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
-        }
+        await BootstrapUtils.writeYaml(customPresetFile, presetContent, password);
+        console.log();
+        console.log();
+        console.log(`The Symbol Bootstrap preset file '${customPresetFile}' has been created!!!. Keep this safe!`);
+        console.log();
+        console.log(
+            `You can edit this file to further customize it. Read more https://github.com/nemtech/symbol-bootstrap/blob/main/docs/presetGuides.md`,
+        );
 
         console.log();
-        console.log(`Symbol Bootstrap preset file '${customPresetFile}' created. Keep this safe!`);
-        if (network === Network.mainnet)
-            console.log(
-                `Once the Symbol network launches, you will be able run your Symbol Node using Symbol Bootstrap and this custom preset file. Read more at https://docs.symbolplatform.com/guides/network/using-symbol-bootstrap.html`,
-            );
-        else {
-            console.log(
-                `You are able run your Symbol Node using Symbol Bootstrap and this custom preset file. Read more at https://docs.symbolplatform.com/guides/network/using-symbol-bootstrap.html`,
-            );
-        }
+        console.log(`Once you have finished the custom preset customization, You can use the 'start' to run the node in this machine:`);
         console.log();
-        console.log('You can edit this file to further customize it.');
-        console.log();
-        console.log('To run your node use:');
         console.log(
             `$ symbol-bootstrap start -p ${network} -a ${assembly} -c ${customPresetFile} ${
                 target !== defaultParams.target ? `-t ${target}` : ''
             }`,
         );
+
         console.log();
-
-        if (existsSync(targetZip)) {
-            console.log(`Alternately, you can copy the zip file ${targetZip} into your node machine, unzip it and run:`);
-            console.log();
-            console.log(`$ symbol-bootstrap start -p ${network} -a ${assembly}`);
-            console.log();
-            console.log(`And to upgrade your server (or configuration)`);
-            console.log();
-            console.log(`$ symbol-bootstrap start -p ${network} -a ${assembly} -c  ${noPrivateKeyCustomPresetFile} --upgrade`);
-            console.log();
-        }
-        console.log('');
+        console.log(`Alternatively, to create a zip file that can be deployed in your node machine you can use the 'pack' command:`);
+        console.log();
         console.log(
-            'To upgrade your node version or configuration, use the start --upgrade parameter. Remember to backup the node`s target folder!',
+            `$ symbol-bootstrap pack -p ${network} -a ${assembly} -c ${customPresetFile} ${
+                target !== defaultParams.target ? `-t ${target}` : ''
+            }`,
         );
-        console.log('');
-
-        console.log('To link your accounts use:');
+        console.log();
+        console.log(
+            `Once the target folder is created, Bootstrap will use the protected and encrypted addresses.yml, and preset.yml in inside the target folder.`,
+        );
+        console.log(
+            'To upgrade your node version or configuration, use the --upgrade parameter in config, compose, start and/or pack. Remember to backup the node`s target folder!',
+        );
+        console.log(
+            'Hint: You can change the configuration of an already created node by proving a new custom preset. This is an experimental feature, backup the target folder before!',
+        );
+        console.log();
+        console.log('To complete the registration, you need to link your keys (online):');
+        console.log();
         console.log(`$ symbol-bootstrap link --useKnownRestGateways`);
         if (rewardProgram == RewardProgram.SuperNode) {
             console.log();
-            console.log('To enrol to the supernode program, run:');
+            console.log('To enrol to the supernode program, run (online):');
+            console.log();
             console.log(`$ symbol-bootstrap enrolRewardProgram  --useKnownRestGateways`);
         }
         console.log();
-        console.log('Symbol bootstrap will ask for password or you can provide them using the  --password ***** parameter');
     }
     public static logAccount<T extends Account | PublicAccount | undefined>(account: T, keyName: KeyName, showPrivateKeys: boolean): T {
         if (account === undefined) {
@@ -367,11 +297,11 @@ export default class Wizard extends Command {
     ): Promise<Account> {
         while (true) {
             const keyCreationChoices = [];
+            keyCreationChoices.push({ name: 'Generating a new account', value: 'generate' });
+            keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
             if (derivedAccount && !derivedAccount.optinMode) {
                 keyCreationChoices.push({ name: 'Deriving it from Symbol Paper Wallet seed', value: 'seed' });
             }
-            keyCreationChoices.push({ name: 'Generating a new account', value: 'generate' });
-            keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
             const { keyCreationMode } = await prompt([
                 {
                     name: 'keyCreationMode',
@@ -519,8 +449,12 @@ export default class Wizard extends Command {
                 name: 'mode',
                 message: 'How do you want to import your accounts?',
                 type: 'list',
-                default: ImportType.OPTIN_PAPER_WALLET,
+                default: ImportType.PRIVATE_KEYS,
                 choices: [
+                    {
+                        value: ImportType.PRIVATE_KEYS,
+                        name: 'Private Keys: The private Keys will be generated or entered.',
+                    },
                     {
                         value: ImportType.OPTIN_PAPER_WALLET,
                         name: 'OptIn Paper Wallet (Pre-Launch): Only the main private key can be restored. Other keys will be generated.',
@@ -528,10 +462,6 @@ export default class Wizard extends Command {
                     {
                         value: ImportType.SYMBOL_PAPER_WALLET,
                         name: 'Symbol Paper Wallet (Post-Launch): The main and secondary keys can be restored from the paper.',
-                    },
-                    {
-                        value: ImportType.PRIVATE_KEYS,
-                        name: 'Private Keys: The private Keys will be generated or entered.',
                     },
                 ],
             },
@@ -562,10 +492,7 @@ export default class Wizard extends Command {
     }
 
     public static getCustomPresetFile(): IOptionFlag<string> {
-        return flags.string({
-            description: 'The custom preset to be created.',
-            default: 'custom-preset.yml',
-        });
+        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
     }
 
     public static isValidPhrase(input: string): boolean | string {

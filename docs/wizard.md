@@ -14,12 +14,11 @@ USAGE
   $ symbol-bootstrap wizard
 
 OPTIONS
+  -c, --customPreset=customPreset           [default: custom-preset.yml] The custom preset to be created.
   -h, --help                                It shows the help of this command.
 
   -t, --target=target                       [default: target] The target folder where the symbol-bootstrap network is
                                             generated
-
-  --customPresetFile=customPresetFile       [default: custom-preset.yml] The custom preset to be created.
 
   --network=mainnet|testnet|privateNetwork  The node or network you want to create
 
@@ -35,4 +34,4 @@ EXAMPLE
   $ symbol-bootstrap wizard
 ```
 
-_See code: [src/commands/wizard.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.1/src/commands/wizard.ts)_
+_See code: [src/commands/wizard.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.4/src/commands/wizard.ts)_

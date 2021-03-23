@@ -15,11 +15,9 @@
  */
 
 import { expect } from '@oclif/test';
-import { existsSync } from 'fs';
 import { stdin } from 'mock-stdin';
-import { join } from 'path';
-import Wizard, { CustomPreset, Network } from '../../src/commands/wizard';
-import { PrivateKeySecurityMode } from '../../src/model';
+import Wizard, { Network } from '../../src/commands/wizard';
+import { CustomPreset, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, Preset, RewardProgram } from '../../src/service';
 
 export const StdUtils = {
@@ -56,14 +54,13 @@ describe('Wizard', () => {
     beforeEach(async () => {
         BootstrapUtils.deleteFolder(testFolder);
     });
-    it('Generate private keys', async () => {
+    it('Provide private keys', async () => {
         // assembly
         StdUtils.in([
             StdUtils.keys.down,
             StdUtils.keys.down,
             '\n',
-            StdUtils.keys.down,
-            StdUtils.keys.down,
+            '\n',
             '\n',
             StdUtils.keys.down,
             '\n',
@@ -95,7 +92,7 @@ describe('Wizard', () => {
         const password = '11111';
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         await Wizard.execute(BootstrapUtils.resolveRootFolder(), {
-            customPresetFile: customPresetFile,
+            customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
             target: `${testFolder}/target`,
@@ -119,36 +116,45 @@ describe('Wizard', () => {
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN,
         };
         const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
-        expect(existsSync(join(testFolder, 'mainnet-dual-node.zip'))).eq(false);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
-    it('Generate use seed keys and zip', async () => {
+    it('Generate use seed keys voting', async () => {
         // assembly
         StdUtils.in([
             StdUtils.keys.down,
             StdUtils.keys.down,
             '\n',
+            'y\n', //Are you offline.
+            StdUtils.keys.down,
             StdUtils.keys.down,
             '\n',
             'dragon situate error grid farm obtain speak mail creek ridge arrange grid crew box sugar play cram ranch evoke include creek breeze shadow critic',
+            '\n', // accept seed
+            '\n', // address selection
+            StdUtils.keys.down,
+            StdUtils.keys.down,
             '\n',
+            StdUtils.keys.down,
+            StdUtils.keys.down,
             '\n',
-            '\n',
-            '\n',
+            StdUtils.keys.down,
+            StdUtils.keys.down,
             '\n',
             '\n',
             'myhostname\n',
             'myfriendlyname\n',
             '\n',
-            '\n',
             'y\n',
+            // '\n',
+            // '\n',
+            // 'y\n',
         ]);
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await Wizard.execute(BootstrapUtils.resolveRootFolder(), {
-            customPresetFile: customPresetFile,
+            customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
             target: `${testFolder}/target`,
@@ -163,14 +169,13 @@ describe('Wizard', () => {
                     mainPrivateKey: '91D8B10CC8F67FB4F42806DAAC59E57A074A999A8FC11F68230AD138AFC2E056',
                     remotePrivateKey: 'B4CA246A890EA7AF48A0D869398ECD042DDD9C6443F1D29CAB6638D1741F27A2',
                     transportPrivateKey: '5D487EB256C5D5B5C47E6884B9C22FAE4C8208B3742331369DCD4BE0423A29DF',
-                    voting: false,
+                    voting: true,
                     vrfPrivateKey: 'B47E0FD09B0D8566EA9058218E6CC57C0431913A9ED41E5D4FE131C54C8D306E',
                 },
             ],
             preset: Preset.mainnet,
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
         };
-        expect(existsSync(join(testFolder, 'mainnet-dual-node.zip'))).eq(true);
         const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
