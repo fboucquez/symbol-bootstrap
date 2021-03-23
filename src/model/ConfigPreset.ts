@@ -25,6 +25,10 @@ export enum PrivateKeySecurityMode {
     PROMPT_ALL = 'PROMPT_ALL',
 }
 
+export type DeepPartial<T> = {
+    [P in keyof T]?: DeepPartial<T[P]>;
+};
+
 export interface DockerServicePreset {
     ipv4_address?: string;
     openPort?: boolean | number | string;
@@ -70,6 +74,16 @@ export interface NodePreset extends DockerServicePreset {
     harvesting: boolean;
     api: boolean;
     voting: boolean;
+
+    syncsource: boolean;
+    filespooling: boolean;
+    partialtransaction: boolean;
+    sinkType: 'Async' | 'Sync';
+    enableSingleThreadPool: boolean;
+    addressextraction: boolean;
+    mongo: boolean;
+    zeromq: boolean;
+    enableAutoSyncCleanup: boolean;
 
     // At least these properties.
     // If true, harvesterSigningPrivateKey != mainPrivateKey and harvesterSigningPrivateKey will be linked to mainPrivateKey
