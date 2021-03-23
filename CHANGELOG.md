@@ -13,6 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | Symbol Bootstrap | v1.0.2  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 -   Fixed link (--unlink) command when voting properties changes.
+-   Broker ports (7902) are closed by default in compose.
 
 ## [1.0.1] - Mar-22-2021
 
