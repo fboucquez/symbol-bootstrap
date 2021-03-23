@@ -10,7 +10,7 @@ nodes:
       databaseHost: 'db'
       brokerName: 'broker'
       openPort: true
-      brokerOpenPort: true
+      brokerOpenPort: false
       trustedHosts: 127.0.0.1, 172.20.0.25
       localNetworks: 127.0.0.1, 172.20.0.25
 gateways:

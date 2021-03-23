@@ -34,8 +34,6 @@ services:
         image: 'symbolplatform/symbol-server:gcc-0.10.1.8'
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server api-broker NORMAL
-        ports:
-            - '7902:7902'
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
