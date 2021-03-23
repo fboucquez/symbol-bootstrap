@@ -153,7 +153,6 @@ transactionElementTraceInterval: 10
 enableDispatcherAbortWhenFull: false
 enableDispatcherInputAuditing: false
 maxTrackedNodes: 5'000
-beneficiaryAddress: ''
 enableAutoHarvesting: true
 fileDatabaseBatchSize: 1
 maxUnlockedAccounts: 10

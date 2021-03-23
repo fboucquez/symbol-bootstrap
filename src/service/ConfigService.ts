@@ -306,6 +306,7 @@ export class ConfigService {
             'storing the harvesterVrfPrivateKey in the server properties',
         );
 
+        const beneficiaryAddress = nodePreset.beneficiaryAddress || presetData.beneficiaryAddress;
         const generatedContext = {
             name: name,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
@@ -314,6 +315,7 @@ export class ConfigService {
             unfinalizedBlocksDuration: nodePreset.voting
                 ? presetData.votingUnfinalizedBlocksDuration
                 : presetData.nonVotingUnfinalizedBlocksDuration,
+            beneficiaryAddress: beneficiaryAddress == undefined ? account.main.address : beneficiaryAddress,
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];

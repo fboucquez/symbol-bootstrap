@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.1] - Next
+## [1.0.2] - NEXT
+
+**Milestone**: Mainnet(1.0.0.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.2  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Fixed link (--unlink) command when voting properties changes.
+
+## [1.0.1] - Mar-22-2021
 
 **Milestone**: Mainnet(1.0.0.0)
 
@@ -15,7 +25,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Random and limited peer/api list.
 -   Custom `votingUnfinalizedBlocksDuration` and `nonVotingUnfinalizedBlocksDuration` preset properties.
 -   Agent service is disabled until supernode program resumes. 
--   Fixed link (--unlink) command when voting properties changes.
+-   The default `beneficiaryAddress` is the node's main address. Use `beneficiaryAddress: ''` in a custom preset to override the new default.
 
 ## [1.0.0] - Mar-16-2021
 

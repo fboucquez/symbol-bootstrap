@@ -47,4 +47,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap enrolRewardProgram --url http://external-rest:3000
 ```
 
-_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.1/src/commands/enrolRewardProgram.ts)_
+_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.2/src/commands/enrolRewardProgram.ts)_
