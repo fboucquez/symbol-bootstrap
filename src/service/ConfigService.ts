@@ -33,7 +33,6 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
-import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
@@ -275,8 +274,16 @@ export class ConfigService {
         await Promise.all(
             (presetData.nodes || [])
                 .filter((n) => n.rewardProgram)
-                .map(async (account) => {
-                    return await new AgentCertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name);
+                .map(async (node) => {
+                    const apiNodeCertFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, node.name, 'cert');
+                    const moveTo = BootstrapUtils.getTargetNodesFolder(this.params.target, false, node.name, 'agent');
+                    await BootstrapUtils.generateConfiguration(
+                        {},
+                        apiNodeCertFolder,
+                        moveTo,
+                        ['new_certs'],
+                        ['node.crt.pem', 'node.key.pem', 'ca.cert.pem'],
+                    );
                 }),
         );
     }
