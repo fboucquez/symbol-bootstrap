@@ -380,7 +380,6 @@ export class ConfigLoader {
                     openPort: true,
                     sinkType: 'Async',
                     enableSingleThreadPool: false,
-                    brokerOpenPort: true,
                     addressextraction: true,
                     enableAutoSyncCleanup: false,
                     mongo: true,
