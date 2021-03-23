@@ -40,12 +40,6 @@ childNamespaceRentalFee: 100000
 mosaicRentalFee: 500000
 throttlingBurst: 80
 throttlingRate: 60
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-1.0.0.0
-symbolServerImage: symbolplatform/symbol-server:gcc-1.0.0.0
-symbolRestImage: symbolplatform/symbol-rest:2.3.5
-minPartnerNodeVersion: 1.0.0.0
-maxPartnerNodeVersion: 1.0.255.255
-serverVersion: 1.0.0.0
 fileDatabaseBatchSize: 100
 minProofSize: 0
 syncTimeout: 5m
