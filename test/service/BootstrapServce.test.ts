@@ -20,7 +20,7 @@ import { BootstrapService, Preset, StartParams } from '../../src/service';
 
 describe('BootstrapService', () => {
     it(' bootstrap config compose non aws', async () => {
-        const service = new BootstrapService('.');
+        const service = new BootstrapService();
         const config: StartParams = {
             report: false,
             preset: Preset.bootstrap,

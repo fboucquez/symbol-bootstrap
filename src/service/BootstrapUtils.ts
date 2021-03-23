@@ -76,6 +76,7 @@ export class BootstrapUtils {
     private static readonly pulledImages: string[] = [];
 
     public static readonly VERSION = version;
+    public static readonly DEFAULT_ROOT_FOLDER = BootstrapUtils.resolveRootFolder();
 
     public static stopProcess = false;
 

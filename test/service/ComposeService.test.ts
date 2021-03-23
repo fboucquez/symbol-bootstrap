@@ -85,7 +85,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             ...LinkService.defaultParams,
             target: 'target/tests/testnet-supernode',
             password,
-            customPreset: './test/supernode.yml',
+            customPreset: './test/unit-test-profiles/supernode.yml',
             reset: false,
             preset: Preset.testnet,
             assembly: 'dual',
@@ -100,7 +100,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             target: 'target/tests/ComposeService-testnet-voting',
             password,
             reset: false,
-            customPreset: './test/voting_preset.yml',
+            customPreset: './test/unit-test-profiles/voting_preset.yml',
             preset: Preset.testnet,
             assembly: 'dual',
         };
