@@ -43,7 +43,7 @@ describe('RewardProgramService', () => {
             password,
             reset: false,
             preset: Preset.testnet,
-            customPreset: './test/supernode.yml',
+            customPreset: './test/unit-test-profiles/supernode.yml',
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },
@@ -78,7 +78,7 @@ describe('RewardProgramService', () => {
             password,
             reset: false,
             preset: Preset.testnet,
-            customPreset: './test/voting_preset.yml',
+            customPreset: './test/unit-test-profiles/voting_preset.yml',
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },

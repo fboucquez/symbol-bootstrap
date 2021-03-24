@@ -42,7 +42,7 @@ describe('BootstrapService', () => {
 
             const nemesisAccounts = configResult.addresses?.mosaics?.[0].accounts.map((n) => n.privateKey);
 
-            if (!nemesisAccounts) {
+            if (!nemesisAccounts || !nemesisAccounts[0]) {
                 throw new Error('Nemesis accounts could not be loaded!');
             }
 
@@ -74,7 +74,7 @@ describe('BootstrapService', () => {
     }
 
     it(' bootstrap start', async () => {
-        const service = new BootstrapService('.');
+        const service = new BootstrapService();
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.bootstrap,
@@ -98,7 +98,7 @@ describe('BootstrapService', () => {
     });
 
     it(' bootstrap light', async () => {
-        const service = new BootstrapService('.');
+        const service = new BootstrapService();
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.bootstrap,

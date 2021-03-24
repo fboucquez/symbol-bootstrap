@@ -20,7 +20,16 @@ import { Account, Address, Convert, Crypto, MosaicId, MosaicNonce, NetworkType, 
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset, PrivateKeySecurityMode } from '../model';
+import {
+    Addresses,
+    ConfigAccount,
+    ConfigPreset,
+    DeepPartial,
+    MosaicAccounts,
+    NodeAccount,
+    NodePreset,
+    PrivateKeySecurityMode,
+} from '../model';
 import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
 import { KeyName, Preset } from './ConfigService';
@@ -371,55 +380,52 @@ export class ConfigLoader {
 
     public dynamicDefaultNodeConfiguration(nodes?: NodePreset[]): NodePreset[] {
         return _.map(nodes || [], (node) => {
-            const roles = this.resolveRoles(node);
-            if (node.harvesting && node.api) {
-                return {
-                    syncsource: true,
-                    filespooling: true,
-                    partialtransaction: true,
-                    openPort: true,
-                    sinkType: 'Async',
-                    enableSingleThreadPool: false,
-                    brokerOpenPort: true,
-                    addressextraction: true,
-                    enableAutoSyncCleanup: false,
-                    mongo: true,
-                    zeromq: true,
-                    ...node,
-                    roles,
-                };
-            }
-            if (node.api) {
-                return {
-                    sinkType: 'Async',
-                    syncsource: false,
-                    filespooling: true,
-                    partialtransaction: true,
-                    enableSingleThreadPool: false,
-                    addressextraction: true,
-                    mongo: true,
-                    zeromq: true,
-                    enableAutoSyncCleanup: false,
-                    ...node,
-                    roles,
-                };
-            }
-
-            //peer only (harvesting or not).
-            return {
-                sinkType: 'Sync',
-                enableSingleThreadPool: true,
-                addressextraction: false,
-                mongo: false,
-                zeromq: false,
-                syncsource: true,
-                filespooling: false,
-                enableAutoSyncCleanup: true,
-                partialtransaction: false,
-                ...node,
-                roles,
-            };
+            const expandedNodeConfiguration = { ...this.getDefaultConfiguration(node), ...node };
+            const roles = this.resolveRoles(expandedNodeConfiguration);
+            return { ...expandedNodeConfiguration, roles };
         });
+    }
+
+    private getDefaultConfiguration(node: NodePreset): DeepPartial<NodePreset> {
+        if (node.harvesting && node.api) {
+            return {
+                syncsource: true,
+                filespooling: true,
+                partialtransaction: true,
+                openPort: true,
+                sinkType: 'Async',
+                enableSingleThreadPool: false,
+                addressextraction: true,
+                enableAutoSyncCleanup: false,
+                mongo: true,
+                zeromq: true,
+            };
+        }
+        if (node.api) {
+            return {
+                sinkType: 'Async',
+                syncsource: false,
+                filespooling: true,
+                partialtransaction: true,
+                enableSingleThreadPool: false,
+                addressextraction: true,
+                mongo: true,
+                zeromq: true,
+                enableAutoSyncCleanup: false,
+            };
+        }
+        //peer only (harvesting or not).
+        return {
+            sinkType: 'Sync',
+            enableSingleThreadPool: true,
+            addressextraction: false,
+            mongo: false,
+            zeromq: false,
+            syncsource: true,
+            filespooling: false,
+            enableAutoSyncCleanup: true,
+            partialtransaction: false,
+        };
     }
 
     private resolveRoles(nodePreset: NodePreset): string {
@@ -427,7 +433,7 @@ export class ConfigLoader {
             return nodePreset.roles;
         }
         const roles: string[] = [];
-        if (nodePreset.harvesting) {
+        if (nodePreset.syncsource) {
             roles.push('Peer');
         }
         if (nodePreset.api) {

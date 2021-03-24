@@ -88,7 +88,7 @@ export class VotingService {
             }
             logger.warn(`A new Voting File for the node ${nodeAccount.name} has been regenerated! `);
             logger.warn(
-                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key ${nodeAccount.voting.publicKey}`,
+                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key ${nodeAccount.voting.publicKey} with startEpoch ${presetData.votingKeyStartEpoch} and endEpoch: ${presetData.votingKeyEndEpoch}`,
             );
             logger.warn('For linking, you can use symbol-bootstrap link command, the symbol cli, or the symbol desktop wallet. ');
             logger.warn('The voting public key is stored in the target`s addresses.yml for reference');

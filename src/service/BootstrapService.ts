@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Addresses, ConfigPreset } from '../model';
-import { DockerCompose } from '../model/DockerCompose';
+import { Addresses, ConfigPreset, DockerCompose } from '../model';
+import { BootstrapUtils } from './BootstrapUtils';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
@@ -29,7 +29,7 @@ export type StartParams = ConfigParams & ComposeParams & RunParams;
  * Main entry point for API integration.
  */
 export class BootstrapService {
-    public constructor(private readonly root: string = './node_modules/symbol-bootstrap') {}
+    public constructor(private readonly root: string = BootstrapUtils.DEFAULT_ROOT_FOLDER) {}
 
     /**
      * It generates the configuration and nemesis for the provided preset

@@ -39,8 +39,6 @@ services:
         image: 'symbolplatform/symbol-server:gcc-0.10.1.8'
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server api-broker NORMAL
-        ports:
-            - '7902:7902'
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
@@ -48,18 +46,18 @@ services:
             - './server:/symbol-commands:ro'
         depends_on:
             - db
-#    api-node-agent:
-#        user: '1000:1000'
-#        container_name: api-node-agent
-#        image: 'symbolplatform/symbol-node-rewards-agent:1.0.1'
-#        working_dir: /symbol-workdir
-#        entrypoint: /app/agent-linux.bin --config agent.properties
-#        ports:
-#            - '7880:7880'
-#        stop_signal: SIGINT
-#        restart: 'on-failure:2'
-#        volumes:
-#            - '../nodes/api-node/agent:/symbol-workdir:rw'
+    #    api-node-agent:
+    #        user: '1000:1000'
+    #        container_name: api-node-agent
+    #        image: 'symbolplatform/symbol-node-rewards-agent:1.0.1'
+    #        working_dir: /symbol-workdir
+    #        entrypoint: /app/agent-linux.bin --config agent.properties
+    #        ports:
+    #            - '7880:7880'
+    #        stop_signal: SIGINT
+    #        restart: 'on-failure:2'
+    #        volumes:
+    #            - '../nodes/api-node/agent:/symbol-workdir:rw'
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
