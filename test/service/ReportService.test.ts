@@ -94,6 +94,31 @@ describe('ReportService', () => {
         await assertReport(params, 'testnet-peer-voting');
     });
 
+    it('ReportService testnet peer voting non harvesting report', async () => {
+        const target = 'target/tests/ReportService.testnet.peer.non.harvesting.voting.report';
+        const customPresetObject = {
+            nodes: [
+                {
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    voting: true,
+                    harvesting: false,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            reset: false,
+            preset: Preset.testnet,
+            customPresetObject: customPresetObject,
+            assembly: 'peer',
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'testnet-peer-non-harvesting-voting');
+    });
+
     it('ReportService testnet api', async () => {
         const target = 'target/tests/ReportService.testnet.api.report';
         const customPresetObject = {

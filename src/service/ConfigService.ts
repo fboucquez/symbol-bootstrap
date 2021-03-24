@@ -382,7 +382,7 @@ export class ConfigService {
             presetData.peersP2PListLimit,
             serverConfig,
             NodeType.PEER_NODE,
-            (nodePresetData) => nodePresetData.harvesting && nodePresetData != nodePreset,
+            (nodePresetData) => nodePresetData.syncsource && nodePresetData != nodePreset,
             'peers-p2p.json',
         );
         const peersApiFile = await this.generateP2PFile(
