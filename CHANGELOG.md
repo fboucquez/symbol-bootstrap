@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.2] - NEXT
+## [1.0.2] - Mar-24-2021
 
 **Milestone**: Mainnet(1.0.0.0)
 
@@ -14,6 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 -   Fixed link (--unlink) command when voting properties changes.
 -   Broker ports (7902) are closed by default in compose.
+-   Peer role is selected based on `syncsource` configuration and not on the `harvesting` flag.
 
 ## [1.0.1] - Mar-22-2021
 
