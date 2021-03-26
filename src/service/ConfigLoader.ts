@@ -24,6 +24,7 @@ import {
     Addresses,
     ConfigAccount,
     ConfigPreset,
+    CustomPreset,
     DeepPartial,
     MosaicAccounts,
     NodeAccount,
@@ -340,21 +341,28 @@ export class ConfigLoader {
         preset: Preset;
         assembly?: string;
         customPreset?: string;
-        customPresetObject?: any;
+        customPresetObject?: CustomPreset;
     }): ConfigPreset {
-        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
-        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
-        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false) : {};
-        const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
+        const sharedPreset: ConfigPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
+        const networkPreset: CustomPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
+        const assemblyPreset: CustomPreset = assembly
+            ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false)
+            : {};
+        const customPresetFileObject: CustomPreset = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
         //Deep merge
-        const inflation =
+        const inflation: Record<string, number> =
             customPresetObject?.inflation ||
             customPresetFileObject?.inflation ||
             assemblyPreset?.inflation ||
             networkPreset?.inflation ||
             sharedPreset?.inflation ||
-            [];
-        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, { preset });
+            {};
+        const presetData: ConfigPreset = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
+            version: 1,
+            bootstrapVersion: BootstrapUtils.VERSION,
+            preset: preset,
+            assembly: assembly || 'default',
+        });
         presetData.inflation = inflation;
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset ${preset}`);
@@ -369,9 +377,7 @@ export class ConfigLoader {
         if (presetData.assemblies && !assembly) {
             throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
         }
-        const presetDataWithDynamicDefaults = {
-            version: 1,
-            preset: preset,
+        const presetDataWithDynamicDefaults: ConfigPreset = {
             ...presetData,
             nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
         };
