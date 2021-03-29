@@ -316,6 +316,7 @@ export class ConfigService {
                 ? presetData.votingUnfinalizedBlocksDuration
                 : presetData.nonVotingUnfinalizedBlocksDuration,
             beneficiaryAddress: beneficiaryAddress == undefined ? account.main.address : beneficiaryAddress,
+            roles: ConfigLoader.resolveRoles(nodePreset),
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];

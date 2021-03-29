@@ -363,9 +363,9 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     version: number; // file version
     bootstrapVersion: number;
     preset: Preset;
+    privateKeySecurityMode?: string;
     assembly: string;
     assemblies?: string;
-    privateKeySecurityMode: string;
     votingKeysDirectory: string;
     sinkAddress?: string;
     epochAdjustment: string;

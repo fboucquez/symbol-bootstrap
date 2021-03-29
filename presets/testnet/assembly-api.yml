@@ -3,7 +3,6 @@ databases:
       openPort: false
 nodes:
     - harvesting: false
-      voting: false
       api: true
       name: 'api-node'
       databaseHost: 'db'

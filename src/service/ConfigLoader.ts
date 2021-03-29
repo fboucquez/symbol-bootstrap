@@ -386,9 +386,7 @@ export class ConfigLoader {
 
     public dynamicDefaultNodeConfiguration(nodes?: NodePreset[]): NodePreset[] {
         return _.map(nodes || [], (node) => {
-            const expandedNodeConfiguration = { ...this.getDefaultConfiguration(node), ...node };
-            const roles = this.resolveRoles(expandedNodeConfiguration);
-            return { ...expandedNodeConfiguration, roles };
+            return { ...this.getDefaultConfiguration(node), ...node };
         });
     }
 
@@ -434,7 +432,7 @@ export class ConfigLoader {
         };
     }
 
-    private resolveRoles(nodePreset: NodePreset): string {
+    public static resolveRoles(nodePreset: NodePreset): string {
         if (nodePreset.roles) {
             return nodePreset.roles;
         }
