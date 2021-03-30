@@ -328,27 +328,32 @@ export class ConfigLoader {
         return [...Array(size).keys()];
     }
 
-    public createPresetData({
-        password,
-        root,
-        preset,
-        assembly,
-        customPreset,
-        customPresetObject,
-    }: {
+    public createPresetData(params: {
         password: string | undefined;
         root: string;
-        preset: Preset;
+        preset?: Preset;
         assembly?: string;
         customPreset?: string;
         customPresetObject?: CustomPreset;
+        oldPresetData?: ConfigPreset;
     }): ConfigPreset {
-        const sharedPreset: ConfigPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
-        const networkPreset: CustomPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
-        const assemblyPreset: CustomPreset = assembly
-            ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false)
-            : {};
-        const customPresetFileObject: CustomPreset = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
+        const customPreset = params.customPreset;
+        const customPresetObject = params.customPresetObject;
+        const oldPresetData = params.oldPresetData;
+        const customPresetFileObject = customPreset ? BootstrapUtils.loadYaml(customPreset, params.password) : {};
+        const preset =
+            params.preset ||
+            params.customPresetObject?.preset ||
+            customPresetFileObject?.preset ||
+            oldPresetData?.preset ||
+            Preset.bootstrap;
+        const assembly =
+            params.assembly || params.customPresetObject?.assembly || customPresetFileObject?.assembly || params.oldPresetData?.assembly;
+
+        const root = params.root;
+        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
+        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
+        const assemblyPreset = assembly ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false) : {};
         //Deep merge
         const inflation: Record<string, number> =
             customPresetObject?.inflation ||
@@ -356,12 +361,9 @@ export class ConfigLoader {
             assemblyPreset?.inflation ||
             networkPreset?.inflation ||
             sharedPreset?.inflation ||
-            {};
-        const presetData: ConfigPreset = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
-            version: 1,
-            bootstrapVersion: BootstrapUtils.VERSION,
-            preset: preset,
-            assembly: assembly || 'default',
+            [];
+        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
+            preset,
         });
         presetData.inflation = inflation;
         if (!ConfigLoader.presetInfoLogged) {
@@ -377,11 +379,14 @@ export class ConfigLoader {
         if (presetData.assemblies && !assembly) {
             throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
         }
-        const presetDataWithDynamicDefaults: ConfigPreset = {
+        const presetDataWithDynamicDefaults = {
+            version: 1,
+            preset: preset,
+            assembly: assembly || '',
             ...presetData,
             nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
         };
-        return this.expandRepeat(presetDataWithDynamicDefaults);
+        return _.merge(oldPresetData || {}, this.expandRepeat(presetDataWithDynamicDefaults));
     }
 
     public dynamicDefaultNodeConfiguration(nodes?: NodePreset[]): NodePreset[] {

@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Fixed host override when no custom preset is provided in mainnet.
 
 ## [1.0.3] - Mar-31-2021
 
@@ -21,7 +22,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   Fixed host override when no custom preset is provided in mainnet.
 -   Improved Custom Preset Object types for symbol bootstrap lib integration.
 -   TransactionSelectionStrategy's new default value is `oldest`.
 

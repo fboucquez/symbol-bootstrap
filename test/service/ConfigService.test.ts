@@ -125,8 +125,6 @@ describe('ConfigService', () => {
             ...ConfigService.defaultParams,
             upgrade: true,
             target: 'target/tests/ConfigService.mainnet.supernode',
-            preset: Preset.mainnet,
-            assembly: 'dual',
         }).run();
 
         expect(CryptoUtils.removePrivateKeys(configResultUpgradeSecond.presetData)).deep.eq(
