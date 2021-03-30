@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>WalletProfilePreset | symbol-bootstrap</title>
+	<title>CustomPreset | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_model_configpreset_.html">&quot;model/ConfigPreset&quot;</a>
 				</li>
 				<li>
-					<a href="_model_configpreset_.walletprofilepreset.html">WalletProfilePreset</a>
+					<a href="_model_configpreset_.custompreset.html">CustomPreset</a>
 				</li>
 			</ul>
-			<h1>Interface WalletProfilePreset</h1>
+			<h1>Interface CustomPreset</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">WalletProfilePreset</span>
+						<span class="tsd-signature-symbol">{}</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">CustomPreset</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -84,9 +89,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.walletprofilepreset.html#data" class="tsd-kind-icon">data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.walletprofilepreset.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.walletprofilepreset.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#databases" class="tsd-kind-icon">databases</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#explorers" class="tsd-kind-icon">explorers</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#faucets" class="tsd-kind-icon">faucets</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#gateways" class="tsd-kind-icon">gateways</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#nemesis" class="tsd-kind-icon">nemesis</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#nodes" class="tsd-kind-icon">nodes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.custompreset.html#wallets" class="tsd-kind-icon">wallets</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,32 +104,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="data" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> data</h3>
-					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="databases" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> databases</h3>
+					<div class="tsd-signature tsd-kind-icon">databases<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.databasepreset.html" class="tsd-signature-type">DatabasePreset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L312">src/model/ConfigPreset.ts:312</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L413">src/model/ConfigPreset.ts:413</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="location" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="explorers" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> explorers</h3>
+					<div class="tsd-signature tsd-kind-icon">explorers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.explorerpreset.html" class="tsd-signature-type">ExplorerPreset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L313">src/model/ConfigPreset.ts:313</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L416">src/model/ConfigPreset.ts:416</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="faucets" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> faucets</h3>
+					<div class="tsd-signature tsd-kind-icon">faucets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.faucetpreset.html" class="tsd-signature-type">FaucetPreset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L310">src/model/ConfigPreset.ts:310</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L418">src/model/ConfigPreset.ts:418</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="gateways" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> gateways</h3>
+					<div class="tsd-signature tsd-kind-icon">gateways<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.gatewaypreset.html" class="tsd-signature-type">GatewayPreset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L415">src/model/ConfigPreset.ts:415</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="nemesis" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> nemesis</h3>
+					<div class="tsd-signature tsd-kind-icon">nemesis<span class="tsd-signature-symbol">:</span> <a href="../modules/_model_configpreset_.html#deeppartial" class="tsd-signature-type">DeepPartial</a><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.nemesispreset.html" class="tsd-signature-type">NemesisPreset</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L412">src/model/ConfigPreset.ts:412</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="nodes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> nodes</h3>
+					<div class="tsd-signature tsd-kind-icon">nodes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.nodepreset.html" class="tsd-signature-type">NodePreset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L414">src/model/ConfigPreset.ts:414</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="wallets" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wallets</h3>
+					<div class="tsd-signature tsd-kind-icon">wallets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="_model_configpreset_.walletpreset.html" class="tsd-signature-type">WalletPreset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L417">src/model/ConfigPreset.ts:417</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -148,9 +197,36 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_model_configpreset_.configpreset.html" class="tsd-kind-icon">Config<wbr>Preset</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
 						<a href="_model_configpreset_.custompreset.html" class="tsd-kind-icon">Custom<wbr>Preset</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#databases" class="tsd-kind-icon">databases</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#explorers" class="tsd-kind-icon">explorers</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#faucets" class="tsd-kind-icon">faucets</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#gateways" class="tsd-kind-icon">gateways</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#nemesis" class="tsd-kind-icon">nemesis</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#nodes" class="tsd-kind-icon">nodes</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_model_configpreset_.custompreset.html#wallets" class="tsd-kind-icon">wallets</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_model_configpreset_.databasepreset.html" class="tsd-kind-icon">Database<wbr>Preset</a>
 					</li>
@@ -187,24 +263,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_model_configpreset_.walletpreset.html" class="tsd-kind-icon">Wallet<wbr>Preset</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_model_configpreset_.walletprofilepreset.html" class="tsd-kind-icon">Wallet<wbr>Profile<wbr>Preset</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_model_configpreset_.walletprofilepreset.html#data" class="tsd-kind-icon">data</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_model_configpreset_.walletprofilepreset.html#location" class="tsd-kind-icon">location</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_model_configpreset_.walletprofilepreset.html#name" class="tsd-kind-icon">name</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../modules/_model_configpreset_.html#deeppartial" class="tsd-kind-icon">Deep<wbr>Partial</a>
 					</li>

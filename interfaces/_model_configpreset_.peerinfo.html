@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>WalletProfilePreset | symbol-bootstrap</title>
+	<title>PeerInfo | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_model_configpreset_.html">&quot;model/ConfigPreset&quot;</a>
 				</li>
 				<li>
-					<a href="_model_configpreset_.walletprofilepreset.html">WalletProfilePreset</a>
+					<a href="_model_configpreset_.peerinfo.html">PeerInfo</a>
 				</li>
 			</ul>
-			<h1>Interface WalletProfilePreset</h1>
+			<h1>Interface PeerInfo</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">WalletProfilePreset</span>
+						<span class="target">PeerInfo</span>
 					</li>
 				</ul>
 			</section>
@@ -84,9 +84,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.walletprofilepreset.html#data" class="tsd-kind-icon">data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.walletprofilepreset.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.walletprofilepreset.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.peerinfo.html#endpoint" class="tsd-kind-icon">endpoint</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.peerinfo.html#metadata" class="tsd-kind-icon">metadata</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_model_configpreset_.peerinfo.html#publickey" class="tsd-kind-icon">public<wbr>Key</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,32 +95,54 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="data" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> data</h3>
-					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="endpoint" class="tsd-anchor"></a>
+					<h3>endpoint</h3>
+					<div class="tsd-signature tsd-kind-icon">endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>host<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>port<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L312">src/model/ConfigPreset.ts:312</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L332">src/model/ConfigPreset.ts:332</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>host<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>port<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="location" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="metadata" class="tsd-anchor"></a>
+					<h3>metadata</h3>
+					<div class="tsd-signature tsd-kind-icon">metadata<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>roles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L313">src/model/ConfigPreset.ts:313</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L336">src/model/ConfigPreset.ts:336</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>roles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="publickey" class="tsd-anchor"></a>
+					<h3>public<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">public<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L310">src/model/ConfigPreset.ts:310</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/3b524d2/src/model/ConfigPreset.ts#L331">src/model/ConfigPreset.ts:331</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,30 +203,30 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_model_configpreset_.nodepreset.html" class="tsd-kind-icon">Node<wbr>Preset</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_model_configpreset_.peerinfo.html" class="tsd-kind-icon">Peer<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_model_configpreset_.walletpreset.html" class="tsd-kind-icon">Wallet<wbr>Preset</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_model_configpreset_.walletprofilepreset.html" class="tsd-kind-icon">Wallet<wbr>Profile<wbr>Preset</a>
+						<a href="_model_configpreset_.peerinfo.html" class="tsd-kind-icon">Peer<wbr>Info</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_model_configpreset_.walletprofilepreset.html#data" class="tsd-kind-icon">data</a>
+								<a href="_model_configpreset_.peerinfo.html#endpoint" class="tsd-kind-icon">endpoint</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_model_configpreset_.walletprofilepreset.html#location" class="tsd-kind-icon">location</a>
+								<a href="_model_configpreset_.peerinfo.html#metadata" class="tsd-kind-icon">metadata</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_model_configpreset_.walletprofilepreset.html#name" class="tsd-kind-icon">name</a>
+								<a href="_model_configpreset_.peerinfo.html#publickey" class="tsd-kind-icon">public<wbr>Key</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_model_configpreset_.walletpreset.html" class="tsd-kind-icon">Wallet<wbr>Preset</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_model_configpreset_.walletprofilepreset.html" class="tsd-kind-icon">Wallet<wbr>Profile<wbr>Preset</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../modules/_model_configpreset_.html#deeppartial" class="tsd-kind-icon">Deep<wbr>Partial</a>
 					</li>
