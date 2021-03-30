@@ -19,3 +19,4 @@ export * from './RewardProgramService';
 export * from './RunService';
 export * from './SshpkService';
 export * from './VotingService';
+export * from './VotingUtils';

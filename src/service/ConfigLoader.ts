@@ -198,22 +198,23 @@ export class ConfigLoader {
     ): ConfigAccount {
         const oldAccount = this.getAccount(networkType, oldStoredAccount?.publicKey, oldStoredAccount?.privateKey);
         const newAccount = this.getAccount(networkType, publicKey, privateKey);
+        const getAccountLog = (account: Account | PublicAccount) =>
+            `${keyName} Account ${account.address.plain()} Public Ley ${account.publicKey} `;
+
         if (oldAccount && !newAccount) {
-            logger.info(`Reusing ${keyName} account ${oldAccount.address.plain()}`);
+            logger.info(`Reusing ${getAccountLog(oldAccount)}...`);
             return this.toConfig(oldAccount);
         }
         if (!oldAccount && newAccount) {
-            logger.info(`${keyName} Account ${newAccount.address.plain()} has been provided`);
+            logger.info(`${getAccountLog(newAccount)} has been provided`);
             return this.toConfig(newAccount);
         }
         if (oldAccount && newAccount) {
             if (oldAccount.address.equals(newAccount.address)) {
-                logger.info(`Reusing ${keyName} account ${oldAccount.address.plain()}`);
+                logger.info(`Reusing ${getAccountLog(newAccount)}`);
                 return { ...this.toConfig(oldAccount), ...this.toConfig(newAccount) };
             }
-            logger.info(
-                `Old ${keyName} Account ${oldAccount.address.plain()} has been changed. New ${keyName} Account is ${newAccount.address.plain()}`,
-            );
+            logger.info(`Old ${getAccountLog(oldAccount)} has been changed. New ${getAccountLog(newAccount)} replaces it.`);
             return this.toConfig(newAccount);
         }
 
@@ -293,12 +294,6 @@ export class ConfigLoader {
                 oldNodeAccount?.remote,
                 nodePreset.remotePrivateKey,
                 nodePreset.remotePublicKey,
-            );
-        if (nodePreset.voting)
-            nodeAccount.voting = this.toConfig(
-                oldNodeAccount?.voting
-                    ? PublicAccount.createFromPublicKey(oldNodeAccount.voting.publicKey, networkType)
-                    : Account.generateNewAccount(networkType),
             );
         if (nodePreset.harvesting)
             nodeAccount.vrf = this.generateAccount(

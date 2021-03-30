@@ -50,6 +50,7 @@ export interface TransactionFactoryParams {
     mainAccountInfo: AccountInfo;
     mainAccount: PublicAccount;
     deadline: Deadline;
+    target: string;
     maxFee: UInt64;
 }
 
@@ -82,7 +83,6 @@ export class AnnounceService {
             description:
                 'Use the best NEM node available when announcing. Otherwise the command will use the node provided by the --url parameter.',
         }),
-
         ready: flags.boolean({
             description: 'If --ready is provided, the command will not ask for confirmation when announcing transactions.',
         }),
@@ -95,6 +95,7 @@ export class AnnounceService {
         providedMaxFee: number | undefined,
         useKnownRestGateways: boolean,
         ready: boolean | undefined,
+        target: string,
         presetData: ConfigPreset,
         addresses: Addresses,
         transactionFactory: TransactionFactory,
@@ -174,6 +175,7 @@ export class AnnounceService {
                 nodePreset,
                 nodeAccount,
                 mainAccountInfo,
+                target,
                 mainAccount,
                 deadline,
                 maxFee: defaultMaxFee,

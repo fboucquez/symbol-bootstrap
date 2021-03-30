@@ -27,6 +27,7 @@ import {
     Transaction,
     TransactionMapping,
     UInt64,
+    VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
 import { LogType } from '../logger';
@@ -467,11 +468,7 @@ export class ConfigService {
                 .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
 
-        await Promise.all(
-            (addresses.nodes || [])
-                .filter((n) => n.voting)
-                .map((n) => this.createVotingKeyTransaction(transactionsDirectory, presetData, n)),
-        );
+        await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransactions(transactionsDirectory, presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
             logger.info('Opt In mode is ON!!! balances or transactions have been provided');
@@ -593,25 +590,12 @@ export class ConfigService {
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
 
-    private async createVotingKeyTransaction(
+    private async createVotingKeyTransactions(
         transactionsDirectory: string,
         presetData: ConfigPreset,
         node: NodeAccount,
-    ): Promise<Transaction> {
-        if (!node.voting) {
-            throw new Error('Voting keys should have been generated!!');
-        }
-
-        if (!node.main) {
-            throw new Error('Main keys should have been generated!!');
-        }
-        const voting = BootstrapUtils.createVotingKeyTransaction(
-            node.voting.publicKey,
-            LinkAction.Link,
-            presetData,
-            Deadline.createFromDTO('1'),
-            UInt64.fromUint(0),
-        );
+    ): Promise<Transaction[]> {
+        const votingFiles = node.voting || [];
         const mainPrivateKey = await CommandUtils.resolvePrivateKey(
             presetData.networkType,
             node.main,
@@ -619,9 +603,23 @@ export class ConfigService {
             node.name,
             'creating the voting key link transactions',
         );
-        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
-        const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
-        return await this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
+        return Promise.all(
+            votingFiles.map(async (votingFile) => {
+                const voting = VotingKeyLinkTransaction.create(
+                    Deadline.createFromDTO('1'),
+                    votingFile.publicKey,
+                    votingFile.startEpoch,
+                    votingFile.endEpoch,
+                    LinkAction.Link,
+                    presetData.networkType,
+                    1,
+                    UInt64.fromUint(0),
+                );
+                const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
+                const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
+                return this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
+            }),
+        );
     }
 
     private async storeTransaction(transactionsDirectory: string, name: string, payload: string): Promise<Transaction> {

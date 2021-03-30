@@ -32,8 +32,8 @@
 import { expect } from '@oclif/test';
 import { readFileSync } from 'fs';
 import 'mocha';
-import { Convert } from 'symbol-sdk';
-import { VotingUtils } from '../../src/service/VotingUtils';
+import { Convert, KeyPair } from 'symbol-sdk';
+import { VotingMetadata, VotingUtils } from '../../src/service';
 describe('VotingUtils', () => {
     async function assertVotingKey(
         expectedVotingKeyFile: Uint8Array,
@@ -45,6 +45,7 @@ describe('VotingUtils', () => {
         const itemSize = 32 + 64;
         //This files have been created from the original catapult tools's votingkey
 
+        const votingPublicKey = Convert.uint8ToHex(KeyPair.createKeyPairFromPrivateKeyString(privateKey).publicKey);
         const items = (expectedVotingKeyFile.length - headerSize) / itemSize;
 
         const unitTestPrivateKeys: Uint8Array[] = [];
@@ -57,17 +58,19 @@ describe('VotingUtils', () => {
             unitTestPrivateKeys.push(unitTestPrivateKey);
         }
 
-        const votingKeyFile = await new VotingUtils().createVotingFile(
-            privateKey,
-            votingKeyStartEpoch,
-            votingKeyEndEpoch,
-            unitTestPrivateKeys,
-        );
+        const service = new VotingUtils();
+        const votingKeyFile = await service.createVotingFile(privateKey, votingKeyStartEpoch, votingKeyEndEpoch, unitTestPrivateKeys);
         expect(votingKeyFile.length).eq(expectedVotingKeyFile.length);
         const header = votingKeyFile.subarray(0, headerSize);
         const expectedHeader = expectedVotingKeyFile.subarray(0, headerSize);
         expect(header).deep.eq(expectedHeader);
         expect(Convert.uint8ToHex(votingKeyFile)).eq(Convert.uint8ToHex(expectedVotingKeyFile));
+        const expected: VotingMetadata = {
+            startEpoch: votingKeyStartEpoch,
+            endEpoch: votingKeyEndEpoch,
+            publicKey: votingPublicKey,
+        };
+        expect(service.readVotingFile(votingKeyFile)).deep.eq(expected);
     }
 
     it('createVotingFile voting key 1', async () => {

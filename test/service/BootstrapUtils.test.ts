@@ -20,7 +20,6 @@ import * as _ from 'lodash';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
-import { Account, Deadline, LinkAction, NetworkType, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import { BootstrapUtils, CryptoUtils } from '../../src/service';
 import assert = require('assert');
 
@@ -156,32 +155,6 @@ describe('BootstrapUtils', () => {
         expect(_.merge(a, b, c)).deep.equals(expected);
 
         expect(_.merge(a, b, c)).deep.equals(expected);
-    });
-
-    it('createVotingKeyTransaction v1 short key', async () => {
-        const networkType = NetworkType.PRIVATE;
-        const deadline = Deadline.createFromDTO('1');
-        const voting = Account.generateNewAccount(networkType);
-        const presetData = {
-            networkType,
-            votingKeyStartEpoch: 1,
-            votingKeyEndEpoch: 3,
-        };
-        const maxFee = UInt64.fromUint(20);
-
-        const transaction = BootstrapUtils.createVotingKeyTransaction(
-            voting.publicKey,
-            LinkAction.Link,
-            presetData,
-            deadline,
-            maxFee,
-        ) as VotingKeyLinkTransaction;
-        expect(transaction.version).to.be.eq(1);
-        expect(transaction.linkedPublicKey).to.be.eq(voting.publicKey);
-        expect(transaction.startEpoch).to.be.eq(presetData.votingKeyStartEpoch);
-        expect(transaction.endEpoch).to.be.eq(presetData.votingKeyEndEpoch);
-        expect(transaction.maxFee).to.be.deep.eq(maxFee);
-        expect(transaction.deadline).to.be.deep.eq(deadline);
     });
 
     it('should remove null values', () => {

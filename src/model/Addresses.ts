@@ -15,6 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
+import { VotingKeyFile } from '../service';
 
 export interface CertificatePair {
     privateKey?: string;
@@ -35,8 +36,7 @@ export interface NodeAccount {
     remote?: ConfigAccount;
     // VRF key is produced if node is peer
     vrf?: ConfigAccount;
-    // Voting key is produced if node is voting
-    voting?: ConfigAccount;
+    voting?: VotingKeyFile[];
     roles: string;
     name: string;
     friendlyName: string;

@@ -16,124 +16,95 @@
 
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+import { Account } from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { ConfigAccount, ConfigPreset, NodeAccount, NodePreset } from '../model';
+import { ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
-import { ConfigParams, KeyName } from './ConfigService';
-import { VotingUtils } from './VotingUtils';
 import { ConfigParams } from './ConfigService';
+import { VotingKeyFile, VotingUtils } from './VotingUtils';
 
 type VotingParams = ConfigParams;
-
-export interface VotingMetadata {
-    readonly votingKeyStartEpoch: number;
-    readonly votingKeyEndEpoch: number;
-    readonly votingPublicKey: string;
-    readonly version: number;
-}
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class VotingService {
-    private static readonly METADATA_VERSION = 1;
-
     constructor(protected readonly params: VotingParams) {}
 
     public async run(presetData: ConfigPreset, nodeAccount: NodeAccount, nodePreset: NodePreset | undefined): Promise<void> {
-      const symbolServerToolsImage = presetData.symbolServerToolsImage;
-      if (nodePreset?.voting && nodeAccount.voting) {
-            const privateKeyTreeFileName = 'private_key_tree1.dat';
+        const symbolServerToolsImage = presetData.symbolServerToolsImage;
+
+        function logVotingKeyFiles(currentVotingFiles: VotingKeyFile[]) {
+            const log = currentVotingFiles
+                .map((value) => {
+                    return `${value.filename}, Voting Public Key ${value.publicKey}, Start Epoch: ${value.startEpoch}, End Epoch: ${value.endEpoch}`;
+                })
+                .join('\n');
+            logger.info(`Current Voting files:\n ${log}`);
+        }
+
+        if (nodePreset?.voting) {
             const target = this.params.target;
             const votingKeysFolder = join(
                 BootstrapUtils.getTargetNodesFolder(target, true, nodeAccount.name),
                 presetData.votingKeysDirectory,
             );
-            const metadataFile = join(votingKeysFolder, 'metadata.yml');
-            if (!(await this.shouldGenerateVoting(presetData, metadataFile, nodeAccount.voting))) {
-                logger.info(`Voting File for node ${nodePreset.name} has been previously generated. Reusing...`);
+            await BootstrapUtils.mkdir(votingKeysFolder);
+            const votingUtils = new VotingUtils();
+            const currentVotingFiles = votingUtils.loadVotingFiles(votingKeysFolder);
+            const maxVotingKeyEndEpoch =
+                currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || presetData.lastKnownNetworkEpoch - 1;
+            if (maxVotingKeyEndEpoch > presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength / 2) {
+                logVotingKeyFiles(currentVotingFiles);
+                nodeAccount.voting = currentVotingFiles;
                 return;
             }
-            const votingPrivateKey = nodeAccount?.voting.privateKey;
+            const votingKeyStartEpoch = maxVotingKeyEndEpoch + 1;
+            const votingKeyEndEpoch = maxVotingKeyEndEpoch + presetData.votingKeyDesiredEpochLength;
 
-            if (!votingPrivateKey) {
-                throw new Error(
-                    'Voting key should have been previously generated!!! You need to reset your target folder. Please run --reset using your original custom preset.',
-                );
-            }
-
-            const cmd = [
-                `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
-                `--secret=${votingPrivateKey}`,
-                `--startEpoch=${presetData.votingKeyStartEpoch}`,
-                `--endEpoch=${presetData.votingKeyEndEpoch}`,
-                `--output=/votingKeys/${privateKeyTreeFileName}`,
-            ];
-            const epochs = presetData.votingKeyEndEpoch - presetData.votingKeyStartEpoch + 1;
+            const votingAccount = Account.generateNewAccount(presetData.networkType);
+            const votingPrivateKey = votingAccount.privateKey;
+            const epochs = votingKeyEndEpoch - votingKeyStartEpoch + 1;
             logger.info(`Creating Voting key file of ${epochs} epochs for node ${nodeAccount.name}. This could take a while!`);
-            const votingPrivateKey = await CommandUtils.resolvePrivateKey(
-                presetData.networkType,
-                nodeAccount.voting,
-                KeyName.Voting,
-                nodeAccount.name,
-            );
-            const votingUtils = new VotingUtils();
-            const votingFile = await votingUtils.createVotingFile(
-                votingPrivateKey,
-                presetData.votingKeyStartEpoch,
-                presetData.votingKeyEndEpoch,
-            );
-            await BootstrapUtils.deleteFolder(votingKeysFolder);
-            await BootstrapUtils.mkdir(votingKeysFolder);
+            const privateKeyTreeFileName = `private_key_tree${currentVotingFiles.length + 1}.dat`;
+            if (presetData.useExperimentalNativeVotingKeyGeneration) {
+                const votingFile = await votingUtils.createVotingFile(votingPrivateKey, votingKeyStartEpoch, votingKeyEndEpoch);
+                writeFileSync(join(votingKeysFolder, privateKeyTreeFileName), votingFile);
+            } else {
+                const binds = [`${votingKeysFolder}:/votingKeys:rw`];
+                const cmd = [
+                    `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
+                    `--secret=${votingPrivateKey}`,
+                    `--startEpoch=${votingKeyStartEpoch}`,
+                    `--endEpoch=${votingKeyEndEpoch}`,
+                    `--output=/votingKeys/${privateKeyTreeFileName}`,
+                ];
+                const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+                const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+                    catapultAppFolder: presetData.catapultAppFolder,
+                    image: symbolServerToolsImage,
+                    userId: userId,
+                    cmds: cmd,
+                    binds: binds,
+                });
 
-            writeFileSync(join(votingKeysFolder, privateKeyTreeFileName), votingFile);
-            logger.info(`Voting key file of ${epochs} epochs created for node ${nodeAccount.name}!`);
-            const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
-                catapultAppFolder: presetData.catapultAppFolder,
-                image: symbolServerToolsImage,
-                userId: userId,
-                cmds: cmd,
-                binds: binds,
-            });
-
-            if (stdout.indexOf('<error> ') > -1) {
-                logger.info(stdout);
-                logger.error(stderr);
-                throw new Error('Voting key failed. Check the logs!');
+                if (stdout.indexOf('<error> ') > -1) {
+                    logger.info(stdout);
+                    logger.error(stderr);
+                    throw new Error('Voting key failed. Check the logs!');
+                }
             }
             logger.warn(`A new Voting File for the node ${nodeAccount.name} has been regenerated! `);
             logger.warn(
-                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key ${nodeAccount.voting.publicKey} with startEpoch ${presetData.votingKeyStartEpoch} and endEpoch: ${presetData.votingKeyEndEpoch}`,
+                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${votingAccount.publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
             );
             logger.warn('For linking, you can use symbol-bootstrap link command, the symbol cli, or the symbol desktop wallet. ');
-            logger.warn('The voting public key is stored in the target`s addresses.yml for reference');
-
-            const metadata: VotingMetadata = {
-                votingKeyStartEpoch: presetData.votingKeyStartEpoch,
-                votingKeyEndEpoch: presetData.votingKeyEndEpoch,
-                version: VotingService.METADATA_VERSION,
-                votingPublicKey: nodeAccount.voting.publicKey,
-            };
-            await BootstrapUtils.writeYaml(metadataFile, metadata, undefined);
+            const newVotingKeyFiles = votingUtils.loadVotingFiles(votingKeysFolder);
+            logVotingKeyFiles(newVotingKeyFiles);
+            nodeAccount.voting = newVotingKeyFiles;
         } else {
             logger.info(`Non-voting node ${nodeAccount.name}.`);
-        }
-    }
-
-    private async shouldGenerateVoting(presetData: ConfigPreset, metadataFile: string, votingAccount: ConfigAccount): Promise<boolean> {
-        try {
-            const metadata = BootstrapUtils.loadYaml(metadataFile, false) as VotingMetadata;
-            return (
-                metadata.votingPublicKey !== votingAccount.publicKey ||
-                metadata.version !== VotingService.METADATA_VERSION ||
-                metadata.votingKeyStartEpoch !== presetData.votingKeyStartEpoch ||
-                metadata.votingKeyEndEpoch !== presetData.votingKeyEndEpoch
-            );
-        } catch (e) {
-            return true;
         }
     }
 }

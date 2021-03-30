@@ -29,7 +29,7 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, NodeAccount } from '../model';
+import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -52,9 +52,11 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 export interface LinkServiceTransactionFactoryParams {
     presetData: ConfigPreset;
     nodeAccount: NodeAccount;
+    nodePreset: NodePreset;
     mainAccountInfo: AccountInfo;
     deadline: Deadline;
     maxFee: UInt64;
+    target: string;
     removeOldLinked?: boolean;
 }
 
@@ -84,6 +86,7 @@ export class LinkService implements TransactionFactory {
             this.params.maxFee,
             this.params.useKnownRestGateways,
             this.params.ready,
+            this.params.target,
             presetData,
             addresses,
             this,
@@ -93,10 +96,12 @@ export class LinkService implements TransactionFactory {
     async createTransactions({
         presetData,
         nodeAccount,
+        nodePreset,
         mainAccountInfo,
         deadline,
         maxFee,
         removeOldLinked,
+        target,
     }: LinkServiceTransactionFactoryParams): Promise<Transaction[]> {
         const transactions: Transaction[] = [];
         const unlink = this.params.unlink;
@@ -140,44 +145,41 @@ export class LinkService implements TransactionFactory {
                 (account) => `public key ${account.publicKey}`,
             );
         }
-        if (nodeAccount.voting) {
-            const accountTobeLinked = {
-                publicKey: nodeAccount.voting.publicKey,
-                startEpoch: presetData.votingKeyStartEpoch,
-                endEpoch: presetData.votingKeyEndEpoch,
-            };
-            const alreadyLinkedAccount = (mainAccountInfo.supplementalPublicKeys?.voting || []).find((a) =>
-                LinkService.overlapsVotingAccounts(accountTobeLinked, a),
-            );
+        if (nodePreset.voting) {
+            const votingFiles = nodeAccount.voting || [];
+            for (const accountTobeLinked of votingFiles) {
+                const alreadyLinkedAccount = (mainAccountInfo.supplementalPublicKeys?.voting || []).find((a) =>
+                    LinkService.overlapsVotingAccounts(accountTobeLinked, a),
+                );
+                const isAlreadyLinkedSameAccount =
+                    alreadyLinkedAccount?.publicKey.toUpperCase() === accountTobeLinked.publicKey.toUpperCase() &&
+                    alreadyLinkedAccount?.startEpoch === accountTobeLinked.startEpoch &&
+                    alreadyLinkedAccount?.endEpoch === accountTobeLinked.endEpoch;
 
-            const isAlreadyLinkedSameAccount =
-                alreadyLinkedAccount?.publicKey.toUpperCase() === accountTobeLinked.publicKey.toUpperCase() &&
-                alreadyLinkedAccount?.startEpoch === accountTobeLinked.startEpoch &&
-                alreadyLinkedAccount?.endEpoch === accountTobeLinked.endEpoch;
-
-            await this.addTransaction(
-                alreadyLinkedAccount,
-                isAlreadyLinkedSameAccount,
-                unlink,
-                (votingKeyAccount, action) => {
-                    return VotingKeyLinkTransaction.create(
-                        deadline,
-                        votingKeyAccount.publicKey,
-                        votingKeyAccount.startEpoch,
-                        votingKeyAccount.endEpoch,
-                        action,
-                        presetData.networkType,
-                        1,
-                        maxFee,
-                    );
-                },
-                nodeAccount,
-                'Voting',
-                accountTobeLinked,
-                transactions,
-                removeOldLinked,
-                (account) => `public key ${account.publicKey}, start epoch ${account.startEpoch}, end epoch ${account.endEpoch}`,
-            );
+                await this.addTransaction(
+                    alreadyLinkedAccount,
+                    isAlreadyLinkedSameAccount,
+                    unlink,
+                    (votingKeyAccount, action) => {
+                        return VotingKeyLinkTransaction.create(
+                            deadline,
+                            votingKeyAccount.publicKey,
+                            votingKeyAccount.startEpoch,
+                            votingKeyAccount.endEpoch,
+                            action,
+                            presetData.networkType,
+                            1,
+                            maxFee,
+                        );
+                    },
+                    nodeAccount,
+                    'Voting',
+                    accountTobeLinked,
+                    transactions,
+                    removeOldLinked,
+                    (account) => `public key ${account.publicKey}, start epoch ${account.startEpoch}, end epoch ${account.endEpoch}`,
+                );
+            }
         }
         return transactions;
     }

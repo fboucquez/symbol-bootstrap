@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
 import * as noble from 'noble-ed25519';
 import * as forge from 'node-forge';
+import { join } from 'path';
 import { Convert, Crypto } from 'symbol-sdk';
 import * as nacl from 'tweetnacl';
+
 const ed25519 = forge.pki.ed25519;
 export interface KeyPair {
     privateKey: Uint8Array;
@@ -27,6 +30,14 @@ export interface CryptoImplementation {
     createKeyPairFromPrivateKey: (privateKey: Uint8Array) => Promise<KeyPair>;
     sign: (keyPair: KeyPair, data: Uint8Array) => Promise<Uint8Array>;
 }
+
+export interface VotingMetadata {
+    readonly startEpoch: number;
+    readonly endEpoch: number;
+    readonly publicKey: string;
+}
+
+export type VotingKeyFile = VotingMetadata & { filename: string };
 
 export class VotingUtils {
     public static nobleImplementation: CryptoImplementation = {
@@ -41,7 +52,7 @@ export class VotingUtils {
     };
 
     public static forgeImplementation: CryptoImplementation = {
-        name: 'Froge',
+        name: 'Forge',
         createKeyPairFromPrivateKey: async (privateKey: Uint8Array): Promise<KeyPair> => {
             const keyPair = ed25519.generateKeyPair({ seed: privateKey });
             return { privateKey, publicKey: keyPair.publicKey };
@@ -148,5 +159,45 @@ export class VotingUtils {
         // every priv key should be cryptographically random,
 
         return result;
+    }
+
+    public readVotingFile(file: Uint8Array): VotingMetadata {
+        //start-epoch (8b),
+        const votingKeyStartEpoch = Convert.uintArray8ToNumber(file.slice(0, 8));
+        //end-epoch (8b),
+        const votingKeyEndEpoch = Convert.uintArray8ToNumber(file.slice(8, 16));
+        const votingPublicKey = Convert.uint8ToHex(file.slice(32, 64));
+
+        const items = votingKeyEndEpoch - votingKeyStartEpoch + 1;
+        const headerSize = 64 + 16;
+        const itemSize = 32 + 64;
+        const totalSize = headerSize + items * itemSize;
+
+        if (file.length != totalSize) {
+            throw new Error(`Unexpected voting key file. Expected ${totalSize} but got ${file.length}`);
+        }
+        return {
+            publicKey: votingPublicKey,
+            startEpoch: votingKeyStartEpoch,
+            endEpoch: votingKeyEndEpoch,
+        };
+    }
+
+    public loadVotingFiles(folder: string): VotingKeyFile[] {
+        if (!existsSync(folder)) {
+            return [];
+        }
+        return readdirSync(folder)
+            .map((filename: string) => {
+                const currentPath = join(folder, filename);
+                if (lstatSync(currentPath).isFile() && filename.startsWith('private_key_tree') && filename.endsWith('.dat')) {
+                    return { ...this.readVotingFile(readFileSync(currentPath)), filename };
+                } else {
+                    return undefined;
+                }
+            })
+            .filter((i) => i)
+            .map((i) => i as VotingKeyFile)
+            .sort((a, b) => a.startEpoch - b.startEpoch);
     }
 }

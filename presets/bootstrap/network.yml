@@ -11,6 +11,8 @@ harvestingName: 'harvest'
 explorerUrl: http://localhost:90/
 faucetUrl: http://localhost:100/
 beneficiaryAddress: ''
+votingKeyDesiredEpochLength: 720
+lastKnownNetworkEpoch: 1
 nemesis:
     mosaics:
         - name: '{{currencyName}}'

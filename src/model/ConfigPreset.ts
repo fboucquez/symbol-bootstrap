@@ -370,8 +370,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     dockerComposeVersion: number | string;
     dockerComposeServiceRestart: string;
     dockerComposeDebugMode: boolean;
-    votingKeyEndEpoch: number;
-    votingKeyStartEpoch: number;
     mongoComposeRunParam: string;
     peersP2PListLimit: number;
     peersApiListLimit: number;
@@ -390,8 +388,10 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     baseNamespace: string;
     rewardProgramControllerPublicKey?: string;
     networkType: NetworkType;
+    votingKeyDesiredEpochLength: number;
+    useExperimentalNativeVotingKeyGeneration?: boolean;
+    lastKnownNetworkEpoch: number;
     //Nested Objects
-
     knownRestGateways?: string[];
     inflation?: Record<string, number>;
     knownPeers?: Record<NodeType, PeerInfo[]>;
