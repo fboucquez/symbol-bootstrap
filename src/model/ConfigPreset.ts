@@ -15,7 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Preset } from '../service';
+import { Preset, RewardProgram } from '../service';
 import { NodeType } from './NodeType';
 
 export enum PrivateKeySecurityMode {
@@ -65,6 +65,23 @@ export interface NemesisPreset {
     transactionsDirectory: string;
 }
 
+export enum TransactionSelectionStrategy {
+    maximizeFee = 'maximize-fee',
+    oldest = 'oldest',
+    minimizeFee = 'minimize-fee',
+}
+export enum DebugLevel {
+    trace = 'Trace',
+    debug = 'Debug',
+    info = 'Info',
+    important = 'Important',
+    warning = 'Warning',
+    error = 'Error',
+    fatal = 'Fatal',
+    min = 'Min',
+    max = 'Max',
+}
+
 export interface NodeConfigPreset {
     syncsource: boolean;
     filespooling: boolean;
@@ -79,7 +96,7 @@ export interface NodeConfigPreset {
     nodeUseRemoteAccount: boolean;
     beneficiaryAddress?: string;
     stepDuration: string;
-    logLevel: 'Debug' | 'Info';
+    logLevel: DebugLevel;
     shortLivedCacheMessageDuration: string;
     readRateMonitoringBucketDuration: string;
     networkHeightMaxNodes: number;
@@ -101,7 +118,7 @@ export interface NodeConfigPreset {
     maxMultisigDepth: number;
     maxChildNamespaces: number;
     maxTrackedNodes: string;
-    transactionSelectionStrategy: string;
+    transactionSelectionStrategy: TransactionSelectionStrategy;
     blockDisruptorSlotCount: number;
     minTransactionFailuresPercentForBan: number;
     enableCacheDatabaseStorage: boolean;
@@ -263,7 +280,7 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     brokerDockerComposeDebugMode?: boolean;
 
     //Reward program
-    rewardProgram?: string;
+    rewardProgram?: RewardProgram;
     rewardProgramAgentIpv4_address?: string;
     rewardProgramAgentOpenPort?: boolean | number | string;
     rewardProgramAgentExcludeDockerService?: boolean;
