@@ -136,7 +136,7 @@ shortLivedCacheTransactionDuration: 10m
 shortLivedCacheBlockDuration: 100m
 shortLivedCachePruneInterval: 90s
 shortLivedCacheMaxSize: 10000000
-transactionSelectionStrategy: maximize-fee
+transactionSelectionStrategy: oldest
 unconfirmedTransactionsCacheMaxResponseSize: 5MB
 unconfirmedTransactionsCacheMaxSize: 20MB
 connectTimeout: 15s
