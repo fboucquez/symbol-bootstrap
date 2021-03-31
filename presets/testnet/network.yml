@@ -47,6 +47,8 @@ maxChildNamespaces: 100
 nonVotingUnfinalizedBlocksDuration: 10m
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
+faucetUrl: 'http://faucet.testnet.symboldev.network'
+explorerUrl: 'http://explorer.testnet.symboldev.network'
 knownRestGateways:
     - 'http://ngl-dual-501.testnet.symboldev.network:3000'
     - 'http://ngl-dual-601.testnet.symboldev.network:3000'
