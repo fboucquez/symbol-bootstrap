@@ -32,7 +32,7 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigPreset, CustomPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils, KnownError } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
@@ -74,7 +74,7 @@ export interface ConfigParams {
     pullImages?: boolean;
     assembly?: string;
     customPreset?: string;
-    customPresetObject?: any;
+    customPresetObject?: CustomPreset;
 }
 
 export interface ConfigResult {
@@ -382,7 +382,7 @@ export class ConfigService {
             presetData.peersP2PListLimit,
             serverConfig,
             NodeType.PEER_NODE,
-            (nodePresetData) => nodePresetData.syncsource && nodePresetData != nodePreset,
+            (nodePresetData) => !!nodePresetData.syncsource && nodePresetData != nodePreset,
             'peers-p2p.json',
         );
         const peersApiFile = await this.generateP2PFile(
