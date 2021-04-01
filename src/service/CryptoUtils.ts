@@ -40,7 +40,10 @@ export class CryptoUtils {
         return value;
     }
 
-    public static getPrivateKeySecurityMode(value: string): PrivateKeySecurityMode {
+    public static getPrivateKeySecurityMode(value: string | undefined): PrivateKeySecurityMode {
+        if (!value) {
+            return PrivateKeySecurityMode.ENCRYPT;
+        }
         const securityModes = Object.values(PrivateKeySecurityMode) as PrivateKeySecurityMode[];
         const securityMode = securityModes.find((p) => p.toLowerCase() == value.toLowerCase());
         if (securityMode) {

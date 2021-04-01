@@ -46,7 +46,6 @@ nodes:
       openPort: '{{add $index 7900}}'
     - repeat: 1
       harvesting: false
-      voting: false
       api: true
       friendlyName: 'api-node-{{$index}}'
       name: 'api-node-{{$index}}'
