@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -51,11 +50,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>symbol-bootstrap</h1>
 		</div>
 	</div>
@@ -86,8 +80,7 @@
 					<li><a href="#e2e-testing-support">E2E Testing support</a></li>
 					<li><a href="#development">Development</a></li>
 					<li><a href="#commands">Commands</a></li>
-					<li><a href="#command-topics">Command Topics</a><!-- tocstop -->
-					</li>
+					<li><a href="#command-topics">Command Topics</a><!-- tocstop --></li>
 				</ul>
 				<a href="#why-this-tool" id="why-this-tool" style="color: inherit; text-decoration: none;">
 					<h1>Why this tool?</h1>
@@ -169,15 +162,15 @@
 					<li>  Docker Compose</li>
 				</ul>
 				<p>Validate your environment by running:</p>
-				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">-v</span>
-docker -v
-docker-compose -v
+				<pre><code><span style="color: #001080">node</span><span style="color: #000000"> -</span><span style="color: #001080">v</span>
+<span style="color: #001080">docker</span><span style="color: #000000"> -</span><span style="color: #001080">v</span>
+<span style="color: #001080">docker</span><span style="color: #000000">-</span><span style="color: #001080">compose</span><span style="color: #000000"> -</span><span style="color: #001080">v</span>
 </code></pre>
 				<p>Check your user can run docker without sudo:</p>
-				<pre><code>docker <span class="hljs-keyword">run</span><span class="bash"> hello-world</span>
+				<pre><code><span style="color: #001080">docker</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">hello</span><span style="color: #000000">-</span><span style="color: #001080">world</span>
 </code></pre>
 				<p>If you see an error like:</p>
-				<pre><code>Got permission denied <span class="hljs-keyword">while</span> trying <span class="hljs-built_in">to</span> connect <span class="hljs-built_in">to</span> <span class="hljs-keyword">the</span> Docker daemon <span class="hljs-built_in">socket</span> <span class="hljs-keyword">at</span> unix:<span class="hljs-comment">///var/run/docker.sock</span>
+				<pre><code><span style="color: #001080">Got</span><span style="color: #000000"> </span><span style="color: #001080">permission</span><span style="color: #000000"> </span><span style="color: #001080">denied</span><span style="color: #000000"> </span><span style="color: #AF00DB">while</span><span style="color: #000000"> </span><span style="color: #001080">trying</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">connect</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #001080">Docker</span><span style="color: #000000"> </span><span style="color: #001080">daemon</span><span style="color: #000000"> </span><span style="color: #001080">socket</span><span style="color: #000000"> </span><span style="color: #001080">at</span><span style="color: #000000"> unix:</span><span style="color: #008000">///var/run/docker.sock</span>
 </code></pre>
 				<p>Please follow this <a href="https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket">guide</a>.</p>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
@@ -185,8 +178,8 @@ docker-compose -v
 				</a>
 				<p>It&#39;s recommended to run the commands from en empty working dir.</p>
 				<p>The network configuration, data and docker files will be created inside the target folder (&#39;./target&#39;) by default.</p>
-				<pre><code><span class="hljs-keyword">mkdir</span> <span class="hljs-keyword">my</span>-networks
-cd <span class="hljs-keyword">my</span>-networks
+				<pre><code><span style="color: #001080">mkdir</span><span style="color: #000000"> </span><span style="color: #001080">my</span><span style="color: #000000">-</span><span style="color: #001080">networks</span>
+<span style="color: #001080">cd</span><span style="color: #000000"> </span><span style="color: #001080">my</span><span style="color: #000000">-</span><span style="color: #001080">networks</span>
 </code></pre>
 				<p>Once in the working dir:</p>
 				<!-- usage -->
@@ -202,23 +195,23 @@ USAGE
 </code></pre>
 				<!-- usagestop -->
 				<p>The general usage would be:</p>
-				<pre><code>symbol-<span class="hljs-keyword">bootstrap </span><span class="hljs-built_in">config</span> -p <span class="hljs-keyword">bootstrap
-</span>symbol-<span class="hljs-keyword">bootstrap </span>compose
-symbol-<span class="hljs-keyword">bootstrap </span>run
+				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">config</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">bootstrap</span>
+<span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">compose</span>
+<span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">run</span>
 </code></pre>
 				<p>You can aggregate all these commands with this one liner:</p>
-				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span>
+				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">start</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">bootstrap</span>
 </code></pre>
 				<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
-				<pre><code>sudo rm -rf <span class="hljs-string">./target</span>
+				<pre><code><span style="color: #001080">sudo</span><span style="color: #000000"> </span><span style="color: #001080">rm</span><span style="color: #000000"> -</span><span style="color: #001080">rf</span><span style="color: #000000"> ./</span><span style="color: #001080">target</span>
 </code></pre>
 				<a href="#e2e-testing-support" id="e2e-testing-support" style="color: inherit; text-decoration: none;">
 					<h1>E2E Testing support</h1>
 				</a>
 				<p>One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:</p>
-				<pre><code>symbol-<span class="hljs-keyword">bootstrap</span> start -p <span class="hljs-keyword">bootstrap</span> --detached
-YOUR <span class="hljs-keyword">TEST</span> (<span class="hljs-keyword">e</span>.<span class="hljs-keyword">g</span>: npm <span class="hljs-keyword">run</span> <span class="hljs-keyword">test</span>, gradle <span class="hljs-keyword">test</span>, selenium etc.)
-symbol-<span class="hljs-keyword">bootstrap</span> stop
+				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">start</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">bootstrap</span><span style="color: #000000"> --</span><span style="color: #001080">detached</span>
+<span style="color: #0070C1">YOUR</span><span style="color: #000000"> </span><span style="color: #795E26">TEST</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">g</span><span style="color: #000000">: </span><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000">, </span><span style="color: #001080">gradle</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000">, </span><span style="color: #001080">selenium</span><span style="color: #000000"> </span><span style="color: #001080">etc</span><span style="color: #000000">.)</span>
+<span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">stop</span>
 </code></pre>
 				<p><code>--detached</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
 				<p>You can also provide your own custom preset (<code>-c</code>) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)</p>
@@ -228,61 +221,61 @@ symbol-<span class="hljs-keyword">bootstrap</span> stop
 				<p>The CLI can also be used as npm project (dev) dependency (<code>npm install --save-dev symbol-bootstrap</code>). Then you can integrate the network to your npm test cycle.
 				Your <code>package.json</code> can look like this:</p>
 				<pre><code class="language-yaml">
-<span class="hljs-attr">&quot;devDependencies&quot;:</span> {
-    <span class="hljs-string">....</span>
-    <span class="hljs-attr">&quot;symbol-bootstrap&quot;:</span> <span class="hljs-string">&quot;0.0.x&quot;</span>,
-    <span class="hljs-string">....</span>
-}
+<span style="color: #A31515">&quot;devDependencies&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #098658">....</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;symbol-bootstrap&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;0.0.x&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #098658">....</span>
+<span style="color: #000000">}</span>
 
-<span class="hljs-string">scripts&quot;:</span> {
-<span class="hljs-string">...</span>
-    <span class="hljs-attr">&quot;clean-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap clean&quot;</span>,
-    <span class="hljs-attr">&quot;run-network&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --detached --healthCheck&quot;</span>,
-    <span class="hljs-attr">&quot;run-stop&quot;:</span> <span class="hljs-string">&quot;symbol-bootstrap stop&quot;</span>,
-    <span class="hljs-attr">&quot;integration-test&quot;:</span> <span class="hljs-string">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span>,
-    <span class="hljs-attr">&quot;e2e&quot;:</span> <span class="hljs-string">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span>,
-<span class="hljs-string">...</span>
-}
+<span style="color: #800000">scripts&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #098658">...</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;clean-network&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;symbol-bootstrap clean&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;run-network&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;symbol-bootstrap start -c ./output/my_custom_preset.yml --detached --healthCheck&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;run-stop&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;symbol-bootstrap stop&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;integration-test&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;e2e&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span><span style="color: #000000">,</span>
+<span style="color: #098658">...</span>
+<span style="color: #000000">}</span>
 </code></pre>
 				<p>Then, you, Jenkins, Travis or your CI tool can run;</p>
-				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> e2e</span>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">e2e</span>
 </code></pre>
 				<a href="#node-client-e2e-via-api" id="node-client-e2e-via-api" style="color: inherit; text-decoration: none;">
 					<h2>Node client E2E via API:</h2>
 				</a>
 				<p>Alternatively, you can use the <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
 				<p>Example:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {BootstrapService, StartParams, Preset} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;symbol-bootstrap&#x27;</span>;
-<span class="hljs-keyword">import</span> {expect} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@oclif/test&#x27;</span>; 
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">BootstrapService</span><span style="color: #000000">, </span><span style="color: #001080">StartParams</span><span style="color: #000000">, </span><span style="color: #001080">Preset</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;symbol-bootstrap&#039;</span><span style="color: #000000">; </span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">expect</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@oclif/test&#039;</span><span style="color: #000000">; </span>
 
-it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; {
-    <span class="hljs-keyword">const</span> service = <span class="hljs-keyword">new</span> BootstrapService();
-    <span class="hljs-keyword">const</span> config: StartParams = {
-        <span class="hljs-attr">preset</span>: Preset.bootstrap,
-        <span class="hljs-attr">reset</span>: <span class="hljs-literal">true</span>,
-        <span class="hljs-attr">healthCheck</span>: <span class="hljs-literal">true</span>,
-        <span class="hljs-attr">timeout</span>: <span class="hljs-number">60000</span> * <span class="hljs-number">5</span>,
-        <span class="hljs-attr">target</span>: <span class="hljs-string">&#x27;target/bootstrap-test&#x27;</span>,
-        <span class="hljs-attr">detached</span>: <span class="hljs-literal">true</span>,
-        <span class="hljs-attr">user</span>: <span class="hljs-string">&#x27;current&#x27;</span>,
-    };
-    <span class="hljs-keyword">try</span> {
-        <span class="hljs-keyword">await</span> service.stop(config);
-        <span class="hljs-keyword">const</span> configResult = <span class="hljs-keyword">await</span> service.start(config);
-        expect(configResult.presetData).not.null;
-        expect(configResult.addresses).not.null;
-        <span class="hljs-comment">// Here you can write unit tests against a http://localhost:3000 network</span>
-    } <span class="hljs-keyword">finally</span> {
-        <span class="hljs-keyword">await</span> service.stop(config);
-    }
-});
+<span style="color: #795E26">it</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Bootstrap e2e test&#039;</span><span style="color: #000000">, </span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">service</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BootstrapService</span><span style="color: #000000">();</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">config</span><span style="color: #000000">: </span><span style="color: #267F99">StartParams</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">        </span><span style="color: #001080">preset:</span><span style="color: #000000"> </span><span style="color: #001080">Preset</span><span style="color: #000000">.</span><span style="color: #001080">bootstrap</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">reset:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">healthCheck:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">timeout:</span><span style="color: #000000"> </span><span style="color: #098658">60000</span><span style="color: #000000"> * </span><span style="color: #098658">5</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">target:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;target/bootstrap-test&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">detached:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;current&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    };</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">service</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">(</span><span style="color: #001080">config</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">configResult</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">service</span><span style="color: #000000">.</span><span style="color: #795E26">start</span><span style="color: #000000">(</span><span style="color: #001080">config</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #795E26">expect</span><span style="color: #000000">(</span><span style="color: #001080">configResult</span><span style="color: #000000">.</span><span style="color: #001080">presetData</span><span style="color: #000000">).</span><span style="color: #001080">not</span><span style="color: #000000">.</span><span style="color: #001080">null</span><span style="color: #000000">;</span>
+<span style="color: #000000">        </span><span style="color: #795E26">expect</span><span style="color: #000000">(</span><span style="color: #001080">configResult</span><span style="color: #000000">.</span><span style="color: #001080">addresses</span><span style="color: #000000">).</span><span style="color: #001080">not</span><span style="color: #000000">.</span><span style="color: #001080">null</span><span style="color: #000000">;</span>
+<span style="color: #000000">        </span><span style="color: #008000">// Here you can write unit tests against a http://localhost:3000 network</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">finally</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">service</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">(</span><span style="color: #001080">config</span><span style="color: #000000">);</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">});</span>
 </code></pre>
 				<p>It&#39;s recommended to reuse the same server for multiple tests by using <code>beforeAll</code>, <code>afterAll</code> kind of statements.</p>
 				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
 					<h1>Development</h1>
 				</a>
 				<p>If you want to contribute to this tool, clone this repo and run:</p>
-				<pre><code>npm <span class="hljs-keyword">install</span> -g
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> -</span><span style="color: #001080">g</span>
 </code></pre>
 				<p>Then, <code>symbol-bootstrap</code> runs from the source code. You can now try your features after changing the code.</p>
 				<p>Pull Requests are appreciated! Please follow the contributing <a href="CONTRIBUTING.md">guidelines</a>.</p>
@@ -320,137 +313,137 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_clean_.html">&quot;commands/clean&quot;</a>
+						<a href="modules/commands_clean.html">commands/clean</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_compose_.html">&quot;commands/compose&quot;</a>
+						<a href="modules/commands_compose.html">commands/compose</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_config_.html">&quot;commands/config&quot;</a>
+						<a href="modules/commands_config.html">commands/config</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_decrypt_.html">&quot;commands/decrypt&quot;</a>
+						<a href="modules/commands_decrypt.html">commands/decrypt</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_encrypt_.html">&quot;commands/encrypt&quot;</a>
+						<a href="modules/commands_encrypt.html">commands/encrypt</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_enrolrewardprogram_.html">&quot;commands/enrol<wbr>Reward<wbr>Program&quot;</a>
+						<a href="modules/commands_enrolrewardprogram.html">commands/enrol<wbr>Reward<wbr>Program</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_healthcheck_.html">&quot;commands/health<wbr>Check&quot;</a>
+						<a href="modules/commands_healthcheck.html">commands/health<wbr>Check</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_link_.html">&quot;commands/link&quot;</a>
+						<a href="modules/commands_link.html">commands/link</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_report_.html">&quot;commands/report&quot;</a>
+						<a href="modules/commands_report.html">commands/report</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_resetdata_.html">&quot;commands/reset<wbr>Data&quot;</a>
+						<a href="modules/commands_resetdata.html">commands/reset<wbr>Data</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_run_.html">&quot;commands/run&quot;</a>
+						<a href="modules/commands_run.html">commands/run</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_start_.html">&quot;commands/start&quot;</a>
+						<a href="modules/commands_start.html">commands/start</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_stop_.html">&quot;commands/stop&quot;</a>
+						<a href="modules/commands_stop.html">commands/stop</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_index_.html">&quot;index&quot;</a>
+						<a href="modules/index.html">index</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_logger_logtype_.html">&quot;logger/<wbr>Log<wbr>Type&quot;</a>
+						<a href="modules/logger.html">logger</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_logger_logger_.html">&quot;logger/<wbr>Logger&quot;</a>
+						<a href="modules/logger_logtype.html">logger/<wbr>Log<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_logger_loggerfactory_.html">&quot;logger/<wbr>Logger<wbr>Factory&quot;</a>
+						<a href="modules/logger_logger.html">logger/<wbr>Logger</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_logger_index_.html">&quot;logger/index&quot;</a>
+						<a href="modules/logger_loggerfactory.html">logger/<wbr>Logger<wbr>Factory</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_model_addresses_.html">&quot;model/<wbr>Addresses&quot;</a>
+						<a href="modules/model.html">model</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_model_configpreset_.html">&quot;model/<wbr>Config<wbr>Preset&quot;</a>
+						<a href="modules/model_addresses.html">model/<wbr>Addresses</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_model_dockercompose_.html">&quot;model/<wbr>Docker<wbr>Compose&quot;</a>
+						<a href="modules/model_configpreset.html">model/<wbr>Config<wbr>Preset</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_model_nodetype_.html">&quot;model/<wbr>Node<wbr>Type&quot;</a>
+						<a href="modules/model_dockercompose.html">model/<wbr>Docker<wbr>Compose</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_model_index_.html">&quot;model/index&quot;</a>
+						<a href="modules/model_nodetype.html">model/<wbr>Node<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_agentcertificateservice_.html">&quot;service/<wbr>Agent<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="modules/service.html">service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_announceservice_.html">&quot;service/<wbr>Announce<wbr>Service&quot;</a>
+						<a href="modules/service_agentcertificateservice.html">service/<wbr>Agent<wbr>Certificate<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_bootstrapservice_.html">&quot;service/<wbr>Bootstrap<wbr>Service&quot;</a>
+						<a href="modules/service_announceservice.html">service/<wbr>Announce<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_bootstraputils_.html">&quot;service/<wbr>Bootstrap<wbr>Utils&quot;</a>
+						<a href="modules/service_bootstrapservice.html">service/<wbr>Bootstrap<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_certificateservice_.html">&quot;service/<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="modules/service_bootstraputils.html">service/<wbr>Bootstrap<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_commandutils_.html">&quot;service/<wbr>Command<wbr>Utils&quot;</a>
+						<a href="modules/service_certificateservice.html">service/<wbr>Certificate<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_composeservice_.html">&quot;service/<wbr>Compose<wbr>Service&quot;</a>
+						<a href="modules/service_commandutils.html">service/<wbr>Command<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_configloader_.html">&quot;service/<wbr>Config<wbr>Loader&quot;</a>
+						<a href="modules/service_composeservice.html">service/<wbr>Compose<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_configservice_.html">&quot;service/<wbr>Config<wbr>Service&quot;</a>
+						<a href="modules/service_configloader.html">service/<wbr>Config<wbr>Loader</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_cryptoutils_.html">&quot;service/<wbr>Crypto<wbr>Utils&quot;</a>
+						<a href="modules/service_configservice.html">service/<wbr>Config<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_forgecertificateservice_.html">&quot;service/<wbr>Forge<wbr>Certificate<wbr>Service&quot;</a>
+						<a href="modules/service_cryptoutils.html">service/<wbr>Crypto<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_linkservice_.html">&quot;service/<wbr>Link<wbr>Service&quot;</a>
+						<a href="modules/service_forgecertificateservice.html">service/<wbr>Forge<wbr>Certificate<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_nemgenservice_.html">&quot;service/<wbr>Nemgen<wbr>Service&quot;</a>
+						<a href="modules/service_linkservice.html">service/<wbr>Link<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_portservice_.html">&quot;service/<wbr>Port<wbr>Service&quot;</a>
+						<a href="modules/service_nemgenservice.html">service/<wbr>Nemgen<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_reportservice_.html">&quot;service/<wbr>Report<wbr>Service&quot;</a>
+						<a href="modules/service_portservice.html">service/<wbr>Port<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_rewardprogramservice_.html">&quot;service/<wbr>Reward<wbr>Program<wbr>Service&quot;</a>
+						<a href="modules/service_reportservice.html">service/<wbr>Report<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_runservice_.html">&quot;service/<wbr>Run<wbr>Service&quot;</a>
+						<a href="modules/service_rewardprogramservice.html">service/<wbr>Reward<wbr>Program<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_sshpkservice_.html">&quot;service/<wbr>Sshpk<wbr>Service&quot;</a>
+						<a href="modules/service_runservice.html">service/<wbr>Run<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_votingservice_.html">&quot;service/<wbr>Voting<wbr>Service&quot;</a>
+						<a href="modules/service_sshpkservice.html">service/<wbr>Sshpk<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_service_index_.html">&quot;service/index&quot;</a>
+						<a href="modules/service_votingservice.html">service/<wbr>Voting<wbr>Service</a>
 					</li>
 				</ul>
 			</nav>
@@ -466,7 +459,6 @@ it(<span class="hljs-string">&#x27;Bootstrap e2e test&#x27;</span>, <span class=
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
