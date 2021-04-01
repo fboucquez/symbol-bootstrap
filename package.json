@@ -104,7 +104,7 @@
         "coveralls-report": "cat ./coverage/lcov.info | coveralls",
         "version": "echo $npm_package_version",
         "install-cli": "npm pack && npm i -g",
-        "publish": "aws s3 cp --recursive ./dist/symbol-bootstrap-* s3://symbol-bootstrap/dist/v$npm_package_version --acl public-read",
+        "publish": "aws s3 cp --recursive ./dist/symbol-bootstrap-v$npm_package_version/ s3://symbol-bootstrap/dist/v$npm_package_version --acl public-read",
         "tarToZip": "tar2zip ./dist/symbol-bootstrap-v$npm_package_version/*win32*.tar.gz",
         "dist": "oclif-dev pack && npm run tarToZip",
         "clean-network": "symbol-bootstrap clean -t target/bootstrap-test",
