@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Fixed case issue validating keys when creating certificates.
 
 ## [1.0.3] - Mar-31-2021
 
