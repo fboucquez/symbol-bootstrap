@@ -196,8 +196,12 @@ export class ConfigLoader {
         privateKey: string | undefined,
         publicKey: string | undefined,
     ): ConfigAccount {
-        const oldAccount = this.getAccount(networkType, oldStoredAccount?.publicKey, oldStoredAccount?.privateKey);
-        const newAccount = this.getAccount(networkType, publicKey, privateKey);
+        const oldAccount = this.getAccount(
+            networkType,
+            oldStoredAccount?.publicKey.toUpperCase(),
+            oldStoredAccount?.privateKey?.toUpperCase(),
+        );
+        const newAccount = this.getAccount(networkType, publicKey?.toUpperCase(), privateKey?.toUpperCase());
         if (oldAccount && !newAccount) {
             logger.info(`Reusing ${keyName} account ${oldAccount.address.plain()}`);
             return this.toConfig(oldAccount);
