@@ -34,13 +34,14 @@ export default class Config extends Command {
         noPassword: CommandUtils.noPasswordFlag,
         preset: flags.enum({
             char: 'p',
-            description: 'the network preset',
+            description:
+                'The network preset, can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.',
             options: Object.keys(Preset).map((v) => v as Preset),
-            default: ConfigService.defaultParams.preset,
         }),
         assembly: flags.string({
             char: 'a',
-            description: 'An optional assembly type, example "dual" for testnet',
+            description:
+                'The assembly, example "dual" for testnet. If not provided, the value is resolved from the target/preset.yml file.',
         }),
 
         customPreset: flags.string({

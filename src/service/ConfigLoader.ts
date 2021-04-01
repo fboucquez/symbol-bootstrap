@@ -331,28 +331,58 @@ export class ConfigLoader {
     private static getArray(size: number): number[] {
         return [...Array(size).keys()];
     }
+    private loadCustomPreset(customPreset: string | undefined, password: string | undefined): CustomPreset {
+        if (!customPreset) {
+            return {};
+        }
+        if (!existsSync(customPreset)) {
+            throw new KnownError(
+                `Custom preset '${customPreset}' doesn't exist. Have you provided the right --customPreset <customPrestFileLocation> ?`,
+            );
+        }
+        return BootstrapUtils.loadYaml(customPreset, password);
+    }
 
-    public createPresetData({
-        password,
-        root,
-        preset,
-        assembly,
-        customPreset,
-        customPresetObject,
-    }: {
+    private loadAssembly(root: string, preset: Preset, assembly: string | undefined): CustomPreset {
+        if (!assembly) {
+            return {};
+        }
+        const fileLocation = `${root}/presets/${preset}/assembly-${assembly}.yml`;
+        if (!existsSync(fileLocation)) {
+            throw new KnownError(
+                `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`,
+            );
+        }
+        return BootstrapUtils.loadYaml(fileLocation, false);
+    }
+
+    public createPresetData(params: {
         password: string | undefined;
         root: string;
-        preset: Preset;
+        preset?: Preset;
         assembly?: string;
         customPreset?: string;
         customPresetObject?: CustomPreset;
+        oldPresetData?: ConfigPreset;
     }): ConfigPreset {
-        const sharedPreset: ConfigPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
-        const networkPreset: CustomPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
-        const assemblyPreset: CustomPreset = assembly
-            ? BootstrapUtils.loadYaml(`${root}/presets/${preset}/assembly-${assembly}.yml`, false)
-            : {};
-        const customPresetFileObject: CustomPreset = customPreset ? BootstrapUtils.loadYaml(customPreset, password) : {};
+        const customPreset = params.customPreset;
+        const customPresetObject = params.customPresetObject;
+        const oldPresetData = params.oldPresetData;
+        const customPresetFileObject = this.loadCustomPreset(customPreset, params.password);
+        const preset =
+            params.preset ||
+            params.customPresetObject?.preset ||
+            customPresetFileObject?.preset ||
+            oldPresetData?.preset ||
+            Preset.bootstrap;
+
+        const assembly =
+            params.assembly || params.customPresetObject?.assembly || customPresetFileObject?.assembly || params.oldPresetData?.assembly;
+
+        const root = params.root;
+        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
+        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
+        const assemblyPreset = this.loadAssembly(root, preset, assembly);
         //Deep merge
         const inflation: Record<string, number> =
             customPresetObject?.inflation ||
@@ -360,39 +390,37 @@ export class ConfigLoader {
             assemblyPreset?.inflation ||
             networkPreset?.inflation ||
             sharedPreset?.inflation ||
-            {};
-        const presetData: ConfigPreset = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
-            version: 1,
-            bootstrapVersion: BootstrapUtils.VERSION,
-            preset: preset,
-            assembly: assembly || 'default',
+            [];
+        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
+            preset,
         });
-        presetData.inflation = inflation;
-        if (!ConfigLoader.presetInfoLogged) {
-            logger.info(`Generating config from preset ${preset}`);
-            if (assembly) {
-                logger.info(`Assembly preset ${assembly}`);
-            }
-            if (customPreset) {
-                logger.info(`Custom preset file ${customPreset}`);
-            }
-        }
-        ConfigLoader.presetInfoLogged = true;
         if (presetData.assemblies && !assembly) {
             throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
         }
-        const presetDataWithDynamicDefaults: ConfigPreset = {
+        presetData.inflation = inflation;
+        if (!ConfigLoader.presetInfoLogged) {
+            logger.info(`Generating config from preset '${preset}'`);
+            if (assembly) {
+                logger.info(`Using assembly '${assembly}'`);
+            }
+            if (customPreset) {
+                logger.info(`Using custom preset file '${customPreset}'`);
+            }
+        }
+        ConfigLoader.presetInfoLogged = true;
+        const presetDataWithDynamicDefaults = {
+            version: 1,
+            preset: preset,
+            assembly: assembly || '',
             ...presetData,
             nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
         };
-        return this.expandRepeat(presetDataWithDynamicDefaults);
+        return _.merge(oldPresetData || {}, this.expandRepeat(presetDataWithDynamicDefaults));
     }
 
     public dynamicDefaultNodeConfiguration(nodes?: NodePreset[]): NodePreset[] {
         return _.map(nodes || [], (node) => {
-            const expandedNodeConfiguration = { ...this.getDefaultConfiguration(node), ...node };
-            const roles = this.resolveRoles(expandedNodeConfiguration);
-            return { ...expandedNodeConfiguration, roles };
+            return { ...this.getDefaultConfiguration(node), ...node };
         });
     }
 
@@ -438,7 +466,7 @@ export class ConfigLoader {
         };
     }
 
-    private resolveRoles(nodePreset: NodePreset): string {
+    public static resolveRoles(nodePreset: NodePreset): string {
         if (nodePreset.roles) {
             return nodePreset.roles;
         }

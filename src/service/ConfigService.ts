@@ -67,7 +67,7 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
-    preset: Preset;
+    preset?: Preset;
     target: string;
     password?: string;
     user: string;
@@ -88,7 +88,6 @@ export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
         report: false,
-        preset: Preset.bootstrap,
         reset: false,
         upgrade: false,
         pullImages: false,
@@ -177,10 +176,7 @@ export class ConfigService {
     }
 
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
-        return _.merge(
-            _.omit(oldPresetData || {}, 'inflation'),
-            this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }),
-        );
+        return this.configLoader.createPresetData({ ...this.params, root: this.root, password: password, oldPresetData });
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -237,13 +233,13 @@ export class ConfigService {
             await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
             return;
         }
-        const finalNemesisSeed = join(this.root, 'presets', this.params.preset, 'seed');
+        const finalNemesisSeed = join(this.root, 'presets', presetData.preset, 'seed');
         if (existsSync(finalNemesisSeed)) {
             await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
-            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
+            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
             return;
         }
-        logger.warn(`Seed for preset ${this.params.preset} could not be found in ${finalNemesisSeed}`);
+        logger.warn(`Seed for preset ${presetData.preset} could not be found in ${finalNemesisSeed}`);
 
         throw new Error('Seed could not be found!!!!');
     }
@@ -316,6 +312,7 @@ export class ConfigService {
                 ? presetData.votingUnfinalizedBlocksDuration
                 : presetData.nonVotingUnfinalizedBlocksDuration,
             beneficiaryAddress: beneficiaryAddress == undefined ? account.main.address : beneficiaryAddress,
+            roles: ConfigLoader.resolveRoles(nodePreset),
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];

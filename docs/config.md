@@ -14,14 +14,16 @@ USAGE
   $ symbol-bootstrap config
 
 OPTIONS
-  -a, --assembly=assembly                   An optional assembly type, example "dual" for testnet
+  -a, --assembly=assembly                   The assembly, example "dual" for testnet. If not provided, the value is
+                                            resolved from the target/preset.yml file.
 
   -c, --customPreset=customPreset           External preset file. Values in this file will override the provided presets
                                             (optional)
 
   -h, --help                                It shows the help of this command.
 
-  -p, --preset=(bootstrap|testnet|mainnet)  [default: bootstrap] the network preset
+  -p, --preset=(bootstrap|testnet|mainnet)  The network preset, can be provided via custom preset or cli parameter. If
+                                            not provided, the value is resolved from the target/preset.yml file.
 
   -r, --reset                               It resets the configuration generating a new one
 
