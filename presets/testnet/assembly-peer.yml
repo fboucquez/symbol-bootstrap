@@ -4,4 +4,3 @@ nodes:
       api: false
       name: 'node'
       openPort: true
-      host: ''

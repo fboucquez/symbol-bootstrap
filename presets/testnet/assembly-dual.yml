@@ -5,7 +5,6 @@ nodes:
     - harvesting: true
       api: true
       name: 'node'
-      host: ''
       databaseHost: 'db'
       brokerName: 'broker'
       openPort: true

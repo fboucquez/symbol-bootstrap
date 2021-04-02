@@ -129,7 +129,7 @@ services:
                 ipv4_address: 172.20.0.25
     wallet-0:
         container_name: wallet-0
-        image: 'symbolplatform/symbol-desktop-wallet:0.13.6'
+        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:

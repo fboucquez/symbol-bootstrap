@@ -131,4 +131,34 @@ describe('ConfigService', () => {
             CryptoUtils.removePrivateKeys(configResultInitial.presetData),
         );
     });
+
+    it('ConfigService testnet supernode assembly after upgrade', async () => {
+        const configResultInitial = await new ConfigService('.', {
+            ...ConfigService.defaultParams,
+            reset: true,
+            target: 'target/tests/ConfigService.testnet.supernode',
+            preset: Preset.testnet,
+            customPreset: 'test/unit-test-profiles/supernode.yml',
+            assembly: 'dual',
+        }).run();
+        const configResultUpgrade = await new ConfigService('.', {
+            ...ConfigService.defaultParams,
+            upgrade: true,
+            target: 'target/tests/ConfigService.testnet.supernode',
+            preset: Preset.testnet,
+            assembly: 'dual',
+        }).run();
+        expect(CryptoUtils.removePrivateKeys(configResultUpgrade.presetData)).deep.eq(
+            CryptoUtils.removePrivateKeys(configResultInitial.presetData),
+        );
+        const configResultUpgradeSecond = await new ConfigService('.', {
+            ...ConfigService.defaultParams,
+            upgrade: true,
+            target: 'target/tests/ConfigService.testnet.supernode',
+        }).run();
+
+        expect(CryptoUtils.removePrivateKeys(configResultUpgradeSecond.presetData)).deep.eq(
+            CryptoUtils.removePrivateKeys(configResultInitial.presetData),
+        );
+    });
 });

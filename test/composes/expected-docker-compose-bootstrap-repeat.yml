@@ -316,7 +316,7 @@ services:
                 ipv4_address: 172.20.0.28
     wallet-0:
         container_name: wallet-0
-        image: 'symbolplatform/symbol-desktop-wallet:0.13.6'
+        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
@@ -326,7 +326,7 @@ services:
             - '../wallets/wallet-0:/usr/share/nginx/html/config:ro'
     wallet-1:
         container_name: wallet-1
-        image: 'symbolplatform/symbol-desktop-wallet:0.13.6'
+        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
