@@ -32,7 +32,7 @@ import * as Handlebars from 'handlebars';
 import { get } from 'https';
 import * as _ from 'lodash';
 import { platform, totalmem } from 'os';
-import { basename, join, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
@@ -402,6 +402,13 @@ export class BootstrapUtils {
         await fsPromises.mkdir(path, { recursive: true });
     }
 
+    public static async mkdirParentFolder(fileName: string): Promise<void> {
+        const parentFolder = dirname(fileName);
+        if (parentFolder) {
+            await BootstrapUtils.mkdir(parentFolder);
+        }
+    }
+
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
         const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
@@ -457,6 +464,7 @@ export class BootstrapUtils {
     }
 
     public static async writeTextFile(path: string, text: string): Promise<void> {
+        await BootstrapUtils.mkdirParentFolder(path);
         await fsPromises.writeFile(path, text, 'utf8');
     }
 

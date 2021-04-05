@@ -12,52 +12,40 @@ services:
         volumes:
             - './mongo:/docker-entrypoint-initdb.d:ro'
             - '../databases/db:/dbdata:rw'
-    api-node:
+    node:
         user: '1000:1000'
-        container_name: api-node
-        image: 'symbolplatform/symbol-server:gcc-0.10.1.8'
-        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker api-node NORMAL true
+        container_name: node
+        image: 'symbolplatform/symbol-server:gcc-1.0.0.0'
+        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         ports:
             - '7900:7900'
         volumes:
-            - '../nodes/api-node:/symbol-workdir:rw'
+            - '../nodes/node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
             - db
-            - api-broker
+            - broker
         networks:
             default:
                 aliases:
                     - fboucquez-agent-symbollocal.ngrok.io
         hostname: fboucquez-agent-symbollocal.ngrok.io
-    api-broker:
+    broker:
         user: '1000:1000'
-        container_name: api-broker
-        image: 'symbolplatform/symbol-server:gcc-0.10.1.8'
+        container_name: broker
+        image: 'symbolplatform/symbol-server:gcc-1.0.0.0'
         working_dir: /symbol-workdir
-        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server api-broker NORMAL
+        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker NORMAL
         stop_signal: SIGINT
         restart: 'on-failure:2'
         volumes:
-            - '../nodes/api-node:/symbol-workdir:rw'
+            - '../nodes/node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
         depends_on:
             - db
-    #    api-node-agent:
-    #        user: '1000:1000'
-    #        container_name: api-node-agent
-    #        image: 'symbolplatform/symbol-node-rewards-agent:1.0.1'
-    #        working_dir: /symbol-workdir
-    #        entrypoint: /app/agent-linux.bin --config agent.properties
-    #        ports:
-    #            - '7880:7880'
-    #        stop_signal: SIGINT
-    #        restart: 'on-failure:2'
-    #        volumes:
-    #            - '../nodes/api-node/agent:/symbol-workdir:rw'
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'

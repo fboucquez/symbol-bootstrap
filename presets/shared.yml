@@ -63,11 +63,11 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-0.10.0.8
-symbolServerImage: symbolplatform/symbol-server:gcc-0.10.0.8
+symbolServerToolsImage: symbolplatform/symbol-server:tools-gcc-1.0.0.0
+symbolServerImage: symbolplatform/symbol-server:gcc-1.0.0.0
 symbolRestImage: symbolplatform/symbol-rest:2.3.5
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
-symbolWalletImage: symbolplatform/symbol-desktop-wallet:0.13.6
+symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
 symbolFaucetImage: symbolplatform/symbol-faucet:0.5.0-alpha
 symbolAgentImage: symbolplatform/symbol-node-rewards-agent:1.0.1
 mongoImage: mongo:4.4.3-bionic
@@ -126,7 +126,6 @@ timeSynchronizationMinImportance: 3750
 maxIncomingConnectionsPerIdentity: 6
 enableAddressReuse: false
 nodeListenInterface: 0.0.0.0
-serverVersion: 0.10.0.8
 enableTransactionSpamThrottling: true
 transactionSpamThrottlingMaxBoostFee: 10000000
 maxHashesPerSyncAttempt: 370
@@ -160,10 +159,9 @@ delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
-
-minPartnerNodeVersion: 0.10.0.7
-maxPartnerNodeVersion: 0.10.0.8
-
+minPartnerNodeVersion: 1.0.0.0
+maxPartnerNodeVersion: 1.0.255.255
+serverVersion: 1.0.0.0
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20
