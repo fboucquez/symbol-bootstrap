@@ -46,7 +46,7 @@ describe('BootstrapService', () => {
                 throw new Error('Nemesis accounts could not be loaded!');
             }
 
-            const maxFee = UInt64.fromUint(1000000);
+            const maxFee = UInt64.fromUint(10000000);
             const account = Account.createFromPrivateKey(nemesisAccounts[0], networkType);
 
             const recipient = Account.generateNewAccount(networkType);
@@ -60,8 +60,9 @@ describe('BootstrapService', () => {
                 networkType,
                 maxFee,
             );
+            await BootstrapUtils.sleep(100);
             const signedTransaction = account.sign(transferTransaction, generationHash);
-            console.log('Announcing!!');
+            console.log(`Announcing transaction hash http://localhost:3000/transactions/unconfirmed/${signedTransaction.hash}`);
             const announcedTransaction = await transactionService.announce(signedTransaction, listener).toPromise();
             console.log('Confirmed!!!');
             expect(announcedTransaction.signer?.address.plain()).eq(account.publicAccount.address.plain());

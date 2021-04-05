@@ -402,6 +402,13 @@ export class BootstrapUtils {
         await fsPromises.mkdir(path, { recursive: true });
     }
 
+    public static async mkdirParentFolder(fileName: string): Promise<void> {
+        const parentFolder = dirname(fileName);
+        if (parentFolder) {
+            await BootstrapUtils.mkdir(parentFolder);
+        }
+    }
+
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static async writeYaml(fileName: string, object: any, password: string | undefined): Promise<void> {
         const parentFolder = dirname(fileName);
@@ -461,6 +468,7 @@ export class BootstrapUtils {
     }
 
     public static async writeTextFile(path: string, text: string): Promise<void> {
+        await BootstrapUtils.mkdirParentFolder(path);
         await fsPromises.writeFile(path, text, 'utf8');
     }
 

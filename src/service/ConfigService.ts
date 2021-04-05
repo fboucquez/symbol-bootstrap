@@ -15,7 +15,7 @@
  */
 
 import * as fs from 'fs';
-import { copyFileSync, existsSync } from 'fs';
+import { copyFileSync, existsSync, promises as fsPromises } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import {
@@ -430,7 +430,7 @@ export class ConfigService {
                     },
                     metadata: {
                         name: nodePresetData.friendlyName,
-                        roles: nodePresetData.roles,
+                        roles: ConfigLoader.resolveRoles(nodePresetData),
                     },
                 };
             })
@@ -684,6 +684,10 @@ export class ConfigService {
                 const name = templateContext.name || `wallet-${index}`;
                 const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+                await fsPromises.chmod(join(moveTo, 'app.conf.js'), 0o777);
+                await fsPromises.chmod(join(moveTo, 'fees.conf.js'), 0o777);
+                await fsPromises.chmod(join(moveTo, 'network.conf.js'), 0o777);
+                await fsPromises.chmod(join(moveTo, 'profileImporter.html'), 0o777);
                 await Promise.all(
                     (explorerPreset.profiles || []).map(async (profile) => {
                         if (!profile.name) {
