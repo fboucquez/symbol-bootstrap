@@ -95,6 +95,7 @@ describe('Wizard', () => {
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
+            skipPull: true,
             target: `${testFolder}/target`,
             password: password,
         });
@@ -157,6 +158,7 @@ describe('Wizard', () => {
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
+            skipPull: true,
             target: `${testFolder}/target`,
             password: password,
         });

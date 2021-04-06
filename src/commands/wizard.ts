@@ -99,11 +99,12 @@ export default class Wizard extends Command {
         root: string,
         flags: {
             noPassword: boolean;
+            skipPull?: boolean;
             target: string;
             password: string | undefined;
             network: Network | undefined;
             customPreset: string;
-            ready: boolean | undefined;
+            ready?: boolean;
         },
     ): Promise<void> {
         BootstrapUtils.showBanner();
@@ -134,19 +135,21 @@ export default class Wizard extends Command {
             return;
         }
 
-        const service = await new BootstrapService();
-        console.log();
-        console.log('Pulling catapult tools image before asking to go offline...');
-        console.log();
-        ConfigLoader.presetInfoLogged = true;
-        await BootstrapUtils.pullImage(
-            service.resolveConfigPreset({
-                ...ConfigService.defaultParams,
-                preset: preset,
-                assembly: assembly,
-                target: target,
-            }).symbolServerToolsImage,
-        );
+        if (!flags.skipPull) {
+            const service = await new BootstrapService();
+            console.log();
+            console.log('Pulling catapult tools image before asking to go offline...');
+            console.log();
+            ConfigLoader.presetInfoLogged = true;
+            await BootstrapUtils.pullImage(
+                service.resolveConfigPreset({
+                    ...ConfigService.defaultParams,
+                    preset: preset,
+                    assembly: assembly,
+                    target: target,
+                }).symbolServerToolsImage,
+            );
+        }
         console.log();
         console.log();
         if (
