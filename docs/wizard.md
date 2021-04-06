@@ -30,6 +30,8 @@ OPTIONS
                                             can be provided in the command line (--password=XXXX) or disabled in the
                                             command line (--noPassword).
 
+  --ready                                   If --ready is provided, the command will not ask offline confirmation.
+
 EXAMPLE
   $ symbol-bootstrap wizard
 ```

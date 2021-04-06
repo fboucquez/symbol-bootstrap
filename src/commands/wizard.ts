@@ -21,7 +21,7 @@ import { prompt } from 'inquirer';
 import { ExtendedKey, MnemonicPassPhrase, Network as SeedNetwork, Wallet } from 'symbol-hd-wallets';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
-import { BootstrapUtils, CommandUtils, ConfigService, KeyName, Preset, RewardProgram } from '../service';
+import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset, RewardProgram } from '../service';
 
 export const assemblies: Record<Preset, { value: string; description: string }[]> = {
     [Preset.bootstrap]: [
@@ -85,6 +85,9 @@ export default class Wizard extends Command {
         noPassword: CommandUtils.noPasswordFlag,
         network: Wizard.getNetworkIdFlag(),
         customPreset: Wizard.getCustomPresetFile(),
+        ready: flags.boolean({
+            description: 'If --ready is provided, the command will not ask offline confirmation.',
+        }),
     };
 
     public async run(): Promise<void> {
@@ -100,6 +103,7 @@ export default class Wizard extends Command {
             password: string | undefined;
             network: Network | undefined;
             customPreset: string;
+            ready: boolean | undefined;
         },
     ): Promise<void> {
         BootstrapUtils.showBanner();
@@ -130,19 +134,43 @@ export default class Wizard extends Command {
             return;
         }
 
-        const { offlineNow } = await prompt([
-            {
-                name: 'offlineNow',
-                message: `Bootstrap is going to ask and/or generate private keys and mnemonic phrases. This machine should no be connected to internet. Are you offline?`,
-                type: 'confirm',
-                default: true,
-            },
-        ]);
-
-        if (!offlineNow) {
+        const service = await new BootstrapService();
+        console.log();
+        console.log('Pulling catapult tools image before asking to go offline...');
+        console.log();
+        ConfigLoader.presetInfoLogged = true;
+        await BootstrapUtils.pullImage(
+            service.resolveConfigPreset({
+                ...ConfigService.defaultParams,
+                preset: preset,
+                assembly: assembly,
+                target: target,
+            }).symbolServerToolsImage,
+        );
+        console.log();
+        console.log();
+        if (
+            !flags.ready &&
+            !(
+                await prompt([
+                    {
+                        name: 'offlineNow',
+                        message: `Symbol Bootstrap is about to start working with sensitive information (private keys or mnemonic phrases) so it is highly recommended that you disconnect from the network before continuing. Say YES if you are offline or if you don't care.`,
+                        type: 'confirm',
+                        default: true,
+                    },
+                ])
+            ).offlineNow
+        ) {
             console.log('Come back when you are offline...');
             return;
         }
+
+        console.log();
+        console.log(
+            'Symbol bootstrap needs to provide the node with a number of key pairs (Read more at https://docs.symbolplatform.com/concepts/cryptography.html#symbol-keys).',
+        );
+        console.log(`If you don't know what a key is used for, let Symbol Bootstrap generate a new one for you.`);
 
         const password = await CommandUtils.resolvePassword(
             flags.password,
@@ -278,14 +306,33 @@ export default class Wizard extends Command {
         networkType: NetworkType,
         derivedAccount: DerivedAccount | undefined,
     ): Promise<ProvidedAccounts> {
+        console.log();
         return {
             seeded: true,
             main: derivedAccount
                 ? derivedAccount.account
-                : await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.Main, 0),
-            transport: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.Transport, 1),
-            vrf: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.VRF, 2),
-            remote: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.Remote, 3),
+                : await this.resolveAccountFromSelection(
+                      networkType,
+                      derivedAccount,
+                      KeyName.Main,
+                      0,
+                      'It holds the tokens required to give the node its importance.',
+                  ),
+            transport: await this.resolveAccountFromSelection(
+                networkType,
+                derivedAccount,
+                KeyName.Transport,
+                1,
+                'It is used by nodes for secure transport over TLS.',
+            ),
+            vrf: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.VRF, 2, 'It is required for harvesting.'),
+            remote: await this.resolveAccountFromSelection(
+                networkType,
+                derivedAccount,
+                KeyName.Remote,
+                3,
+                'It is used to harvest and collect the rewards on behalf of the main account in remote harvesting .',
+            ),
         };
     }
 
@@ -294,7 +341,9 @@ export default class Wizard extends Command {
         derivedAccount: DerivedAccount | undefined,
         keyName: KeyName,
         changeIndex: number,
+        keyDescription: string,
     ): Promise<Account> {
+        console.log(`${keyName} Key Pair: ${keyDescription}`);
         while (true) {
             const keyCreationChoices = [];
             keyCreationChoices.push({ name: 'Generating a new account', value: 'generate' });
@@ -443,7 +492,6 @@ export default class Wizard extends Command {
     }
 
     public static async resolveImportMode(): Promise<ImportType> {
-        console.log('It is highly recommended to use a Paper Wallet so all your keys kept there');
         const responses = await prompt([
             {
                 name: 'mode',

@@ -14,14 +14,15 @@ USAGE
   $ symbol-bootstrap pack
 
 OPTIONS
-  -a, --assembly=assembly                   An optional assembly type, example "dual" for testnet
+  -a, --assembly=assembly                   (required) The assembly, example "dual" for testnet.
 
-  -c, --customPreset=customPreset           External preset file. Values in this file will override the provided presets
-                                            (optional)
+  -c, --customPreset=customPreset           (required) External preset file. Values in this file will override the
+                                            provided presets
 
   -h, --help                                It shows the help of this command.
 
-  -p, --preset=(bootstrap|testnet|mainnet)  [default: bootstrap] the network preset
+  -p, --preset=(bootstrap|testnet|mainnet)  (required) The network preset, can be provided via custom preset or cli
+                                            parameter.
 
   -r, --reset                               It resets the configuration generating a new one
 
@@ -42,6 +43,8 @@ OPTIONS
 
   --pullImages                              It pulls the utility images from DockerHub when running the configuration.
                                             It only affects alpha/dev docker images.
+
+  --ready                                   If --ready is provided, the command will not ask offline confirmation.
 
   --report                                  It generates reStructuredText (.rst) reports describing the configuration of
                                             each node.

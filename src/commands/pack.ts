@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
+import { prompt } from 'inquirer';
 import { dirname, join } from 'path';
 import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, ZipItem, ZipUtils } from '../service';
 import Clean from './clean';
@@ -36,20 +37,43 @@ export default class Pack extends Command {
     static flags = {
         ...Compose.flags,
         ...Clean.flags,
-        ...Config.flags,
+        ...Config.resolveFlags(true),
+        ready: flags.boolean({
+            description: 'If --ready is provided, the command will not ask offline confirmation.',
+        }),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Pack);
         BootstrapUtils.showBanner();
-
-        const targetZip = join(dirname(flags.target), `${flags.preset}-${flags.assembly || 'default'}-node.zip`);
+        const preset = flags.preset;
+        const assembly = flags.assembly;
+        const targetZip = join(dirname(flags.target), `${preset}-${assembly || 'default'}-node.zip`);
 
         if (existsSync(targetZip)) {
             throw new Error(
                 `The target zip file ${targetZip} already exist. Do you want to delete it before repackaging your target folder?`,
             );
         }
+        console.log();
+        console.log();
+        if (
+            !flags.ready &&
+            !(
+                await prompt([
+                    {
+                        name: 'offlineNow',
+                        message: `Symbol Bootstrap is about to start working with sensitive information (certificates and voting file generation) so it is highly recommended that you disconnect from the network before continuing. Say YES if you are offline or if you don't care.`,
+                        type: 'confirm',
+                        default: true,
+                    },
+                ])
+            ).offlineNow
+        ) {
+            console.log('Come back when you are offline...');
+            return;
+        }
+
         flags.password = await CommandUtils.resolvePassword(
             flags.password,
             flags.noPassword,
@@ -89,10 +113,6 @@ export default class Pack extends Command {
         await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
         console.log();
         console.log(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
-        console.log(
-            `$ symbol-bootstrap start -p ${flags.preset}${
-                flags.assembly ? ` -a ${flags.assembly}` : ''
-            } -c ${configOnlyCustomPresetFileName}`,
-        );
+        console.log(`$ symbol-bootstrap start -p ${preset}${assembly ? ` -a ${assembly}` : ''} -c ${configOnlyCustomPresetFileName}`);
     }
 }

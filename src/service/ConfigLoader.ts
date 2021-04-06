@@ -39,7 +39,7 @@ import { CryptoUtils } from './CryptoUtils';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class ConfigLoader {
-    private static presetInfoLogged = false;
+    public static presetInfoLogged = false;
 
     public async generateRandomConfiguration(oldAddresses: Addresses | undefined, presetData: ConfigPreset): Promise<Addresses> {
         const networkType = presetData.networkType;
@@ -331,7 +331,7 @@ export class ConfigLoader {
     private static getArray(size: number): number[] {
         return [...Array(size).keys()];
     }
-    private loadCustomPreset(customPreset: string | undefined, password: string | undefined): CustomPreset {
+    private loadCustomPreset(customPreset: string | undefined, password: Password): CustomPreset {
         if (!customPreset) {
             return {};
         }
@@ -357,7 +357,7 @@ export class ConfigLoader {
     }
 
     public createPresetData(params: {
-        password: string | undefined;
+        password: Password;
         root: string;
         preset?: Preset;
         assembly?: string;

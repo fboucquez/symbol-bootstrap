@@ -34,7 +34,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, CustomPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
-import { BootstrapUtils, KnownError } from './BootstrapUtils';
+import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -97,6 +97,16 @@ export class ConfigService {
 
     constructor(private readonly root: string, private readonly params: ConfigParams) {
         this.configLoader = new ConfigLoader();
+    }
+
+    public resolveConfigPreset(password: Password): ConfigPreset {
+        const target = this.params.target;
+        const presetLocation = this.configLoader.getGeneratedPresetLocation(target);
+        if (fs.existsSync(presetLocation) && !this.params.upgrade) {
+            return this.configLoader.loadExistingPresetData(target, password);
+        }
+        const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target, password);
+        return this.resolveCurrentPresetData(oldPresetData, password);
     }
 
     public async run(): Promise<ConfigResult> {
@@ -175,7 +185,7 @@ export class ConfigService {
         }
     }
 
-    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
+    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
         return this.configLoader.createPresetData({ ...this.params, root: this.root, password: password, oldPresetData });
     }
 
