@@ -17,6 +17,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Fixed case issue validating keys when creating certificates.
 -   Updated Wallet to latest 1.0.1 release.
 -   Node properties sinkType: Async and enableSingleThreadPool: false by default in peer nodes too.
+-   Dropped NodeJS 10 support. Added Node LTS and Stable Support. 
 
 ## [1.0.3] - Mar-31-2021
 
