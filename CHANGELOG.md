@@ -16,6 +16,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Fixed host override when no custom preset is provided in mainnet.
 -   Fixed case issue validating keys when creating certificates.
 -   Updated Wallet to latest 1.0.1 release.
+-   Dropped NodeJS 10 support. Added Node LTS and Stable Support. 
 
 ## [1.0.3] - Mar-31-2021
 
