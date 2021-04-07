@@ -140,6 +140,8 @@ unconfirmedTransactionsCacheMaxResponseSize: 5MB
 unconfirmedTransactionsCacheMaxSize: 20MB
 connectTimeout: 15s
 syncTimeout: 20m
+enableSingleThreadPool: false
+sinkType: Async
 socketWorkingBufferSize: 16KB
 socketWorkingBufferSensitivity: 1
 maxPacketDataSize: 150MB

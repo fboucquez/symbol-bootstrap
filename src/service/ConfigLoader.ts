@@ -430,39 +430,32 @@ export class ConfigLoader {
                 syncsource: true,
                 filespooling: true,
                 partialtransaction: true,
-                openPort: true,
-                sinkType: 'Async',
-                enableSingleThreadPool: false,
                 addressextraction: true,
-                enableAutoSyncCleanup: false,
                 mongo: true,
                 zeromq: true,
+                enableAutoSyncCleanup: false,
             };
         }
         if (node.api) {
             return {
-                sinkType: 'Async',
                 syncsource: false,
                 filespooling: true,
                 partialtransaction: true,
-                enableSingleThreadPool: false,
                 addressextraction: true,
                 mongo: true,
                 zeromq: true,
                 enableAutoSyncCleanup: false,
             };
         }
-        //peer only (harvesting or not).
+        // peer only (harvesting or not).
         return {
-            sinkType: 'Sync',
-            enableSingleThreadPool: true,
+            syncsource: true,
+            filespooling: false,
+            partialtransaction: false,
             addressextraction: false,
             mongo: false,
             zeromq: false,
-            syncsource: true,
-            filespooling: false,
             enableAutoSyncCleanup: true,
-            partialtransaction: false,
         };
     }
 
