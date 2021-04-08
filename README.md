@@ -92,7 +92,7 @@ The folder where the generated config, docker files and data are stored. The fol
 
 # Requirements
 
--   Node 10+
+-   Node 12+
 -   Docker
 -   Docker Compose
 
