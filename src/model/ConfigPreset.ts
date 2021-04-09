@@ -82,11 +82,16 @@ export enum DebugLevel {
     max = 'Max',
 }
 
+export enum SinkType {
+    async = 'Async',
+    sync = 'Sync',
+}
+
 export interface NodeConfigPreset {
     syncsource: boolean;
     filespooling: boolean;
     partialtransaction: boolean;
-    sinkType: 'Async' | 'Sync';
+    sinkType: SinkType;
     enableSingleThreadPool: boolean;
     addressextraction: boolean;
     mongo: boolean;
