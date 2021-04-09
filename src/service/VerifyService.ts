@@ -41,6 +41,7 @@ const defaultExpectedVersions: ExpectedVersions = {
 
 export class VerifyService {
     private readonly expectedVersions: ExpectedVersions;
+    public readonly semverOptions = { loose: true };
 
     constructor(private readonly root = BootstrapUtils.resolveRootFolder(), expectedVersions: Partial<ExpectedVersions> = {}) {
         this.expectedVersions = { ...defaultExpectedVersions, ...expectedVersions };
@@ -60,12 +61,12 @@ export class VerifyService {
         return { lines, platform };
     }
 
-    private loadVersion(text: string): string | undefined {
+    public loadVersion(text: string): string | undefined {
         return text
             .replace(',', '')
             .split(' ')
             .map((word) => {
-                const coerce = semver.coerce(word.trim().replace('.0', '.'));
+                const coerce = semver.coerce(word.trim(), this.semverOptions);
                 return coerce?.raw;
             })
             .find((a) => a)
@@ -158,7 +159,7 @@ export class VerifyService {
                     recommendation: `At least version ${minVersion} is required. Check ${recommendationUrl}`,
                 };
             }
-            if (semver.lt(version, minVersion)) {
+            if (semver.lt(version, minVersion, this.semverOptions)) {
                 return {
                     header,
                     message: version,

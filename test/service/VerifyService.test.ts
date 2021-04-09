@@ -20,13 +20,21 @@ import { BootstrapUtils, VerifyService } from '../../src/service';
 
 describe('VerifyService', () => {
     const currentNodeJsVersion = process.versions.node;
+
+    it('loadVersion', async () => {
+        const service = new VerifyService();
+        expect(service.loadVersion('Docker version 19.03.8, build afacb8b7f0')).eq('19.03.8');
+        expect(service.loadVersion('Docker version 19.0.8, build afacb8b7f0')).eq('19.0.8');
+        expect(service.loadVersion('Docker version 19 build a')).eq('19.0.0');
+    });
+
     it('VerifyService verify current installation', async () => {
         const service = new VerifyService();
         const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
         const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
-        expect(semver.valid(currentNodeJsVersion));
-        expect(semver.valid(currentDockerVersion));
-        expect(semver.valid(currentDockerComposeVersion));
+        expect(semver.valid(currentNodeJsVersion, service.semverOptions));
+        expect(semver.valid(currentDockerVersion, service.semverOptions));
+        expect(semver.valid(currentDockerComposeVersion, service.semverOptions));
         const report = await service.createReport();
         const expected = {
             lines: [
@@ -65,9 +73,9 @@ describe('VerifyService', () => {
         const service = new VerifyService(BootstrapUtils.resolveRootFolder(), expectedVersions);
         const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
         const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
-        expect(semver.valid(currentNodeJsVersion));
-        expect(semver.valid(currentDockerVersion));
-        expect(semver.valid(currentDockerComposeVersion));
+        expect(semver.valid(currentNodeJsVersion, service.semverOptions));
+        expect(semver.valid(currentDockerVersion, service.semverOptions));
+        expect(semver.valid(currentDockerComposeVersion, service.semverOptions));
 
         const report = await service.createReport();
         const expected = {
