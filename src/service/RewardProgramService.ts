@@ -68,7 +68,7 @@ export class RewardProgramService implements TransactionFactory {
         throw new KnownError(`${value} is not a valid Reward program. Please use one of ${programs.join(', ')}`);
     }
 
-    public async enrol(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
+    public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         if (!presetData.rewardProgramControllerPublicKey) {
@@ -119,7 +119,7 @@ export class RewardProgramService implements TransactionFactory {
             return transactions;
         }
         const agentUrl = nodePreset.agentUrl || `https://${nodePreset.host}:7880`;
-        const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
+        const plainMessage = `enroll ${agentPublicKey} ${agentUrl}`;
         const message = PlainMessage.create(plainMessage);
         logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
         const transaction: Transaction = TransferTransaction.create(
