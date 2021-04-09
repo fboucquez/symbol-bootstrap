@@ -150,21 +150,19 @@
 					<li>  <code>./gateways</code>: it holds the configuration and logs for all the defined node rest gateways.</li>
 					<li>  <code>./nemesis</code>: The folder used to hold the nemesis block. Block 1 data is generated via <code>nemgen</code> tool for new networks. For existing network, it is copied over.</li>
 					<li>  <code>./databases</code>: the location where the mongo data is stored for the different database instances.</li>
-					<li>  <code>./docker</code>: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. </li>
+					<li>  <code>./docker</code>: the generated docker-compose.yml, mongo init scripts and server basic bash scripts.</li>
 					<li>  <code>./reports</code>: the location of the generated reports.</li>
 				</ul>
 				<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
 					<h1>Requirements</h1>
 				</a>
 				<ul>
-					<li>  Node 10+</li>
-					<li>  Docker</li>
-					<li>  Docker Compose</li>
+					<li>  Node 12.0.0+</li>
+					<li>  Docker 18.3.0+</li>
+					<li>  Docker Compose 1.25.0+</li>
 				</ul>
 				<p>Validate your environment by running:</p>
-				<pre><code><span style="color: #001080">node</span><span style="color: #000000"> -</span><span style="color: #001080">v</span>
-<span style="color: #001080">docker</span><span style="color: #000000"> -</span><span style="color: #001080">v</span>
-<span style="color: #001080">docker</span><span style="color: #000000">-</span><span style="color: #001080">compose</span><span style="color: #000000"> -</span><span style="color: #001080">v</span>
+				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">verify</span>
 </code></pre>
 				<p>Check your user can run docker without sudo:</p>
 				<pre><code><span style="color: #001080">docker</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">hello</span><span style="color: #000000">-</span><span style="color: #001080">world</span>
@@ -245,8 +243,8 @@ USAGE
 				</a>
 				<p>Alternatively, you can use the <a href="https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
 				<p>Example:</p>
-				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">BootstrapService</span><span style="color: #000000">, </span><span style="color: #001080">StartParams</span><span style="color: #000000">, </span><span style="color: #001080">Preset</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;symbol-bootstrap&#039;</span><span style="color: #000000">; </span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">expect</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@oclif/test&#039;</span><span style="color: #000000">; </span>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">BootstrapService</span><span style="color: #000000">, </span><span style="color: #001080">StartParams</span><span style="color: #000000">, </span><span style="color: #001080">Preset</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;symbol-bootstrap&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">expect</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@oclif/test&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #795E26">it</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Bootstrap e2e test&#039;</span><span style="color: #000000">, </span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
 <span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">service</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BootstrapService</span><span style="color: #000000">();</span>
@@ -304,6 +302,7 @@ USAGE
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
 					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
+					<li><a href="docs/verify.md"><code>symbol-bootstrap verify</code></a> - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.</li>
 				</ul>
 				<!-- commandsstop -->
 				<pre><code>
@@ -354,6 +353,9 @@ USAGE
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/commands_stop.html">commands/stop</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/commands_verify.html">commands/verify</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/index.html">index</a>
@@ -441,6 +443,9 @@ USAGE
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/service_sshpkservice.html">service/<wbr>Sshpk<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/service_verifyservice.html">service/<wbr>Verify<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/service_votingservice.html">service/<wbr>Voting<wbr>Service</a>
