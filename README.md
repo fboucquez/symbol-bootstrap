@@ -17,6 +17,8 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 * [Concepts](#concepts)
 * [Requirements](#requirements)
 * [Usage](#usage)
+* [General Usage](#general-usage)
+* [Wizard](#wizard)
 * [E2E Testing support](#e2e-testing-support)
 * [Development](#development)
 * [Commands](#commands)
@@ -143,6 +145,8 @@ USAGE
 ```
 <!-- usagestop -->
 
+# General Usage
+
 The general usage would be:
 
 ```
@@ -161,6 +165,14 @@ If you need to start fresh, you many need to sudo remove the target folder (dock
 
 ```
 sudo rm -rf ./target
+```
+
+# Wizard
+
+If this is your first time creating a node, it's recommended to use the Wizard. Just follow the instructions:
+
+```
+symbol-bootstrap wizard
 ```
 
 # E2E Testing support
@@ -278,8 +290,8 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 * [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
 * [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
-* [`symbol-bootstrap wizard`](docs/wizard.md) - An utility command that will help you configuring node!
 * [`symbol-bootstrap verify`](docs/verify.md) - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.
+* [`symbol-bootstrap wizard`](docs/wizard.md) - An utility command that will help you configuring node!
 
 <!-- commandsstop -->
 
