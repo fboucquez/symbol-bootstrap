@@ -84,19 +84,18 @@ export class VerifyService {
         const command = 'docker --version';
         const recommendationUrl = `https://docs.docker.com/get-docker/`;
         return this.verifyInstalledApp(
-            async () => (await BootstrapUtils.exec(command)).stdout.trim(),
+            async () => await this.loadVersionFromCommand(command),
             header,
             this.expectedVersions.docker,
             recommendationUrl,
         );
     }
-
     public async testDockerCompose(): Promise<ReportLine> {
         const header = 'Docker Compose Version';
         const command = 'docker-compose --version';
         const recommendationUrl = `https://docs.docker.com/compose/install/`;
         return this.verifyInstalledApp(
-            async () => (await BootstrapUtils.exec(command)).stdout.trim(),
+            async () => await this.loadVersionFromCommand(command),
             header,
             this.expectedVersions.dockerCompose,
             recommendationUrl,
@@ -140,13 +139,22 @@ export class VerifyService {
         return { header, message: `Your are not the sudo user!` };
     }
 
-    private async verifyInstalledApp(output: () => Promise<string>, header: string, minVersion: string, recommendationUrl: string) {
+    public async loadVersionFromCommand(command: string): Promise<string | undefined> {
+        return this.loadVersion((await BootstrapUtils.exec(command)).stdout.trim());
+    }
+
+    private async verifyInstalledApp(
+        versionLoader: () => Promise<string | undefined>,
+        header: string,
+        minVersion: string,
+        recommendationUrl: string,
+    ): Promise<ReportLine> {
         try {
-            const version = this.loadVersion(await output());
+            const version = await versionLoader();
             if (!version) {
                 return {
                     header,
-                    message: `Version could not be found! Output: ${output}`,
+                    message: `Version could not be found! Output: ${versionLoader}`,
                     recommendation: `At least version ${minVersion} is required. Check ${recommendationUrl}`,
                 };
             }

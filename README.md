@@ -11,17 +11,16 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://nemtech.github.io/symbol-bootstrap/)
 
 <!-- toc -->
-
--   [symbol-bootstrap](#symbol-bootstrap)
--   [Why this tool?](#why-this-tool)
--   [Key benefits:](#key-benefits)
--   [Concepts](#concepts)
--   [Requirements](#requirements)
--   [Usage](#usage)
--   [E2E Testing support](#e2e-testing-support)
--   [Development](#development)
--   [Commands](#commands)
--   [Command Topics](#command-topics)
+* [symbol-bootstrap](#symbol-bootstrap)
+* [Why this tool?](#why-this-tool)
+* [Key benefits:](#key-benefits)
+* [Concepts](#concepts)
+* [Requirements](#requirements)
+* [Usage](#usage)
+* [E2E Testing support](#e2e-testing-support)
+* [Development](#development)
+* [Commands](#commands)
+* [Command Topics](#command-topics)
 <!-- tocstop -->
 
 # Why this tool?
@@ -131,7 +130,6 @@ cd my-networks
 Once in the working dir:
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
@@ -143,7 +141,6 @@ USAGE
   $ symbol-bootstrap COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 The general usage would be:
@@ -263,25 +260,24 @@ General users should install this tool like any other node module.
 # Commands
 
 <!-- commands -->
-
 # Command Topics
 
--   [`symbol-bootstrap autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
--   [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder deleting the generated configuration and data
--   [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
--   [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
--   [`symbol-bootstrap decrypt`](docs/decrypt.md) - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
--   [`symbol-bootstrap encrypt`](docs/encrypt.md) - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
--   [`symbol-bootstrap enrolRewardProgram`](docs/enrolRewardProgram.md) - It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address. You can also use this command to update the program registration when you change the node public key or server host.
--   [`symbol-bootstrap healthCheck`](docs/healthCheck.md) - It checks if the services created with docker compose are up and running.
--   [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
--   [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
--   [`symbol-bootstrap report`](docs/report.md) - it generates reStructuredText (.rst) reports describing the configuration of each node.
--   [`symbol-bootstrap resetData`](docs/resetData.md) - It removes the data keeping the generated configuration, certificates, keys and block 1.
--   [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
--   [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
--   [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
--   [`symbol-bootstrap verify`](docs/verify.md) - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or configuration issue.
+* [`symbol-bootstrap autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
+* [`symbol-bootstrap clean`](docs/clean.md) - It removes the target folder deleting the generated configuration and data
+* [`symbol-bootstrap compose`](docs/compose.md) - It generates the `docker-compose.yml` file from the configured network.
+* [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
+* [`symbol-bootstrap decrypt`](docs/decrypt.md) - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
+* [`symbol-bootstrap encrypt`](docs/encrypt.md) - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
+* [`symbol-bootstrap enrolRewardProgram`](docs/enrolRewardProgram.md) - It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
+* [`symbol-bootstrap healthCheck`](docs/healthCheck.md) - It checks if the services created with docker compose are up and running.
+* [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
+* [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
+* [`symbol-bootstrap report`](docs/report.md) - it generates reStructuredText (.rst) reports describing the configuration of each node.
+* [`symbol-bootstrap resetData`](docs/resetData.md) - It removes the data keeping the generated configuration, certificates, keys and block 1.
+* [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
+* [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
+* [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
+* [`symbol-bootstrap verify`](docs/verify.md) - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.
 
 <!-- commandsstop -->
 

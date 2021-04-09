@@ -15,26 +15,32 @@
  */
 import { expect } from '@oclif/test';
 import * as os from 'os';
-import { BootstrapUtils } from '../../src/service';
-import { VerifyService } from '../../src/service/VerifyService';
+import * as semver from 'semver';
+import { BootstrapUtils, VerifyService } from '../../src/service';
 
 describe('VerifyService', () => {
+    const currentNodeJsVersion = process.versions.node;
     it('VerifyService verify current installation', async () => {
         const service = new VerifyService();
+        const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
+        const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
+        expect(semver.valid(currentNodeJsVersion));
+        expect(semver.valid(currentDockerVersion));
+        expect(semver.valid(currentDockerComposeVersion));
         const report = await service.createReport();
         const expected = {
             lines: [
                 {
                     header: 'NodeVersion',
-                    message: process.versions.node,
+                    message: currentNodeJsVersion,
                 },
                 {
                     header: 'Docker Version',
-                    message: '19.3.8',
+                    message: currentDockerVersion,
                 },
                 {
                     header: 'Docker Compose Version',
-                    message: '1.25.0',
+                    message: currentDockerComposeVersion,
                 },
                 {
                     header: 'Docker Run Test',
@@ -57,23 +63,29 @@ describe('VerifyService', () => {
             dockerCompose: '1.25.30',
         };
         const service = new VerifyService(BootstrapUtils.resolveRootFolder(), expectedVersions);
+        const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
+        const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
+        expect(semver.valid(currentNodeJsVersion));
+        expect(semver.valid(currentDockerVersion));
+        expect(semver.valid(currentDockerComposeVersion));
+
         const report = await service.createReport();
         const expected = {
             lines: [
                 {
                     header: 'NodeVersion',
-                    message: process.versions.node,
-                    recommendation: `At least version ${expectedVersions.node} is required. Currently installed version is 12.16.3. Check https://nodejs.org/en/download/package-manager/`,
+                    message: currentNodeJsVersion,
+                    recommendation: `At least version ${expectedVersions.node} is required. Currently installed version is ${currentNodeJsVersion}. Check https://nodejs.org/en/download/package-manager/`,
                 },
                 {
                     header: 'Docker Version',
-                    message: '19.3.8',
-                    recommendation: `At least version ${expectedVersions.docker} is required. Currently installed version is 19.3.8. Check https://docs.docker.com/get-docker/`,
+                    message: currentDockerVersion,
+                    recommendation: `At least version ${expectedVersions.docker} is required. Currently installed version is ${currentDockerVersion}. Check https://docs.docker.com/get-docker/`,
                 },
                 {
                     header: 'Docker Compose Version',
-                    message: '1.25.0',
-                    recommendation: `At least version ${expectedVersions.dockerCompose} is required. Currently installed version is 1.25.0. Check https://docs.docker.com/compose/install/`,
+                    message: currentDockerComposeVersion,
+                    recommendation: `At least version ${expectedVersions.dockerCompose} is required. Currently installed version is ${currentDockerComposeVersion}. Check https://docs.docker.com/compose/install/`,
                 },
                 {
                     header: 'Sudo User Test',
