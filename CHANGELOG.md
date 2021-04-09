@@ -15,6 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added `wizard` command.
 -   Added `pack` command.
 -   New `testnet.symboldev.network` testnet!
+-   Added `verify` command.
 -   Fixed host override when no custom preset is provided in mainnet.
 -   Fixed case issue validating keys when creating certificates.
 -   Updated Wallet to latest 1.0.1 release.

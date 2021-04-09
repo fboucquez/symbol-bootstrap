@@ -18,5 +18,6 @@ export * from './ReportService';
 export * from './RewardProgramService';
 export * from './RunService';
 export * from './SshpkService';
+export * from './VerifyService';
 export * from './VotingService';
 export * from './ZipUtils';
