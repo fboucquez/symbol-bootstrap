@@ -87,21 +87,19 @@ The folder where the generated config, docker files and data are stored. The fol
 -   `./gateways`: it holds the configuration and logs for all the defined node rest gateways.
 -   `./nemesis`: The folder used to hold the nemesis block. Block 1 data is generated via `nemgen` tool for new networks. For existing network, it is copied over.
 -   `./databases`: the location where the mongo data is stored for the different database instances.
--   `./docker`: the generated docker-compose.yml, mongo init scripts and server basic bash scripts. 
+-   `./docker`: the generated docker-compose.yml, mongo init scripts and server basic bash scripts.
 -   `./reports`: the location of the generated reports.
 
 # Requirements
 
--   Node 12+
--   Docker
--   Docker Compose
+-   Node 12.0.0+
+-   Docker 18.3.0+
+-   Docker Compose 1.25.0+
 
 Validate your environment by running:
 
 ```
-node -v
-docker -v
-docker-compose -v
+symbol-bootstrap verify
 ```
 
 Check your user can run docker without sudo:
@@ -216,8 +214,8 @@ Alternatively, you can use the [BootstrapService](https://github.com/nemtech/sym
 Example:
 
 ```ts
-import {BootstrapService, StartParams, Preset} from 'symbol-bootstrap'; 
-import {expect} from '@oclif/test'; 
+import {BootstrapService, StartParams, Preset} from 'symbol-bootstrap';
+import {expect} from '@oclif/test';
 
 it('Bootstrap e2e test', async () => {
     const service = new BootstrapService();
@@ -279,6 +277,7 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
 * [`symbol-bootstrap start`](docs/start.md) - Single command that aggregates config, compose and run in one line!
 * [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
+* [`symbol-bootstrap verify`](docs/verify.md) - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.
 
 <!-- commandsstop -->
 
