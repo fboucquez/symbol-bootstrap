@@ -35,7 +35,7 @@ export interface ExpectedVersions {
 
 const defaultExpectedVersions: ExpectedVersions = {
     node: '12.0.0',
-    docker: '19.0.0',
+    docker: '18.3.0',
     dockerCompose: '1.25.0',
 };
 

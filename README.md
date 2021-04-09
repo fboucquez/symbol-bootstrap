@@ -93,7 +93,7 @@ The folder where the generated config, docker files and data are stored. The fol
 # Requirements
 
 -   Node 12.0.0+
--   Docker 19.0.0+
+-   Docker 18.3.0+
 -   Docker Compose 1.25.0+
 
 Validate your environment by running:
