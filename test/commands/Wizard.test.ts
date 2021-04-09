@@ -57,8 +57,6 @@ describe('Wizard', () => {
     it('Provide private keys', async () => {
         // assembly
         StdUtils.in([
-            StdUtils.keys.down,
-            StdUtils.keys.down,
             '\n',
             '\n',
             '\n',
@@ -123,8 +121,6 @@ describe('Wizard', () => {
     it('Generate use seed keys voting', async () => {
         // assembly
         StdUtils.in([
-            StdUtils.keys.down,
-            StdUtils.keys.down,
             '\n',
             'y\n', //Are you offline.
             StdUtils.keys.down,

@@ -30,14 +30,14 @@ export const assemblies: Record<Preset, { value: string; description: string }[]
         { value: 'light', description: 'Light: A light network with a dual, a mongo dn and a rest gateway' },
     ],
     [Preset.mainnet]: [
+        { value: 'dual', description: 'Dual Node' },
         { value: 'peer', description: 'Peer Node' },
         { value: 'api', description: 'Api  Node' },
-        { value: 'dual', description: 'Dual Node' },
     ],
     [Preset.testnet]: [
+        { value: 'dual', description: 'Dual Node' },
         { value: 'peer', description: 'Peer Node' },
         { value: 'api', description: 'Api  Node' },
-        { value: 'dual', description: 'Dual Node' },
     ],
 };
 export enum Network {
