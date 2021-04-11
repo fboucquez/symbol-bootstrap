@@ -25,7 +25,7 @@ import { BootstrapUtils } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; composeResolvePassword: boolean };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; composeResolvePassword?: boolean };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
