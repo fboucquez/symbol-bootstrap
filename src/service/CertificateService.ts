@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { NetworkType } from 'symbol-sdk';
 import { LogType } from '../logger';
@@ -161,6 +162,9 @@ export class CertificateService {
     }
 
     private async shouldGenerateCertificate(metadataFile: string, providedCertificates: NodeCertificates): Promise<boolean> {
+        if (!existsSync(metadataFile)) {
+            return true;
+        }
         try {
             const metadata = BootstrapUtils.loadYaml(metadataFile, false) as CertificateMetadata;
             return (
@@ -169,6 +173,7 @@ export class CertificateService {
                 metadata.version !== CertificateService.METADATA_VERSION
             );
         } catch (e) {
+            logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
             return true;
         }
     }

@@ -270,6 +270,9 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
 
+    agentPrivateKey?: string;
+    agentPublicKey?: string;
+
     //Broker specific
     brokerName?: string;
     brokerHost?: string;

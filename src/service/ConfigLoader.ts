@@ -313,6 +313,15 @@ export class ConfigLoader {
                 nodePreset.vrfPrivateKey,
                 nodePreset.vrfPublicKey,
             );
+        if (nodePreset.rewardProgram)
+            nodeAccount.agent = this.generateAccount(
+                networkType,
+                privateKeySecurityMode,
+                KeyName.Agent,
+                oldNodeAccount?.agent,
+                nodePreset.agentPrivateKey,
+                nodePreset.agentPublicKey,
+            );
         return nodeAccount;
     }
 
