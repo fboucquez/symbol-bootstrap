@@ -79,6 +79,71 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-testnet-dual-compose.yml');
     });
 
+    it('Compose testnet api', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/testnet-api',
+            password,
+            reset: false,
+            preset: Preset.testnet,
+            assembly: 'api',
+        };
+        await assertDockerCompose(params, 'expected-testnet-api-compose.yml');
+    });
+
+    it('Compose testnet peer', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/testnet-peer',
+            password,
+            reset: false,
+            preset: Preset.testnet,
+            assembly: 'peer',
+        };
+        await assertDockerCompose(params, 'expected-testnet-peer-compose.yml');
+    });
+
+    it('Compose mainnet dual', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/mainnet-dual',
+            password,
+            reset: false,
+            preset: Preset.mainnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-mainnet-dual-compose.yml');
+    });
+
+    it('Compose mainnet api', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/mainnet-api',
+            password,
+            reset: false,
+            preset: Preset.mainnet,
+            assembly: 'api',
+        };
+        await assertDockerCompose(params, 'expected-mainnet-api-compose.yml');
+    });
+
+    it('Compose mainnet peer', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/mainnet-peer',
+            password,
+            reset: false,
+            preset: Preset.mainnet,
+            assembly: 'peer',
+        };
+        await assertDockerCompose(params, 'expected-mainnet-peer-compose.yml');
+    });
+
     it('Compose testnet supernode', async () => {
         const params = {
             ...ConfigService.defaultParams,
