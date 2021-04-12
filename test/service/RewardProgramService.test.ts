@@ -66,7 +66,7 @@ describe('RewardProgramService', () => {
         const transaction = transactions[0] as TransferTransaction;
         expect(transaction.type).eq(TransactionType.TRANSFER);
         expect(transaction.message.payload).eq(
-            'enroll C9767496987222790518114049299DD52114BF2A8F7E5F4B70BB2B6365FAFD34 https://fboucquez-agent-symbollocal.ngrok.io',
+            'enroll https://fboucquez-agent-symbollocal.ngrok.io LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlHU01FWUNBUUF3RXpFUk1BOEdBMVVFQXd3SVFXZGxiblFnUTBFd0tqQUZCZ01yWlhBRElRQjJ6QVRrMm5nbQoxamxYbTViWUhOMDR1SnZMQ1Mrb0VRam1nMmpSZTU4OUU2QUFNQVVHQXl0bGNBTkJBQS92U2ZWSjkwUGV3ckQrCkRoKzR0YkhiZEFrS1VnbGlpNlZ4SW1qMHRtdS9Oc3dMWGw4aTdkY2hGWFM5UVFtSTIyS1ZuZVdENEtpUXRtMEkKM3ZSUVRRbz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0tCg==',
         );
     });
 
