@@ -261,7 +261,7 @@ export class ComposeService {
                         );
                     }
 
-                    if (n.rewardProgram && false) {
+                    if (n.rewardProgram) {
                         const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
 
                         const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
@@ -281,7 +281,7 @@ export class ComposeService {
                                     entrypoint: rewardProgramAgentCommand,
                                     ports: resolvePorts([
                                         {
-                                            internalPort: 7880,
+                                            internalPort: n.rewardProgramAgentPort || presetData.rewardProgramAgentPort,
                                             openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
                                         },
                                     ]),

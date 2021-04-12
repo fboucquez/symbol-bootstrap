@@ -84,6 +84,7 @@ dataDirectory: ./data
 votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
+rewardProgramAgentPort: 7881
 
 # config database
 databaseName: catapult

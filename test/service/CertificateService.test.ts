@@ -16,7 +16,7 @@
 
 import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import * as sshpk from 'sshpk';
@@ -76,12 +76,15 @@ describe('CertificateService', () => {
             password: 'abc',
         });
         const networkType = NetworkType.TEST_NET;
-        const main = Account.generateNewAccount(networkType);
-        const transport = Account.generateNewAccount(networkType);
         const keys: NodeCertificates = {
-            main: ConfigLoader.toConfig(main),
-            transport: ConfigLoader.toConfig(transport),
+            main: ConfigLoader.toConfig(
+                Account.createFromPrivateKey('E095162875BB1D98CA5E0941670E01C1B0DBDF86DF7B3BEDA4A93635F8E51A03', networkType),
+            ),
+            transport: ConfigLoader.toConfig(
+                Account.createFromPrivateKey('415F253ABF0FB2DFD39D7F409EFA2E88769873CAEB45617313B98657A1476A15', networkType),
+            ),
         };
+
         await service.run(networkType, presetData.symbolServerToolsImage, 'test-node', keys, target);
 
         const expectedMetadata: CertificateMetadata = {
@@ -110,5 +113,14 @@ describe('CertificateService', () => {
             'serial.dat',
             'serial.dat.old',
         ]);
+
+        const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem', 'serial.dat', 'serial.dat.old'];
+
+        // Filtering out files that aren't the same
+        files
+            .filter((f) => diffFiles.indexOf(f) === -1)
+            .forEach((f) => {
+                expect(readFileSync(join(target, f)), `Different fields: ${f}`).deep.eq(readFileSync(join('test', 'nodeCertificates', f)));
+            });
     });
 });

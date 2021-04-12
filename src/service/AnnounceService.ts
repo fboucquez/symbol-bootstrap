@@ -110,7 +110,6 @@ export class AnnounceService {
         let repositoryFactory: RepositoryFactory;
         const urls = (useKnownRestGateways && presetData.knownRestGateways) || [];
         if (urls.length) {
-            urls.push(url);
             const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls))[0];
             if (!repositoryInfo) {
                 throw new Error(`No up and running node could be found of out: ${urls.join(', ')}`);

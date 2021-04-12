@@ -20,7 +20,7 @@ import { AnnounceService } from '../service/AnnounceService';
 import { CommandUtils } from '../service/CommandUtils';
 
 export default class EnrollRewardProgram extends Command {
-    static description = `It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
+    static description = `It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the agent keys (changing the agent-ca-csr) or server host.
 
 Currently, the only program that can be enrolled post-launch is 'SuperNode'.`;
 
