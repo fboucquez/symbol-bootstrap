@@ -140,7 +140,7 @@ export class AnnounceService {
         }
 
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
-        if (generationHash !== presetData.nemesisGenerationHashSeed) {
+        if (generationHash?.toUpperCase() !== presetData.nemesisGenerationHashSeed?.toUpperCase()) {
             throw new Error(
                 `You are connecting to the wrong network. Expected generation hash is ${presetData.nemesisGenerationHashSeed} but got ${generationHash}`,
             );

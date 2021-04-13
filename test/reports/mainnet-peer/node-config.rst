@@ -567,7 +567,7 @@ config-logging-recovery.properties
     :delim: ;
 
     **console**;
-    sinkType; Sync
+    sinkType; Async
     level; Info
     colorMode; Ansi
     **console.component.levels**;
@@ -588,12 +588,12 @@ config-logging-server.properties
     :delim: ;
 
     **console**;
-    sinkType; Sync
+    sinkType; Async
     level; Info
     colorMode; Ansi
     **console.component.levels**;
     **file**;
-    sinkType; Sync
+    sinkType; Async
     level; Info
     directory; logs
     filePattern; logs/catapult_server%4N.log
@@ -707,7 +707,7 @@ config-node.properties
     port; 7900; unsigned short; Server port.
     maxIncomingConnectionsPerIdentity; 6; uint32_t; Maximum number of incoming connections per identity over primary port.
     enableAddressReuse; false; bool; Set to true if the server should reuse ports already in use.
-    enableSingleThreadPool; true; bool; Set to true if a single thread pool should be used, Set to false if multiple thread pools should be used.
+    enableSingleThreadPool; false; bool; Set to true if a single thread pool should be used, Set to false if multiple thread pools should be used.
     enableCacheDatabaseStorage; true; bool; Set to true if cache data should be saved in a database.
     enableAutoSyncCleanup; true; bool; Set to true if temporary sync files should be automatically cleaned up. Note: This should be Set to false if broker process is running.
     fileDatabaseBatchSize; 100; ;

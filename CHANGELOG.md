@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.4] - NEXT
+
+**Milestone**: Mainnet(1.0.0.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   New `testnet.symboldev.network` testnet!
+-   Added `verify` command.
+-   Fixed host override when no custom preset is provided in mainnet.
+-   Fixed case issue validating keys when creating certificates.
+-   Updated Wallet to latest 1.0.1 release.
+-   Node properties sinkType: Async and enableSingleThreadPool: false by default in peer nodes too.
+-   Dropped NodeJS 10 support. Added Node LTS and Stable Support. 
+
 ## [1.0.3] - Mar-31-2021
 
 **Milestone**: Mainnet(1.0.0.0)

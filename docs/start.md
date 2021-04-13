@@ -15,7 +15,7 @@ USAGE
 
 OPTIONS
   -a, --assembly=assembly
-      An optional assembly type, example "dual" for testnet
+      The assembly, example "dual" for testnet. If not provided, the value is resolved from the target/preset.yml file.
 
   -b, --build
       If provided, docker-compose will run with -b (--build)
@@ -31,7 +31,8 @@ OPTIONS
       It shows the help of this command.
 
   -p, --preset=(bootstrap|testnet|mainnet)
-      [default: bootstrap] the network preset
+      The network preset, can be provided via custom preset or cli parameter. If not provided, the value is resolved from 
+      the target/preset.yml file.
 
   -r, --reset
       It resets the configuration generating a new one
@@ -89,4 +90,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.3/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.4/src/commands/start.ts)_
