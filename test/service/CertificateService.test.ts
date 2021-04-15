@@ -85,7 +85,8 @@ describe('CertificateService', () => {
             ),
         };
 
-        await service.run(networkType, presetData.symbolServerToolsImage, 'test-node', keys, target);
+        const randomSerial = '4C87E5C49034B711E2DA38D116366829DA144B\n'.toLowerCase();
+        await service.run(networkType, presetData.symbolServerToolsImage, 'test-node', keys, target, randomSerial);
 
         const expectedMetadata: CertificateMetadata = {
             version: 1,
@@ -114,7 +115,7 @@ describe('CertificateService', () => {
             'serial.dat.old',
         ]);
 
-        const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem', 'serial.dat', 'serial.dat.old'];
+        const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem'];
 
         // Filtering out files that aren't the same
         files

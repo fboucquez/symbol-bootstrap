@@ -16,7 +16,7 @@
 
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
-import { NetworkType } from 'symbol-sdk';
+import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
@@ -87,6 +87,7 @@ export class CertificateService {
         name: string,
         providedCertificates: NodeCertificates,
         customCertFolder?: string,
+        randomSerial?: string,
     ): Promise<void> {
         const copyFrom = `${this.root}/config/cert`;
         const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
@@ -120,6 +121,10 @@ export class CertificateService {
         );
         BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
         BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
+        await BootstrapUtils.writeTextFile(
+            join(certFolder, 'serial.dat'),
+            (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
+        );
 
         // TODO. Migrate this process to forge, sshpk or any node native implementation.
         const command = this.createCertCommands('/data');
@@ -204,8 +209,6 @@ openssl req  -text -noout -verify -in node.csr.pem
 
 ### below is done after files are written
 # CA side
-# create serial
-openssl rand -hex 19 > ./serial.dat
 
 # sign cert for 375 days
 openssl ca -batch -config ca.cnf -days 375 -notext -in node.csr.pem -out node.crt.pem
