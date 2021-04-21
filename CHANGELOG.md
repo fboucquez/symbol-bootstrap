@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.5  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Fixed `failed to load: /docker-entrypoint-initdb.d/mongoDbPrepare.js` when running with root user.
 
 ## [1.0.4] - Apr-13-2021
 

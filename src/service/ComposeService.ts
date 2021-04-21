@@ -86,6 +86,8 @@ export class ComposeService {
         await BootstrapUtils.mkdir(targetDocker);
         await BootstrapUtils.generateConfiguration(presetData, join(this.root, 'config', 'docker'), targetDocker);
 
+        await BootstrapUtils.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
+
         const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
 
         const vol = (hostFolder: string, imageFolder: string, readOnly: boolean): string => {
