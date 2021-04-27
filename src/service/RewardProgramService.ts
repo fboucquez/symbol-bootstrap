@@ -15,7 +15,7 @@
  */
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Deadline, PlainMessage, PublicAccount, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
+import { Address, Deadline, PlainMessage, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
@@ -73,7 +73,7 @@ export class RewardProgramService implements TransactionFactory {
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
-        if (!presetData.rewardProgramControllerPublicKey) {
+        if (!presetData.rewardProgramControllerAddress) {
             logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
         }
@@ -103,12 +103,10 @@ export class RewardProgramService implements TransactionFactory {
             return transactions;
         }
 
-        if (!presetData.rewardProgramControllerPublicKey) {
+        if (!presetData.rewardProgramControllerAddress) {
             return transactions;
         }
-
-        const rewardProgramControllerAddress = PublicAccount.createFromPublicKey(presetData.rewardProgramControllerPublicKey, networkType)
-            .address;
+        const rewardProgramControllerAddress = Address.createFromRawAddress(presetData.rewardProgramControllerAddress);
         const agentPublicKey = nodeAccount.transport.publicKey;
         if (!agentPublicKey) {
             logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
