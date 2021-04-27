@@ -73,7 +73,7 @@ export class RewardProgramService implements TransactionFactory {
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
-        if (!presetData.rewardProgramControllerAddress) {
+        if (!presetData.rewardProgramEnrollmentAddress) {
             logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
         }
@@ -103,10 +103,10 @@ export class RewardProgramService implements TransactionFactory {
             return transactions;
         }
 
-        if (!presetData.rewardProgramControllerAddress) {
+        if (!presetData.rewardProgramEnrollmentAddress) {
             return transactions;
         }
-        const rewardProgramControllerAddress = Address.createFromRawAddress(presetData.rewardProgramControllerAddress);
+        const rewardProgramEnrollmentAddress = Address.createFromRawAddress(presetData.rewardProgramEnrollmentAddress);
         const agentPublicKey = nodeAccount.transport.publicKey;
         if (!agentPublicKey) {
             logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
@@ -127,7 +127,7 @@ export class RewardProgramService implements TransactionFactory {
         logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
         const transaction: Transaction = TransferTransaction.create(
             deadline,
-            rewardProgramControllerAddress,
+            rewardProgramEnrollmentAddress,
             [],
             message,
             networkType,
