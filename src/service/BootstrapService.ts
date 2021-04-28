@@ -82,12 +82,12 @@ export class BootstrapService {
      * @param passedPresetData  the created preset if you know it, otherwise will load the latest one resolved from the target folder.
      * @param passedAddresses  the created addresses if you know it, otherwise will load the latest one resolved from the target folder.
      */
-    public async enrolRewardProgram(
+    public async enrollRewardProgram(
         config: RewardProgramParams = RewardProgramService.defaultParams,
         passedPresetData?: ConfigPreset | undefined,
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
-        await new RewardProgramService(config).enrol(passedPresetData, passedAddresses);
+        await new RewardProgramService(config).enroll(passedPresetData, passedAddresses);
     }
 
     /**
