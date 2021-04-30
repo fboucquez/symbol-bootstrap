@@ -59,6 +59,8 @@ describe('Wizard', () => {
         StdUtils.in([
             '\n',
             '\n',
+            StdUtils.keys.down,
+            '\n',
             '\n',
             StdUtils.keys.down,
             '\n',
@@ -76,8 +78,10 @@ describe('Wizard', () => {
             '\n',
             'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
             'y\n',
-            StdUtils.keys.down, //supernode
+            StdUtils.keys.down,
             '\n',
+            'EEE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
+            'y\n',
             'myhostname\n',
             'myfriendlyname\n',
             '\n',
@@ -108,6 +112,7 @@ describe('Wizard', () => {
                     remotePrivateKey: 'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
                     transportPrivateKey: 'BBB3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
                     vrfPrivateKey: 'CCC3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                    agentPrivateKey: 'EEE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
                     rewardProgram: RewardProgram.SuperNode,
                 },
             ],
@@ -123,6 +128,7 @@ describe('Wizard', () => {
         StdUtils.in([
             '\n',
             'y\n', //Are you offline.
+            '\n',
             StdUtils.keys.down,
             StdUtils.keys.down,
             '\n',
@@ -137,7 +143,6 @@ describe('Wizard', () => {
             '\n',
             StdUtils.keys.down,
             StdUtils.keys.down,
-            '\n',
             '\n',
             'myhostname\n',
             'myfriendlyname\n',

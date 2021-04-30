@@ -66,6 +66,7 @@ export interface ProvidedAccounts {
     remote: Account;
     vrf: Account;
     transport: Account;
+    agent?: Account;
 }
 
 export const networkToPreset: Record<Network, Preset> = {
@@ -182,8 +183,10 @@ export default class Wizard extends Command {
             false,
         );
 
+        const rewardProgram = assembly === 'dual' ? await Wizard.resolveRewardProgram() : undefined;
+
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await Wizard.resolveAccounts(networkType);
+        const accounts = await Wizard.resolveAccounts(networkType, rewardProgram);
 
         console.log();
         console.log(`These are your node's accounts:`);
@@ -191,10 +194,10 @@ export default class Wizard extends Command {
         Wizard.logAccount(accounts.vrf, KeyName.VRF, false);
         Wizard.logAccount(accounts.remote, KeyName.Remote, false);
         Wizard.logAccount(accounts.transport, KeyName.Transport, false);
+        Wizard.logAccount(accounts.agent, KeyName.Agent, false);
         console.log();
         console.log();
 
-        const rewardProgram = assembly === 'dual' ? await Wizard.resolveRewardProgram() : undefined;
         const symbolHostRequired = !!rewardProgram;
         const host = await Wizard.resolveHost(
             `Enter the public hostname or IP of your future node. ${
@@ -203,7 +206,7 @@ export default class Wizard extends Command {
             symbolHostRequired,
         );
         const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
-        const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode(rewardProgram);
+        const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
         const voting = await Wizard.isVoting();
         const presetContent: CustomPreset = {
             assembly: assembly,
@@ -219,6 +222,7 @@ export default class Wizard extends Command {
                     vrfPrivateKey: accounts.vrf.privateKey,
                     remotePrivateKey: accounts.remote.privateKey,
                     transportPrivateKey: accounts.transport.privateKey,
+                    agentPrivateKey: accounts.agent?.privateKey,
                 },
             ],
         };
@@ -265,9 +269,9 @@ export default class Wizard extends Command {
         console.log(`$ symbol-bootstrap link --useKnownRestGateways`);
         if (rewardProgram == RewardProgram.SuperNode) {
             console.log();
-            console.log('To enrol to the supernode program, run (online):');
+            console.log('To enroll to the supernode program, run (online):');
             console.log();
-            console.log(`$ symbol-bootstrap enrolRewardProgram  --useKnownRestGateways`);
+            console.log(`$ symbol-bootstrap enrollRewardProgram  --useKnownRestGateways`);
         }
         console.log();
     }
@@ -280,26 +284,26 @@ export default class Wizard extends Command {
         return account as T;
     }
 
-    private static async resolveAccounts(networkType: NetworkType): Promise<ProvidedAccounts> {
+    private static async resolveAccounts(networkType: NetworkType, rewardProgram: RewardProgram | undefined): Promise<ProvidedAccounts> {
         while (true) {
             const importMode = await Wizard.resolveImportMode();
             if (importMode === ImportType.OPTIN_PAPER_WALLET) {
                 {
                     const derivedAccount = await Wizard.resolveDerivedAccount(networkType, true);
                     if (derivedAccount) {
-                        return await Wizard.resolveAllAccount(networkType, derivedAccount);
+                        return await Wizard.resolveAllAccount(networkType, derivedAccount, rewardProgram);
                     }
                 }
             } else if (importMode === ImportType.SYMBOL_PAPER_WALLET) {
                 {
                     const derivedAccount = await Wizard.resolveDerivedAccount(networkType, false);
                     if (derivedAccount) {
-                        return await Wizard.resolveAllAccount(networkType, derivedAccount);
+                        return await Wizard.resolveAllAccount(networkType, derivedAccount, rewardProgram);
                     }
                 }
             } else if (importMode === ImportType.PRIVATE_KEYS) {
                 {
-                    return await Wizard.resolveAllAccount(networkType, undefined);
+                    return await Wizard.resolveAllAccount(networkType, undefined, rewardProgram);
                 }
             }
         }
@@ -308,6 +312,7 @@ export default class Wizard extends Command {
     private static async resolveAllAccount(
         networkType: NetworkType,
         derivedAccount: DerivedAccount | undefined,
+        rewardProgram: RewardProgram | undefined,
     ): Promise<ProvidedAccounts> {
         console.log();
         return {
@@ -334,8 +339,17 @@ export default class Wizard extends Command {
                 derivedAccount,
                 KeyName.Remote,
                 3,
-                'It is used to harvest and collect the rewards on behalf of the main account in remote harvesting .',
+                'It is used to harvest and collect the rewards on behalf of the main account in remote harvesting.',
             ),
+            agent: rewardProgram
+                ? await this.resolveAccountFromSelection(
+                      networkType,
+                      derivedAccount,
+                      KeyName.Remote,
+                      4,
+                      'It is used to create TLS certificates request for the Controller to Agent communication.',
+                  )
+                : undefined,
         };
     }
 
@@ -452,13 +466,13 @@ export default class Wizard extends Command {
         return providedNetwork;
     }
 
-    public static async resolvePrivateKeySecurityMode(rewardProgram: RewardProgram | undefined): Promise<PrivateKeySecurityMode> {
+    public static async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {
         const { mode } = await prompt([
             {
                 name: 'mode',
                 message: 'Select the type of security you want to use:',
                 type: 'list',
-                default: rewardProgram ? PrivateKeySecurityMode.PROMPT_MAIN : PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
+                default: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                 choices: [
                     {
                         name:
