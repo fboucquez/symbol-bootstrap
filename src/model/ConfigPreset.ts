@@ -82,11 +82,16 @@ export enum DebugLevel {
     max = 'Max',
 }
 
+export enum SinkType {
+    async = 'Async',
+    sync = 'Sync',
+}
+
 export interface NodeConfigPreset {
     syncsource: boolean;
     filespooling: boolean;
     partialtransaction: boolean;
-    sinkType: 'Async' | 'Sync';
+    sinkType: SinkType;
     enableSingleThreadPool: boolean;
     addressextraction: boolean;
     mongo: boolean;
@@ -243,6 +248,7 @@ export interface NodeConfigPreset {
     maxProofSize: number;
     maxTransactionsPerBlock: number;
     localNetworks: string;
+    rewardProgramAgentPort: number;
 }
 
 export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPreset> {
@@ -269,6 +275,9 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
 
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
+
+    agentPrivateKey?: string;
+    agentPublicKey?: string;
 
     //Broker specific
     brokerName?: string;
@@ -405,7 +414,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;
-    rewardProgramControllerPublicKey?: string;
+    rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
     //Nested Objects
 

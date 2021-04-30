@@ -37,6 +37,8 @@ export interface NodeAccount {
     vrf?: ConfigAccount;
     // Voting key is produced if node is voting
     voting?: ConfigAccount;
+    // Agent private key is produced if node is supernode
+    agent?: ConfigAccount;
     roles: string;
     name: string;
     friendlyName: string;

@@ -86,6 +86,8 @@ export class ComposeService {
         await BootstrapUtils.mkdir(targetDocker);
         await BootstrapUtils.generateConfiguration(presetData, join(this.root, 'config', 'docker'), targetDocker);
 
+        await BootstrapUtils.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
+
         const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
 
         const vol = (hostFolder: string, imageFolder: string, readOnly: boolean): string => {
@@ -261,7 +263,7 @@ export class ComposeService {
                         );
                     }
 
-                    if (n.rewardProgram && false) {
+                    if (n.rewardProgram) {
                         const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
 
                         const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
@@ -281,7 +283,7 @@ export class ComposeService {
                                     entrypoint: rewardProgramAgentCommand,
                                     ports: resolvePorts([
                                         {
-                                            internalPort: 7880,
+                                            internalPort: n.rewardProgramAgentPort || presetData.rewardProgramAgentPort,
                                             openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
                                         },
                                     ]),

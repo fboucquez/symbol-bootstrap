@@ -46,6 +46,18 @@ services:
             - './server:/symbol-commands:ro'
         depends_on:
             - db
+    node-agent:
+        user: '1000:1000'
+        container_name: node-agent
+        image: 'symbolplatform/symbol-node-rewards-agent:1.0.2-alpha.0'
+        working_dir: /symbol-workdir
+        entrypoint: /app/agent-linux.bin --config agent.properties
+        ports:
+            - '7881:7881'
+        stop_signal: SIGINT
+        restart: 'on-failure:2'
+        volumes:
+            - '../nodes/node/agent:/symbol-workdir:rw'
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
