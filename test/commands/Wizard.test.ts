@@ -117,7 +117,7 @@ describe('Wizard', () => {
                 },
             ],
             preset: Preset.mainnet,
-            privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN,
+            privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
         };
         const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
