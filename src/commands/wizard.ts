@@ -232,10 +232,15 @@ export default class Wizard extends Command {
         console.log();
         console.log(`The Symbol Bootstrap preset file '${customPresetFile}' has been created!!!. Keep this safe!`);
         console.log();
+        console.log(`To decrypt the node's private key, run: `);
+        console.log();
+        console.log(`$ symbol-bootstrap decrypt --source ${customPresetFile} --destination plain-custom-preset.yml`);
+        console.log();
+        console.log('Remember to delete the plain-custom-preset.yml file after used!!!');
+
         console.log(
             `You can edit this file to further customize it. Read more https://github.com/nemtech/symbol-bootstrap/blob/main/docs/presetGuides.md`,
         );
-
         console.log();
         console.log(`Once you have finished the custom preset customization, You can use the 'start' to run the node in this machine:`);
         console.log();
