@@ -46,4 +46,4 @@ EXAMPLES
   encrypted-custom-preset.yml
 ```
 
-_See code: [src/commands/encrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.5/src/commands/encrypt.ts)_
+_See code: [src/commands/encrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.6/src/commands/encrypt.ts)_

@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.5] - NEXT
+## [1.0.6] - Next
+
+**Milestone**: Mainnet(1.0.0.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.6  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Added `wizard` command.
+-   Added `pack` command.
+
+## [1.0.5] - May-3-2021
 
 **Milestone**: Mainnet(1.0.0.0)
 
@@ -15,8 +26,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Re-enabled node reward program. Upgraded TLS communication.
 -   Fixed `failed to load: /docker-entrypoint-initdb.d/mongoDbPrepare.js` when running with root user.
 -   Renamed `enrol` to `enroll` for the Rewards Program.
--   Added `wizard` command.
--   Added `pack` command.
 
 ## [1.0.4] - Apr-13-2021
 
