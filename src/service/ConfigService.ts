@@ -59,6 +59,7 @@ export enum KeyName {
     Transport = 'Transport',
     Voting = 'Voting',
     VRF = 'VRF',
+    Agent = 'Agent',
     NemesisSigner = 'Nemesis Signer',
     NemesisAccount = 'Nemesis Account',
 }
@@ -144,7 +145,7 @@ export class ConfigService {
 
             this.cleanUpConfiguration(presetData);
             await this.generateNodeCertificates(presetData, addresses);
-            await this.generateAgentCertificates(presetData);
+            await this.generateAgentCertificates(presetData, addresses);
             await this.generateNodes(presetData, addresses);
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData);
@@ -267,13 +268,20 @@ export class ConfigService {
         );
     }
 
-    private async generateAgentCertificates(presetData: ConfigPreset): Promise<void> {
+    private async generateAgentCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
-            (presetData.nodes || [])
-                .filter((n) => n.rewardProgram)
-                .map(async (account) => {
-                    return await new AgentCertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name);
-                }),
+            (addresses.nodes || []).map(async (account, index) => {
+                const node = presetData.nodes?.[index];
+                if (node?.rewardProgram && account.agent)
+                    await new AgentCertificateService(this.root, this.params).run(
+                        presetData.networkType,
+                        presetData.symbolServerToolsImage,
+                        account.name,
+                        {
+                            agent: account.agent,
+                        },
+                    );
+            }),
         );
     }
 
@@ -337,19 +345,12 @@ export class ConfigService {
                     `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
                 );
             }
-            const nodePrivateKey = await CommandUtils.resolvePrivateKey(
-                presetData.networkType,
-                account.transport,
-                KeyName.Transport,
-                account.name,
-                'creating the agent properties',
-            );
 
             const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
             templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
-            templateContext.nodePrivateKey = nodePrivateKey;
+            templateContext.mainPublicKey = account.main.publicKey;
             const copyFrom = join(this.root, 'config', 'agent');
             const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
             await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);

@@ -392,6 +392,21 @@ export class BootstrapUtils {
         );
     }
 
+    public static async chmodRecursive(path: string, mode: string | number): Promise<void> {
+        // Loop through all the files in the config folder
+        const stat = await fsPromises.stat(path);
+        if (stat.isFile()) {
+            await fsPromises.chmod(path, mode);
+        } else if (stat.isDirectory()) {
+            const files = await fsPromises.readdir(path);
+            await Promise.all(
+                files.map(async (file: string) => {
+                    await this.chmodRecursive(join(path, file), mode);
+                }),
+            );
+        }
+    }
+
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static runTemplate(template: string, templateContext: any): string {
         const compiledTemplate = Handlebars.compile(template);

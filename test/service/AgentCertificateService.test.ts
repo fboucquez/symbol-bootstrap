@@ -15,10 +15,10 @@
  */
 
 import { expect } from 'chai';
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
-import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
-import { AgentCertificateService } from '../../src/service/AgentCertificateService';
+import { join } from 'path';
+import { AgentCertificateService, BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
 
 describe('AgentCertificateService', () => {
     it('createCertificate', async () => {
@@ -33,9 +33,35 @@ describe('AgentCertificateService', () => {
             password: 'abc',
         });
 
-        await service.run(presetData.symbolServerToolsImage, 'supernode', target);
+        await service.run(
+            presetData.networkType,
+            presetData.symbolServerToolsImage,
+            'supernode',
+            {
+                agent: {
+                    privateKey: '8D1929CAC89295BE7DBE26B7F830AA42A74D75D7055117DF2973001E3271BDD9',
+                    publicKey: '04794EE7BD0810057870C7739C985D42BB4AAA4B1B9E3A71BFE6373A72D63726',
+                },
+            },
+            target,
+        );
 
         const files = await fsPromises.readdir(target);
-        expect(files).deep.eq(['agent-crt.pem', 'agent-key.pem']);
+        expect(files).deep.eq([
+            'agent-ca.cnf',
+            'agent-ca.csr.pem',
+            'agent-ca.key.pem',
+            'agent-ca.pubkey.pem',
+            'agent-comm.cnf',
+            'index.txt',
+            'metadata.yml',
+            'new_certs',
+        ]);
+
+        files
+            .filter((f) => f != 'new_certs')
+            .forEach((f) => {
+                expect(readFileSync(join(target, f))).deep.eq(readFileSync(join('test', 'agentCertificates', f)));
+            });
     });
 });

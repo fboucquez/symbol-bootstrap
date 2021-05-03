@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Deadline, PlainMessage, PublicAccount, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { Address, Deadline, PlainMessage, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
@@ -68,10 +70,10 @@ export class RewardProgramService implements TransactionFactory {
         throw new KnownError(`${value} is not a valid Reward program. Please use one of ${programs.join(', ')}`);
     }
 
-    public async enrol(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
+    public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
-        if (!presetData.rewardProgramControllerPublicKey) {
+        if (!presetData.rewardProgramEnrollmentAddress) {
             logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
         }
@@ -101,12 +103,10 @@ export class RewardProgramService implements TransactionFactory {
             return transactions;
         }
 
-        if (!presetData.rewardProgramControllerPublicKey) {
+        if (!presetData.rewardProgramEnrollmentAddress) {
             return transactions;
         }
-
-        const rewardProgramControllerAddress = PublicAccount.createFromPublicKey(presetData.rewardProgramControllerPublicKey, networkType)
-            .address;
+        const rewardProgramEnrollmentAddress = Address.createFromRawAddress(presetData.rewardProgramEnrollmentAddress);
         const agentPublicKey = nodeAccount.transport.publicKey;
         if (!agentPublicKey) {
             logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
@@ -118,13 +118,16 @@ export class RewardProgramService implements TransactionFactory {
             );
             return transactions;
         }
-        const agentUrl = nodePreset.agentUrl || `https://${nodePreset.host}:7880`;
-        const plainMessage = `enrol ${agentPublicKey} ${agentUrl}`;
+        const agentUrl =
+            nodePreset.agentUrl || `https://${nodePreset.host}:${nodePreset.rewardProgramAgentPort || presetData.rewardProgramAgentPort}`;
+        const certFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, nodePreset.name, 'agent');
+        const base64AgentCaCsrFile = readFileSync(join(certFolder, 'agent-ca.csr.pem'), 'base64');
+        const plainMessage = `enroll ${agentUrl} ${base64AgentCaCsrFile}`;
         const message = PlainMessage.create(plainMessage);
         logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
         const transaction: Transaction = TransferTransaction.create(
             deadline,
-            rewardProgramControllerAddress,
+            rewardProgramEnrollmentAddress,
             [],
             message,
             networkType,
