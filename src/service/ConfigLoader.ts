@@ -340,7 +340,8 @@ export class ConfigLoader {
     private static getArray(size: number): number[] {
         return [...Array(size).keys()];
     }
-    private loadCustomPreset(customPreset: string | undefined, password: Password): CustomPreset {
+
+    public loadCustomPreset(customPreset: string | undefined, password: Password): CustomPreset {
         if (!customPreset) {
             return {};
         }
@@ -363,6 +364,14 @@ export class ConfigLoader {
             );
         }
         return BootstrapUtils.loadYaml(fileLocation, false);
+    }
+
+    public mergePresets(object: ConfigPreset, ...otherArgs: (CustomPreset | undefined)[]): any {
+        const presets: (CustomPreset | undefined)[] = [object, ...otherArgs];
+        const inflation: Record<string, number> = presets.reverse().find((p) => p?.inflation)?.inflation || {};
+        const presetData = _.merge(object, ...otherArgs);
+        presetData.inflation = inflation;
+        return presetData;
     }
 
     public createPresetData(params: {
@@ -392,21 +401,14 @@ export class ConfigLoader {
         const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
         const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
         const assemblyPreset = this.loadAssembly(root, preset, assembly);
-        //Deep merge
-        const inflation: Record<string, number> =
-            customPresetObject?.inflation ||
-            customPresetFileObject?.inflation ||
-            assemblyPreset?.inflation ||
-            networkPreset?.inflation ||
-            sharedPreset?.inflation ||
-            [];
-        const presetData = _.merge(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
+
+        const presetData = this.mergePresets(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
             preset,
         });
+
         if (presetData.assemblies && !assembly) {
             throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
         }
-        presetData.inflation = inflation;
         if (!ConfigLoader.presetInfoLogged) {
             logger.info(`Generating config from preset '${preset}'`);
             if (assembly) {

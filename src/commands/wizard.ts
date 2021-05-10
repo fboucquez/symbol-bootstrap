@@ -271,12 +271,12 @@ export default class Wizard extends Command {
         console.log();
         console.log('To complete the registration, you need to link your keys (online):');
         console.log();
-        console.log(`$ symbol-bootstrap link --useKnownRestGateways`);
+        console.log(`$ symbol-bootstrap link --useKnownRestGateways -c ${customPresetFile}`);
         if (rewardProgram == RewardProgram.SuperNode) {
             console.log();
             console.log('To enroll to the supernode program, run (online):');
             console.log();
-            console.log(`$ symbol-bootstrap enrollRewardProgram  --useKnownRestGateways`);
+            console.log(`$ symbol-bootstrap enrollRewardProgram  --useKnownRestGateways -c ${customPresetFile}`);
         }
         console.log();
     }

@@ -45,6 +45,7 @@ export type LinkParams = {
     unlink: boolean;
     useKnownRestGateways: boolean;
     ready?: boolean;
+    customPreset?: string;
 };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
@@ -77,6 +78,7 @@ export class LinkService implements TransactionFactory {
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
+        const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         logger.info(`${this.params.unlink ? 'Unlinking' : 'Linking'} nodes`);
 
         await new AnnounceService().announce(
@@ -84,7 +86,7 @@ export class LinkService implements TransactionFactory {
             this.params.maxFee,
             this.params.useKnownRestGateways,
             this.params.ready,
-            presetData,
+            this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,
         );
