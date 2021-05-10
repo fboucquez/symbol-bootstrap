@@ -12,6 +12,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.6  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Added `MonitorOnly` reward program.
+
 ## [1.0.5] - May-3-2021
 
 **Milestone**: Mainnet(1.0.0.0)

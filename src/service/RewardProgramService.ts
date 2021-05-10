@@ -46,6 +46,7 @@ export enum RewardProgram {
     EarlyAdoption = 'EarlyAdoption',
     Ecosystem = 'Ecosystem',
     SuperNode = 'SuperNode',
+    MonitorOnly = 'MonitorOnly',
 }
 
 export class RewardProgramService implements TransactionFactory {
