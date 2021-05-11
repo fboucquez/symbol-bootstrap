@@ -220,6 +220,7 @@ describe('LinkService', () => {
     it('LinkService create transactions when dual + voting + upgrade', async () => {
         const target = 'target/tests/testnet-dual-voting-upgrade';
         const maxFee = UInt64.fromUint(10);
+        let originalLasKnownNetworkEpoch = 0;
         {
             const params = {
                 ...ConfigService.defaultParams,
@@ -253,6 +254,7 @@ describe('LinkService', () => {
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
             expect(addresses!.nodes![0].voting?.length).eq(1);
+            originalLasKnownNetworkEpoch = presetData.lastKnownNetworkEpoch;
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
@@ -295,19 +297,20 @@ describe('LinkService', () => {
             expect(transactions.length).eq(4);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
                 addresses!.nodes![0].voting![0].publicKey,
-                323,
-                323 + presetData.votingKeyEpochLength - 1,
+                originalLasKnownNetworkEpoch,
+                originalLasKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
             );
             assertVotingTransaction(
                 transactions[3],
                 LinkAction.Link,
                 addresses!.nodes![0].voting![1].publicKey,
-                323 + presetData.votingKeyEpochLength,
-                323 + presetData.votingKeyEpochLength + presetData.votingKeyEpochLength - 1,
+                originalLasKnownNetworkEpoch + presetData.votingKeyEpochLength,
+                originalLasKnownNetworkEpoch + presetData.votingKeyEpochLength + presetData.votingKeyEpochLength - 1,
             );
         }
     });
