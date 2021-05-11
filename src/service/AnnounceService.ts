@@ -30,6 +30,7 @@ import {
     PublicAccount,
     RepositoryFactory,
     RepositoryFactoryHttp,
+    SignedTransaction,
     Transaction,
     TransactionService,
     UInt64,
@@ -111,7 +112,6 @@ export class AnnounceService {
         let repositoryFactory: RepositoryFactory;
         const urls = (useKnownRestGateways && presetData.knownRestGateways) || [];
         if (urls.length) {
-            urls.push(url);
             const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls))[0];
             if (!repositoryInfo) {
                 throw new Error(`No up and running node could be found of out: ${urls.join(', ')}`);
@@ -141,7 +141,7 @@ export class AnnounceService {
         }
 
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
-        if (generationHash !== presetData.nemesisGenerationHashSeed) {
+        if (generationHash?.toUpperCase() !== presetData.nemesisGenerationHashSeed?.toUpperCase()) {
             throw new Error(
                 `You are connecting to the wrong network. Expected generation hash is ${presetData.nemesisGenerationHashSeed} but got ${generationHash}`,
             );
@@ -185,22 +185,31 @@ export class AnnounceService {
                 logger.info(`There are not transactions to announce for node ${nodeAccount.name}`);
                 continue;
             }
-            const shouldAnnounce: boolean =
-                ready ||
-                (
-                    await prompt([
-                        {
-                            name: 'value',
-                            message: `Do you want to announce ${transactions.length} transactions for node ${nodeAccount.name}`,
-                            type: 'confirm',
-                            default: true,
-                        },
-                    ])
-                ).value;
-            if (!shouldAnnounce) {
-                logger.info(`Ignoring transaction for node ${nodeAccount.name}`);
-                continue;
-            }
+
+            const getTransactionDescription = (transaction: Transaction, signedTransaction: SignedTransaction): string => {
+                return `${transaction.constructor.name} - Hash: ${signedTransaction.hash} - MaxFee ${
+                    transaction.maxFee.compact() / Math.pow(10, currency.divisibility)
+                }`;
+            };
+
+            const shouldAnnounce = async (transaction: Transaction, signedTransaction: SignedTransaction): Promise<boolean> => {
+                const response: boolean =
+                    ready ||
+                    (
+                        await prompt([
+                            {
+                                name: 'value',
+                                message: `Do you want to announce ${getTransactionDescription(transaction, signedTransaction)}?`,
+                                type: 'confirm',
+                                default: true,
+                            },
+                        ])
+                    ).value;
+                if (!response) {
+                    logger.info(`Ignoring transaction for node ${nodeAccount.name}`);
+                }
+                return response;
+            };
 
             if (multisigAccountInfo) {
                 logger.info(
@@ -243,10 +252,13 @@ export class AnnounceService {
                         cosigners.filter((a) => a !== bestCosigner),
                         generationHash,
                     );
+                    if (!(await shouldAnnounce(aggregateTransaction, signedAggregateTransaction))) {
+                        continue;
+                    }
                     try {
-                        logger.info(`Announcing Multisig Aggregate Complete Transaction hash ${signedAggregateTransaction.hash}`);
+                        logger.info(`Announcing ${getTransactionDescription(aggregateTransaction, signedAggregateTransaction)}`);
                         await transactionService.announce(signedAggregateTransaction, listener).toPromise();
-                        logger.info('Aggregate Complete Transaction has been confirmed!');
+                        logger.info(`${getTransactionDescription(aggregateTransaction, signedAggregateTransaction)} has been confirmed`);
                     } catch (e) {
                         const message =
                             `Aggregate Complete Transaction ${signedAggregateTransaction.type} ${
@@ -282,12 +294,21 @@ export class AnnounceService {
                         lockFundsTransaction = lockFundsTransaction.setMaxFee(minFeeMultiplier);
                     }
                     const signedLockFundsTransaction = bestCosigner.sign(lockFundsTransaction, generationHash);
-                    try {
-                        logger.info(`Announcing Lock Funds Transaction hash ${signedLockFundsTransaction.hash}`);
-                        await transactionService.announce(signedLockFundsTransaction, listener).toPromise();
+                    if (!(await shouldAnnounce(lockFundsTransaction, signedLockFundsTransaction))) {
+                        continue;
+                    }
+                    if (!(await shouldAnnounce(aggregateTransaction, signedAggregateTransaction))) {
+                        continue;
+                    }
 
-                        logger.info(`Announcing Aggregate Bonded Transaction hash ${signedAggregateTransaction.hash}`);
+                    try {
+                        logger.info(`Announcing ${getTransactionDescription(lockFundsTransaction, signedLockFundsTransaction)}`);
+                        await transactionService.announce(signedLockFundsTransaction, listener).toPromise();
+                        logger.info(`${getTransactionDescription(lockFundsTransaction, signedLockFundsTransaction)} has been confirmed`);
+
+                        logger.info(`Announcing Bonded ${getTransactionDescription(aggregateTransaction, signedAggregateTransaction)}`);
                         await transactionService.announceAggregateBonded(signedAggregateTransaction, listener).toPromise();
+                        logger.info(`${getTransactionDescription(aggregateTransaction, signedAggregateTransaction)} has been announced`);
 
                         logger.info('Aggregate Bonded Transaction has been confirmed! Your cosigners would need to cosign!');
                     } catch (e) {
@@ -315,10 +336,13 @@ export class AnnounceService {
                         transaction = transaction.setMaxFee(minFeeMultiplier);
                     }
                     const signedTransaction = signerAccount.sign(transactions[0], generationHash);
+                    if (!(await shouldAnnounce(transaction, signedTransaction))) {
+                        continue;
+                    }
                     try {
-                        logger.info(`Announcing Simple Transaction hash ${signedTransaction.hash}`);
+                        logger.info(`Announcing ${getTransactionDescription(transaction, signedTransaction)}`);
                         await transactionService.announce(signedTransaction, listener).toPromise();
-                        logger.info('Transaction has been confirmed!');
+                        logger.info(`${getTransactionDescription(transaction, signedTransaction)} has been confirmed`);
                     } catch (e) {
                         const message =
                             `Simple Transaction ${signedTransaction.type} ${
@@ -338,10 +362,13 @@ export class AnnounceService {
                         aggregateTransaction = aggregateTransaction.setMaxFeeForAggregate(minFeeMultiplier, 0);
                     }
                     const signedAggregateTransaction = signerAccount.sign(aggregateTransaction, generationHash);
+                    if (!(await shouldAnnounce(aggregateTransaction, signedAggregateTransaction))) {
+                        continue;
+                    }
                     try {
-                        logger.info(`Announcing Aggregate Complete Transaction hash ${signedAggregateTransaction.hash}`);
+                        logger.info(`Announcing ${getTransactionDescription(aggregateTransaction, signedAggregateTransaction)}`);
                         await transactionService.announce(signedAggregateTransaction, listener).toPromise();
-                        logger.info('Aggregate Complete Transaction has been confirmed!');
+                        logger.info(`${getTransactionDescription(aggregateTransaction, signedAggregateTransaction)} has been confirmed`);
                     } catch (e) {
                         const message =
                             `Aggregate Complete Transaction ${signedAggregateTransaction.type} ${

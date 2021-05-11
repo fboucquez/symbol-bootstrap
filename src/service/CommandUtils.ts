@@ -92,7 +92,7 @@ export class CommandUtils {
                         validate: CommandUtils.isValidPrivateKey,
                     },
                 ]);
-                const privateKey = responses.value === '' ? undefined : responses.value;
+                const privateKey = responses.value === '' ? undefined : responses.value.toUpperCase();
                 if (!privateKey) {
                     console.log('Please provide the private key.');
                 } else {
@@ -109,7 +109,7 @@ export class CommandUtils {
                 }
             }
         }
-        return account.privateKey;
+        return account.privateKey.toUpperCase();
     }
 
     public static async resolvePassword(

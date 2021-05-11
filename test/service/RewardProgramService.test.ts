@@ -31,7 +31,7 @@ describe('RewardProgramService', () => {
             RewardProgramService.getRewardProgram('NA');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq('NA is not a valid Reward program. Please use one of EarlyAdoption, Ecosystem, SuperNode');
+            expect(e.message).eq('NA is not a valid Reward program. Please use one of EarlyAdoption, Ecosystem, SuperNode, MonitorOnly');
         }
     });
 
@@ -66,7 +66,7 @@ describe('RewardProgramService', () => {
         const transaction = transactions[0] as TransferTransaction;
         expect(transaction.type).eq(TransactionType.TRANSFER);
         expect(transaction.message.payload).eq(
-            'enrol C9767496987222790518114049299DD52114BF2A8F7E5F4B70BB2B6365FAFD34 https://fboucquez-agent-symbollocal.ngrok.io',
+            'enroll https://fboucquez-agent-symbollocal.ngrok.io LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlHU01FWUNBUUF3RXpFUk1BOEdBMVVFQXd3SVFXZGxiblFnUTBFd0tqQUZCZ01yWlhBRElRQmtJVU1VTjJMSQpKMWcraW1TQW0zM3lkNDRVSlhWdjVkZi95Z0N6eGJVbUc2QUFNQVVHQXl0bGNBTkJBTncyWlIvQUtxUzlSblJWCnMzYWtZcXdHMnAzR0RTREQzVlU3VDFOSk9MWkdiU3g3alY2WnovS2ZzMGgvcEsyRmhvb2taL2oxeUxUQzgxdEkKZzR6MWFnWT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0tCg==',
         );
     });
 

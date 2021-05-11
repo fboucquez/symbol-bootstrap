@@ -20,7 +20,9 @@ import * as _ from 'lodash';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
-import { BootstrapUtils, CryptoUtils } from '../../src/service';
+import { Account, NetworkType } from 'symbol-sdk';
+import { ConfigAccount } from '../../src/model';
+import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
 import assert = require('assert');
 
 describe('BootstrapUtils', () => {
@@ -31,6 +33,20 @@ describe('BootstrapUtils', () => {
         assert.strictEqual(user1, user2);
         assert.strictEqual(user1, user3);
     });
+
+    it('BootstrapUtils generate random', async () => {
+        const networkType = NetworkType.TEST_NET;
+
+        const balances: (ConfigAccount & { balance: number })[] = [];
+
+        for (let i = 0; i < 10; i++) {
+            console.log();
+            const account = ConfigLoader.toConfig(Account.generateNewAccount(networkType));
+            balances.push({ ...account, balance: 1000000 });
+        }
+        console.log(BootstrapUtils.toYaml({ nemesisBalances: balances }));
+    });
+
     it('BootstrapUtils.toAmount', async () => {
         expect(() => BootstrapUtils.toAmount(12345678.9)).to.throw;
         expect(() => BootstrapUtils.toAmount('12345678.9')).to.throw;

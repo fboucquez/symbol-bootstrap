@@ -36,7 +36,10 @@ export interface NodeAccount {
     remote?: ConfigAccount;
     // VRF key is produced if node is peer
     vrf?: ConfigAccount;
+    // Voting keys are produced if node is voting
     voting?: VotingKeyFile[];
+    // Agent private key is produced if node is supernode
+    agent?: ConfigAccount;
     roles: string;
     name: string;
     friendlyName: string;

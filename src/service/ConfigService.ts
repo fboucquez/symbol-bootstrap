@@ -15,7 +15,7 @@
  */
 
 import * as fs from 'fs';
-import { copyFileSync, existsSync } from 'fs';
+import { copyFileSync, existsSync, promises as fsPromises } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import {
@@ -60,6 +60,7 @@ export enum KeyName {
     Transport = 'Transport',
     Voting = 'Voting',
     VRF = 'VRF',
+    Agent = 'Agent',
     NemesisSigner = 'Nemesis Signer',
     NemesisAccount = 'Nemesis Account',
 }
@@ -68,7 +69,7 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
-    preset: Preset;
+    preset?: Preset;
     target: string;
     password?: string;
     user: string;
@@ -88,7 +89,6 @@ export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
         report: false,
-        preset: Preset.bootstrap,
         reset: false,
         upgrade: false,
         user: BootstrapUtils.CURRENT_USER,
@@ -143,7 +143,7 @@ export class ConfigService {
 
             this.cleanUpConfiguration(presetData);
             await this.generateNodeCertificates(presetData, addresses);
-            await this.generateAgentCertificates(presetData);
+            await this.generateAgentCertificates(presetData, addresses);
             await this.generateNodes(presetData, addresses);
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData);
@@ -175,10 +175,7 @@ export class ConfigService {
     }
 
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
-        return _.merge(
-            _.omit(oldPresetData || {}, 'inflation'),
-            this.configLoader.createPresetData({ ...this.params, root: this.root, password: password }),
-        );
+        return this.configLoader.createPresetData({ ...this.params, root: this.root, password: password, oldPresetData });
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -235,13 +232,13 @@ export class ConfigService {
             await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
             return;
         }
-        const finalNemesisSeed = join(this.root, 'presets', this.params.preset, 'seed');
+        const finalNemesisSeed = join(this.root, 'presets', presetData.preset, 'seed');
         if (existsSync(finalNemesisSeed)) {
             await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
-            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${this.params.preset} preset default seed a valid seed folder?`);
+            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
             return;
         }
-        logger.warn(`Seed for preset ${this.params.preset} could not be found in ${finalNemesisSeed}`);
+        logger.warn(`Seed for preset ${presetData.preset} could not be found in ${finalNemesisSeed}`);
 
         throw new Error('Seed could not be found!!!!');
     }
@@ -269,13 +266,20 @@ export class ConfigService {
         );
     }
 
-    private async generateAgentCertificates(presetData: ConfigPreset): Promise<void> {
+    private async generateAgentCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
-            (presetData.nodes || [])
-                .filter((n) => n.rewardProgram)
-                .map(async (account) => {
-                    return await new AgentCertificateService(this.root, this.params).run(presetData.symbolServerToolsImage, account.name);
-                }),
+            (addresses.nodes || []).map(async (account, index) => {
+                const node = presetData.nodes?.[index];
+                if (node?.rewardProgram && account.agent)
+                    await new AgentCertificateService(this.root, this.params).run(
+                        presetData.networkType,
+                        presetData.symbolServerToolsImage,
+                        account.name,
+                        {
+                            agent: account.agent,
+                        },
+                    );
+            }),
         );
     }
 
@@ -314,6 +318,7 @@ export class ConfigService {
                 ? presetData.votingUnfinalizedBlocksDuration
                 : presetData.nonVotingUnfinalizedBlocksDuration,
             beneficiaryAddress: beneficiaryAddress == undefined ? account.main.address : beneficiaryAddress,
+            roles: ConfigLoader.resolveRoles(nodePreset),
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];
@@ -338,19 +343,12 @@ export class ConfigService {
                     `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
                 );
             }
-            const nodePrivateKey = await CommandUtils.resolvePrivateKey(
-                presetData.networkType,
-                account.transport,
-                KeyName.Transport,
-                account.name,
-                'creating the agent properties',
-            );
 
             const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
             templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
             templateContext.rewardProgram = rewardProgram;
             templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
-            templateContext.nodePrivateKey = nodePrivateKey;
+            templateContext.mainPublicKey = account.main.publicKey;
             const copyFrom = join(this.root, 'config', 'agent');
             const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
             await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
@@ -431,7 +429,7 @@ export class ConfigService {
                     },
                     metadata: {
                         name: nodePresetData.friendlyName,
-                        roles: nodePresetData.roles,
+                        roles: ConfigLoader.resolveRoles(nodePresetData),
                     },
                 };
             })
@@ -682,6 +680,10 @@ export class ConfigService {
                 const name = templateContext.name || `wallet-${index}`;
                 const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+                await fsPromises.chmod(join(moveTo, 'app.conf.js'), 0o777);
+                await fsPromises.chmod(join(moveTo, 'fees.conf.js'), 0o777);
+                await fsPromises.chmod(join(moveTo, 'network.conf.js'), 0o777);
+                await fsPromises.chmod(join(moveTo, 'profileImporter.html'), 0o777);
                 await Promise.all(
                     (explorerPreset.profiles || []).map(async (profile) => {
                         if (!profile.name) {

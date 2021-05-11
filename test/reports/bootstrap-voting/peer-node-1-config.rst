@@ -146,7 +146,7 @@ config-logging-recovery.properties
     :delim: ;
 
     **console**;
-    sinkType; Sync
+    sinkType; Async
     level; Info
     colorMode; Ansi
     **console.component.levels**;
@@ -167,12 +167,12 @@ config-logging-server.properties
     :delim: ;
 
     **console**;
-    sinkType; Sync
+    sinkType; Async
     level; Info
     colorMode; Ansi
     **console.component.levels**;
     **file**;
-    sinkType; Sync
+    sinkType; Async
     level; Info
     directory; logs
     filePattern; logs/catapult_server%4N.log
@@ -286,7 +286,7 @@ config-node.properties
     port; 7900; unsigned short; Server port.
     maxIncomingConnectionsPerIdentity; 6; uint32_t; Maximum number of incoming connections per identity over primary port.
     enableAddressReuse; false; bool; Set to true if the server should reuse ports already in use.
-    enableSingleThreadPool; true; bool; Set to true if a single thread pool should be used, Set to false if multiple thread pools should be used.
+    enableSingleThreadPool; false; bool; Set to true if a single thread pool should be used, Set to false if multiple thread pools should be used.
     enableCacheDatabaseStorage; true; bool; Set to true if cache data should be saved in a database.
     enableAutoSyncCleanup; true; bool; Set to true if temporary sync files should be automatically cleaned up. Note: This should be Set to false if broker process is running.
     fileDatabaseBatchSize; 1; ;
@@ -301,7 +301,7 @@ config-node.properties
     shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
     minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
     maxTimeBehindPullTransactionsStart; 5m; ;
-    transactionSelectionStrategy; maximize-fee; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
+    transactionSelectionStrategy; oldest; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
     unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
     unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
     connectTimeout; 15s; utils::TimeSpan; Timeout for connecting to a peer.
@@ -318,8 +318,8 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 0.10.0.7; ;
-    maxPartnerNodeVersion; 0.10.0.8; ;
+    minPartnerNodeVersion; 1.0.0.0; ;
+    maxPartnerNodeVersion; 1.0.255.255; ;
     trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
     listenInterface; 0.0.0.0; ;
@@ -334,7 +334,7 @@ config-node.properties
     **localnode**; ; ;
     host; peer-node-1; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-peer-node-1; string; Node friendly name (leave empty to use address).
-    version; 0.10.0.8; uint32_t; Node version.
+    version; 1.0.0.0; uint32_t; Node version.
     roles; Peer,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.

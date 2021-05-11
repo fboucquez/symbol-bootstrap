@@ -1,10 +1,9 @@
-var networkConfig = {
+var networkTypeConfig = {
   "explorerUrl": "{{{explorerUrl}}}",
   "faucetUrl": "{{{faucetUrl}}}",
   "defaultNetworkType": {{{networkType}}},
   "defaultNodeUrl": "{{{defaultNodeUrl}}}",
   "networkConfigurationDefaults": {
-    "epochAdjustment": {{{toSeconds epochAdjustment}}},
     "maxMosaicDivisibility": {{{maxMosaicDivisibility}}},
     "namespaceGracePeriodDuration": {{{toSeconds namespaceGracePeriodDuration}}},
     "lockedFundsPerAggregate": "{{{lockedFundsPerAggregate}}}",
@@ -21,7 +20,9 @@ var networkConfig = {
     "currencyMosaicId": "{{{toSimpleHex currencyMosaicId}}}",
     "harvestingMosaicId": "{{{toSimpleHex harvestingMosaicId}}}",
     "defaultDynamicFeeMultiplier": {{{defaultDynamicFeeMultiplier}}},
-    "epochAdjustment": {{{toSeconds epochAdjustment}}}
+    "epochAdjustment": {{{toSeconds epochAdjustment}}},
+    "totalChainImportance": {{totalChainImportance}},
+    "generationHash": "{{nemesisGenerationHashSeed}}"
   },
   "nodes": [
 {{#restNodes}}
@@ -29,6 +30,7 @@ var networkConfig = {
 {{/restNodes}}
   ]
 }
+var networkConfig = { {{{networkType}}} : networkTypeConfig }
 window.networkConfig = networkConfig
 console.log('networkConfig loaded!', networkConfig)
 

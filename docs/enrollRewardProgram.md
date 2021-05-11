@@ -1,19 +1,19 @@
-`symbol-bootstrap enrolRewardProgram`
-=====================================
+`symbol-bootstrap enrollRewardProgram`
+======================================
 
-It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
+It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the agent keys (changing the agent-ca-csr) or server host.
 
 Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
-* [`symbol-bootstrap enrolRewardProgram`](#symbol-bootstrap-enrolrewardprogram)
+* [`symbol-bootstrap enrollRewardProgram`](#symbol-bootstrap-enrollrewardprogram)
 
-## `symbol-bootstrap enrolRewardProgram`
+## `symbol-bootstrap enrollRewardProgram`
 
-It enrols the nodes in the rewards program by announcing the enrol transaction to the registration address.  You can also use this command to update the program registration when you change the node public key or server host.
+It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the agent keys (changing the agent-ca-csr) or server host.
 
 ```
 USAGE
-  $ symbol-bootstrap enrolRewardProgram
+  $ symbol-bootstrap enrollRewardProgram
 
 OPTIONS
   -h, --help              It shows the help of this command.
@@ -40,11 +40,11 @@ DESCRIPTION
   Currently, the only program that can be enrolled post-launch is 'SuperNode'.
 
 EXAMPLES
-  $ symbol-bootstrap enrolRewardProgram
-  $ symbol-bootstrap enrolRewardProgram --noPassword
-  $ symbol-bootstrap enrolRewardProgram --useKnownRestGateways
-  $ symbol-bootstrap enrolRewardProgram --password 1234 --url http://external-rest:3000
-  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap enrolRewardProgram --url http://external-rest:3000
+  $ symbol-bootstrap enrollRewardProgram
+  $ symbol-bootstrap enrollRewardProgram --noPassword
+  $ symbol-bootstrap enrollRewardProgram --useKnownRestGateways
+  $ symbol-bootstrap enrollRewardProgram --password 1234 --url http://external-rest:3000
+  $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap enrollRewardProgram --url http://external-rest:3000
 ```
 
-_See code: [src/commands/enrolRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.3/src/commands/enrolRewardProgram.ts)_
+_See code: [src/commands/enrollRewardProgram.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.6/src/commands/enrollRewardProgram.ts)_

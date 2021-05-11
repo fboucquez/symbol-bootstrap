@@ -3,10 +3,8 @@ databases:
       openPort: false
 nodes:
     - harvesting: false
-      voting: false
       api: true
       name: 'node'
-      host: ''
       databaseHost: 'db'
       brokerName: 'broker'
       openPort: true

@@ -15,7 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Preset } from '../service';
+import { Preset, RewardProgram } from '../service';
 import { NodeType } from './NodeType';
 
 export enum PrivateKeySecurityMode {
@@ -65,11 +65,33 @@ export interface NemesisPreset {
     transactionsDirectory: string;
 }
 
+export enum TransactionSelectionStrategy {
+    maximizeFee = 'maximize-fee',
+    oldest = 'oldest',
+    minimizeFee = 'minimize-fee',
+}
+export enum DebugLevel {
+    trace = 'Trace',
+    debug = 'Debug',
+    info = 'Info',
+    important = 'Important',
+    warning = 'Warning',
+    error = 'Error',
+    fatal = 'Fatal',
+    min = 'Min',
+    max = 'Max',
+}
+
+export enum SinkType {
+    async = 'Async',
+    sync = 'Sync',
+}
+
 export interface NodeConfigPreset {
     syncsource: boolean;
     filespooling: boolean;
     partialtransaction: boolean;
-    sinkType: 'Async' | 'Sync';
+    sinkType: SinkType;
     enableSingleThreadPool: boolean;
     addressextraction: boolean;
     mongo: boolean;
@@ -79,7 +101,7 @@ export interface NodeConfigPreset {
     nodeUseRemoteAccount: boolean;
     beneficiaryAddress?: string;
     stepDuration: string;
-    logLevel: 'Debug' | 'Info';
+    logLevel: DebugLevel;
     shortLivedCacheMessageDuration: string;
     readRateMonitoringBucketDuration: string;
     networkHeightMaxNodes: number;
@@ -101,7 +123,7 @@ export interface NodeConfigPreset {
     maxMultisigDepth: number;
     maxChildNamespaces: number;
     maxTrackedNodes: string;
-    transactionSelectionStrategy: string;
+    transactionSelectionStrategy: TransactionSelectionStrategy;
     blockDisruptorSlotCount: number;
     minTransactionFailuresPercentForBan: number;
     enableCacheDatabaseStorage: boolean;
@@ -226,6 +248,7 @@ export interface NodeConfigPreset {
     maxProofSize: number;
     maxTransactionsPerBlock: number;
     localNetworks: string;
+    rewardProgramAgentPort: number;
 }
 
 export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPreset> {
@@ -253,6 +276,9 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
 
+    agentPrivateKey?: string;
+    agentPublicKey?: string;
+
     //Broker specific
     brokerName?: string;
     brokerHost?: string;
@@ -263,7 +289,7 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     brokerDockerComposeDebugMode?: boolean;
 
     //Reward program
-    rewardProgram?: string;
+    rewardProgram?: RewardProgram;
     rewardProgramAgentIpv4_address?: string;
     rewardProgramAgentOpenPort?: boolean | number | string;
     rewardProgramAgentExcludeDockerService?: boolean;
@@ -348,7 +374,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     preset: Preset;
     assembly: string;
     assemblies?: string;
-    privateKeySecurityMode: string;
+    privateKeySecurityMode?: string;
     votingKeysDirectory: string;
     sinkAddress?: string;
     epochAdjustment: string;
@@ -386,7 +412,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;
-    rewardProgramControllerPublicKey?: string;
+    rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
     votingKeyDesiredEpochLength: number;
     useExperimentalNativeVotingKeyGeneration?: boolean;
