@@ -25,8 +25,8 @@ totalChainImportance: 7842928625000000
 initialCurrencyAtomicUnits: 7842928625000000
 importanceGrouping: 180
 votingSetGrouping: 720
-votingKeyDesiredEpochLength: 720
-lastKnownNetworkEpoch: 323
+votingKeyEpochLength: 720
+lastKnownNetworkEpoch: 122
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m

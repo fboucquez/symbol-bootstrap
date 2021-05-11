@@ -12,7 +12,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.6  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
+-   Added multi voting key file support.
 -   Added `MonitorOnly` reward program.
+-   Added experimental typescript voting key file generation.
 
 ## [1.0.5] - May-3-2021
 

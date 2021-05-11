@@ -167,7 +167,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             addresses!.nodes![0].voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
         );
     });
 
@@ -207,13 +207,13 @@ describe('LinkService', () => {
         assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
         expect(addresses!.nodes![0].voting?.length).eq(1);
         expect(presetData.lastKnownNetworkEpoch).eq(1);
-        expect(presetData.votingKeyDesiredEpochLength).eq(720);
+        expect(presetData.votingKeyEpochLength).eq(720);
         assertVotingTransaction(
             transactions[2],
             LinkAction.Link,
             addresses!.nodes![0].voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
         );
     });
 
@@ -258,7 +258,7 @@ describe('LinkService', () => {
                 LinkAction.Link,
                 addresses!.nodes![0].voting![0].publicKey,
                 presetData.lastKnownNetworkEpoch,
-                presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength - 1,
+                presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
             );
         }
 
@@ -300,14 +300,14 @@ describe('LinkService', () => {
                 LinkAction.Link,
                 addresses!.nodes![0].voting![0].publicKey,
                 323,
-                323 + presetData.votingKeyDesiredEpochLength - 1,
+                323 + presetData.votingKeyEpochLength - 1,
             );
             assertVotingTransaction(
                 transactions[3],
                 LinkAction.Link,
                 addresses!.nodes![0].voting![1].publicKey,
-                323 + presetData.votingKeyDesiredEpochLength,
-                323 + presetData.votingKeyDesiredEpochLength + presetData.votingKeyDesiredEpochLength - 1,
+                323 + presetData.votingKeyEpochLength,
+                323 + presetData.votingKeyEpochLength + presetData.votingKeyEpochLength - 1,
             );
         }
     });
@@ -373,7 +373,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             addresses!.nodes![0].voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
         );
     });
 
@@ -543,7 +543,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             nodeAccount.voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
         );
     });
 
@@ -833,7 +833,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             nodeAccount.voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
         );
     });
 });

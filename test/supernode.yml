@@ -1,8 +1,11 @@
 #privateKeySecurityMode: PROMPT_MAIN
 nodeUseRemoteAccount: false
 logLevel: 'Debug'
+votingKeyEpochLength: 140
+lastKnownNetworkEpoch: 1
+votingKeyEpochMinOffset: 300
 nodes:
-    - voting: false
+    - voting: true
       rewardProgram: 'supernode'
       host: fboucquez-agent-symbollocal.ngrok.io
       agentUrl: https://fboucquez-agent-symbollocal.ngrok.io

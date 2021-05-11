@@ -414,7 +414,8 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     baseNamespace: string;
     rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
-    votingKeyDesiredEpochLength: number;
+    votingKeyEpochLength: number;
+    votingKeyEpochMinOffset?: number; // How in the future voting key files need to be generated. By default votingKeyEpochLength / 2
     useExperimentalNativeVotingKeyGeneration?: boolean;
     lastKnownNetworkEpoch: number;
     //Nested Objects
