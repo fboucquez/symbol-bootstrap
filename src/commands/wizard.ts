@@ -285,7 +285,7 @@ export default class Wizard extends Command {
             return account;
         }
         const privateKeyText = showPrivateKeys && account instanceof Account ? `\n\tPrivate Key: ${account.privateKey}` : '';
-        console.log(` - ${keyName}:\n\tAddress:     ${account.address.pretty()}\n\tPublic Key:  ${account.publicKey}${privateKeyText}`);
+        console.log(` - ${keyName}:\n\tAddress:     ${account.address.plain()}\n\tPublic Key:  ${account.publicKey}${privateKeyText}`);
         return account as T;
     }
 
@@ -384,7 +384,7 @@ export default class Wizard extends Command {
             ]);
             const log = (account: Account, message: string): Account => {
                 console.log();
-                console.log(`Using account ${account.address.pretty()} for ${keyName} key. ${message}`);
+                console.log(`Using account ${account.address.plain()} for ${keyName} key. ${message}`);
                 console.log();
                 return account;
             };
@@ -438,7 +438,7 @@ export default class Wizard extends Command {
                 const { ok } = await prompt([
                     {
                         name: 'ok',
-                        message: `Is this the expected address ${enteredAccount.address.pretty()} to used as ${keyName} account? `,
+                        message: `Is this the expected address ${enteredAccount.address.plain()} to used as ${keyName} account? `,
                         type: 'confirm',
                         default: false,
                     },
@@ -598,7 +598,7 @@ export default class Wizard extends Command {
 
                 const choices = derivedAccounts.map((derivedAccounts) => ({
                     value: derivedAccounts.account.address.plain(),
-                    name: derivedAccounts.account.address.pretty(),
+                    name: derivedAccounts.account.address.plain(),
                 }));
                 choices.push({
                     value: 'none',
