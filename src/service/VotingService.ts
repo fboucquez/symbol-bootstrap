@@ -52,7 +52,7 @@ export class VotingService {
             );
             await BootstrapUtils.mkdir(votingKeysFolder);
             const votingUtils = new VotingUtils();
-
+            await BootstrapUtils.deleteFile(join(votingKeysFolder, 'metadata.yml'));
             while (true) {
                 const currentVotingFiles = votingUtils.loadVotingFiles(votingKeysFolder);
                 const maxVotingKeyEndEpoch =
@@ -72,9 +72,11 @@ export class VotingService {
                 logger.info(`Creating Voting key file of ${epochs} epochs for node ${nodeAccount.name}. This could take a while!`);
                 const privateKeyTreeFileName = `private_key_tree${currentVotingFiles.length + 1}.dat`;
                 if (presetData.useExperimentalNativeVotingKeyGeneration) {
+                    logger.info('Voting file is created using the native typescript voting key file generator!');
                     const votingFile = await votingUtils.createVotingFile(votingPrivateKey, votingKeyStartEpoch, votingKeyEndEpoch);
                     writeFileSync(join(votingKeysFolder, privateKeyTreeFileName), votingFile);
                 } else {
+                    logger.info(`Voting file is created using docker and the default's catapult.tools.votingkey`);
                     const binds = [`${votingKeysFolder}:/votingKeys:rw`];
                     const cmd = [
                         `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,

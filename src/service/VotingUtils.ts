@@ -31,13 +31,13 @@ export interface CryptoImplementation {
     sign: (keyPair: KeyPair, data: Uint8Array) => Promise<Uint8Array>;
 }
 
-export interface VotingMetadata {
+export interface VotingKeyAccount {
     readonly startEpoch: number;
     readonly endEpoch: number;
     readonly publicKey: string;
 }
 
-export type VotingKeyFile = VotingMetadata & { filename: string };
+export type VotingKeyFile = VotingKeyAccount & { filename: string };
 
 export class VotingUtils {
     public static nobleImplementation: CryptoImplementation = {
@@ -161,7 +161,7 @@ export class VotingUtils {
         return result;
     }
 
-    public readVotingFile(file: Uint8Array): VotingMetadata {
+    public readVotingFile(file: Uint8Array): VotingKeyAccount {
         //start-epoch (8b),
         const votingKeyStartEpoch = Convert.uintArray8ToNumber(file.slice(0, 8));
         //end-epoch (8b),

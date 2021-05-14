@@ -53,6 +53,7 @@ export interface TransactionFactoryParams {
     deadline: Deadline;
     target: string;
     maxFee: UInt64;
+    latestFinalizedBlockEpoch: number;
 }
 
 export interface TransactionFactory {
@@ -134,6 +135,8 @@ export class AnnounceService {
         const currencyMosaicId = currency.mosaicId;
         const deadline = Deadline.create(epochAdjustment);
         const minFeeMultiplier = (await repositoryFactory.createNetworkRepository().getTransactionFees().toPromise()).minFeeMultiplier;
+        const latestFinalizedBlockEpoch = (await repositoryFactory.createChainRepository().getChainInfo().toPromise()).latestFinalizedBlock
+            .finalizationEpoch;
         if (providedMaxFee) {
             logger.info(`MaxFee is ${providedMaxFee / Math.pow(10, currency.divisibility)}`);
         } else {
@@ -175,6 +178,7 @@ export class AnnounceService {
                 nodePreset,
                 nodeAccount,
                 mainAccountInfo,
+                latestFinalizedBlockEpoch,
                 target,
                 mainAccount,
                 deadline,

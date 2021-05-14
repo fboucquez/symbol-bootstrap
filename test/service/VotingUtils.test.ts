@@ -33,7 +33,7 @@ import { expect } from '@oclif/test';
 import { readFileSync } from 'fs';
 import 'mocha';
 import { Convert, KeyPair } from 'symbol-sdk';
-import { VotingMetadata, VotingUtils } from '../../src/service';
+import { VotingKeyAccount, VotingUtils } from '../../src/service';
 describe('VotingUtils', () => {
     async function assertVotingKey(
         expectedVotingKeyFile: Uint8Array,
@@ -65,7 +65,7 @@ describe('VotingUtils', () => {
         const expectedHeader = expectedVotingKeyFile.subarray(0, headerSize);
         expect(header).deep.eq(expectedHeader);
         expect(Convert.uint8ToHex(votingKeyFile)).eq(Convert.uint8ToHex(expectedVotingKeyFile));
-        const expected: VotingMetadata = {
+        const expected: VotingKeyAccount = {
             startEpoch: votingKeyStartEpoch,
             endEpoch: votingKeyEndEpoch,
             publicKey: votingPublicKey,
