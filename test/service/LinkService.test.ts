@@ -166,7 +166,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             addresses!.nodes![0].voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
         );
     });
 
@@ -204,13 +204,13 @@ describe('LinkService', () => {
         assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
         expect(addresses!.nodes![0].voting?.length).eq(1);
         expect(presetData.lastKnownNetworkEpoch).eq(1);
-        expect(presetData.votingKeyEpochLength).eq(720);
+        expect(presetData.votingKeyDesiredLifetime).eq(720);
         assertVotingTransaction(
             transactions[2],
             LinkAction.Link,
             addresses!.nodes![0].voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
         );
     });
 
@@ -255,7 +255,7 @@ describe('LinkService', () => {
                 LinkAction.Link,
                 addresses!.nodes![0].voting![0].publicKey,
                 presetData.lastKnownNetworkEpoch,
-                presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
+                presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
             );
         }
 
@@ -295,8 +295,8 @@ describe('LinkService', () => {
                 transactions[2],
                 LinkAction.Link,
                 addresses!.nodes![0].voting![1].publicKey,
-                originalLasKnownNetworkEpoch + presetData.votingKeyEpochLength,
-                originalLasKnownNetworkEpoch + presetData.votingKeyEpochLength + presetData.votingKeyEpochLength - 1,
+                originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime,
+                originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime + presetData.votingKeyDesiredLifetime - 1,
             );
         }
     });
@@ -360,7 +360,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             addresses!.nodes![0].voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
         );
 
         expect(addresses!.nodes![0].voting?.length).eq(1);
@@ -529,7 +529,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             nodeAccount.voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
         );
     });
 
@@ -769,7 +769,7 @@ describe('LinkService', () => {
             LinkAction.Link,
             nodeAccount.voting![0].publicKey,
             presetData.lastKnownNetworkEpoch,
-            presetData.lastKnownNetworkEpoch + presetData.votingKeyEpochLength - 1,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
         );
     });
 });

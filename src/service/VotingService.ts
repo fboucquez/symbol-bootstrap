@@ -57,14 +57,14 @@ export class VotingService {
                 const currentVotingFiles = votingUtils.loadVotingFiles(votingKeysFolder);
                 const maxVotingKeyEndEpoch =
                     currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || presetData.lastKnownNetworkEpoch - 1;
-                const offset = presetData.votingKeyEpochMinOffset || presetData.votingKeyEpochLength / 2;
-                if (maxVotingKeyEndEpoch > presetData.lastKnownNetworkEpoch + offset) {
+                const votingKeyDesiredFutureLifetime = presetData.votingKeyDesiredFutureLifetime || presetData.votingKeyDesiredLifetime / 2;
+                if (maxVotingKeyEndEpoch > presetData.lastKnownNetworkEpoch + votingKeyDesiredFutureLifetime) {
                     logVotingKeyFiles(currentVotingFiles);
                     nodeAccount.voting = currentVotingFiles;
                     return;
                 }
                 const votingKeyStartEpoch = maxVotingKeyEndEpoch + 1;
-                const votingKeyEndEpoch = maxVotingKeyEndEpoch + presetData.votingKeyEpochLength;
+                const votingKeyEndEpoch = maxVotingKeyEndEpoch + presetData.votingKeyDesiredLifetime;
 
                 const votingAccount = Account.generateNewAccount(presetData.networkType);
                 const votingPrivateKey = votingAccount.privateKey;

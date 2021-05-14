@@ -2,8 +2,8 @@
 nodeUseRemoteAccount: true
 logLevel: 'Debug'
 lastKnownNetworkEpoch: 70
-votingKeyEpochLength: 28 # create short voting key files, 28 is the minimun
-votingKeyEpochMinOffset: 300 # create files for at least 60 epochs in the future, this will create voting key file 2 and file 3
+votingKeyDesiredLifetime: 28 # create short voting key files, 28 is the minimun
+votingKeyDesiredFutureLifetime: 300 # create files for at least 60 epochs in the future, this will create voting key file 2 and file 3
 useExperimentalNativeVotingKeyGeneration: true # Use new native ts generation
 nodes:
     - voting: true
