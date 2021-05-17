@@ -14,6 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 -   Added `wizard` command.
 -   Added `pack` command.
+-   Added `MonitorOnly` reward program.
 
 ## [1.0.5] - May-3-2021
 
