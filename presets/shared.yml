@@ -85,6 +85,7 @@ votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 rewardProgramAgentPort: 7881
+enableRevoteOnBoot: true
 
 # config database
 databaseName: catapult
@@ -211,4 +212,4 @@ maxConnectionAttempts: 15
 baseRetryDelay: 750
 connectionPoolSize: 10
 maxSubscriptions: 300
-enableRevoteOnBoot: true
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'

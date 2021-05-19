@@ -359,7 +359,13 @@ export class BootstrapUtils {
                         if (isMustache) {
                             const template = await BootstrapUtils.readTextFile(fromPath);
                             const renderedTemplate = this.runTemplate(template, templateContext);
-                            await fsPromises.writeFile(destinationFile, renderedTemplate);
+
+                            await fsPromises.writeFile(
+                                destinationFile,
+                                destinationFile.toLowerCase().endsWith('.json')
+                                    ? BootstrapUtils.formatJson(renderedTemplate)
+                                    : renderedTemplate,
+                            );
                         } else {
                             await fsPromises.copyFile(fromPath, destinationFile);
                         }
@@ -614,6 +620,7 @@ export class BootstrapUtils {
         Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
         Handlebars.registerHelper('toSeconds', BootstrapUtils.toSeconds);
         Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
+        Handlebars.registerHelper('splitCsv', BootstrapUtils.splitCsv);
         Handlebars.registerHelper('add', BootstrapUtils.add);
         Handlebars.registerHelper('minus', BootstrapUtils.minus);
         Handlebars.registerHelper('computerMemory', BootstrapUtils.computerMemory);
@@ -662,6 +669,15 @@ export class BootstrapUtils {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static toJson(object: any): string {
         return JSON.stringify(object, null, 2);
+    }
+
+    public static formatJson(string: string): string {
+        // Validates and format the json string.
+        return JSON.stringify(JSON.parse(string), null, 2);
+    }
+
+    public static splitCsv(object: string): string[] {
+        return (object || '').split(',').map((c) => c.trim());
     }
 
     public static toSeconds(serverDuration: string): number {
