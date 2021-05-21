@@ -43,6 +43,23 @@ describe('ReportService', () => {
 `,
             ).to.be.eq(expectedReport.trim());
         });
+
+        for (const gateway of configResult.presetData.gateways || []) {
+            const currentRestJsonFile = BootstrapUtils.getTargetGatewayFolder(params.target, true, gateway.name, 'rest.json');
+            const currentRestJson = await BootstrapUtils.readTextFile(currentRestJsonFile);
+            const expectedRestJsonFile = join(expectedReportFolder, `${gateway.name}-rest.json`);
+            if (!existsSync(expectedRestJsonFile)) {
+                await BootstrapUtils.writeTextFile(expectedRestJsonFile, currentRestJson);
+            }
+            const expectedRestJson = await BootstrapUtils.readTextFile(expectedRestJsonFile);
+            expect(
+                currentRestJson.trim(),
+                `Rest ${currentRestJsonFile} doesn't match
+
+`,
+            ).to.be.eq(expectedRestJson.trim());
+        }
+
         await Promise.all(promises);
     };
 
@@ -59,7 +76,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'dual',
