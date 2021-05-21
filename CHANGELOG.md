@@ -52,7 +52,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   Native and offline ready voting key file generation.
 -   Improved Custom Preset Object types for symbol bootstrap lib integration.
 -   TransactionSelectionStrategy's new default value is `oldest`.
 
