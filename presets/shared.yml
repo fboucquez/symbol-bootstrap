@@ -211,6 +211,7 @@ maxConnectionAttempts: 15
 baseRetryDelay: 750
 connectionPoolSize: 10
 maxSubscriptions: 300
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
 
 #voting
 votingKeyStartEpoch: 1
