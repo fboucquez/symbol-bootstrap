@@ -48,6 +48,7 @@ maxChildNamespaces: 100
 nonVotingUnfinalizedBlocksDuration: 10m
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
 knownRestGateways:
     - 'http://ngl-dual-001.symbolblockchain.io:3000'
     - 'http://ngl-dual-002.symbolblockchain.io:3000'
