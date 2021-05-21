@@ -18,7 +18,6 @@ OPTIONS
                                             resolved from the target/preset.yml file.
 
   -c, --customPreset=customPreset           External preset file. Values in this file will override the provided presets
-                                            (optional)
 
   -h, --help                                It shows the help of this command.
 

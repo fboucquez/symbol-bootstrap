@@ -13,6 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | Symbol Bootstrap | v1.0.6  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 -   Added `MonitorOnly` reward program.
+-   The `link` and `enrollRewardProgram` commands allow `--customPreset` to avoid password prompt when main private key is not stored in the target folder. 
 
 ## [1.0.5] - May-3-2021
 
