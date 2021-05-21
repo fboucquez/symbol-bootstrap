@@ -23,7 +23,7 @@ import LoggerFactory from '../logger/LoggerFactory';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigParams } from './ConfigService';
-import { VotingKeyFile, VotingUtils } from './VotingUtils';
+import { VotingUtils } from './VotingUtils';
 
 type VotingParams = ConfigParams;
 
@@ -34,15 +34,6 @@ export class VotingService {
 
     public async run(presetData: ConfigPreset, nodeAccount: NodeAccount, nodePreset: NodePreset | undefined): Promise<void> {
         const symbolServerToolsImage = presetData.symbolServerToolsImage;
-
-        function logVotingKeyFiles(currentVotingFiles: VotingKeyFile[]) {
-            const log = currentVotingFiles
-                .map((value) => {
-                    return `${value.filename}, Voting Public Key ${value.publicKey}, Start Epoch: ${value.startEpoch}, End Epoch: ${value.endEpoch}`;
-                })
-                .join('\n');
-            logger.info(`Current Voting files:\n${log}`);
-        }
 
         if (nodePreset?.voting) {
             const target = this.params.target;
@@ -59,7 +50,6 @@ export class VotingService {
                     currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || presetData.lastKnownNetworkEpoch - 1;
                 const votingKeyDesiredFutureLifetime = presetData.votingKeyDesiredFutureLifetime || presetData.votingKeyDesiredLifetime / 2;
                 if (maxVotingKeyEndEpoch > presetData.lastKnownNetworkEpoch + votingKeyDesiredFutureLifetime) {
-                    logVotingKeyFiles(currentVotingFiles);
                     nodeAccount.voting = currentVotingFiles;
                     return;
                 }
@@ -100,7 +90,7 @@ export class VotingService {
                         throw new Error('Voting key failed. Check the logs!');
                     }
                 }
-                logger.warn(`A new Voting File for the node ${nodeAccount.name} has been regenerated! `);
+                logger.warn(`A new Voting File for the node ${nodeAccount.name} has been generated! `);
                 logger.warn(
                     `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${votingAccount.publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
                 );

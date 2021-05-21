@@ -26,7 +26,7 @@ initialCurrencyAtomicUnits: 7842928625000000
 importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
-lastKnownNetworkEpoch: 122
+lastKnownNetworkEpoch: 151
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m

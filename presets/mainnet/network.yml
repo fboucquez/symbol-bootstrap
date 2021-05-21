@@ -28,7 +28,7 @@ votingSetGrouping: 1440
 minVotingKeyLifetime: 112
 maxVotingKeyLifetime: 360
 votingKeyDesiredLifetime: 360
-lastKnownNetworkEpoch: 113
+lastKnownNetworkEpoch: 131
 stepDuration: 5m
 maxBlockFutureTime: 300ms
 maxAccountRestrictionValues: 100
