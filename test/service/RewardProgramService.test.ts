@@ -31,7 +31,7 @@ describe('RewardProgramService', () => {
             RewardProgramService.getRewardProgram('NA');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq('NA is not a valid Reward program. Please use one of EarlyAdoption, Ecosystem, SuperNode');
+            expect(e.message).eq('NA is not a valid Reward program. Please use one of EarlyAdoption, Ecosystem, SuperNode, MonitorOnly');
         }
     });
 

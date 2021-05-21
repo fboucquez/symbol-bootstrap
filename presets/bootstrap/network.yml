@@ -11,6 +11,7 @@ harvestingName: 'harvest'
 explorerUrl: http://localhost:90/
 faucetUrl: http://localhost:100/
 beneficiaryAddress: ''
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer'
 nemesis:
     mosaics:
         - name: '{{currencyName}}'

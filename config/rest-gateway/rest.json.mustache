@@ -9,19 +9,7 @@
     "allowedHosts": ["*"],
     "allowedMethods": ["GET", "POST", "PUT", "OPTIONS"]
   },
-  "extensions": [
-    "accountLink",
-    "aggregate",
-    "lockHash",
-    "lockSecret",
-    "mosaic",
-    "metadata",
-    "multisig",
-    "namespace",
-    "receipts",
-    "restrictions",
-    "transfer"
-  ],
+  "extensions": {{{toJson (splitCsv restExtensions)}}},
   "db": {
     "url": "mongodb://{{{databaseHost}}}:27017/",
     "name": "catapult",
