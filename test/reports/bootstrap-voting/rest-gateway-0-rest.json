@@ -26,8 +26,7 @@
     "namespace",
     "receipts",
     "restrictions",
-    "transfer",
-    "cmc"
+    "transfer"
   ],
   "db": {
     "url": "mongodb://db-0:27017/",
