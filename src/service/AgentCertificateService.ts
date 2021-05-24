@@ -47,7 +47,7 @@ export class AgentCertificateService {
 
     public async run(
         networkType: NetworkType,
-        symbolServerToolsImage: string,
+        symbolServerImage: string,
         name: string,
         providedCertificates: AgentCertificates,
         customCertFolder?: string,
@@ -84,7 +84,7 @@ export class AgentCertificateService {
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
-            image: symbolServerToolsImage,
+            image: symbolServerImage,
             userId: userId,
             workdir: '/data',
             cmds: cmd,

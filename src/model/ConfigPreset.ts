@@ -385,7 +385,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     faucetUrl?: string;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
 
-    symbolServerToolsImage: string;
     symbolWalletImage: string;
     symbolServerImage: string;
     symbolExplorerImage: string;

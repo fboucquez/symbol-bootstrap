@@ -139,7 +139,7 @@ export class ConfigService {
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
             const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
-            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
+            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerImage);
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
@@ -257,7 +257,7 @@ export class ConfigService {
             (addresses.nodes || []).map(async (account) => {
                 return await new CertificateService(this.root, this.params).run(
                     presetData.networkType,
-                    presetData.symbolServerToolsImage,
+                    presetData.symbolServerImage,
                     account.name,
                     {
                         main: account.main,
@@ -275,7 +275,7 @@ export class ConfigService {
                 if (node?.rewardProgram && account.agent)
                     await new AgentCertificateService(this.root, this.params).run(
                         presetData.networkType,
-                        presetData.symbolServerToolsImage,
+                        presetData.symbolServerImage,
                         account.name,
                         {
                             agent: account.agent,
