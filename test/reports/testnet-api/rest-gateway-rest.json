@@ -83,5 +83,10 @@
       "maxFiles": 100
     }
   },
-  "numBlocksTransactionFeeStats": 300
+  "numBlocksTransactionFeeStats": 300,
+  "deployment": {
+    "deploymentTool": "symbol-bootstrap",
+    "deploymentToolVersion": "1.0.6",
+    "lastUpdatedDate": "2021-05-24"
+  }
 }
