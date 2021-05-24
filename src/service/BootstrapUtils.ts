@@ -431,13 +431,9 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(fileName: string, object: any, password: string | undefined): Promise<void> {
-        const parentFolder = dirname(fileName);
-        if (parentFolder) {
-            await BootstrapUtils.mkdir(parentFolder);
-        }
+    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
         const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
-        await BootstrapUtils.writeTextFile(fileName, yamlString);
+        await BootstrapUtils.writeTextFile(path, yamlString);
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
