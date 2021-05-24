@@ -21,7 +21,7 @@ OPTIONS
       If provided, docker-compose will run with -b (--build)
 
   -c, --customPreset=customPreset
-      External preset file. Values in this file will override the provided presets (optional)
+      External preset file. Values in this file will override the provided presets
 
   -d, --detached
       If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before 

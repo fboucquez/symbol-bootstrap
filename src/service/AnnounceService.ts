@@ -91,6 +91,11 @@ export class AnnounceService {
         maxFee: flags.integer({
             description: 'the max fee used when announcing (absolute). The node min multiplier will be used if it is not provided.',
         }),
+        customPreset: flags.string({
+            char: 'c',
+            description: `This command uses the encrypted addresses.yml to resolve the main private key. If the main private is only stored in the custom preset, you can provide it using this param. Otherwise, the command may ask for it when required.`,
+            required: false,
+        }),
     };
     public async announce(
         providedUrl: string,
@@ -215,6 +220,27 @@ export class AnnounceService {
                 return response;
             };
 
+            const resolveMainAccount = async (): Promise<Account> => {
+                const presetMainPrivateKey = (presetData.nodes || [])[index]?.mainPrivateKey;
+                if (presetMainPrivateKey) {
+                    const account = Account.createFromPrivateKey(presetMainPrivateKey, networkType);
+                    if (account.address.equals(mainAccount.address)) {
+                        return account;
+                    }
+                }
+
+                return Account.createFromPrivateKey(
+                    await CommandUtils.resolvePrivateKey(
+                        networkType,
+                        nodeAccount.main,
+                        KeyName.Main,
+                        nodeAccount.name,
+                        'signing a transaction',
+                    ),
+                    networkType,
+                );
+            };
+
             if (multisigAccountInfo) {
                 logger.info(
                     `The node's main account is a multig account with Address: ${
@@ -324,16 +350,7 @@ export class AnnounceService {
                     }
                 }
             } else {
-                const signerAccount = Account.createFromPrivateKey(
-                    await CommandUtils.resolvePrivateKey(
-                        networkType,
-                        nodeAccount.main,
-                        KeyName.Main,
-                        nodeAccount.name,
-                        'signing a transaction',
-                    ),
-                    networkType,
-                );
+                const signerAccount = await resolveMainAccount();
                 if (transactions.length == 1) {
                     let transaction = transactions[0];
                     if (!providedMaxFee) {

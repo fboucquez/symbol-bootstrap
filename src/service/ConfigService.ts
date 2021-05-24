@@ -35,7 +35,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, CustomPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
-import { BootstrapUtils, KnownError } from './BootstrapUtils';
+import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -174,7 +174,7 @@ export class ConfigService {
         }
     }
 
-    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
+    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
         return this.configLoader.createPresetData({ ...this.params, root: this.root, password: password, oldPresetData });
     }
 

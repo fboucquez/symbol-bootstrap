@@ -27,27 +27,30 @@ export default class Config extends Command {
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
     ];
 
-    static flags = {
+    static resolveFlags = (required: boolean) => ({
         help: CommandUtils.helpFlag,
         target: CommandUtils.targetFlag,
         password: CommandUtils.passwordFlag,
         noPassword: CommandUtils.noPasswordFlag,
         preset: flags.enum({
             char: 'p',
-            description:
-                'The network preset, can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.',
+            description: `The network preset, can be provided via custom preset or cli parameter. ${
+                required ? '' : 'If not provided, the value is resolved from the target/preset.yml file.'
+            }`,
             options: Object.keys(Preset).map((v) => v as Preset),
+            required: required,
         }),
         assembly: flags.string({
             char: 'a',
-            description:
-                'The assembly, example "dual" for testnet. If not provided, the value is resolved from the target/preset.yml file.',
+            description: `The assembly, example "dual" for testnet. ${
+                required ? '' : 'If not provided, the value is resolved from the target/preset.yml file.'
+            }`,
+            required: required,
         }),
-
         customPreset: flags.string({
             char: 'c',
-            description: 'External preset file. Values in this file will override the provided presets (optional)',
-            required: false,
+            description: `External preset file. Values in this file will override the provided presets`,
+            required: required,
         }),
         reset: flags.boolean({
             char: 'r',
@@ -70,7 +73,9 @@ export default class Config extends Command {
             description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: BootstrapUtils.CURRENT_USER,
         }),
-    };
+    });
+
+    static flags = Config.resolveFlags(false);
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Config);
