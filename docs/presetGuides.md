@@ -142,7 +142,7 @@ will generate a docker service like:
 ```yaml
   peer-node-0:
         container_name: peer-node-0
-        image: 'symbolplatform/symbol-server:gcc-0.10.0.6'
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.1.0'
         .......
         cpu_count: 4
         shm_size: 64M

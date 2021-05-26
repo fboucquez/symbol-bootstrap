@@ -83,7 +83,7 @@ export class CertificateService {
 
     public async run(
         networkType: NetworkType,
-        symbolServerToolsImage: string,
+        symbolServerImage: string,
         name: string,
         providedCertificates: NodeCertificates,
         customCertFolder?: string,
@@ -133,7 +133,7 @@ export class CertificateService {
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
-            image: symbolServerToolsImage,
+            image: symbolServerImage,
             userId: userId,
             workdir: '/data',
             cmds: cmd,

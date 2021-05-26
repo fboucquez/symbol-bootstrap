@@ -35,7 +35,7 @@ describe('AgentCertificateService', () => {
 
         await service.run(
             presetData.networkType,
-            presetData.symbolServerToolsImage,
+            presetData.symbolServerImage,
             'supernode',
             {
                 agent: {
