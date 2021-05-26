@@ -15,7 +15,7 @@ services:
     node:
         user: '1000:1000'
         container_name: node
-        image: 'symbolplatform/symbol-server-private:gcc-release-build-ac412190'
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.1.0'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -36,7 +36,7 @@ services:
     broker:
         user: '1000:1000'
         container_name: broker
-        image: 'symbolplatform/symbol-server-private:gcc-release-build-ac412190'
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.1.0'
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker NORMAL
         stop_signal: SIGINT
