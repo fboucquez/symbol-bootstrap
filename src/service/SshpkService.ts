@@ -96,10 +96,10 @@ export class SshpkService {
         const cmd = ['bash', 'createCertificate.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const symbolServerToolsImage = presetData.symbolServerToolsImage;
+        const symbolServerImage = presetData.symbolServerImage;
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
             catapultAppFolder: presetData.catapultAppFolder,
-            image: symbolServerToolsImage,
+            image: symbolServerImage,
             userId: userId,
             workdir: '/data',
             cmds: cmd,

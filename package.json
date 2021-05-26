@@ -41,7 +41,7 @@
         "@types/mocha": "^8.2.2",
         "@types/node": "^10.17.28",
         "@types/node-forge": "^0.9.4",
-        "@types/semver": "^7.3.4",
+        "@types/semver": "^7.3.6",
         "@types/sshpk": "^1.10.5",
         "@types/winston": "^2.4.4",
         "@typescript-eslint/eslint-plugin": "^3.7.1",

@@ -32,7 +32,7 @@ export class NemgenService {
 
     public async run(presetData: ConfigPreset): Promise<void> {
         const networkIdentifier = presetData.networkIdentifier;
-        const symbolServerToolsImage = presetData.symbolServerToolsImage;
+        const symbolServerImage = presetData.symbolServerImage;
         const target = this.params.target;
 
         if (!presetData.nodes || !presetData.nodes.length) {
@@ -60,7 +60,7 @@ export class NemgenService {
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
         const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
             catapultAppFolder: presetData.catapultAppFolder,
-            image: symbolServerToolsImage,
+            image: symbolServerImage,
             userId: userId,
             workdir: '/nemesis',
             cmds: cmd,
