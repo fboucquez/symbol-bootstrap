@@ -33,7 +33,7 @@ export class VotingService {
     constructor(protected readonly params: VotingParams) {}
 
     public async run(presetData: ConfigPreset, nodeAccount: NodeAccount, nodePreset: NodePreset | undefined): Promise<void> {
-        const symbolServerToolsImage = presetData.symbolServerToolsImage;
+        const symbolServerImage = presetData.symbolServerImage;
 
         if (nodePreset?.voting) {
             const target = this.params.target;
@@ -78,7 +78,7 @@ export class VotingService {
                     const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
                     const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
                         catapultAppFolder: presetData.catapultAppFolder,
-                        image: symbolServerToolsImage,
+                        image: symbolServerImage,
                         userId: userId,
                         cmds: cmd,
                         binds: binds,

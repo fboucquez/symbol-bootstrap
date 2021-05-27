@@ -315,6 +315,9 @@ export interface GatewayConfigPreset {
     maxSubscriptions: number;
     apiNodeTimeout: number;
     baseRetryDelay: number;
+    restDeploymentTool: string;
+    restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
+    restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
 }
 
 export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfigPreset> {
@@ -385,7 +388,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     faucetUrl?: string;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
 
-    symbolServerToolsImage: string;
     symbolWalletImage: string;
     symbolServerImage: string;
     symbolExplorerImage: string;
