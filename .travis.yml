@@ -27,6 +27,8 @@ before_script:
     - VERSION="$(node_load_version)"
     - if [[ ! -z "$DOCKER_USERNAME" ]] ; then echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; fi
     - log_env_variables
+    - if ! [ -x "$(command -v aws)" ]; then curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; unzip awscliv2.zip ; sudo ./aws/install ; fi
+    - aws s3 ls s3://symbol-bootstrap
 script:
     - npm pack
     - npm test
@@ -43,14 +45,14 @@ jobs:
           name: github alpha pages
           script: /bin/bash travis/node-functions.sh node_push_github_pages
           if: branch = env(DEV_BRANCH) AND type = push
-        - name: alpha npm
-          script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
+        - name: alpha npm - s3
+          script: npm pack && /bin/bash travis/node-functions.sh node_publish_alpha && npm run dist && npm run publish
           if: (branch = env(DEV_BRANCH) AND type = push) OR (type = api AND commit_message = alpha)
         - stage: release
-          name: release npm
-          script: npm pack && /bin/bash travis/node-functions.sh node_publish_release
+          name: release npm - s3
+          script: npm pack && /bin/bash travis/node-functions.sh node_publish_release && npm run dist && npm run publish
           if: branch = env(RELEASE_BRANCH) AND type = api AND commit_message = env(RELEASE_MESSAGE)
         - stage: post release
           name: tag and version upgrade
-          script: npm pack && /bin/bash travis/node-functions.sh node_post_release
+          script: npm pack && /bin/bash travis/node-functions.sh node_post_release && npm run dist && npm run publish
           if: branch = env(RELEASE_BRANCH) AND type = api AND commit_message = env(RELEASE_MESSAGE)
