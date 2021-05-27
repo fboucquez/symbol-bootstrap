@@ -15,6 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Reward Program Agent `2.0.0` upgrade.
 -   Added `MonitorOnly` reward program.
 -   The `link` and `enrollRewardProgram` commands allow `--customPreset` to avoid password prompt when main private key is not stored in the target folder. 
+-   Symbol rest `3.5.6` upgrade.
 
 ## [1.0.5] - May-3-2021
 

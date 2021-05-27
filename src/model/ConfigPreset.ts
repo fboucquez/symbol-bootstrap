@@ -315,6 +315,9 @@ export interface GatewayConfigPreset {
     maxSubscriptions: number;
     apiNodeTimeout: number;
     baseRetryDelay: number;
+    restDeploymentTool: string;
+    restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
+    restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
 }
 
 export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfigPreset> {
