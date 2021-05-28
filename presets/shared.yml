@@ -164,7 +164,7 @@ dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
 minPartnerNodeVersion: 1.0.0.0
 maxPartnerNodeVersion: 1.0.255.255
-serverVersion: 1.0.0.0
+serverVersion: 1.0.1.0
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20

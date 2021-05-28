@@ -320,7 +320,7 @@ config-node.properties
     **localnode**; ; ;
     host; api-node-0; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-api-node-0; string; Node friendly name (leave empty to use address).
-    version; 1.0.0.0; uint32_t; Node version.
+    version; 1.0.1.0; uint32_t; Node version.
     roles; Api; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.
