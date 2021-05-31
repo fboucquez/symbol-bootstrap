@@ -565,7 +565,11 @@ export class ConfigLoader {
     public loadExistingPresetData(target: string, password: Password): ConfigPreset {
         const presetData = this.loadExistingPresetDataIfPreset(target, password);
         if (!presetData) {
-            throw new Error(`The file ${this.getGeneratedPresetLocation(target)} doesn't exist. Have you executed the 'config' command?`);
+            throw new Error(
+                `The file ${this.getGeneratedPresetLocation(
+                    target,
+                )} doesn't exist. Have you executed the 'config' command? Have you provided the right --target param?`,
+            );
         }
         return presetData;
     }
@@ -624,7 +628,11 @@ export class ConfigLoader {
     public loadExistingAddresses(target: string, password: Password): Addresses {
         const addresses = this.loadExistingAddressesIfPreset(target, password);
         if (!addresses) {
-            throw new Error(`The file ${this.getGeneratedAddressLocation(target)} doesn't exist. Have you executed the 'config' command?`);
+            throw new Error(
+                `The file ${this.getGeneratedAddressLocation(
+                    target,
+                )} doesn't exist. Have you executed the 'config' command? Have you provided the right --target param?`,
+            );
         }
         return addresses;
     }

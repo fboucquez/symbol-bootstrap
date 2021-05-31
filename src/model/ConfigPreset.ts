@@ -420,6 +420,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     votingKeyDesiredFutureLifetime?: number; // How in the future voting key files need to be generated. By default votingKeyDesiredLifetime / 2
     useExperimentalNativeVotingKeyGeneration?: boolean;
     lastKnownNetworkEpoch: number;
+    autoUpdateVotingKeys: boolean;
     //Nested Objects
     knownRestGateways?: string[];
     inflation?: Record<string, number>;

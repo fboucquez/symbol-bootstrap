@@ -403,7 +403,7 @@ export class ConfigService {
             copyFileSync(peersApiFile, join(join(brokerConfig, 'resources', 'peers-api.json')));
         }
 
-        await new VotingService(this.params).run(presetData, account, nodePreset);
+        await new VotingService(this.params).run(presetData, account, nodePreset, undefined, undefined);
     }
 
     private async generateP2PFile(

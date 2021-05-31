@@ -214,8 +214,8 @@ describe('LinkService', () => {
         );
     });
 
-    it('LinkService create transactions when dual + voting + upgrade', async () => {
-        const target = 'target/tests/testnet-dual-voting-upgrade';
+    it('LinkService create transactions when dual + voting + upgrade (manual)', async () => {
+        const target = 'target/tests/testnet-dual-voting-upgrade-manual';
         const maxFee = UInt64.fromUint(10);
         let originalLasKnownNetworkEpoch = 0;
         {
@@ -271,6 +271,87 @@ describe('LinkService', () => {
                 customPreset: './test/unit-test-profiles/voting_preset.yml',
                 customPresetObject: {
                     nodeUseRemoteAccount: true,
+                    lastKnownNetworkEpoch: 323 + 720 - 10, //in the future, last known Network Epoch is pretty high!
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+            expect(addresses!.nodes![0].voting?.length).eq(1);
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(2);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        }
+    });
+
+    it('LinkService create transactions when dual + voting + upgrade (automatic)', async () => {
+        const target = 'target/tests/testnet-dual-voting-upgrade-automatic';
+        const maxFee = UInt64.fromUint(10);
+        let originalLasKnownNetworkEpoch = 0;
+        {
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                target: target,
+                password,
+                reset: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    autoUpdateVotingKeys: true,
+                    nodeUseRemoteAccount: true,
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(3);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+            expect(addresses!.nodes![0].voting?.length).eq(1);
+            originalLasKnownNetworkEpoch = presetData.lastKnownNetworkEpoch;
+            assertVotingTransaction(
+                transactions[2],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![0].publicKey,
+                presetData.lastKnownNetworkEpoch,
+                presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+            );
+        }
+
+        {
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                target: target,
+                password,
+                upgrade: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    nodeUseRemoteAccount: true,
+                    autoUpdateVotingKeys: true,
                     lastKnownNetworkEpoch: 323 + 720 - 10, //in the future, last known Network Epoch is pretty high!
                 },
                 assembly: 'dual',

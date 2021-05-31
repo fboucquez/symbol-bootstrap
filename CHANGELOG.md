@@ -14,6 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 -   Catapult server `1.0.1.0` upgrade.
 -   Added multi voting key file support.
+-   Added `upgradeVotingKeys` command.
 -   Added `MonitorOnly` reward program.
 -   The `link` and `enrollRewardProgram` commands allow `--customPreset` to avoid password prompt when main private key is not stored in the target folder. 
 -   Added experimental typescript voting key file generation.

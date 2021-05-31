@@ -22,19 +22,25 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigParams } from './ConfigService';
 import { VotingUtils } from './VotingUtils';
 
-type VotingParams = ConfigParams;
+type VotingParams = { target: string; user: string };
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class VotingService {
     constructor(protected readonly params: VotingParams) {}
 
-    public async run(presetData: ConfigPreset, nodeAccount: NodeAccount, nodePreset: NodePreset | undefined): Promise<void> {
+    public async run(
+        presetData: ConfigPreset,
+        nodeAccount: NodeAccount,
+        nodePreset: NodePreset,
+        currentNetworkEpoch: number | undefined,
+        updateVotingKey: boolean | undefined,
+    ): Promise<boolean> {
         const symbolServerImage = presetData.symbolServerImage;
-
+        const networkEpoch = currentNetworkEpoch || presetData.lastKnownNetworkEpoch || 1;
+        const update = updateVotingKey === undefined ? presetData.autoUpdateVotingKeys : updateVotingKey;
         if (nodePreset?.voting) {
             const target = this.params.target;
             const votingKeysFolder = join(
@@ -44,18 +50,25 @@ export class VotingService {
             await BootstrapUtils.mkdir(votingKeysFolder);
             const votingUtils = new VotingUtils();
             await BootstrapUtils.deleteFile(join(votingKeysFolder, 'metadata.yml'));
+            let newFileCreated = false;
             while (true) {
                 const currentVotingFiles = votingUtils.loadVotingFiles(votingKeysFolder);
-                const maxVotingKeyEndEpoch =
-                    currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || presetData.lastKnownNetworkEpoch - 1;
+                const maxVotingKeyEndEpoch = currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || networkEpoch - 1;
                 const votingKeyDesiredFutureLifetime = presetData.votingKeyDesiredFutureLifetime || presetData.votingKeyDesiredLifetime / 2;
-                if (maxVotingKeyEndEpoch > presetData.lastKnownNetworkEpoch + votingKeyDesiredFutureLifetime) {
-                    nodeAccount.voting = currentVotingFiles;
-                    return;
+                nodeAccount.voting = currentVotingFiles;
+                if (maxVotingKeyEndEpoch > networkEpoch + votingKeyDesiredFutureLifetime) {
+                    return newFileCreated;
+                }
+                if (!update && currentVotingFiles.length > 0) {
+                    logger.warn('');
+                    logger.warn(
+                        `Voting key files are close to EXPIRATION or have EXPIRED!. Run the 'symbol-bootstrap upgradeVotingKeys' command!`,
+                    );
+                    logger.warn('');
+                    return newFileCreated;
                 }
                 const votingKeyStartEpoch = maxVotingKeyEndEpoch + 1;
                 const votingKeyEndEpoch = maxVotingKeyEndEpoch + presetData.votingKeyDesiredLifetime;
-
                 const votingAccount = Account.generateNewAccount(presetData.networkType);
                 const votingPrivateKey = votingAccount.privateKey;
                 const epochs = votingKeyEndEpoch - votingKeyStartEpoch + 1;
@@ -90,14 +103,19 @@ export class VotingService {
                         throw new Error('Voting key failed. Check the logs!');
                     }
                 }
+                newFileCreated = true;
+
+                logger.warn('');
                 logger.warn(`A new Voting File for the node ${nodeAccount.name} has been generated! `);
                 logger.warn(
                     `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${votingAccount.publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
                 );
-                logger.warn('For linking, you can use symbol-bootstrap link command, the symbol cli, or the symbol desktop wallet. ');
+                logger.warn(`For linking, you can use 'symbol-bootstrap link' command, the symbol cli, or the symbol desktop wallet.`);
+                logger.warn('');
             }
         } else {
             logger.info(`Non-voting node ${nodeAccount.name}.`);
+            return false;
         }
     }
 }
