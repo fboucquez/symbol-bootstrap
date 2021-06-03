@@ -60,7 +60,6 @@ export class VotingService {
                     return newFileCreated;
                 }
                 if (!update && currentVotingFiles.length > 0) {
-                    logger.warn('');
                     logger.warn(
                         `Voting key files are close to EXPIRATION or have EXPIRED!. Run the 'symbol-bootstrap upgradeVotingKeys' command!`,
                     );

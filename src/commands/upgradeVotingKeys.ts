@@ -18,7 +18,7 @@ import { Command, flags } from '@oclif/command';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, VotingService } from '../service';
+import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class UpgradeVotingKeys extends Command {
@@ -27,7 +27,7 @@ export default class UpgradeVotingKeys extends Command {
 Voting file upgrade:
 - If the node's current voting file has an end epoch close to the current epoch ("close to expiring") this command creates a new 'private_key_treeX.dat' that continues the current file.
 - "Close to expiring" happens when the epoch is in the upper half of the voting file. If the file's epoch length is 720, close to expiring will be 360+.
-- The current finalization epoch that defines if the file is close to expiration can be passed as parameter. Otherwise, bootstrap will use the locally known value.
+- The current finalization epoch that defines if the file is close to expiration can be passed as parameter. Otherwise, bootstrap will try to resolve it from the network.
 
 When a new voting file is created, bootstrap will advise running the link command again.
 
@@ -58,6 +58,9 @@ When a new voting file is created, bootstrap will advise running the link comman
         const presetData = configLoader.loadExistingPresetData(target, password);
         const addresses = configLoader.loadExistingAddresses(target, password);
         const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
+
+        const finalizationEpoch = flags.finalizationEpoch || (await new RemoteNodeService().resolveCurrentFinalizationEpoch(presetData));
+
         const votingKeyUpgrade = (
             await Promise.all(
                 (presetData.nodes || []).map((nodePreset, index) => {
@@ -68,7 +71,7 @@ When a new voting file is created, bootstrap will advise running the link comman
                     return new VotingService({
                         target,
                         user: flags.user,
-                    }).run(presetData, nodeAccount, nodePreset, flags.finalizationEpoch, true);
+                    }).run(presetData, nodeAccount, nodePreset, finalizationEpoch, true);
                 }),
             )
         ).find((f) => f);

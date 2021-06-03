@@ -20,7 +20,6 @@ import {
     AccountInfo,
     Address,
     AggregateTransaction,
-    ChainInfo,
     Convert,
     Deadline,
     LockFundsTransaction,
@@ -29,7 +28,6 @@ import {
     NetworkType,
     PublicAccount,
     RepositoryFactory,
-    RepositoryFactoryHttp,
     SignedTransaction,
     Transaction,
     TransactionService,
@@ -41,6 +39,7 @@ import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
+import { RemoteNodeService } from './RemoteNodeService';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -58,13 +57,6 @@ export interface TransactionFactoryParams {
 
 export interface TransactionFactory {
     createTransactions(params: TransactionFactoryParams): Promise<Transaction[]>;
-}
-
-export interface RepositoryInfo {
-    repositoryFactory: RepositoryFactory;
-    restGatewayUrl: string;
-    generationHash?: string;
-    chainInfo?: ChainInfo;
 }
 
 export class AnnounceService {
@@ -113,22 +105,10 @@ export class AnnounceService {
             logger.info(`There are no transactions to announce...`);
             return;
         }
-
         const url = providedUrl.replace(/\/$/, '');
-        let repositoryFactory: RepositoryFactory;
-        const urls = (useKnownRestGateways && presetData.knownRestGateways) || [];
-        if (urls.length) {
-            const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls))[0];
-            if (!repositoryInfo) {
-                throw new Error(`No up and running node could be found of out: ${urls.join(', ')}`);
-            }
-            repositoryFactory = repositoryInfo.repositoryFactory;
-            logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
-        } else {
-            repositoryFactory = new RepositoryFactoryHttp(url);
-            logger.info(`Connecting to node ${url}`);
-        }
-
+        const urls = (useKnownRestGateways && presetData.knownRestGateways) || [url];
+        const repositoryInfo = await new RemoteNodeService().getBestRepositoryInfo(urls);
+        const repositoryFactory = repositoryInfo.repositoryFactory;
         const networkType = await repositoryFactory.getNetworkType().toPromise();
         const transactionRepository = repositoryFactory.createTransactionRepository();
         const transactionService = new TransactionService(transactionRepository, repositoryFactory.createReceiptRepository());
@@ -481,48 +461,6 @@ export class AnnounceService {
         } catch (e) {
             return undefined;
         }
-    }
-
-    private getKnownNodeRepositoryInfos(knownUrls: string[]): Promise<RepositoryInfo[]> {
-        logger.info(`Looking for the best node out of: ${knownUrls.join(', ')}`);
-        return Promise.all(
-            knownUrls.map(
-                async (restGatewayUrl): Promise<RepositoryInfo> => {
-                    const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
-                    try {
-                        const generationHash = await repositoryFactory.getGenerationHash().toPromise();
-                        const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
-                        return {
-                            restGatewayUrl,
-                            repositoryFactory,
-                            generationHash,
-                            chainInfo,
-                        };
-                    } catch (e) {
-                        const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}}`;
-                        logger.warn(message);
-                        return {
-                            restGatewayUrl: restGatewayUrl,
-                            repositoryFactory,
-                        };
-                    }
-                },
-            ),
-        );
-    }
-
-    private sortByHeight(repos: RepositoryInfo[]): RepositoryInfo[] {
-        return repos
-            .filter((b) => b.chainInfo)
-            .sort((a, b) => {
-                if (!a.chainInfo) {
-                    return 1;
-                }
-                if (!b.chainInfo) {
-                    return -1;
-                }
-                return b.chainInfo.height.compare(a.chainInfo.height);
-            });
     }
 
     private async getBestCosigner(

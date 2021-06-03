@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 import { it } from 'mocha';
-import { RepositoryFactoryHttp } from 'symbol-sdk';
 import { ConfigPreset } from '../../src/model';
 import { BootstrapUtils, Preset } from '../../src/service';
+import { RemoteNodeService } from '../../src/service/RemoteNodeService';
 
 describe('NetworkPresetUpgrade', () => {
     const patchNetworkPreset = async (preset: Preset): Promise<void> => {
         const root = './';
         const presetLocation = `${root}/presets/${preset}/network.yml`;
         const networkPreset: ConfigPreset = BootstrapUtils.loadYaml(presetLocation, false);
-        const url = networkPreset.knownRestGateways![0];
-        const repositoryFactory = new RepositoryFactoryHttp(url);
-        const epoch = (await repositoryFactory.createChainRepository().getChainInfo().toPromise()).latestFinalizedBlock.finalizationEpoch;
+
+        const epoch = await new RemoteNodeService().getBestFinalizationEpoch(networkPreset.knownRestGateways);
+        if (!epoch) {
+            throw new Error('Epoch could not be resolved!!');
+        }
         networkPreset.lastKnownNetworkEpoch = epoch;
         await BootstrapUtils.writeYaml(presetLocation, networkPreset, undefined);
     };

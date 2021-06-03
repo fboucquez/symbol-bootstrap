@@ -116,7 +116,6 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             assembly: 'dual',
-
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },
@@ -125,7 +124,8 @@ describe('LinkService', () => {
             await new BootstrapService().config(params);
             await new BootstrapService().link(params);
         } catch (e) {
-            expect(e.message.indexOf('ECONNREFUSED'), `Not a connection error: ${e.message}`).to.be.greaterThan(-1);
+            expect(e.message.indexOf('No up and running node could be found out of:'), e.message).to.be.greaterThan(-1);
+            expect(e.message.indexOf('http://localhost:3000'), e.message).to.be.greaterThan(-1);
         }
     });
 
@@ -138,6 +138,7 @@ describe('LinkService', () => {
             password,
             reset: false,
             preset: Preset.testnet,
+            offline: true,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
             customPresetObject: {
                 nodeUseRemoteAccount: true,
@@ -178,6 +179,7 @@ describe('LinkService', () => {
             target: 'target/tests/testnet-dual-voting-network-1',
             password,
             reset: false,
+            offline: true,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
             customPresetObject: {
@@ -223,6 +225,7 @@ describe('LinkService', () => {
                 ...ConfigService.defaultParams,
                 ...LinkService.defaultParams,
                 ready: true,
+                offline: true,
                 target: target,
                 password,
                 reset: true,
@@ -302,6 +305,7 @@ describe('LinkService', () => {
                 ...ConfigService.defaultParams,
                 ...LinkService.defaultParams,
                 ready: true,
+                offline: true,
                 target: target,
                 password,
                 reset: true,
@@ -347,6 +351,7 @@ describe('LinkService', () => {
                 target: target,
                 password,
                 upgrade: true,
+                offline: true,
                 preset: Preset.testnet,
                 customPreset: './test/unit-test-profiles/voting_preset.yml',
                 customPresetObject: {
@@ -387,6 +392,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -452,6 +458,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -528,6 +535,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -619,6 +627,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -820,6 +829,7 @@ describe('LinkService', () => {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             ready: true,
+            offline: true,
             target: 'target/tests/testnet-api-voting',
             password,
             reset: false,

@@ -41,6 +41,7 @@ import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { CryptoUtils } from './CryptoUtils';
 import { NemgenService } from './NemgenService';
+import { RemoteNodeService } from './RemoteNodeService';
 import { ReportService } from './ReportService';
 import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
@@ -69,6 +70,7 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
+    offline?: boolean;
     preset?: Preset;
     target: string;
     password?: string;
@@ -89,6 +91,7 @@ export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
         report: false,
+        offline: false,
         reset: false,
         upgrade: false,
         user: BootstrapUtils.CURRENT_USER,
@@ -244,12 +247,17 @@ export class ConfigService {
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
+        const currentFinalizationEpoch = this.params.offline
+            ? presetData.lastKnownNetworkEpoch
+            : await new RemoteNodeService().resolveCurrentFinalizationEpoch(presetData);
         await Promise.all(
             (addresses.nodes || []).map(
-                async (account, index) => await this.generateNodeConfiguration(account, index, presetData, addresses),
+                async (account, index) =>
+                    await this.generateNodeConfiguration(account, index, presetData, addresses, currentFinalizationEpoch),
             ),
         );
     }
+
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
@@ -283,7 +291,13 @@ export class ConfigService {
         );
     }
 
-    private async generateNodeConfiguration(account: NodeAccount, index: number, presetData: ConfigPreset, addresses: Addresses) {
+    private async generateNodeConfiguration(
+        account: NodeAccount,
+        index: number,
+        presetData: ConfigPreset,
+        addresses: Addresses,
+        currentFinalizationEpoch: number | undefined,
+    ) {
         const copyFrom = join(this.root, 'config', 'node');
         const name = account.name;
 
@@ -403,7 +417,7 @@ export class ConfigService {
             copyFileSync(peersApiFile, join(join(brokerConfig, 'resources', 'peers-api.json')));
         }
 
-        await new VotingService(this.params).run(presetData, account, nodePreset, undefined, undefined);
+        await new VotingService(this.params).run(presetData, account, nodePreset, currentFinalizationEpoch, undefined);
     }
 
     private async generateP2PFile(

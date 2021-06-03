@@ -14,6 +14,7 @@ export * from './ForgeCertificateService';
 export * from './LinkService';
 export * from './NemgenService';
 export * from './PortService';
+export * from './RemoteNodeService';
 export * from './ReportService';
 export * from './RewardProgramService';
 export * from './RunService';
