@@ -24,6 +24,9 @@ OPTIONS
 
   -u, --url=url                    [default: http://localhost:3000] the network url
 
+  --ledger                         If --ledger is provided, the command will connect and sign the transactions using a
+                                   Ledger device.
+
   --maxFee=maxFee                  the max fee used when announcing (absolute). The node min multiplier will be used if
                                    it is not provided.
 
