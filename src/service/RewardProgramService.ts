@@ -32,6 +32,7 @@ export type RewardProgramParams = {
     maxFee?: number;
     useKnownRestGateways: boolean;
     ready?: boolean;
+    ledger?: boolean;
     customPreset?: string;
 };
 
@@ -80,16 +81,13 @@ export class RewardProgramService implements TransactionFactory {
             logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
         }
-        await new AnnounceService().announce(
-            this.params.url,
-            this.params.maxFee,
-            this.params.useKnownRestGateways,
-            this.params.ready,
-            this.configLoader.mergePresets(presetData, customPreset),
+        await new AnnounceService().announce({
+            ...this.params,
             addresses,
-            this,
-            '1M+',
-        );
+            presetData: this.configLoader.mergePresets(presetData, customPreset),
+            transactionFactory: this,
+            tokenAmount: '1M+',
+        });
     }
 
     async createTransactions({

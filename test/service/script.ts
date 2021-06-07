@@ -23,6 +23,7 @@ import {
     Deadline,
     LinkAction,
     MultisigAccountModificationTransaction,
+    PublicAccount,
     RawMessage,
     RepositoryFactoryHttp,
     TransactionGroup,
@@ -30,7 +31,7 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { BootstrapUtils } from '../../src/service';
+import { AnnounceService, BootstrapUtils, PrivateKeyAccount, SigningUtils } from '../../src/service';
 
 // const url = 'http://localhost:3000';
 // const multisigPrivateKey = '96258E6EDBFA77D4138A56D03A7A38B89F1BC7721B532B91A43704AE87BBCC87';
@@ -38,11 +39,12 @@ import { BootstrapUtils } from '../../src/service';
 // const cosignatory2PrivateKey = 'AECAA68E6C12C88D28067612AA71B70AA9DA9549CEB3B54D897B711A63E93B71';
 // const cosignatory3PrivateKey = '2515356696EB926299ACD3BA872A404BB6D8AD35F9F86015F280858D60C16600';
 
-const url = 'http://api-01.ap-northeast-1.testnet.symboldev.network:3000';
+const url = 'http://ngl-dual-501.testnet.symboldev.network:3000';
 const multisigPrivateKey = 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD';
 const cosignatory1PrivateKey = 'AAAAB232742BB4AB3A1368BD4615E4E6D0224AB71A016BAF8520A332C9778737';
 const cosignatory2PrivateKey = 'BBBEE976890916E54FA825D26BDD0235F5EB5B6A143C199AB0AE5EE9328E08CE';
 const cosignatory3PrivateKey = 'CCCEE976890916E54FA825D26BDD0235F5EB5B6A143C199AB0AE5EE9328E08EE';
+const ledgerPublicKey = '638bb9ccad2f9c4e4f14215c91b3fe8e4623291926860f19196d3f89709a5772';
 
 const example = async () => {
     const repositoryFactory = new RepositoryFactoryHttp(url);
@@ -70,12 +72,17 @@ const example = async () => {
     const cosignatory3 = Account.createFromPrivateKey(cosignatory3PrivateKey, networkType);
     console.log(`cosignatory3 ${cosignatory3.address.plain()}`);
 
+    const ledger4 = PublicAccount.createFromPublicKey(ledgerPublicKey, networkType);
+    console.log(`ledger4 ${ledger4.address.plain()}`);
+
+    const ledgerData = await AnnounceService.resolveLedgerData(networkType);
+
     const sendModification = async () => {
         const multisigAccountModificationTransaction = MultisigAccountModificationTransaction.create(
             deadline,
             2,
             2,
-            [cosignatory1.address, cosignatory2.address, cosignatory3.address],
+            [cosignatory1.address, cosignatory2.address, cosignatory3.address, ledger4.address],
             [],
             networkType,
         );
@@ -88,12 +95,19 @@ const example = async () => {
             maxFee,
         );
 
-        const signedTransaction = multisig.signTransactionWithCosignatories(
+        const ledgerAccount = ledgerData.accounts.find((l) => l.address.equals(ledger4.address));
+        if (!ledgerAccount) {
+            throw new Error('Ledger account not found!!');
+        }
+        const signedTransaction = await SigningUtils.signTransactionWithCosignatories(
+            new PrivateKeyAccount(multisig),
             aggregateTransaction,
-            [cosignatory1, cosignatory2, cosignatory3],
+            [new PrivateKeyAccount(cosignatory1), new PrivateKeyAccount(cosignatory2), new PrivateKeyAccount(cosignatory3), ledgerAccount],
             networkGenerationHash,
         );
+        console.log('Announcing multisig ' + multisig.address.plain());
         await service.announce(signedTransaction, listener).toPromise();
+        console.log(`Multisig ${multisig.address.plain()} confirmed`);
         return signedTransaction;
     };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -212,10 +226,16 @@ const example = async () => {
     } catch (e) {
         console.log(e);
     } finally {
+        ledgerData.ledger.close();
         listener.close();
     }
 };
 
-example().then(() => {
-    console.log('finish!');
-});
+example().then(
+    () => {
+        console.log('finish!');
+    },
+    (err) => {
+        console.error(err);
+    },
+);

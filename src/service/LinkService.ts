@@ -45,6 +45,7 @@ export type LinkParams = {
     unlink: boolean;
     useKnownRestGateways: boolean;
     ready?: boolean;
+    ledger?: boolean;
     customPreset?: string;
 };
 
@@ -81,15 +82,12 @@ export class LinkService implements TransactionFactory {
         const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         logger.info(`${this.params.unlink ? 'Unlinking' : 'Linking'} nodes`);
 
-        await new AnnounceService().announce(
-            this.params.url,
-            this.params.maxFee,
-            this.params.useKnownRestGateways,
-            this.params.ready,
-            this.configLoader.mergePresets(presetData, customPreset),
+        await new AnnounceService().announce({
+            ...this.params,
             addresses,
-            this,
-        );
+            presetData: this.configLoader.mergePresets(presetData, customPreset),
+            transactionFactory: this,
+        });
     }
 
     async createTransactions({
