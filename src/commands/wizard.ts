@@ -148,7 +148,7 @@ export default class Wizard extends Command {
                     preset: preset,
                     assembly: assembly,
                     target: target,
-                }).symbolServerToolsImage,
+                }).symbolServerImage,
             );
         }
         console.log();

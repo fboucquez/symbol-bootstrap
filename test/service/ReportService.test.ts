@@ -18,6 +18,7 @@ import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
+import { CustomPreset } from '../../src/model';
 import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } from '../../src/service';
 
 describe('ReportService', () => {
@@ -65,7 +66,14 @@ describe('ReportService', () => {
 
     it('ReportService testnet dual voting report', async () => {
         const target = 'target/tests/ReportService.testnet.voting.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            gateways: [
+                {
+                    restDeploymentToolLastUpdatedDate: '2021-05-22',
+                    restDeploymentToolVersion: 'abc',
+                },
+            ],
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -89,7 +97,8 @@ describe('ReportService', () => {
 
     it('ReportService testnet peer voting report', async () => {
         const target = 'target/tests/ReportService.testnet.peer.voting.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -100,7 +109,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'peer',
@@ -113,7 +122,7 @@ describe('ReportService', () => {
 
     it('ReportService testnet peer voting non harvesting report', async () => {
         const target = 'target/tests/ReportService.testnet.peer.non.harvesting.voting.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -125,7 +134,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'peer',
@@ -138,7 +147,9 @@ describe('ReportService', () => {
 
     it('ReportService testnet api', async () => {
         const target = 'target/tests/ReportService.testnet.api.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            restDeploymentToolVersion: 'ABC',
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -149,7 +160,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
             assembly: 'api',
@@ -162,7 +173,7 @@ describe('ReportService', () => {
 
     it('ReportService mainnet peer', async () => {
         const target = 'target/tests/ReportService.mainnet.peer.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -173,7 +184,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'peer',
@@ -186,7 +197,9 @@ describe('ReportService', () => {
 
     it('ReportService mainnet dual', async () => {
         const target = 'target/tests/ReportService.mainnet.dual.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            restDeploymentToolVersion: 'abc',
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -197,7 +210,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'dual',
@@ -210,7 +223,9 @@ describe('ReportService', () => {
 
     it('ReportService mainnet dual voting', async () => {
         const target = 'target/tests/ReportService.mainnet.dual.voting.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            restDeploymentToolVersion: 'abc',
             nodes: [
                 {
                     mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
@@ -221,7 +236,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.mainnet,
             customPresetObject: customPresetObject,
             assembly: 'dual',
@@ -234,7 +249,9 @@ describe('ReportService', () => {
 
     it('ReportService bootstrap report', async () => {
         const target = 'target/tests/ReportService.bootstrap.voting.report';
-        const customPresetObject = {
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            restDeploymentToolVersion: 'abc',
             nemesisGenerationHashSeed: '6AF8E35BBC7AC341E7931B39E2C9A591EDBE9F9111996053E6771D48E9C53B31',
             nemesis: {
                 nemesisSignerPrivateKey: 'AA0863BDB0C2C275EE8CADECC8FAF01CAF632A2D6E1DE9ECB58917F65C89B204',
@@ -254,7 +271,7 @@ describe('ReportService', () => {
         };
         const params = {
             ...ConfigService.defaultParams,
-            reset: false,
+            upgrade: true,
             preset: Preset.bootstrap,
             customPresetObject: customPresetObject,
             target: target,

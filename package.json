@@ -1,7 +1,7 @@
 {
     "name": "symbol-bootstrap",
     "description": "Symbol tool that allows you creating, configuring and running Symbol's networks",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "author": "Fernando Boucquez <fboucquez@gmail.com>",
     "bin": {
         "symbol-bootstrap": "bin/run"
@@ -13,11 +13,11 @@
         "@oclif/plugin-autocomplete": "^0.3.0",
         "@oclif/plugin-help": "^3.1.0",
         "figlet": "^1.2.4",
-        "handlebars": "^4.7.6",
+        "handlebars": "^4.7.7",
         "inquirer": "^7.3.3",
         "js-yaml": "^3.14.0",
         "archiver": "^5.2.0",
-        "lodash": "^4.17.20",
+        "lodash": "^4.17.21",
         "memorystream": "^0.3.1",
         "node-forge": "^0.10.0",
         "node-stream-zip": "^1.12.0",
@@ -26,7 +26,7 @@
         "shx": "^0.3.2",
         "sshpk": "^1.16.1",
         "symbol-hd-wallets": "^0.14.1-alpha-202103052158",
-        "symbol-sdk": "^0.23.2",
+        "symbol-sdk": "^1.0.1",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
@@ -46,7 +46,7 @@
         "@types/mocha": "^8.2.2",
         "@types/node": "^10.17.28",
         "@types/node-forge": "^0.9.4",
-        "@types/semver": "^7.3.4",
+        "@types/semver": "^7.3.6",
         "@types/sshpk": "^1.10.5",
         "@types/winston": "^2.4.4",
         "@typescript-eslint/eslint-plugin": "^3.7.1",
