@@ -755,7 +755,7 @@ config-node.properties
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-    version; 1.0.0.0; uint32_t; Node version.
+    version; 1.0.1.0; uint32_t; Node version.
     roles; Peer,Api,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.

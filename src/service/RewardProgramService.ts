@@ -32,6 +32,7 @@ export type RewardProgramParams = {
     maxFee?: number;
     useKnownRestGateways: boolean;
     ready?: boolean;
+    customPreset?: string;
 };
 
 export interface RewardProgramServiceTransactionFactoryParams {
@@ -46,6 +47,7 @@ export enum RewardProgram {
     EarlyAdoption = 'EarlyAdoption',
     Ecosystem = 'Ecosystem',
     SuperNode = 'SuperNode',
+    MonitorOnly = 'MonitorOnly',
 }
 
 export class RewardProgramService implements TransactionFactory {
@@ -73,6 +75,7 @@ export class RewardProgramService implements TransactionFactory {
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password);
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
+        const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         if (!presetData.rewardProgramEnrollmentAddress) {
             logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
@@ -82,7 +85,7 @@ export class RewardProgramService implements TransactionFactory {
             this.params.maxFee,
             this.params.useKnownRestGateways,
             this.params.ready,
-            presetData,
+            this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,
             '1M+',

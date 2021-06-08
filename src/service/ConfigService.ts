@@ -32,9 +32,9 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, CustomPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
 import { AgentCertificateService } from './AgentCertificateService';
-import { BootstrapUtils, KnownError } from './BootstrapUtils';
+import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
@@ -139,7 +139,7 @@ export class ConfigService {
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
             const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
-            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerToolsImage);
+            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerImage);
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
@@ -176,7 +176,7 @@ export class ConfigService {
         }
     }
 
-    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: string | undefined) {
+    private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
         return this.configLoader.createPresetData({ ...this.params, root: this.root, password: password, oldPresetData });
     }
 
@@ -257,7 +257,7 @@ export class ConfigService {
             (addresses.nodes || []).map(async (account) => {
                 return await new CertificateService(this.root, this.params).run(
                     presetData.networkType,
-                    presetData.symbolServerToolsImage,
+                    presetData.symbolServerImage,
                     account.name,
                     {
                         main: account.main,
@@ -275,7 +275,7 @@ export class ConfigService {
                 if (node?.rewardProgram && account.agent)
                     await new AgentCertificateService(this.root, this.params).run(
                         presetData.networkType,
-                        presetData.symbolServerToolsImage,
+                        presetData.symbolServerImage,
                         account.name,
                         {
                             agent: account.agent,
@@ -635,7 +635,11 @@ export class ConfigService {
         return Promise.all(
             (presetData.gateways || []).map(async (gatewayPreset, index: number) => {
                 const copyFrom = join(this.root, 'config', 'rest-gateway');
-                const templateContext = { ...presetData, ...gatewayPreset };
+                const generatedContext: Partial<GatewayConfigPreset> = {
+                    restDeploymentToolVersion: BootstrapUtils.VERSION,
+                    restDeploymentToolLastUpdatedDate: new Date().toISOString().slice(0, 10),
+                };
+                const templateContext = { ...generatedContext, ...presetData, ...gatewayPreset };
                 const name = templateContext.name || `rest-gateway-${index}`;
                 const moveTo = BootstrapUtils.getTargetGatewayFolder(this.params.target, false, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);

@@ -21,7 +21,7 @@ OPTIONS
       If provided, docker-compose will run with -b (--build)
 
   -c, --customPreset=customPreset
-      External preset file. Values in this file will override the provided presets (optional)
+      External preset file. Values in this file will override the provided presets
 
   -d, --detached
       If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before 
@@ -90,4 +90,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.5/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.6/src/commands/start.ts)_
