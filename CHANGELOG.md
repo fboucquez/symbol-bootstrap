@@ -4,22 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.6] - Next
+## [1.0.7] - NEXT
+**Milestone**: Mainnet(1.0.1.0)
 
-**Milestone**: Mainnet(1.0.0.0)
+-   Added multi voting key file support.
+-   Added `upgradeVotingKeys` command.
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+## [1.0.6] - June-8-2021
+
+**Milestone**: Mainnet(1.0.1.0)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.6  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   Catapult server `1.0.1.0` upgrade.
--   Added multi voting key file support.
--   Added `upgradeVotingKeys` command.
+-   Catapult Server `1.0.1.0` upgrade.
+-   Symbol Rest `2.3.6` upgrade.
+-   Reward Program Agent `2.0.0` upgrade.
 -   Added `MonitorOnly` reward program.
 -   The `link` and `enrollRewardProgram` commands allow `--customPreset` to avoid password prompt when main private key is not stored in the target folder. 
--   Added experimental typescript voting key file generation.
--   Symbol Rest `3.5.6` upgrade.
--   Reward Program Agent `2.0.0` upgrade.
+-   Merged tools and server docker images into one.
 
 ## [1.0.5] - May-3-2021
 
