@@ -16,8 +16,7 @@
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import { flags } from '@oclif/command';
 import { prompt } from 'inquirer';
-import { SymbolLedger } from 'symbol-ledger-typescript';
-import { AppVersion, LedgerDerivationPath } from 'symbol-ledger-typescript/lib';
+import { AppVersion, LedgerDerivationPath, SymbolLedger } from 'symbol-ledger-typescript';
 import {
     Account,
     AccountInfo,
