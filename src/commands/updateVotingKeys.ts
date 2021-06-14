@@ -21,19 +21,19 @@ import LoggerFactory from '../logger/LoggerFactory';
 import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
-export default class UpgradeVotingKeys extends Command {
-    static description = `It upgrades the voting keys and files when required.
+export default class UpdateVotingKeys extends Command {
+    static description = `It updates the voting keys and files when required.
 
-Voting file upgrade:
+Voting file update:
 - If the node's current voting file has an end epoch close to the current epoch ("close to expiring") this command creates a new 'private_key_treeX.dat' that continues the current file.
-- "Close to expiring" happens when the epoch is in the upper half of the voting file. If the file's epoch length is 720, close to expiring will be 360+.
+- By default, "Close to expiring" happens the voting file in the . By default, bootstrap will allow creating new files once the current file reaches its last month.
 - The current finalization epoch that defines if the file is close to expiration can be passed as parameter. Otherwise, bootstrap will try to resolve it from the network.
 
 When a new voting file is created, bootstrap will advise running the link command again.
 
 `;
 
-    static examples = [`$ symbol-bootstrap upgradeVotingKeys`];
+    static examples = [`$ symbol-bootstrap updateVotingKeys`];
 
     static flags = {
         help: CommandUtils.helpFlag,
@@ -49,7 +49,7 @@ When a new voting file is created, bootstrap will advise running the link comman
     };
 
     public async run(): Promise<void> {
-        const { flags } = this.parse(UpgradeVotingKeys);
+        const { flags } = this.parse(UpdateVotingKeys);
         BootstrapUtils.showBanner();
         const password = false;
         const target = flags.target;
@@ -71,7 +71,7 @@ When a new voting file is created, bootstrap will advise running the link comman
                     return new VotingService({
                         target,
                         user: flags.user,
-                    }).run(presetData, nodeAccount, nodePreset, finalizationEpoch, true);
+                    }).run(presetData, nodeAccount, nodePreset, finalizationEpoch, true, false);
                 }),
             )
         ).find((f) => f);

@@ -15,8 +15,7 @@
  */
 import { it } from 'mocha';
 import { ConfigPreset } from '../../src/model';
-import { BootstrapUtils, Preset } from '../../src/service';
-import { RemoteNodeService } from '../../src/service/RemoteNodeService';
+import { BootstrapUtils, Preset, RemoteNodeService } from '../../src/service';
 
 describe('NetworkPresetUpgrade', () => {
     const patchNetworkPreset = async (preset: Preset): Promise<void> => {
@@ -31,10 +30,10 @@ describe('NetworkPresetUpgrade', () => {
         networkPreset.lastKnownNetworkEpoch = epoch;
         await BootstrapUtils.writeYaml(presetLocation, networkPreset, undefined);
     };
-    it.skip('should patch testnet lastKnownNetworkEpoch', () => {
+    it('should patch testnet lastKnownNetworkEpoch', () => {
         return patchNetworkPreset(Preset.testnet);
     });
-    it.skip('should patch mainnet lastKnownNetworkEpoch', () => {
+    it('should patch mainnet lastKnownNetworkEpoch', () => {
         return patchNetworkPreset(Preset.mainnet);
     });
 });

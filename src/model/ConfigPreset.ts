@@ -417,7 +417,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
     votingKeyDesiredLifetime: number;
-    votingKeyDesiredFutureLifetime?: number; // How in the future voting key files need to be generated. By default votingKeyDesiredLifetime / 2
+    votingKeyDesiredFutureLifetime: number; // How in the future voting key files need to be generated. By default, 1 months before expiring..
     useExperimentalNativeVotingKeyGeneration?: boolean;
     lastKnownNetworkEpoch: number;
     autoUpdateVotingKeys: boolean;

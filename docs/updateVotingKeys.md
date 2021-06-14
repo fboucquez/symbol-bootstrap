@@ -1,24 +1,24 @@
-`symbol-bootstrap upgradeVotingKeys`
-====================================
+`symbol-bootstrap updateVotingKeys`
+===================================
 
-It upgrades the voting keys and files when required.
+It updates the voting keys and files when required.
 
-Voting file upgrade:
+Voting file update:
 - If the node's current voting file has an end epoch close to the current epoch ("close to expiring") this command creates a new 'private_key_treeX.dat' that continues the current file.
-- "Close to expiring" happens when the epoch is in the upper half of the voting file. If the file's epoch length is 720, close to expiring will be 360+.
+- By default, "Close to expiring" happens the voting file in the . By default, bootstrap will allow creating new files once the current file reaches its last month.
 - The current finalization epoch that defines if the file is close to expiration can be passed as parameter. Otherwise, bootstrap will try to resolve it from the network.
 
 When a new voting file is created, bootstrap will advise running the link command again.
 
-* [`symbol-bootstrap upgradeVotingKeys`](#symbol-bootstrap-upgradevotingkeys)
+* [`symbol-bootstrap updateVotingKeys`](#symbol-bootstrap-updatevotingkeys)
 
-## `symbol-bootstrap upgradeVotingKeys`
+## `symbol-bootstrap updateVotingKeys`
 
-It upgrades the voting keys and files when required.
+It updates the voting keys and files when required.
 
 ```
 USAGE
-  $ symbol-bootstrap upgradeVotingKeys
+  $ symbol-bootstrap updateVotingKeys
 
 OPTIONS
   -h, --help                             It shows the help of this command.
@@ -33,18 +33,18 @@ OPTIONS
                                          endpoint. If not provided, the bootstrap known epoch is used.
 
 DESCRIPTION
-  Voting file upgrade:
+  Voting file update:
   - If the node's current voting file has an end epoch close to the current epoch ("close to expiring") this command 
   creates a new 'private_key_treeX.dat' that continues the current file.
-  - "Close to expiring" happens when the epoch is in the upper half of the voting file. If the file's epoch length is 
-  720, close to expiring will be 360+.
+  - By default, "Close to expiring" happens the voting file in the . By default, bootstrap will allow creating new files 
+  once the current file reaches its last month.
   - The current finalization epoch that defines if the file is close to expiration can be passed as parameter. 
   Otherwise, bootstrap will try to resolve it from the network.
 
   When a new voting file is created, bootstrap will advise running the link command again.
 
 EXAMPLE
-  $ symbol-bootstrap upgradeVotingKeys
+  $ symbol-bootstrap updateVotingKeys
 ```
 
-_See code: [src/commands/upgradeVotingKeys.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.6/src/commands/upgradeVotingKeys.ts)_
+_See code: [src/commands/updateVotingKeys.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.7/src/commands/updateVotingKeys.ts)_
