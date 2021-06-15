@@ -33,7 +33,7 @@ import { get } from 'https';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
 import { basename, dirname, join, resolve } from 'path';
-import { Convert, Deadline, DtoMapping, LinkAction, NetworkType, Transaction, UInt64, VotingKeyLinkTransaction } from 'symbol-sdk';
+import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
 import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
@@ -307,25 +307,6 @@ export class BootstrapUtils {
                 resolve();
             }, ms);
         });
-    }
-
-    public static createVotingKeyTransaction(
-        shortPublicKey: string,
-        action: LinkAction,
-        presetData: { networkType: NetworkType; votingKeyStartEpoch: number; votingKeyEndEpoch: number },
-        deadline: Deadline,
-        maxFee: UInt64,
-    ): Transaction {
-        return VotingKeyLinkTransaction.create(
-            deadline,
-            shortPublicKey,
-            presetData.votingKeyStartEpoch,
-            presetData.votingKeyEndEpoch,
-            action,
-            presetData.networkType,
-            1,
-            maxFee,
-        );
     }
 
     public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {

@@ -85,6 +85,7 @@ export class RewardProgramService implements TransactionFactory {
             this.params.maxFee,
             this.params.useKnownRestGateways,
             this.params.ready,
+            this.params.target,
             this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,

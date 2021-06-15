@@ -27,6 +27,7 @@ import {
     Transaction,
     TransactionMapping,
     UInt64,
+    VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
 import { LogType } from '../logger';
@@ -40,6 +41,7 @@ import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { CryptoUtils } from './CryptoUtils';
 import { NemgenService } from './NemgenService';
+import { RemoteNodeService } from './RemoteNodeService';
 import { ReportService } from './ReportService';
 import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
@@ -68,11 +70,11 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
+    offline?: boolean;
     preset?: Preset;
     target: string;
     password?: string;
     user: string;
-    pullImages?: boolean;
     assembly?: string;
     customPreset?: string;
     customPresetObject?: CustomPreset;
@@ -89,9 +91,9 @@ export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
         report: false,
+        offline: false,
         reset: false,
         upgrade: false,
-        pullImages: false,
         user: BootstrapUtils.CURRENT_USER,
     };
     private readonly configLoader: ConfigLoader;
@@ -149,7 +151,6 @@ export class ConfigService {
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
             const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, presetData);
 
-            if (this.params.pullImages) await BootstrapUtils.pullImage(presetData.symbolServerImage);
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
@@ -256,12 +257,17 @@ export class ConfigService {
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
+        const currentFinalizationEpoch = this.params.offline
+            ? presetData.lastKnownNetworkEpoch
+            : await new RemoteNodeService().resolveCurrentFinalizationEpoch(presetData);
         await Promise.all(
             (addresses.nodes || []).map(
-                async (account, index) => await this.generateNodeConfiguration(account, index, presetData, addresses),
+                async (account, index) =>
+                    await this.generateNodeConfiguration(account, index, presetData, addresses, currentFinalizationEpoch),
             ),
         );
     }
+
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
@@ -295,7 +301,13 @@ export class ConfigService {
         );
     }
 
-    private async generateNodeConfiguration(account: NodeAccount, index: number, presetData: ConfigPreset, addresses: Addresses) {
+    private async generateNodeConfiguration(
+        account: NodeAccount,
+        index: number,
+        presetData: ConfigPreset,
+        addresses: Addresses,
+        currentFinalizationEpoch: number | undefined,
+    ) {
         const copyFrom = join(this.root, 'config', 'node');
         const name = account.name;
 
@@ -415,7 +427,14 @@ export class ConfigService {
             copyFileSync(peersApiFile, join(join(brokerConfig, 'resources', 'peers-api.json')));
         }
 
-        await new VotingService(this.params).run(presetData, account, nodePreset);
+        await new VotingService(this.params).run(
+            presetData,
+            account,
+            nodePreset,
+            currentFinalizationEpoch,
+            undefined,
+            presetData.nemesis != undefined,
+        );
     }
 
     private async generateP2PFile(
@@ -478,11 +497,7 @@ export class ConfigService {
                 .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
 
-        await Promise.all(
-            (addresses.nodes || [])
-                .filter((n) => n.voting)
-                .map((n) => this.createVotingKeyTransaction(transactionsDirectory, presetData, n)),
-        );
+        await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransactions(transactionsDirectory, presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
             logger.info('Opt In mode is ON!!! balances or transactions have been provided');
@@ -604,25 +619,12 @@ export class ConfigService {
         return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
 
-    private async createVotingKeyTransaction(
+    private async createVotingKeyTransactions(
         transactionsDirectory: string,
         presetData: ConfigPreset,
         node: NodeAccount,
-    ): Promise<Transaction> {
-        if (!node.voting) {
-            throw new Error('Voting keys should have been generated!!');
-        }
-
-        if (!node.main) {
-            throw new Error('Main keys should have been generated!!');
-        }
-        const voting = BootstrapUtils.createVotingKeyTransaction(
-            node.voting.publicKey,
-            LinkAction.Link,
-            presetData,
-            Deadline.createFromDTO('1'),
-            UInt64.fromUint(0),
-        );
+    ): Promise<Transaction[]> {
+        const votingFiles = node.voting || [];
         const mainPrivateKey = await CommandUtils.resolvePrivateKey(
             presetData.networkType,
             node.main,
@@ -630,9 +632,23 @@ export class ConfigService {
             node.name,
             'creating the voting key link transactions',
         );
-        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
-        const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
-        return await this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
+        return Promise.all(
+            votingFiles.map(async (votingFile) => {
+                const voting = VotingKeyLinkTransaction.create(
+                    Deadline.createFromDTO('1'),
+                    votingFile.publicKey,
+                    votingFile.startEpoch,
+                    votingFile.endEpoch,
+                    LinkAction.Link,
+                    presetData.networkType,
+                    1,
+                    UInt64.fromUint(0),
+                );
+                const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
+                const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
+                return this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
+            }),
+        );
     }
 
     private async storeTransaction(transactionsDirectory: string, name: string, payload: string): Promise<Transaction> {

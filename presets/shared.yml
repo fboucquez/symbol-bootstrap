@@ -33,6 +33,7 @@ minVotingKeyLifetime: 28
 mosaicRentalFee: 500
 votingSetGrouping: 180
 maxVotingKeysPerAccount: 3
+autoUpdateVotingKeys: false
 maxTransactionsPerAggregate: 100
 maxCosignaturesPerAggregate: 25
 harvestBeneficiaryPercentage: 10
@@ -84,6 +85,7 @@ votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 rewardProgramAgentPort: 7881
+enableRevoteOnBoot: true
 
 # config database
 databaseName: catapult
@@ -210,9 +212,5 @@ maxConnectionAttempts: 15
 baseRetryDelay: 750
 connectionPoolSize: 10
 maxSubscriptions: 300
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
 restDeploymentTool: symbol-bootstrap
-
-#voting
-votingKeyStartEpoch: 1
-votingKeyEndEpoch: 360
-enableRevoteOnBoot: true
