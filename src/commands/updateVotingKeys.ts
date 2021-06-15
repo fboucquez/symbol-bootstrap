@@ -22,14 +22,13 @@ import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeServ
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class UpdateVotingKeys extends Command {
-    static description = `It updates the voting keys and files when required.
+    static description = `It updates the voting files containing the voting keys when required.
 
-Voting file update:
-- If the node's current voting file has an end epoch close to the current epoch ("close to expiring") this command creates a new 'private_key_treeX.dat' that continues the current file.
-- By default, "Close to expiring" happens the voting file in the . By default, bootstrap will allow creating new files once the current file reaches its last month.
-- The current finalization epoch that defines if the file is close to expiration can be passed as parameter. Otherwise, bootstrap will try to resolve it from the network.
+If the node's current voting file has an end epoch close to the current network epoch, this command will create a new 'private_key_treeX.dat' that continues the current file.
 
-When a new voting file is created, bootstrap will advise running the link command again.
+By default, bootstrap creates a new voting file once the current file reaches its last month. The current network epoch is resolved from the network or you can provide it with the \`finalizationEpoch\` param.
+
+When a new voting file is created, Bootstrap will advise running the \`link\` command again.
 
 `;
 
