@@ -8,7 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 **Milestone**: Mainnet(1.0.1.0)
 
 -   Added multi voting key file support.
--   Added `upgradeVotingKeys` command.
+-   Added `updateVotingKeys` command.
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
