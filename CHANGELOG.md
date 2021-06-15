@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [1.0.7] - NEXT
 **Milestone**: Mainnet(1.0.1.0)
 
+-   Added multi voting key file support.
+-   Added `updateVotingKeys` command.
+
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
