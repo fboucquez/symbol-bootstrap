@@ -302,6 +302,7 @@ USAGE
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
 					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
+					<li><a href="docs/updateVotingKeys.md"><code>symbol-bootstrap updateVotingKeys</code></a> - It updates the voting files containing the voting keys when required.</li>
 					<li><a href="docs/verify.md"><code>symbol-bootstrap verify</code></a> - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.</li>
 				</ul>
 				<!-- commandsstop -->
@@ -353,6 +354,9 @@ USAGE
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/commands_stop.html">commands/stop</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/commands_updatevotingkeys.html">commands/update<wbr>Voting<wbr>Keys</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/commands_verify.html">commands/verify</a>
@@ -433,6 +437,9 @@ USAGE
 						<a href="modules/service_portservice.html">service/<wbr>Port<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/service_remotenodeservice.html">service/<wbr>Remote<wbr>Node<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/service_reportservice.html">service/<wbr>Report<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -449,6 +456,9 @@ USAGE
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/service_votingservice.html">service/<wbr>Voting<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/service_votingutils.html">service/<wbr>Voting<wbr>Utils</a>
 					</li>
 				</ul>
 			</nav>

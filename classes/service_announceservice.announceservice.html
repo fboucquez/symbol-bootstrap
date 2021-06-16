@@ -98,11 +98,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_announceservice.announceservice.html#announce" class="tsd-kind-icon">announce</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getaccountinfo" class="tsd-kind-icon">get<wbr>Account<wbr>Info</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getbestcosigner" class="tsd-kind-icon">get<wbr>Best<wbr>Cosigner</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getknownnoderepositoryinfos" class="tsd-kind-icon">get<wbr>Known<wbr>Node<wbr>Repository<wbr>Infos</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getmultisigaccount" class="tsd-kind-icon">get<wbr>Multisig<wbr>Account</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#isaccountempty" class="tsd-kind-icon">is<wbr>Account<wbr>Empty</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#promptaccounts" class="tsd-kind-icon">prompt<wbr>Accounts</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#sortbyheight" class="tsd-kind-icon">sort<wbr>ByHeight</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_announceservice.announceservice.html#isvalidprivatekey" class="tsd-kind-icon">is<wbr>Valid<wbr>Private<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="service_announceservice.announceservice.html#onprocesslistener" class="tsd-kind-icon">on<wbr>Process<wbr>Listener</a></li>
 							</ul>
@@ -135,7 +133,7 @@
 					<div class="tsd-signature tsd-kind-icon">flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>maxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L74">src/service/AnnounceService.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L68">src/service/AnnounceService.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -172,13 +170,13 @@
 					<a name="announce" class="tsd-anchor"></a>
 					<h3>announce</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">announce<span class="tsd-signature-symbol">(</span>providedUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a>, addresses<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_addresses.addresses.html" class="tsd-signature-type" data-tsd-kind="Interface">Addresses</a>, transactionFactory<span class="tsd-signature-symbol">: </span><a href="../interfaces/service_announceservice.transactionfactory.html" class="tsd-signature-type" data-tsd-kind="Interface">TransactionFactory</a>, tokenAmount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">announce<span class="tsd-signature-symbol">(</span>providedUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a>, addresses<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_addresses.addresses.html" class="tsd-signature-type" data-tsd-kind="Interface">Addresses</a>, transactionFactory<span class="tsd-signature-symbol">: </span><a href="../interfaces/service_announceservice.transactionfactory.html" class="tsd-signature-type" data-tsd-kind="Interface">TransactionFactory</a>, tokenAmount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L99">src/service/AnnounceService.ts:99</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L92">src/service/AnnounceService.ts:92</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -194,6 +192,9 @@
 								</li>
 								<li>
 									<h5>ready: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>target: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
 									<h5>presetData: <a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a></h5>
@@ -222,7 +223,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L460">src/service/AnnounceService.ts:460</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L446">src/service/AnnounceService.ts:446</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -248,7 +249,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L522">src/service/AnnounceService.ts:522</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L466">src/service/AnnounceService.ts:466</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -268,29 +269,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="getknownnoderepositoryinfos" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Known<wbr>Node<wbr>Repository<wbr>Infos</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Known<wbr>Node<wbr>Repository<wbr>Infos<span class="tsd-signature-symbol">(</span>knownUrls<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L480">src/service/AnnounceService.ts:480</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>knownUrls: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="getmultisigaccount" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Multisig<wbr>Account</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -300,7 +278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L468">src/service/AnnounceService.ts:468</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L454">src/service/AnnounceService.ts:454</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -326,7 +304,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L539">src/service/AnnounceService.ts:539</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L483">src/service/AnnounceService.ts:483</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -352,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L401">src/service/AnnounceService.ts:401</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L387">src/service/AnnounceService.ts:387</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -371,29 +349,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="sortbyheight" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> sort<wbr>ByHeight</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">sort<wbr>ByHeight<span class="tsd-signature-symbol">(</span>repos<span class="tsd-signature-symbol">: </span><a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L508">src/service/AnnounceService.ts:508</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>repos: <a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="isvalidprivatekey" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Valid<wbr>Private<wbr>Key</h3>
@@ -404,7 +359,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L456">src/service/AnnounceService.ts:456</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L442">src/service/AnnounceService.ts:442</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -427,7 +382,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/70af2ae/src/service/AnnounceService.ts#L69">src/service/AnnounceService.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/nemtech/symbol-bootstrap/blob/7847653/src/service/AnnounceService.ts#L63">src/service/AnnounceService.ts:63</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -470,9 +425,6 @@
 								<a href="service_announceservice.announceservice.html#getbestcosigner" class="tsd-kind-icon">get<wbr>Best<wbr>Cosigner</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="service_announceservice.announceservice.html#getknownnoderepositoryinfos" class="tsd-kind-icon">get<wbr>Known<wbr>Node<wbr>Repository<wbr>Infos</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="service_announceservice.announceservice.html#getmultisigaccount" class="tsd-kind-icon">get<wbr>Multisig<wbr>Account</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -480,9 +432,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="service_announceservice.announceservice.html#promptaccounts" class="tsd-kind-icon">prompt<wbr>Accounts</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="service_announceservice.announceservice.html#sortbyheight" class="tsd-kind-icon">sort<wbr>ByHeight</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="service_announceservice.announceservice.html#isvalidprivatekey" class="tsd-kind-icon">is<wbr>Valid<wbr>Private<wbr>Key</a>
@@ -494,9 +443,6 @@
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/service_announceservice.repositoryinfo.html" class="tsd-kind-icon">Repository<wbr>Info</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/service_announceservice.transactionfactory.html" class="tsd-kind-icon">Transaction<wbr>Factory</a>
 					</li>
