@@ -21,7 +21,7 @@ import LoggerFactory from '../logger/LoggerFactory';
 import { BootstrapUtils, CommandUtils, VerifyService } from '../service';
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
-export default class Clean extends Command {
+export default class Verify extends Command {
     static description =
         'It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.';
     static examples = [`$ symbol-bootstrap verify`];
