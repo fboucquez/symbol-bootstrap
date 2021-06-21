@@ -19,13 +19,12 @@ import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { CertificatePair } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
-import { KeyName } from './ConfigService';
+import { AccountResolver, BootstrapUtils, KeyName } from './';
 
 export interface CertificateParams {
     readonly target: string;
     readonly user: string;
+    readonly accountResolver: AccountResolver;
 }
 
 export interface CertificateMetadata {
@@ -46,10 +45,10 @@ export class CertificateService {
 
     public static getCertificates(stdout: string): CertificatePair[] {
         const locations = (string: string, substring: string): number[] => {
-            const indexes = [];
+            const list = [];
             let i = -1;
-            while ((i = string.indexOf(substring, i + 1)) >= 0) indexes.push(i);
-            return indexes;
+            while ((i = string.indexOf(substring, i + 1)) >= 0) list.push(i);
+            return list;
         };
 
         const extractKey = (subtext: string): string => {
@@ -101,30 +100,28 @@ export class CertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const mainAccount = await this.params.accountResolver.resolveAccount(
             networkType,
             providedCertificates.main,
             KeyName.Main,
             name,
             'generating the server CA certificates',
+            'Should not generate!',
         );
-        const transportPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const transportAccount = await this.params.accountResolver.resolveAccount(
             networkType,
             providedCertificates.transport,
             KeyName.Transport,
             name,
             'generating the server Node certificates',
+            'Should not generate!',
         );
-        BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
+        BootstrapUtils.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
+        BootstrapUtils.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
         await BootstrapUtils.writeTextFile(
             join(certFolder, 'serial.dat'),
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
         );
-
-        // TODO. Migrate this process to forge, sshpk or any node native implementation.
         const command = this.createCertCommands('/data');
         await BootstrapUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
         const cmd = ['bash', 'createNodeCertificates.sh'];
@@ -151,9 +148,9 @@ export class CertificateService {
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
-        BootstrapUtils.validateIsTrue(caCertificate.privateKey === mainAccountPrivateKey, 'Invalid ca private key');
+        BootstrapUtils.validateIsTrue(caCertificate.privateKey === mainAccount.privateKey, 'Invalid ca private key');
         BootstrapUtils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
-        BootstrapUtils.validateIsTrue(nodeCertificate.privateKey === transportPrivateKey, 'Invalid Node private key');
+        BootstrapUtils.validateIsTrue(nodeCertificate.privateKey === transportAccount.privateKey, 'Invalid Node private key');
         BootstrapUtils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
 
         const metadata: CertificateMetadata = {
@@ -169,7 +166,7 @@ export class CertificateService {
             return true;
         }
         try {
-            const metadata = BootstrapUtils.loadYaml(metadataFile, false) as CertificateMetadata;
+            const metadata = (await BootstrapUtils.loadYaml(metadataFile, false)) as CertificateMetadata;
             return (
                 metadata.mainPublicKey !== providedCertificates.main.publicKey ||
                 metadata.transportPublicKey !== providedCertificates.transport.publicKey ||
@@ -219,6 +216,9 @@ rm createNodeCertificates.sh
 rm ca.key.pem
 rm ca.der
 rm node.der
+rm index.txt*
+rm serial.dat*
+rm -rf new_certs
 
 echo "Certificate Created"
 `;

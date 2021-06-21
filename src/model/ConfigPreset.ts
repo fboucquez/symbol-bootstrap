@@ -15,7 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Preset } from '../service';
+import { DockerComposeService } from './DockerCompose';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -29,9 +29,14 @@ export interface DockerServicePreset {
     openPort?: boolean | number | string;
     host?: string;
     excludeDockerService?: boolean;
-    environment?: any;
-    compose?: any;
+    environment?: Record<string, string>;
+    compose?: DockerComposeService;
     dockerComposeDebugMode?: boolean;
+}
+
+export interface CurrencyDistribution {
+    address: string;
+    amount: number;
 }
 
 export interface MosaicPreset {
@@ -45,8 +50,9 @@ export interface MosaicPreset {
     isTransferable: boolean;
     isSupplyMutable: boolean;
     isRestrictable: boolean;
-    accounts: number;
-    currencyDistributions: { address: string; amount: number }[];
+    // string[] are provided public keys for unit test.
+    accounts: number | string[];
+    currencyDistributions: CurrencyDistribution[];
 }
 
 export interface DatabasePreset extends DockerServicePreset {
@@ -57,8 +63,7 @@ export interface DatabasePreset extends DockerServicePreset {
 
 export interface NemesisPreset {
     binDirectory: string;
-    mosaics?: MosaicPreset[];
-    balances?: Record<string, number>;
+    mosaics: MosaicPreset[];
     transactions?: Record<string, string>;
     nemesisSignerPrivateKey: string;
     transactionsDirectory: string;
@@ -260,6 +265,7 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     host?: string;
     roles?: string;
     friendlyName?: string;
+    excludeFromNemesis: boolean;
 
     // Optional private keys. If not provided, bootstrap will generate random ones.
     mainPrivateKey?: string;
@@ -273,6 +279,8 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
 
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
+
+    balances?: number[];
 
     //Broker specific
     brokerName?: string;
@@ -331,6 +339,8 @@ export interface HttpsProxyPreset extends DockerServicePreset {
 
 export interface ExplorerPreset extends DockerServicePreset {
     // At least these properties.
+    restNodes?: string[];
+    defaultNode?: string;
     repeat?: number;
     name: string;
 }
@@ -347,6 +357,8 @@ export interface WalletPreset extends DockerServicePreset {
     repeat?: number;
     name: string;
     profiles?: WalletProfilePreset[];
+    defaultNodeUrl?: string;
+    restNodes?: { friendlyName: string; url: string; roles: number }[];
 }
 
 export interface FaucetPreset extends DockerServicePreset {
@@ -354,6 +366,7 @@ export interface FaucetPreset extends DockerServicePreset {
     gateway: string;
     repeat?: number;
     name: string;
+    privateKey?: string;
 }
 
 export interface PeerInfo {
@@ -373,10 +386,9 @@ export type DeepPartial<T> = {
 
 export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPreset {
     version: number; // file version
-    bootstrapVersion: number;
-    preset: Preset;
+    bootstrapVersion: string;
+    preset: string;
     assembly: string;
-    assemblies?: string;
     privateKeySecurityMode?: string;
     votingKeysDirectory: string;
     sinkAddress?: string;
@@ -414,9 +426,13 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     namespaceRentalFeeSinkAddress?: string;
     networkIdentifier: string;
     networkName: string;
+    networkDescription: string;
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;
+    totalVotingBalanceCalculationFix: number;
+    treasuryReissuance: number;
+    treasuryReissuanceEpoch: number;
     // This next 2 would be removed in a later merge.
     currencyName?: string;
     harvestingName?: string;
@@ -441,7 +457,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
 
 export interface ConfigPreset extends CommonConfigPreset {
     // Nested objects!
-    nemesis?: NemesisPreset;
+    nemesis: NemesisPreset;
     databases?: DatabasePreset[];
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
@@ -454,11 +470,11 @@ export interface ConfigPreset extends CommonConfigPreset {
 
 export interface CustomPreset extends Partial<CommonConfigPreset> {
     nemesis?: DeepPartial<NemesisPreset>;
-    databases?: Partial<DatabasePreset>[];
-    nodes?: Partial<NodePreset>[];
-    gateways?: Partial<GatewayPreset>[];
-    explorers?: Partial<ExplorerPreset>[];
-    wallets?: Partial<WalletPreset>[];
-    faucets?: Partial<FaucetPreset>[];
-    httpsProxies?: Partial<HttpsProxyPreset>[];
+    databases?: DeepPartial<DatabasePreset>[];
+    nodes?: DeepPartial<NodePreset>[];
+    gateways?: DeepPartial<GatewayPreset>[];
+    explorers?: DeepPartial<ExplorerPreset>[];
+    wallets?: DeepPartial<WalletPreset>[];
+    faucets?: DeepPartial<FaucetPreset>[];
+    httpsProxies?: DeepPartial<HttpsProxyPreset>[];
 }

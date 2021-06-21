@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-import { test } from '@oclif/test';
+import { expect, test } from '@oclif/test';
+import { Account, NetworkType } from 'symbol-sdk';
+import { ConfigLoader } from '../../src';
 
 describe('config', () => {
+    it('should be valid account', function () {
+        const privateKey = 'AAA'.padStart(64, '0');
+        expect(ConfigLoader.toConfigFromAccount(Account.createFromPrivateKey(privateKey, NetworkType.TEST_NET))).deep.eq({
+            address: 'TB26Y6PDUYEVDVWRWHGEGSZ43FT6726XOH5AFMQ',
+            publicKey: '512C97A7527CD49CBD8EDB6A0707EC239A9F24DB2EFFF2272A92BFD8F987D9B3',
+            privateKey: privateKey,
+        });
+    });
     test.stdout()
-        .command(['config', '-p', 'bootstrap', '-r', '--password', '1111'])
+        .command(['config', '-p', 'dualCurrency', '-r', '--password', '1111'])
         .it('runs config', (ctx) => {
             console.log(ctx.stdout);
         });
@@ -26,7 +36,7 @@ describe('config', () => {
 
 describe('config with opt in', () => {
     test.stdout()
-        .command(['config', '-p', 'bootstrap', '-r', '-c', './test/optin_preset.yml', '--noPassword'])
+        .command(['config', '-p', 'dualCurrency', '-r', '-c', './test/custom_preset.yml', '--noPassword'])
         .it('runs config', (ctx) => {
             console.log(ctx.stdout);
         });

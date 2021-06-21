@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 import { flags } from '@oclif/command';
-import { prompt } from 'inquirer';
 import {
     Account,
     AccountInfo,
     Address,
     AggregateTransaction,
-    Convert,
     Currency,
     Deadline,
     IListener,
@@ -42,6 +40,7 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
+import { AccountResolver } from './AccountResolver';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
 import { TransactionUtils } from './TransactionUtils';
@@ -63,7 +62,7 @@ export interface TransactionFactory {
 }
 
 export class AnnounceService {
-    constructor(private readonly logger: Logger) {}
+    constructor(private readonly logger: Logger, private readonly accountResolver: AccountResolver) {}
 
     private static onProcessListener = () => {
         process.on('SIGINT', () => {
@@ -225,16 +224,13 @@ export class AnnounceService {
                     }
                 }
 
-                return Account.createFromPrivateKey(
-                    await CommandUtils.resolvePrivateKey(
-                        this.logger,
-                        networkType,
-                        nodeAccount.main,
-                        KeyName.Main,
-                        nodeAccount.name,
-                        'signing a transaction',
-                    ),
+                return this.accountResolver.resolveAccount(
                     networkType,
+                    nodeAccount.main,
+                    KeyName.Main,
+                    nodeAccount.name,
+                    'signing a transaction',
+                    'Should not generate!',
                 );
             };
 
@@ -262,17 +258,13 @@ export class AnnounceService {
                     signerAccount = bestCosigner; // override with a cosigner when multisig
                     requiredCosignatures = multisigAccountInfo.minApproval;
                 } else {
-                    // ask for serviceProviderAccount private key
-                    signerAccount = Account.createFromPrivateKey(
-                        await CommandUtils.resolvePrivateKey(
-                            this.logger,
-                            networkType,
-                            serviceProviderPublicAccount,
-                            KeyName.ServiceProvider,
-                            '',
-                            'signing a transaction',
-                        ),
+                    signerAccount = await this.accountResolver.resolveAccount(
                         networkType,
+                        serviceProviderPublicAccount,
+                        KeyName.ServiceProvider,
+                        undefined,
+                        'signing a transaction',
+                        'Should not generate!',
                     );
                 }
                 const mainMultisigAccountInfo = await TransactionUtils.getMultisigAccount(repositoryFactory, mainAccount.address);
@@ -423,65 +415,6 @@ export class AnnounceService {
         }
 
         listener.close();
-    }
-
-    private async promptAccounts(networkType: NetworkType, expectedAddresses: Address[], minApproval: number): Promise<Account[]> {
-        const providedAccounts: Account[] = [];
-        const allowedAddresses = [...expectedAddresses];
-        while (true) {
-            this.logger.info('');
-            const expectedDescription = allowedAddresses.map((address) => address.plain()).join(', ');
-            const responses = await prompt([
-                {
-                    name: 'privateKey',
-                    message: `Enter the 64 HEX private key of one of the addresses ${expectedDescription}. Already entered ${providedAccounts.length} out of ${minApproval} required cosigners.`,
-                    type: 'password',
-                    validate: AnnounceService.isValidPrivateKey,
-                },
-            ]);
-            const privateKey = responses.privateKey;
-            if (!privateKey) {
-                this.logger.info('Please provide the private key....');
-            } else {
-                const account = Account.createFromPrivateKey(privateKey, networkType);
-                const expectedAddress = allowedAddresses.find((address) => address.equals(account.address));
-                if (!expectedAddress) {
-                    this.logger.info('');
-                    this.logger.info(
-                        `Invalid private key. The entered private key has this ${account.address.plain()} address and it's not one of ${expectedDescription}. \n`,
-                    );
-                    this.logger.info(`Please re enter private key...`);
-                } else {
-                    allowedAddresses.splice(allowedAddresses.indexOf(expectedAddress), 1);
-                    providedAccounts.push(account);
-                    if (!allowedAddresses.length) {
-                        this.logger.info('All cosigners have been entered.');
-                        return providedAccounts;
-                    }
-                    if (providedAccounts.length == minApproval) {
-                        this.logger.info(`Min Approval of ${minApproval} has been reached. Aggregate Complete transaction can be created.`);
-                        return providedAccounts;
-                    }
-                    const responses = await prompt([
-                        {
-                            name: 'more',
-                            message: `Do you want to enter more cosigners?`,
-                            type: 'confirm',
-                            default: providedAccounts.length < minApproval,
-                        },
-                    ]);
-                    if (!responses.more) {
-                        return providedAccounts;
-                    } else {
-                        this.logger.info('Please provide an additional private key....');
-                    }
-                }
-            }
-        }
-    }
-
-    public static isValidPrivateKey(input: string): boolean | string {
-        return Convert.isHexString(input, 64) ? true : 'Invalid private key. It must be has 64 hex characters!';
     }
 
     private async getAccountInfo(repositoryFactory: RepositoryFactory, mainAccountAddress: Address): Promise<AccountInfo | undefined> {
@@ -663,9 +596,9 @@ export class AnnounceService {
             return true;
         } catch (e) {
             const message =
-                `Simple Transaction ${signedTransaction.type} ${
-                    signedTransaction.hash
-                } - signer ${signedTransaction.getSignerAddress().plain()} failed!! ` + e.message;
+                `Simple Transaction ${signedTransaction.type} ${signedTransaction.hash} - signer ${signedTransaction
+                    .getSignerAddress()
+                    .plain()} failed!! ` + e.message;
             this.logger.error(message);
             return false;
         }
@@ -694,18 +627,13 @@ export class AnnounceService {
         currency: Currency,
         nodeName: string,
     ): Promise<boolean> {
-        const response: boolean =
+        const response =
             ready ||
-            (
-                await prompt([
-                    {
-                        name: 'value',
-                        message: `Do you want to announce ${this.getTransactionDescription(transaction, signedTransaction, currency)}?`,
-                        type: 'confirm',
-                        default: true,
-                    },
-                ])
-            ).value;
+            (await this.accountResolver.shouldAnnounce(
+                transaction,
+                signedTransaction,
+                this.getTransactionDescription(transaction, signedTransaction, currency),
+            ));
         if (!response) {
             this.logger.info(`Ignoring transaction for node[${nodeName}]`);
         }
@@ -729,10 +657,15 @@ export class AnnounceService {
                     ', ',
                 )}. The tool will ask for the cosigners provide keys in order to announce the transactions. These private keys are not stored anywhere!`,
         );
-        cosigners.push(...(await this.promptAccounts(networkType, msigAccountInfo.cosignatoryAddresses, msigAccountInfo.minApproval)));
+        const newCosigners = await this.accountResolver.resolveCosigners(
+            networkType,
+            msigAccountInfo.cosignatoryAddresses,
+            msigAccountInfo.minApproval,
+        );
+        cosigners.push(...newCosigners);
         if (!cosigners.length) {
             return undefined;
         }
-        return await this.getBestCosigner(repositoryFactory, cosigners, currencyMosaicId);
+        return this.getBestCosigner(repositoryFactory, cosigners, currencyMosaicId);
     }
 }

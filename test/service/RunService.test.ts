@@ -19,7 +19,7 @@ import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { LoggerFactory, LogType } from '../../src';
-import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
+import { BootstrapService, BootstrapUtils, ConfigService, Preset, RunService, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('RunService', () => {
     const target = 'target/tests/BootstrapService.standard';
@@ -27,9 +27,10 @@ describe('RunService', () => {
     it('healthCheck', async () => {
         const bootstrapService = new BootstrapService(logger);
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             reset: false,
             target,
             detached: true,
@@ -55,9 +56,10 @@ describe('RunService', () => {
     it('resetData', async () => {
         const bootstrapService = new BootstrapService(logger);
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             reset: false,
             target,
             detached: true,

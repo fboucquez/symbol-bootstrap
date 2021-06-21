@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 import { join } from 'path';
 import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
 import { RepositoryFactoryHttp } from 'symbol-sdk';
-import { Logger } from '../logger';
+import { Logger } from '../logger/Logger';
 import { DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';

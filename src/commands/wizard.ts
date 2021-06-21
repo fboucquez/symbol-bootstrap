@@ -21,25 +21,16 @@ import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
-import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
+import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
 
-export const assemblies: Record<Preset, { value: string; description: string }[]> = {
-    [Preset.bootstrap]: [
-        { value: '', description: 'Default: A network with 2 peers, a api, a broker, a mongo db, and a Rest Gateway' },
-        { value: 'full', description: 'Full: A complete network with a private Explorer, Faucet and Wallet' },
-        { value: 'light', description: 'Light: A light network with a dual, a mongo dn and a rest gateway' },
-    ],
-    [Preset.mainnet]: [
-        { value: 'dual', description: 'Dual Node' },
-        { value: 'peer', description: 'Peer Node' },
-        { value: 'api', description: 'Api  Node' },
-    ],
-    [Preset.testnet]: [
-        { value: 'dual', description: 'Dual Node' },
-        { value: 'peer', description: 'Peer Node' },
-        { value: 'api', description: 'Api  Node' },
-    ],
+export const assembliesDescriptions: Record<Assembly, string> = {
+    [Assembly.dual]: 'Dual Node',
+    [Assembly.peer]: 'Peer Node',
+    [Assembly.api]: 'Api Node',
+    [Assembly.demo]: 'Demo Node',
+    [Assembly.multinode]: 'Multinode Node. A docker compose that includes one api, one rest and two peers.',
 };
+
 export enum HttpsOption {
     Native = 'Native',
     Automatic = 'Automatic',
@@ -48,8 +39,18 @@ export enum HttpsOption {
 export enum Network {
     mainnet = 'mainnet',
     testnet = 'testnet',
-    localNetwork = 'localNetwork',
+    singleCurrencyPrivateNetwork = 'singleCurrencyPrivateNetwork',
+    dualCurrencyPrivateNetwork = 'dualCurrencyPrivateNetwork',
+    customNetwork = 'customNetwork',
 }
+
+export const assemblies: Record<Network, Assembly[]> = {
+    [Network.mainnet]: [Assembly.dual, Assembly.peer, Assembly.api],
+    [Network.testnet]: [Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Network.singleCurrencyPrivateNetwork]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Network.dualCurrencyPrivateNetwork]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Network.customNetwork]: [Assembly.dual, Assembly.peer, Assembly.api],
+};
 
 export interface ProvidedAccounts {
     seeded: boolean;
@@ -59,10 +60,12 @@ export interface ProvidedAccounts {
     transport: Account;
 }
 
-export const networkToPreset: Record<Network, Preset> = {
-    [Network.localNetwork]: Preset.bootstrap,
+export const networkToPreset: Record<Network, string> = {
+    [Network.singleCurrencyPrivateNetwork]: Preset.singleCurrency,
+    [Network.dualCurrencyPrivateNetwork]: Preset.dualCurrency,
     [Network.mainnet]: Preset.mainnet,
     [Network.testnet]: Preset.testnet,
+    [Network.customNetwork]: 'custom-network-preset.yml',
 };
 export default class WizardCommand extends Command {
     static description = 'An utility command that will help you configuring node!';
@@ -81,14 +84,16 @@ export default class WizardCommand extends Command {
         }),
         logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
-    public static getCustomPresetFile(): IOptionFlag<string> {
-        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
-    }
+
     public static getNetworkIdFlag(): IOptionFlag<Network | undefined> {
         return flags.string({
             description: 'The node or network you want to create',
-            options: [Network.mainnet, Network.testnet, Network.localNetwork],
+            options: Object.values(Network),
         }) as IOptionFlag<Network | undefined>;
+    }
+
+    public static getCustomPresetFile(): IOptionFlag<string> {
+        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
     }
 
     public async run(): Promise<void> {
@@ -128,12 +133,12 @@ export class Wizard {
         }
 
         const network = await this.resolveNetwork(flags.network);
-        const preset = networkToPreset[network];
-        const assembly = await this.resolveAssembly(preset);
-        if (network == Network.localNetwork) {
-            this.logger.info('For a local network, just run: ');
+        const preset = await this.resolvePreset(network);
+        const assembly = await this.resolveAssembly(network);
+        if (network == Network.dualCurrencyPrivateNetwork || network == Network.singleCurrencyPrivateNetwork) {
+            this.logger.info('For a private network, just run: ');
             this.logger.info('');
-            this.logger.info(`$ symbol-bootstrap start -b ${preset} -a ${assembly}`);
+            this.logger.info(`$ symbol-bootstrap start -p ${preset} -a ${assembly}`);
             return;
         }
 
@@ -270,7 +275,7 @@ export class Wizard {
         this.logger.info('Remember to delete the plain-custom-preset.yml file after used!!!');
 
         this.logger.info(
-            `You can edit this file to further customize it. Read more https://github.com/nemtech/symbol-bootstrap/blob/main/docs/presetGuides.md`,
+            `You can edit this file to further customize it. Read more https://github.com/symbol/symbol-bootstrap/blob/main/docs/presetGuides.md`,
         );
         this.logger.info('');
         this.logger.info(
@@ -306,7 +311,7 @@ export class Wizard {
         }
         const privateKeyText = showPrivateKeys && account instanceof Account ? `\n\tPrivate Key: ${account.privateKey}` : '';
         this.logger.info(` - ${keyName}:\n\tAddress:     ${account.address.plain()}\n\tPublic Key:  ${account.publicKey}${privateKeyText}`);
-        return account as T;
+        return account;
     }
 
     private async resolveAllAccounts(networkType: NetworkType): Promise<ProvidedAccounts> {
@@ -383,7 +388,7 @@ export class Wizard {
                         if (!value) {
                             return true;
                         }
-                        return CommandUtils.isValidPrivateKey(value);
+                        return BootstrapUtils.isValidPrivateKey(value);
                     },
                 },
             ]);
@@ -418,13 +423,45 @@ export class Wizard {
                     choices: [
                         { name: 'Mainnet Node', value: Network.mainnet },
                         { name: 'Testnet Node', value: Network.testnet },
-                        { name: 'Local Network', value: Network.localNetwork },
+                        { name: 'Dual Currency Local Private Network', value: Network.singleCurrencyPrivateNetwork },
+                        { name: 'Single Currency Local Private Network', value: Network.dualCurrencyPrivateNetwork },
+                        {
+                            name: `Custom Network Node ('custom-network-preset.yml' file and 'nemesis-seed' folder are required)`,
+                            value: Network.customNetwork,
+                        },
                     ],
                 },
             ]);
             return responses.network;
         }
         return providedNetwork;
+    }
+
+    public async resolvePreset(network: Network): Promise<string> {
+        if (network === Network.customNetwork) {
+            this.logger.info(
+                `Enter the network preset you want to join. If you don't know have the network preset, ask the network admin for the file and nemesis seed. :\n`,
+            );
+            const responses = await prompt([
+                {
+                    name: 'networkPresetFile',
+                    message: 'Enter the network a network:',
+                    type: 'input',
+                    validate(input: string): string | boolean {
+                        if (!BootstrapUtils.isYmlFile(input)) {
+                            return `${input} is not a yaml file`;
+                        }
+                        if (!existsSync(input)) {
+                            return `${input} doesn't exist`;
+                        }
+                        return true;
+                    },
+                    default: networkToPreset[network],
+                },
+            ]);
+            return responses.networkPresetFile;
+        }
+        return networkToPreset[network];
     }
 
     public async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {
@@ -436,13 +473,11 @@ export class Wizard {
                 default: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                 choices: [
                     {
-                        name:
-                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
+                        name: 'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
                         value: PrivateKeySecurityMode.PROMPT_MAIN,
                     },
                     {
-                        name:
-                            'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates. Other keys are encrypted. Recommended for most nodes',
+                        name: 'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates. Other keys are encrypted. Recommended for most nodes',
                         value: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                     },
                     { name: 'ENCRYPT: All keys are encrypted, only password would be asked', value: PrivateKeySecurityMode.ENCRYPT },
@@ -452,17 +487,17 @@ export class Wizard {
         return mode;
     }
 
-    public async resolveAssembly(preset: Preset): Promise<string> {
+    public async resolveAssembly(network: Network): Promise<string> {
         this.logger.info('Select the assembly to be created:\n');
         const responses = await prompt([
             {
                 name: 'assembly',
                 message: 'Select an assembly:',
                 type: 'list',
-                default: assemblies[preset][0].value,
-                choices: assemblies[preset].map(({ value, description }) => ({
+                default: assemblies[network][0],
+                choices: assemblies[network].map((value) => ({
                     value: value,
-                    name: description,
+                    name: assembliesDescriptions[value],
                 })),
             },
         ]);
@@ -514,7 +549,7 @@ export class Wizard {
         );
     }
 
-    public async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
+    public async resolveFileContent(encoding: 'base64', message: string, notFoundMessage: string): Promise<string> {
         const { value } = await prompt([
             {
                 name: 'value',
@@ -540,9 +575,10 @@ export class Wizard {
         if (input.length > 50) {
             return `Input (${input.length}) is larger than 50`;
         }
-        const valid = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+(?:[A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(
-            input,
-        );
+        const valid =
+            /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+(?:[A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(
+                input,
+            );
         return valid ? true : `It's not a valid IP or hostname`;
     }
 

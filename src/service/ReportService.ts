@@ -22,7 +22,7 @@ import { ConfigPreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
-export type ReportParams = { target: string };
+export type ReportParams = { target: string; version?: string };
 
 interface ReportLine {
     property: string;
@@ -94,8 +94,7 @@ export class ReportService {
     }
 
     private async createReportsPerNode(presetData: ConfigPreset): Promise<ReportNode[]> {
-        const workingDir = process.cwd();
-        const target = join(workingDir, this.params.target);
+        const target = this.params.target;
         const descriptions = await BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'descriptions.yml'), false);
         const promises: Promise<ReportNode>[] = (presetData.nodes || []).map(async (n) => {
             const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'server-config', 'resources');
@@ -155,15 +154,22 @@ export class ReportService {
 
         await BootstrapUtils.mkdir(reportFolder);
         const promises = _.flatMap(reportNodes, (n) => {
-            return [this.toRstReport(reportFolder, n), this.toCsvReport(reportFolder, n)];
+            return [
+                this.toRstReport(reportFolder, this.getVersion(passedPresetData), n),
+                this.toCsvReport(reportFolder, this.getVersion(passedPresetData), n),
+            ];
         });
         return Promise.all(promises);
     }
 
-    private async toRstReport(reportFolder: string, n: ReportNode) {
+    private getVersion(passedPresetData: ConfigPreset | undefined): string {
+        return this.params.version || passedPresetData?.bootstrapVersion || BootstrapUtils.VERSION;
+    }
+
+    private async toRstReport(reportFolder: string, version: string, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.rst`);
         const reportContent =
-            `Symbol Bootstrap Version: ${BootstrapUtils.VERSION}\n` +
+            `Symbol Bootstrap Version: ${version}\n` +
             n.files
                 .map((fileReport) => {
                     const hasDescriptionSection = fileReport.sections.find((s) => s.lines.find((l) => l.description || l.type));
@@ -202,10 +208,10 @@ ${csvBody.trim().replace(/^/gm, '    ')}`;
         return reportFile;
     }
 
-    private async toCsvReport(reportFolder: string, n: ReportNode) {
+    private async toCsvReport(reportFolder: string, version: string | undefined, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.csv`);
         const reportContent =
-            `symbol-bootstrap-version; ${BootstrapUtils.VERSION}\n\n` +
+            `symbol-bootstrap-version; ${version}\n\n` +
             n.files
                 .map((fileReport) => {
                     const csvBody = fileReport.sections

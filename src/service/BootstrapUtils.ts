@@ -31,7 +31,7 @@ import * as Handlebars from 'handlebars';
 import { get } from 'https';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, dirname, join, resolve } from 'path';
+import { basename, dirname, isAbsolute, join, resolve } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
 import * as util from 'util';
 import { Logger } from '../logger';
@@ -387,6 +387,30 @@ export class BootstrapUtils {
         );
     }
 
+    public static async copyDir(copyFrom: string, copyTo: string, excludeFiles: string[] = [], includeFiles: string[] = []): Promise<void> {
+        await BootstrapUtils.mkdir(copyTo);
+        const files = await fsPromises.readdir(copyFrom);
+        await Promise.all(
+            files.map(async (file: string) => {
+                const fromPath = join(copyFrom, file);
+                const toPath = join(copyTo, file);
+                // Stat the file to see if we have a file or dir
+                const stat = await fsPromises.stat(fromPath);
+                if (stat.isFile()) {
+                    const fileName = basename(toPath);
+                    const notBlacklisted = excludeFiles.indexOf(fileName) === -1;
+                    const inWhitelistIfAny = includeFiles.length === 0 || includeFiles.indexOf(fileName) > -1;
+                    if (notBlacklisted && inWhitelistIfAny) {
+                        await fsPromises.copyFile(fromPath, toPath);
+                    }
+                } else if (stat.isDirectory()) {
+                    await BootstrapUtils.mkdir(toPath);
+                    await this.copyDir(fromPath, toPath, excludeFiles, includeFiles);
+                }
+            }),
+        );
+    }
+
     public static async chmodRecursive(path: string, mode: string | number): Promise<void> {
         // Loop through all the files in the config folder
         const stat = await fsPromises.stat(path);
@@ -428,8 +452,7 @@ export class BootstrapUtils {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
+    public static async writeYaml(path: string, object: unknown, password: Password): Promise<void> {
         const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
         await BootstrapUtils.writeTextFile(path, yamlString);
     }
@@ -487,8 +510,12 @@ export class BootstrapUtils {
         await fsPromises.writeFile(path, text, 'utf8');
     }
 
-    public static async readTextFile(path: string): Promise<string> {
-        return await fsPromises.readFile(path, 'utf8');
+    public static isValidPrivateKey(input: string): boolean | string {
+        return Convert.isHexString(input, 64) ? true : 'Invalid private key. It must have 64 hex characters.';
+    }
+
+    public static readTextFile(path: string): Promise<string> {
+        return fsPromises.readFile(path, 'utf8');
     }
 
     private static dockerUserId: string;
@@ -597,15 +624,6 @@ export class BootstrapUtils {
         return process.platform === 'win32';
     }
 
-    public static validateFolder(workingDirFullPath: string): void {
-        if (!existsSync(workingDirFullPath)) {
-            throw new Error(`${workingDirFullPath} folder does not exist`);
-        }
-        if (!lstatSync(workingDirFullPath).isDirectory()) {
-            throw new Error(`${workingDirFullPath} is not a folder!`);
-        }
-    }
-
     public static getTargetFolder(target: string, absolute: boolean, ...paths: string[]): string {
         if (absolute) {
             return join(process.cwd(), target, ...paths);
@@ -628,6 +646,9 @@ export class BootstrapUtils {
 
     public static getTargetDatabasesFolder(target: string, absolute: boolean, ...paths: string[]): string {
         return this.getTargetFolder(target, absolute, this.targetDatabasesFolder, ...paths);
+    }
+    public static zeroPad(num: number, places: number): string {
+        return String(num).padStart(places, '0');
     }
 
     //HANDLEBARS READY FUNCTIONS:
@@ -765,11 +786,44 @@ export class BootstrapUtils {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
     }
 
+    public static isYmlFile(string: string): boolean {
+        return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');
+    }
+
     public static validatePassword(password: string): string {
         const passwordMinSize = 4;
         if (password.length < passwordMinSize) {
             throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
         }
         return password;
+    }
+
+    public static validateFolder(workingDirFullPath: string): void {
+        if (!existsSync(workingDirFullPath)) {
+            throw new Error(`${workingDirFullPath} folder does not exist`);
+        }
+        if (!lstatSync(workingDirFullPath).isDirectory()) {
+            throw new Error(`${workingDirFullPath} is not a folder!`);
+        }
+    }
+
+    public static async validateSeedFolder(nemesisSeedFolder: string, message: string): Promise<void> {
+        BootstrapUtils.validateFolder(nemesisSeedFolder);
+        const seedData = join(nemesisSeedFolder, '00000', '00001.dat');
+        if (!existsSync(seedData)) {
+            throw new KnownError(`File ${seedData} doesn't exist! ${message}`);
+        }
+        const seedIndex = join(nemesisSeedFolder, 'index.dat');
+        if (!existsSync(seedIndex)) {
+            throw new KnownError(`File ${seedIndex} doesn't exist! ${message}`);
+        }
+    }
+
+    public static resolveWorkingDirPath(workingDir: string, path: string): string {
+        if (isAbsolute(path)) {
+            return path;
+        } else {
+            return join(workingDir, path);
+        }
     }
 }

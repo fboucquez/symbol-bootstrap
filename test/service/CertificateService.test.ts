@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
+import { expect } from 'chai';
 import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
-import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
+import {
+    BootstrapUtils,
+    CertificateMetadata,
+    CertificateService,
+    ConfigLoader,
+    DefaultAccountResolver,
+    LoggerFactory,
+    LogType,
+    NodeCertificates,
+    Preset,
+} from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
+
 describe('CertificateService', () => {
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;
@@ -42,18 +52,23 @@ describe('CertificateService', () => {
 
     it('createCertificates', async () => {
         const target = 'target/tests/CertificateService.test';
-        await BootstrapUtils.deleteFolder(logger, target);
-        const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
+        BootstrapUtils.deleteFolder(logger, target);
+        const service = new CertificateService(logger, {
+            target: target,
+            user: await BootstrapUtils.getDockerUserGroup(logger),
+            accountResolver: new DefaultAccountResolver(),
+        });
         const presetData = new ConfigLoader(logger).createPresetData({
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             password: 'abc',
+            workingDir: BootstrapUtils.defaultWorkingDir,
         });
         const networkType = NetworkType.TEST_NET;
         const keys: NodeCertificates = {
-            main: ConfigLoader.toConfig(
+            main: ConfigLoader.toConfigFromAccount(
                 Account.createFromPrivateKey('E095162875BB1D98CA5E0941670E01C1B0DBDF86DF7B3BEDA4A93635F8E51A03', networkType),
             ),
-            transport: ConfigLoader.toConfig(
+            transport: ConfigLoader.toConfigFromAccount(
                 Account.createFromPrivateKey('415F253ABF0FB2DFD39D7F409EFA2E88769873CAEB45617313B98657A1476A15', networkType),
             ),
         };
@@ -66,26 +81,19 @@ describe('CertificateService', () => {
             transportPublicKey: keys.transport.publicKey,
             mainPublicKey: keys.main.publicKey,
         };
-        expect(expectedMetadata).deep.eq(BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
+        expect(expectedMetadata).deep.eq(await BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
 
         const files = await fsPromises.readdir(target);
         expect(files).deep.eq([
             'ca.cert.pem',
             'ca.cnf',
             'ca.pubkey.pem',
-            'index.txt',
-            'index.txt.attr',
-            'index.txt.attr.old',
-            'index.txt.old',
             'metadata.yml',
-            'new_certs',
             'node.cnf',
             'node.crt.pem',
             'node.csr.pem',
             'node.full.crt.pem',
             'node.key.pem',
-            'serial.dat',
-            'serial.dat.old',
         ]);
 
         const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem'];
