@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { spawn } from 'child_process';
-import { textSync } from 'figlet';
+import { exec, spawn } from 'child_process';
 import {
     createWriteStream,
     existsSync,
@@ -30,23 +29,19 @@ import {
 } from 'fs';
 import * as Handlebars from 'handlebars';
 import { get } from 'https';
+import * as yaml from 'js-yaml';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, dirname, join, resolve } from 'path';
+import { basename, dirname, isAbsolute, join, resolve as pathResolve } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
 import * as util from 'util';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { CryptoUtils } from './CryptoUtils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require('../../package.json').version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const yaml = require('js-yaml');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const exec = util.promisify(require('child_process').exec);
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+const promisifyExec = util.promisify(exec);
 
 export type Password = string | false | undefined;
 
@@ -71,6 +66,7 @@ export class BootstrapUtils {
     public static readonly targetWalletsFolder = 'wallets';
     public static readonly targetDatabasesFolder = 'databases';
     public static readonly targetNemesisFolder = 'nemesis';
+    public static readonly defaultWorkingDir = '.';
 
     public static readonly CURRENT_USER = 'current';
     private static readonly pulledImages: string[] = [];
@@ -86,7 +82,7 @@ export class BootstrapUtils {
         });
     })();
 
-    public static getFilesRecursively(path: string): string[] {
+    public static getFilesRecursively(directoryPath: string): string[] {
         const isDirectory = (path: string) => statSync(path).isDirectory();
         const getDirectories = (path: string) =>
             readdirSync(path)
@@ -99,14 +95,15 @@ export class BootstrapUtils {
                 .map((name) => join(path, name))
                 .filter(isFile);
 
-        const dirs = getDirectories(path);
+        const dirs = getDirectories(directoryPath);
         const files = dirs
             .map((dir) => BootstrapUtils.getFilesRecursively(dir)) // go through each directory
             .reduce((a, b) => a.concat(b), []); // map returns a 2d array (array of file arrays) so flatten
-        return files.concat(getFiles(path));
+        return files.concat(getFiles(directoryPath));
     }
 
     public static async download(
+        logger: Logger,
         url: string,
         dest: string,
     ): Promise<{
@@ -187,14 +184,14 @@ export class BootstrapUtils {
         process.stdout.write(message);
     }
 
-    public static deleteFolder(folder: string, excludeFiles: string[] = []): void {
+    public static deleteFolder(logger: Logger, folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             logger.info(`Deleting folder ${folder}`);
         }
-        return BootstrapUtils.deleteFolderRecursive(folder, excludeFiles);
+        return BootstrapUtils.deleteFolderRecursive(logger, folder, excludeFiles);
     }
 
-    private static deleteFolderRecursive(folder: string, excludeFiles: string[] = []): void {
+    private static deleteFolderRecursive(logger: Logger, folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             readdirSync(folder).forEach((file: string) => {
                 const currentPath = join(folder, file);
@@ -205,6 +202,7 @@ export class BootstrapUtils {
                 if (lstatSync(currentPath).isDirectory()) {
                     // recurse
                     this.deleteFolderRecursive(
+                        logger,
                         currentPath,
                         excludeFiles.map((file) => join(currentPath, file)),
                     );
@@ -223,10 +221,6 @@ export class BootstrapUtils {
         }
     }
 
-    public static showBanner(): void {
-        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
-    }
-
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static validateIsDefined(value: any, message: string): void {
         if (value === undefined || value === null) {
@@ -240,14 +234,14 @@ export class BootstrapUtils {
         }
     }
 
-    public static async pullImage(image: string): Promise<void> {
+    public static async pullImage(logger: Logger, image: string): Promise<void> {
         this.validateIsDefined(image, 'Image must be provided');
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
             return;
         }
         try {
             logger.info(`Pulling image ${image}`);
-            const stdout = await this.spawn('docker', ['pull', image], true, `${image} `);
+            const stdout = await this.spawn('docker', ['pull', image], logger, true, `${image} `);
             const outputLines = stdout.toString().split('\n');
             logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
             BootstrapUtils.pulledImages.push(image);
@@ -257,28 +251,31 @@ export class BootstrapUtils {
     }
 
     public static resolveRootFolder(): string {
-        const rootFolder = resolve(__dirname, '../..');
+        const rootFolder = pathResolve(__dirname, '../..');
         if (!existsSync(join(rootFolder, 'presets', 'shared.yml'))) {
             throw new Error(`Root Folder ${rootFolder} does not look right!`);
         }
         return rootFolder;
     }
 
-    public static async runImageUsingExec({
-        catapultAppFolder,
-        image,
-        userId,
-        workdir,
-        cmds,
-        binds,
-    }: {
-        catapultAppFolder?: string;
-        image: string;
-        userId?: string;
-        workdir?: string;
-        cmds: string[];
-        binds: string[];
-    }): Promise<{ stdout: string; stderr: string }> {
+    public static runImageUsingExec(
+        logger: Logger,
+        {
+            catapultAppFolder,
+            image,
+            userId,
+            workdir,
+            cmds,
+            binds,
+        }: {
+            catapultAppFolder?: string;
+            image: string;
+            userId?: string;
+            workdir?: string;
+            cmds: string[];
+            binds: string[];
+        },
+    ): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
@@ -287,7 +284,7 @@ export class BootstrapUtils {
             .map((a) => `"${a}"`)
             .join(' ')}`;
         logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
-        return await this.exec(runCommand);
+        return this.exec(logger, runCommand);
     }
 
     public static toAns1(privateKey: string): string {
@@ -311,7 +308,12 @@ export class BootstrapUtils {
         });
     }
 
-    public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {
+    public static poll(
+        logger: Logger,
+        promiseFunction: () => Promise<boolean>,
+        totalPollingTime: number,
+        pollIntervalMs: number,
+    ): Promise<boolean> {
         const startTime = new Date().getMilliseconds();
         return promiseFunction().then(async (result) => {
             if (result) {
@@ -325,7 +327,7 @@ export class BootstrapUtils {
                 if (newPollingTime) {
                     logger.info(`Retrying in ${pollIntervalMs / 1000} seconds. Polling will stop in ${newPollingTime / 1000} seconds`);
                     await BootstrapUtils.sleep(pollIntervalMs);
-                    return this.poll(promiseFunction, newPollingTime, pollIntervalMs);
+                    return this.poll(logger, promiseFunction, newPollingTime, pollIntervalMs);
                 } else {
                     return false;
                 }
@@ -381,6 +383,30 @@ export class BootstrapUtils {
         );
     }
 
+    public static async copyDir(copyFrom: string, copyTo: string, excludeFiles: string[] = [], includeFiles: string[] = []): Promise<void> {
+        await BootstrapUtils.mkdir(copyTo);
+        const files = await fsPromises.readdir(copyFrom);
+        await Promise.all(
+            files.map(async (file: string) => {
+                const fromPath = join(copyFrom, file);
+                const toPath = join(copyTo, file);
+                // Stat the file to see if we have a file or dir
+                const stat = await fsPromises.stat(fromPath);
+                if (stat.isFile()) {
+                    const fileName = basename(toPath);
+                    const notBlacklisted = excludeFiles.indexOf(fileName) === -1;
+                    const inWhitelistIfAny = includeFiles.length === 0 || includeFiles.indexOf(fileName) > -1;
+                    if (notBlacklisted && inWhitelistIfAny) {
+                        await fsPromises.copyFile(fromPath, toPath);
+                    }
+                } else if (stat.isDirectory()) {
+                    await BootstrapUtils.mkdir(toPath);
+                    await this.copyDir(fromPath, toPath, excludeFiles, includeFiles);
+                }
+            }),
+        );
+    }
+
     public static async chmodRecursive(path: string, mode: string | number): Promise<void> {
         // Loop through all the files in the config folder
         const stat = await fsPromises.stat(path);
@@ -407,8 +433,7 @@ export class BootstrapUtils {
             const securedMessage = BootstrapUtils.secureString(e.message || 'Unknown');
 
             const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
-            logger.error(`${message}\nContext: \n${securedContext}`);
-            throw new Error(message);
+            throw new Error(`${message}\nContext: \n${securedContext}`);
         }
     }
 
@@ -423,8 +448,7 @@ export class BootstrapUtils {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
+    public static async writeYaml(path: string, object: unknown, password: Password): Promise<void> {
         const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
         await BootstrapUtils.writeTextFile(path, yamlString);
     }
@@ -482,34 +506,38 @@ export class BootstrapUtils {
         await fsPromises.writeFile(path, text, 'utf8');
     }
 
-    public static async readTextFile(path: string): Promise<string> {
-        return await fsPromises.readFile(path, 'utf8');
+    public static isValidPrivateKey(input: string): boolean | string {
+        return Convert.isHexString(input, 64) ? true : 'Invalid private key. It must have 64 hex characters.';
+    }
+
+    public static readTextFile(path: string): Promise<string> {
+        return fsPromises.readFile(path, 'utf8');
     }
 
     private static dockerUserId: string;
 
-    public static async resolveDockerUserFromParam(paramUser: string | undefined): Promise<string | undefined> {
+    public static async resolveDockerUserFromParam(logger: Logger, paramUser: string | undefined): Promise<string | undefined> {
         if (!paramUser || paramUser.trim() === '') {
             return undefined;
         }
         if (paramUser === BootstrapUtils.CURRENT_USER) {
-            return BootstrapUtils.getDockerUserGroup();
+            return BootstrapUtils.getDockerUserGroup(logger);
         }
         return paramUser;
     }
-    public static async createImageUsingExec(targetFolder: string, dockerFile: string, tag: string): Promise<string> {
+    public static async createImageUsingExec(logger: Logger, targetFolder: string, dockerFile: string, tag: string): Promise<string> {
         const runCommand = `docker build -f ${dockerFile} ${targetFolder} -t ${tag}`;
         logger.info(`Creating image image '${tag}' from ${dockerFile}`);
-        return (await this.exec(runCommand)).stdout;
+        return (await this.exec(logger, runCommand)).stdout;
     }
 
-    public static async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
+    public static async exec(logger: Logger, runCommand: string): Promise<{ stdout: string; stderr: string }> {
         logger.debug(`Exec command: ${runCommand}`);
-        const { stdout, stderr } = await exec(runCommand);
+        const { stdout, stderr } = await promisifyExec(runCommand);
         return { stdout, stderr };
     }
 
-    public static async spawn(command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {
+    public static async spawn(command: string, args: string[], logger: Logger, useLogger: boolean, logPrefix = ''): Promise<string> {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
@@ -524,13 +552,15 @@ export class BootstrapUtils {
                 }
             };
 
-            cmd.stdout.on('data', (data) => {
-                log(`${data}`.trim(), false);
-            });
+            if (cmd.stdout)
+                cmd.stdout.on('data', (data) => {
+                    log(`${data}`.trim(), false);
+                });
 
-            cmd.stderr.on('data', (data) => {
-                log(`${data}`.trim(), true);
-            });
+            if (cmd.stderr)
+                cmd.stderr.on('data', (data) => {
+                    log(`${data}`.trim(), true);
+                });
 
             cmd.on('error', (error) => {
                 log(`${error.message}`.trim(), true);
@@ -560,7 +590,7 @@ export class BootstrapUtils {
         });
     }
 
-    public static async getDockerUserGroup(): Promise<string> {
+    public static async getDockerUserGroup(logger: Logger): Promise<string> {
         const isWin = this.isWindows();
         if (isWin) {
             return '';
@@ -592,15 +622,6 @@ export class BootstrapUtils {
         return process.platform === 'win32';
     }
 
-    public static validateFolder(workingDirFullPath: string): void {
-        if (!existsSync(workingDirFullPath)) {
-            throw new Error(`${workingDirFullPath} folder does not exist`);
-        }
-        if (!lstatSync(workingDirFullPath).isDirectory()) {
-            throw new Error(`${workingDirFullPath} is not a folder!`);
-        }
-    }
-
     public static getTargetFolder(target: string, absolute: boolean, ...paths: string[]): string {
         if (absolute) {
             return join(process.cwd(), target, ...paths);
@@ -623,6 +644,9 @@ export class BootstrapUtils {
 
     public static getTargetDatabasesFolder(target: string, absolute: boolean, ...paths: string[]): string {
         return this.getTargetFolder(target, absolute, this.targetDatabasesFolder, ...paths);
+    }
+    public static zeroPad(num: number, places: number): string {
+        return String(num).padStart(places, '0');
     }
 
     //HANDLEBARS READY FUNCTIONS:
@@ -707,7 +731,12 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static migrate<T extends { version?: number }>(entityName: string, versioned: T, migrations: Migration[] = []): T {
+    public static migrate<T extends { version?: number }>(
+        logger: Logger,
+        entityName: string,
+        versioned: T,
+        migrations: Migration[] = [],
+    ): T {
         if (!versioned) {
             return versioned;
         }
@@ -740,10 +769,6 @@ export class BootstrapUtils {
                 return 'public';
             case NetworkType.TEST_NET:
                 return 'public-test';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijin-test';
             case NetworkType.PRIVATE:
                 return 'private';
             case NetworkType.PRIVATE_TEST:
@@ -758,10 +783,6 @@ export class BootstrapUtils {
                 return 'public';
             case NetworkType.TEST_NET:
                 return 'publicTest';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijinTest';
             case NetworkType.PRIVATE:
                 return 'private';
             case NetworkType.PRIVATE_TEST:
@@ -774,11 +795,44 @@ export class BootstrapUtils {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
     }
 
+    public static isYmlFile(string: string): boolean {
+        return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');
+    }
+
     public static validatePassword(password: string): string {
         const passwordMinSize = 4;
         if (password.length < passwordMinSize) {
             throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
         }
         return password;
+    }
+
+    public static validateFolder(workingDirFullPath: string): void {
+        if (!existsSync(workingDirFullPath)) {
+            throw new Error(`${workingDirFullPath} folder does not exist`);
+        }
+        if (!lstatSync(workingDirFullPath).isDirectory()) {
+            throw new Error(`${workingDirFullPath} is not a folder!`);
+        }
+    }
+
+    public static async validateSeedFolder(nemesisSeedFolder: string, message: string): Promise<void> {
+        BootstrapUtils.validateFolder(nemesisSeedFolder);
+        const seedData = join(nemesisSeedFolder, '00000', '00001.dat');
+        if (!existsSync(seedData)) {
+            throw new KnownError(`File ${seedData} doesn't exist! ${message}`);
+        }
+        const seedIndex = join(nemesisSeedFolder, 'index.dat');
+        if (!existsSync(seedIndex)) {
+            throw new KnownError(`File ${seedIndex} doesn't exist! ${message}`);
+        }
+    }
+
+    public static resolveWorkingDirPath(workingDir: string, path: string): string {
+        if (isAbsolute(path)) {
+            return path;
+        } else {
+            return join(workingDir, path);
+        }
     }
 }

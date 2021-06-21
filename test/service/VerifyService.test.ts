@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import * as os from 'os';
 import * as semver from 'semver';
-import { BootstrapUtils, VerifyService } from '../../src/service';
-
+import { LoggerFactory, LogType } from '../../src';
+import { VerifyService } from '../../src/service';
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('VerifyService', () => {
     const currentNodeJsVersion = process.versions.node;
 
     it('loadVersion', async () => {
-        const service = new VerifyService();
+        const service = new VerifyService(logger);
         expect(service.loadVersion('Docker version 19.03.8, build afacb8b7f0')).eq('19.03.8');
         expect(service.loadVersion('Docker version 19.0.8, build afacb8b7f0')).eq('19.0.8');
         expect(service.loadVersion('Docker version 19 build a')).eq('19.0.0');
     });
 
     it('VerifyService verify current installation', async () => {
-        const service = new VerifyService();
+        const service = new VerifyService(logger);
         const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
         const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
         expect(semver.valid(currentNodeJsVersion, service.semverOptions));
@@ -70,7 +71,7 @@ describe('VerifyService', () => {
             docker: '21.4.0',
             dockerCompose: '1.29.5',
         };
-        const service = new VerifyService(BootstrapUtils.resolveRootFolder(), expectedVersions);
+        const service = new VerifyService(logger, expectedVersions);
         const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
         const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
         expect(semver.valid(currentNodeJsVersion, service.semverOptions));

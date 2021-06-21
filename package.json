@@ -49,6 +49,7 @@
         "chai": "^4.2.0",
         "coveralls": "^3.1.0",
         "create-ts-index": "^1.13.6",
+        "dir-compare": "^3.3.0",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.10.1",
         "eslint-plugin-prettier": "^3.1.3",

@@ -17,17 +17,14 @@
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { CertificatePair } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
-import { KeyName } from './ConfigService';
+import { AccountResolver, BootstrapUtils, KeyName } from './';
 
 export interface CertificateParams {
     readonly target: string;
     readonly user: string;
+    readonly accountResolver: AccountResolver;
 }
 
 export interface CertificateMetadata {
@@ -35,8 +32,6 @@ export interface CertificateMetadata {
     readonly mainPublicKey: string;
     readonly version: number;
 }
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export interface NodeCertificates {
     main: CertificatePair;
@@ -46,14 +41,14 @@ export interface NodeCertificates {
 export class CertificateService {
     private static readonly METADATA_VERSION = 1;
 
-    constructor(private readonly root: string, protected readonly params: CertificateParams) {}
+    constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {}
 
     public static getCertificates(stdout: string): CertificatePair[] {
         const locations = (string: string, substring: string): number[] => {
-            const indexes = [];
+            const list = [];
             let i = -1;
-            while ((i = string.indexOf(substring, i + 1)) >= 0) indexes.push(i);
-            return indexes;
+            while ((i = string.indexOf(substring, i + 1)) >= 0) list.push(i);
+            return list;
         };
 
         const extractKey = (subtext: string): string => {
@@ -89,50 +84,50 @@ export class CertificateService {
         customCertFolder?: string,
         randomSerial?: string,
     ): Promise<void> {
-        const copyFrom = `${this.root}/config/cert`;
+        const copyFrom = join(BootstrapUtils.DEFAULT_ROOT_FOLDER, 'config', 'cert');
         const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
 
         const metadataFile = join(certFolder, 'metadata.yml');
 
         if (!(await this.shouldGenerateCertificate(metadataFile, providedCertificates))) {
-            logger.info(`Certificates for node ${name} have been previously generated. Reusing...`);
+            this.logger.info(`Certificates for node ${name} have been previously generated. Reusing...`);
             return;
         }
-        await BootstrapUtils.deleteFolder(certFolder);
+        BootstrapUtils.deleteFolder(this.logger, certFolder);
         await BootstrapUtils.mkdir(certFolder);
         const newCertsFolder = join(certFolder, 'new_certs');
         await BootstrapUtils.mkdir(newCertsFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
+        const mainAccount = await this.params.accountResolver.resolveAccount(
             networkType,
             providedCertificates.main,
             KeyName.Main,
             name,
             'generating the server CA certificates',
+            'Should not generate!',
         );
-        const transportPrivateKey = await CommandUtils.resolvePrivateKey(
+        const transportAccount = await this.params.accountResolver.resolveAccount(
             networkType,
             providedCertificates.transport,
             KeyName.Transport,
             name,
             'generating the server Node certificates',
+            'Should not generate!',
         );
-        BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
+        BootstrapUtils.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
+        BootstrapUtils.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
         await BootstrapUtils.writeTextFile(
             join(certFolder, 'serial.dat'),
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
         );
-
-        // TODO. Migrate this process to forge, sshpk or any node native implementation.
         const command = this.createCertCommands('/data');
         await BootstrapUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
         const cmd = ['bash', 'createNodeCertificates.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
             image: symbolServerImage,
             userId: userId,
             workdir: '/data',
@@ -140,8 +135,8 @@ export class CertificateService {
             binds: binds,
         });
         if (stdout.indexOf('Certificate Created') < 0) {
-            logger.info(BootstrapUtils.secureString(stdout));
-            logger.error(BootstrapUtils.secureString(stderr));
+            this.logger.info(BootstrapUtils.secureString(stdout));
+            this.logger.error(BootstrapUtils.secureString(stderr));
             throw new Error('Certificate creation failed. Check the logs!');
         }
 
@@ -149,13 +144,13 @@ export class CertificateService {
         if (certificates.length != 2) {
             throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
         }
-        logger.info(`Certificate for node ${name} created`);
+        this.logger.info(`Certificate for node ${name} created`);
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
-        BootstrapUtils.validateIsTrue(caCertificate.privateKey === mainAccountPrivateKey, 'Invalid ca private key');
+        BootstrapUtils.validateIsTrue(caCertificate.privateKey === mainAccount.privateKey, 'Invalid ca private key');
         BootstrapUtils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
-        BootstrapUtils.validateIsTrue(nodeCertificate.privateKey === transportPrivateKey, 'Invalid Node private key');
+        BootstrapUtils.validateIsTrue(nodeCertificate.privateKey === transportAccount.privateKey, 'Invalid Node private key');
         BootstrapUtils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
 
         const metadata: CertificateMetadata = {
@@ -171,14 +166,14 @@ export class CertificateService {
             return true;
         }
         try {
-            const metadata = BootstrapUtils.loadYaml(metadataFile, false) as CertificateMetadata;
+            const metadata = (await BootstrapUtils.loadYaml(metadataFile, false)) as CertificateMetadata;
             return (
                 metadata.mainPublicKey !== providedCertificates.main.publicKey ||
                 metadata.transportPublicKey !== providedCertificates.transport.publicKey ||
                 metadata.version !== CertificateService.METADATA_VERSION
             );
         } catch (e) {
-            logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
+            this.logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
             return true;
         }
     }
@@ -221,6 +216,9 @@ rm createNodeCertificates.sh
 rm ca.key.pem
 rm ca.der
 rm node.der
+rm index.txt*
+rm serial.dat*
+rm -rf new_certs
 
 echo "Certificate Created"
 `;

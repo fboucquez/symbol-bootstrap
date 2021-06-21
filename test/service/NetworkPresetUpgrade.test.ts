@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 import { it } from 'mocha';
+import { LoggerFactory, LogType } from '../../src';
 import { ConfigPreset } from '../../src/model';
 import { BootstrapUtils, Preset, RemoteNodeService } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('NetworkPresetUpgrade', () => {
     const patchNetworkPreset = async (preset: Preset): Promise<void> => {
         const root = './';
         const presetLocation = `${root}/presets/${preset}/network.yml`;
-        const networkPreset: ConfigPreset = BootstrapUtils.loadYaml(presetLocation, false);
+        const networkPreset = (await BootstrapUtils.loadYaml(presetLocation, false)) as ConfigPreset;
 
-        const epoch = await new RemoteNodeService().getBestFinalizationEpoch(networkPreset.knownRestGateways);
+        const epoch = await new RemoteNodeService(logger).getBestFinalizationEpoch(networkPreset.knownRestGateways);
         if (!epoch) {
             throw new Error('Epoch could not be resolved!!');
         }
         networkPreset.lastKnownNetworkEpoch = epoch;
         await BootstrapUtils.writeYaml(presetLocation, networkPreset, undefined);
     };
-    it('should patch testnet lastKnownNetworkEpoch', () => {
+    it.skip('should patch testnet lastKnownNetworkEpoch', () => {
         return patchNetworkPreset(Preset.testnet);
     });
-    it('should patch mainnet lastKnownNetworkEpoch', () => {
+    it.skip('should patch mainnet lastKnownNetworkEpoch', () => {
         return patchNetworkPreset(Preset.mainnet);
     });
 });

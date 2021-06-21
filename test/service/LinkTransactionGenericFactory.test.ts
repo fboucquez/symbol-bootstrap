@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { it } from 'mocha';
 import { LinkAction } from 'symbol-sdk';
-import { GenericNodeAccount, KeyAccount, LinkTransactionGenericFactory, VotingKeyAccount } from '../../src/service';
+import { GenericNodeAccount, KeyAccount, LinkTransactionGenericFactory, LoggerFactory, LogType, VotingKeyAccount } from '../../src';
+
+const logger = LoggerFactory.getLogger(LogType.Silence);
 
 type GenericTransaction =
     | { name: string; action: LinkAction; publicKey: string }
@@ -67,10 +69,7 @@ describe('LinkTransactionGenericFactory', () => {
     it('creates generic transactions when empty', async () => {
         const currentLinkedAccounts: GenericNodeAccount = {};
         const toLinkNodeAccounts: GenericNodeAccount = {};
-        const transactions = await new LinkTransactionGenericFactory({
-            unlink: false,
-            ready: true,
-        }).createGenericTransactions(
+        const transactions = await new LinkTransactionGenericFactory(logger, async () => true, false).createGenericTransactions(
             'SomeName',
             currentLinkedAccounts,
             toLinkNodeAccounts,
@@ -89,10 +88,11 @@ describe('LinkTransactionGenericFactory', () => {
         unlink: boolean,
         expectedTransactions: GenericTransaction[],
     ) => {
-        const transactions: GenericTransaction[] = await new LinkTransactionGenericFactory({
-            unlink: unlink,
-            ready: true,
-        }).createGenericTransactions(
+        const transactions: GenericTransaction[] = await new LinkTransactionGenericFactory(
+            logger,
+            async () => true,
+            unlink,
+        ).createGenericTransactions(
             'SomeName',
             currentLinkedAccounts,
             toLinkNodeAccounts,

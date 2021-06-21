@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2021 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,12 @@
 import { expect } from '@oclif/test';
 import 'mocha';
 import { Deadline, TransactionType, TransferTransaction, UInt64 } from 'symbol-sdk';
-import { BootstrapService, ConfigService, LinkService, Preset } from '../../src/service';
-import { RewardProgram, RewardProgramService, RewardProgramServiceTransactionFactoryParams } from '../../src/service/RewardProgramService';
+import { BootstrapService, ConfigService, LoggerFactory, LogType, Preset } from '../../src';
+import { LinkService, RewardProgramService, RewardProgramServiceTransactionFactoryParams } from '../../src/service';
 
+const logger = LoggerFactory.getLogger(LogType.Silence);
 const password = '1234';
 describe('RewardProgramService', () => {
-    it('getRewardProgram', async () => {
-        expect(RewardProgramService.getRewardProgram('ecosystem')).eq(RewardProgram.Ecosystem);
-        expect(RewardProgramService.getRewardProgram('Ecosystem')).eq(RewardProgram.Ecosystem);
-        expect(RewardProgramService.getRewardProgram('superNODE')).eq(RewardProgram.SuperNode);
-        expect(RewardProgramService.getRewardProgram('earlyAdoption')).eq(RewardProgram.EarlyAdoption);
-        try {
-            RewardProgramService.getRewardProgram('NA');
-            expect(1).eq(0);
-        } catch (e) {
-            expect(e.message).eq('NA is not a valid Reward program. Please use one of EarlyAdoption, Ecosystem, SuperNode, MonitorOnly');
-        }
-    });
-
     it('RewardProgramService create transactions when supernode', async () => {
         const params = {
             ...ConfigService.defaultParams,
@@ -42,6 +30,7 @@ describe('RewardProgramService', () => {
             target: 'target/tests/testnet-supernode',
             password,
             reset: false,
+            offline: true,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/supernode.yml',
             customPresetObject: {
@@ -49,7 +38,7 @@ describe('RewardProgramService', () => {
             },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService('.').config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const nodePreset = presetData.nodes![0];
@@ -61,7 +50,7 @@ describe('RewardProgramService', () => {
             maxFee: maxFee,
         };
 
-        const transactions = await new RewardProgramService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new RewardProgramService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(1);
         const transaction = transactions[0] as TransferTransaction;
         expect(transaction.type).eq(TransactionType.TRANSFER);
@@ -77,6 +66,7 @@ describe('RewardProgramService', () => {
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
+            offline: true,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
             customPresetObject: {
@@ -84,7 +74,7 @@ describe('RewardProgramService', () => {
             },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService('.').config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const nodePreset = presetData.nodes![0];
@@ -96,7 +86,7 @@ describe('RewardProgramService', () => {
             maxFee: maxFee,
         };
 
-        const transactions = await new RewardProgramService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new RewardProgramService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 });

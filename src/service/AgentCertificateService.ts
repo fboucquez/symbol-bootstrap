@@ -17,21 +17,20 @@
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { NetworkType } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { CertificatePair } from '../model';
+import { AccountResolver } from './AccountResolver';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
-import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
 export interface AgentCertificateParams {
     readonly target: string;
     readonly user: string;
+    readonly accountResolver: AccountResolver;
 }
 
 export interface AgentCertificates {
-    agent: CertificatePair;
+    readonly agent: CertificatePair;
 }
 
 export interface AgentCertificateMetadata {
@@ -39,11 +38,9 @@ export interface AgentCertificateMetadata {
     readonly version: number;
 }
 
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
-
 export class AgentCertificateService {
     private static readonly METADATA_VERSION = 1;
-    constructor(private readonly root: string, protected readonly params: AgentCertificateParams) {}
+    constructor(private readonly logger: Logger, protected readonly params: AgentCertificateParams) {}
 
     public async run(
         networkType: NetworkType,
@@ -52,16 +49,16 @@ export class AgentCertificateService {
         providedCertificates: AgentCertificates,
         customCertFolder?: string,
     ): Promise<void> {
-        const copyFrom = `${this.root}/config/agent-cert`;
+        const copyFrom = join(BootstrapUtils.DEFAULT_ROOT_FOLDER, 'config', 'agent-cert');
         const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
         await BootstrapUtils.mkdir(certFolder);
 
         const metadataFile = join(certFolder, 'metadata.yml');
         if (!(await this.shouldGenerateCertificate(metadataFile, providedCertificates))) {
-            logger.info(`Agent Certificates for node ${name} have been previously generated. Reusing...`);
+            this.logger.info(`Agent Certificates for node ${name} have been previously generated. Reusing...`);
             return;
         }
-        await BootstrapUtils.deleteFolder(certFolder);
+        BootstrapUtils.deleteFolder(this.logger, certFolder);
         await BootstrapUtils.mkdir(certFolder);
         const newCertsFolder = join(certFolder, 'new_certs');
         await BootstrapUtils.mkdir(newCertsFolder);
@@ -69,21 +66,22 @@ export class AgentCertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        const agentPrivateKey = await CommandUtils.resolvePrivateKey(
+        const agentAccount = await this.params.accountResolver.resolveAccount(
             networkType,
             providedCertificates.agent,
             KeyName.Agent,
             name,
             'generating the Agent certificates',
+            'Should not generate!',
         );
-        BootstrapUtils.createDerFile(agentPrivateKey, join(certFolder, 'agent-ca.der'));
+        BootstrapUtils.createDerFile(agentAccount.privateKey, join(certFolder, 'agent-ca.der'));
 
         const command = this.createCertCommands('/data');
         await BootstrapUtils.writeTextFile(join(certFolder, 'createAgentCertificate.sh'), command);
         const cmd = ['bash', 'createAgentCertificate.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
             image: symbolServerImage,
             userId: userId,
             workdir: '/data',
@@ -91,8 +89,8 @@ export class AgentCertificateService {
             binds: binds,
         });
         if (stdout.indexOf('Certificate Created') < 0) {
-            logger.info(BootstrapUtils.secureString(stdout));
-            logger.error(BootstrapUtils.secureString(stderr));
+            this.logger.info(BootstrapUtils.secureString(stdout));
+            this.logger.error(BootstrapUtils.secureString(stderr));
             throw new Error('Certificate creation failed. Check the logs!');
         }
 
@@ -101,9 +99,9 @@ export class AgentCertificateService {
             throw new Error('Certificate creation failed. 1 certificates should have been created but got: ' + certificates.length);
         }
         const agentCertificate = certificates[0];
-        BootstrapUtils.validateIsTrue(agentCertificate.privateKey === agentPrivateKey, 'Invalid agent private key');
+        BootstrapUtils.validateIsTrue(agentCertificate.privateKey === agentAccount.privateKey, 'Invalid agent private key');
         BootstrapUtils.validateIsTrue(agentCertificate.publicKey === providedCertificates.agent.publicKey, 'Invalid agent public key');
-        logger.info(`Agent Certificate for node ${name} created`);
+        this.logger.info(`Agent Certificate for node ${name} created`);
         const metadata: AgentCertificateMetadata = {
             version: AgentCertificateService.METADATA_VERSION,
             agentPublicKey: providedCertificates.agent.publicKey,
@@ -115,13 +113,13 @@ export class AgentCertificateService {
             return true;
         }
         try {
-            const metadata = BootstrapUtils.loadYaml(metadataFile, false) as AgentCertificateMetadata;
+            const metadata = (await BootstrapUtils.loadYaml(metadataFile, false)) as AgentCertificateMetadata;
             return (
                 metadata.agentPublicKey !== providedCertificates.agent.publicKey ||
                 metadata.version !== AgentCertificateService.METADATA_VERSION
             );
         } catch (e) {
-            logger.warn(`Cannot load agent certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
+            this.logger.warn(`Cannot load agent certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
             return true;
         }
     }
@@ -139,7 +137,7 @@ export class AgentCertificateService {
     //     const storedPublicKey = Convert.uint8ToHex((key.part as any).A.data);
     //     return storedPublicKey !== providedCertificates.agent.publicKey;
     //   } catch (e) {
-    //     logger.warn(`Cannot extract public key from file ${pemFile}. Error: ${e.message}`, e);
+    //     this.logger.warn(`Cannot extract public key from file ${pemFile}. Error: ${e.message}`, e);
     //     return true;
     //   }
     // }
@@ -163,6 +161,8 @@ openssl req -config agent-ca.cnf -key agent-ca.key.pem -new -out agent-ca.csr.pe
 
 rm createAgentCertificate.sh
 rm agent-ca.der
+rm -rf new_certs
+rm index.txt*
 
 echo "Certificate Created"
 `;

@@ -15,8 +15,8 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, RunService } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { BootstrapService, BootstrapUtils, LoggerFactory, LogType, RunService } from '../';
+import { BootstrapCommandUtils } from '../service';
 import HealthCheck from './healthCheck';
 
 export default class Run extends Command {
@@ -26,8 +26,8 @@ export default class Run extends Command {
     static examples = [`$ symbol-bootstrap run`];
 
     static flags = {
-        help: CommandUtils.helpFlag,
-        target: CommandUtils.targetFlag,
+        help: BootstrapCommandUtils.helpFlag,
+        target: BootstrapCommandUtils.targetFlag,
         detached: flags.boolean({
             char: 'd',
             description:
@@ -64,8 +64,10 @@ export default class Run extends Command {
     };
 
     public run(): Promise<void> {
+        const workingDir = BootstrapUtils.defaultWorkingDir;
         const { flags } = this.parse(Run);
-        BootstrapUtils.showBanner();
-        return new BootstrapService(this.config.root).run(flags);
+        BootstrapCommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(LogType.System, workingDir);
+        return new BootstrapService(logger).run(flags);
     }
 }

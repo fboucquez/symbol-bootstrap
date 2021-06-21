@@ -17,10 +17,9 @@
 import { expect } from '@oclif/test';
 import { stdin } from 'mock-stdin';
 import { Account, NetworkType } from 'symbol-sdk';
+import { BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode, RewardProgram } from '../../src';
 import Wizard, { Network } from '../../src/commands/wizard';
-import { CustomPreset, PrivateKeySecurityMode } from '../../src/model';
-import { BootstrapUtils, Preset, RewardProgram } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silence);
 export const StdUtils = {
     keys: Object.freeze({
         up: '\u001b[A',
@@ -35,9 +34,6 @@ export const StdUtils = {
         function sendAnswer() {
             setTimeout(function () {
                 const text = responses[k];
-                if (typeof text !== 'string') {
-                    throw new Error('Should give only text responses ' + JSON.stringify(responses, null, 2));
-                }
                 s.send(text);
                 k += 1;
                 if (k < responses.length) {
@@ -53,7 +49,7 @@ export const StdUtils = {
 describe('Wizard', () => {
     const testFolder = 'target/wizardTest';
     beforeEach(async () => {
-        BootstrapUtils.deleteFolder(testFolder);
+        BootstrapUtils.deleteFolder(logger, testFolder);
     });
     it('Provide private keys', async () => {
         // assembly

@@ -15,22 +15,24 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapService, BootstrapUtils } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { BootstrapService, BootstrapUtils, LoggerFactory, LogType } from '../';
+import { BootstrapCommandUtils } from '../service';
 
-export default class Clean extends Command {
+export default class Report extends Command {
     static description = 'it generates reStructuredText (.rst) reports describing the configuration of each node.';
 
     static examples = [`$ symbol-bootstrap report`];
 
     static flags = {
-        help: CommandUtils.helpFlag,
-        target: CommandUtils.targetFlag,
+        help: BootstrapCommandUtils.helpFlag,
+        target: BootstrapCommandUtils.targetFlag,
     };
 
     public async run(): Promise<void> {
-        const { flags } = this.parse(Clean);
-        BootstrapUtils.showBanner();
-        await new BootstrapService(this.config.root).report(flags);
+        const workingDir = BootstrapUtils.defaultWorkingDir;
+        const { flags } = this.parse(Report);
+        BootstrapCommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(LogType.System, workingDir);
+        await new BootstrapService(logger).report(flags);
     }
 }

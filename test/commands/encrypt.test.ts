@@ -15,17 +15,14 @@
  */
 
 import { expect, test } from '@oclif/test';
-import { existsSync } from 'fs';
-import { BootstrapUtils } from '../../src/service';
-import { CryptoUtils } from '../../src/service/CryptoUtils';
-
+import { BootstrapUtils, CryptoUtils, LoggerFactory, LogType } from '../../src';
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('encrypt', () => {
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/encrypted.yml --password 1111'.split(' '))
         .it('runs encrypt and creates file', async (ctx) => {
             expect(ctx.stdout).to.contain('Encrypted file target/tests.encrypt/encrypted.yml has been created!');
-            expect(existsSync('target/tests.encrypt/encrypted.yml')).eq(true);
             expect(await BootstrapUtils.loadYaml('target/tests.encrypt/encrypted.yml', '1111')).deep.eq(
                 await BootstrapUtils.loadYaml('test/encrypt/encrypted.yml', '1111'),
             );
@@ -34,7 +31,7 @@ describe('encrypt', () => {
             );
         });
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/encrypted.yml --password 1'.split(' '))
         .catch((ctx) => {
@@ -42,7 +39,7 @@ describe('encrypt', () => {
         })
         .it('password too short');
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/encrypted.yml --password 1111'.split(' '))
         .catch((ctx) => {
@@ -52,7 +49,7 @@ describe('encrypt', () => {
         })
         .it('already encrypted');
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination test/encrypt/plain.yml --password 1111'.split(' '))
         .catch((ctx) => {

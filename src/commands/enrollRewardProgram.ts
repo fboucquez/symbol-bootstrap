@@ -15,9 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapService, BootstrapUtils } from '../service';
-import { AnnounceService } from '../service/AnnounceService';
-import { CommandUtils } from '../service/CommandUtils';
+import { BootstrapService, BootstrapUtils, LoggerFactory, LogType } from '../';
+import { BootstrapCommandUtils } from '../service';
 
 export default class EnrollRewardProgram extends Command {
     static description = `It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the agent keys (changing the agent-ca-csr) or server host.
@@ -33,20 +32,22 @@ Currently, the only program that can be enrolled post-launch is 'SuperNode'.`;
     ];
 
     static flags = {
-        help: CommandUtils.helpFlag,
-        target: CommandUtils.targetFlag,
-        ...AnnounceService.flags,
+        help: BootstrapCommandUtils.helpFlag,
+        target: BootstrapCommandUtils.targetFlag,
+        ...BootstrapCommandUtils.announceFlags,
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(EnrollRewardProgram);
-        BootstrapUtils.showBanner();
-        flags.password = await CommandUtils.resolvePassword(
+        BootstrapCommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(LogType.System, BootstrapUtils.defaultWorkingDir);
+        flags.password = await BootstrapCommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
-            CommandUtils.passwordPromptDefaultMessage,
+            BootstrapCommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        return new BootstrapService(this.config.root).enrollRewardProgram(flags);
+        return new BootstrapService(logger).enrollRewardProgram(flags);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2021 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,17 @@ import {
     UInt64,
     VotingKeyLinkTransaction,
 } from 'symbol-sdk';
-import { BootstrapService, ConfigService, LinkService, LinkServiceTransactionFactoryParams, Preset } from '../../src/service';
-
+import {
+    BootstrapService,
+    ConfigService,
+    DefaultAccountResolver,
+    LinkServiceTransactionFactoryParams,
+    LoggerFactory,
+    LogType,
+    Preset,
+} from '../../src';
+import { LinkService } from '../../src/service';
+const logger = LoggerFactory.getLogger(LogType.Silence);
 const password = '1234';
 describe('LinkService', () => {
     const alreadyLinkedAccountInfoDto: AccountInfoDTO = {
@@ -114,15 +123,17 @@ describe('LinkService', () => {
             target: 'target/tests/testnet-dual',
             password,
             reset: false,
+            offline: true,
             preset: Preset.testnet,
             assembly: 'dual',
+            accountResolver: new DefaultAccountResolver(),
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },
         };
         try {
-            await new BootstrapService().config(params);
-            await new BootstrapService().link(params);
+            await new BootstrapService(logger).config(params);
+            await new LinkService(logger, params).run();
         } catch (e) {
             expect(e.message.indexOf('No up and running node could be found out of:'), e.message).to.be.greaterThan(-1);
             expect(e.message.indexOf('http://localhost:3000'), e.message).to.be.greaterThan(-1);
@@ -143,7 +154,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
@@ -155,7 +166,7 @@ describe('LinkService', () => {
             mainAccountInfo: notLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(3);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -186,7 +197,7 @@ describe('LinkService', () => {
             },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
@@ -198,7 +209,7 @@ describe('LinkService', () => {
             mainAccountInfo: notLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(3);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -231,7 +242,7 @@ describe('LinkService', () => {
                 customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
                 assembly: 'dual',
             };
-            const { addresses, presetData } = await new BootstrapService().config(params);
+            const { addresses, presetData } = await new BootstrapService(logger).config(params);
             const nodeAccount = addresses.nodes![0];
             const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
             const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -242,7 +253,7 @@ describe('LinkService', () => {
                 mainAccountInfo: notLinkedAccountInfo,
             };
 
-            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
             expect(transactions.length).eq(3);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -273,7 +284,7 @@ describe('LinkService', () => {
                 },
                 assembly: 'dual',
             };
-            const { addresses, presetData } = await new BootstrapService().config(params);
+            const { addresses, presetData } = await new BootstrapService(logger).config(params);
             const nodeAccount = addresses.nodes![0];
             const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
             const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -284,7 +295,7 @@ describe('LinkService', () => {
                 mainAccountInfo: notLinkedAccountInfo,
             };
             expect(addresses!.nodes![0].voting?.length).eq(1);
-            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
             expect(transactions.length).eq(2);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -309,7 +320,7 @@ describe('LinkService', () => {
                 customPresetObject: { lastKnownNetworkEpoch: 235, autoUpdateVotingKeys: true, nodeUseRemoteAccount: true },
                 assembly: 'dual',
             };
-            const { addresses, presetData } = await new BootstrapService().config(params);
+            const { addresses, presetData } = await new BootstrapService(logger).config(params);
             const nodeAccount = addresses.nodes![0];
             const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
             const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -320,7 +331,7 @@ describe('LinkService', () => {
                 mainAccountInfo: notLinkedAccountInfo,
             };
 
-            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
             expect(transactions.length).eq(3);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -354,7 +365,7 @@ describe('LinkService', () => {
                 },
                 assembly: 'dual',
             };
-            const { addresses, presetData } = await new BootstrapService().config(params);
+            const { addresses, presetData } = await new BootstrapService(logger).config(params);
             const nodeAccount = addresses.nodes![0];
             const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
             const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -365,7 +376,7 @@ describe('LinkService', () => {
                 mainAccountInfo: notLinkedAccountInfo,
             };
             expect(addresses!.nodes![0].voting?.length).eq(2);
-            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
             expect(transactions.length).eq(3);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -404,7 +415,7 @@ describe('LinkService', () => {
                 },
                 assembly: 'dual',
             };
-            const { addresses, presetData } = await new BootstrapService().config(params);
+            const { addresses, presetData } = await new BootstrapService(logger).config(params);
             const nodeAccount = addresses.nodes![0];
             const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
             const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -415,7 +426,7 @@ describe('LinkService', () => {
                 mainAccountInfo: notLinkedAccountInfo,
             };
 
-            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
             expect(transactions.length).eq(3);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -450,7 +461,7 @@ describe('LinkService', () => {
                 },
                 assembly: 'dual',
             };
-            const { addresses, presetData } = await new BootstrapService().config(params);
+            const { addresses, presetData } = await new BootstrapService(logger).config(params);
             const nodeAccount = addresses.nodes![0];
             const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
             const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -461,7 +472,7 @@ describe('LinkService', () => {
                 mainAccountInfo: notLinkedAccountInfo,
             };
             expect(addresses!.nodes![0].voting?.length).eq(2);
-            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
             // The original link needs to still be linked as it's current!
             expect(transactions.length).eq(4);
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
@@ -499,7 +510,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
@@ -511,7 +522,7 @@ describe('LinkService', () => {
             mainAccountInfo: alreadyLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(6);
 
         assertTransaction(
@@ -563,7 +574,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const alreadyLinkedAccountInfoDto: AccountInfoDTO = {
             account: {
                 version: 1,
@@ -604,7 +615,7 @@ describe('LinkService', () => {
             mainAccountInfo: alreadyLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(4);
 
         assertTransaction(
@@ -638,7 +649,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const alreadyLinkedAccountInfoDto: AccountInfoDTO = {
             account: {
                 version: 1,
@@ -679,7 +690,7 @@ describe('LinkService', () => {
             mainAccountInfo: alreadyLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(6);
 
         assertTransaction(
@@ -731,8 +742,7 @@ describe('LinkService', () => {
             removeOldLinked: false,
         };
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
-        const { addresses, presetData } = await new BootstrapService().config(params);
-        expect(presetData.lastKnownNetworkEpoch).eq(lastKnownNetworkEpoch);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -743,7 +753,7 @@ describe('LinkService', () => {
             mainAccountInfo: alreadyLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 
@@ -760,7 +770,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
@@ -772,7 +782,7 @@ describe('LinkService', () => {
             mainAccountInfo: notLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(2);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
@@ -791,7 +801,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
@@ -803,7 +813,7 @@ describe('LinkService', () => {
             mainAccountInfo: alreadyLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(4);
         assertTransaction(
             transactions[0],
@@ -836,7 +846,7 @@ describe('LinkService', () => {
             removeOldLinked: false,
         };
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -847,7 +857,7 @@ describe('LinkService', () => {
             mainAccountInfo: alreadyLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 
@@ -864,7 +874,7 @@ describe('LinkService', () => {
             assembly: 'dual',
         };
 
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
@@ -876,7 +886,7 @@ describe('LinkService', () => {
             mainAccountInfo: notLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(1);
         assertTransaction(transactions[0], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
@@ -893,7 +903,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'api',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
 
         const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
@@ -905,7 +915,7 @@ describe('LinkService', () => {
             mainAccountInfo: notLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 
@@ -923,7 +933,7 @@ describe('LinkService', () => {
             customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'api',
         };
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
@@ -936,7 +946,7 @@ describe('LinkService', () => {
             mainAccountInfo: notLinkedAccountInfo,
         };
 
-        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        const transactions = await new LinkService(logger, params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(2);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertVotingTransaction(

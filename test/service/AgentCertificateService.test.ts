@@ -18,19 +18,25 @@ import { expect } from 'chai';
 import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { AgentCertificateService, BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
+import { LoggerFactory, LogType } from '../../src';
+import { AgentCertificateService, BootstrapUtils, ConfigLoader, DefaultAccountResolver, Preset } from '../../src/service';
 
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('AgentCertificateService', () => {
     it('createCertificate', async () => {
         const target = 'target/tests/AgentCertificateService';
-        await BootstrapUtils.deleteFolder(target);
+        BootstrapUtils.deleteFolder(logger, target);
         await BootstrapUtils.mkdir(target);
-        const service = new AgentCertificateService('.', { target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        const service = new AgentCertificateService(logger, {
+            target: target,
+            user: await BootstrapUtils.getDockerUserGroup(logger),
+            accountResolver: new DefaultAccountResolver(),
+        });
 
-        const presetData = new ConfigLoader().createPresetData({
-            root: '.',
-            preset: Preset.bootstrap,
+        const presetData = new ConfigLoader(logger).createPresetData({
+            preset: Preset.dualCurrency,
             password: 'abc',
+            workingDir: BootstrapUtils.defaultWorkingDir,
         });
 
         await service.run(
@@ -53,15 +59,11 @@ describe('AgentCertificateService', () => {
             'agent-ca.key.pem',
             'agent-ca.pubkey.pem',
             'agent-comm.cnf',
-            'index.txt',
             'metadata.yml',
-            'new_certs',
         ]);
 
-        files
-            .filter((f) => f != 'new_certs')
-            .forEach((f) => {
-                expect(readFileSync(join(target, f))).deep.eq(readFileSync(join('test', 'agentCertificates', f)));
-            });
+        files.forEach((f) => {
+            expect(readFileSync(join(target, f))).deep.eq(readFileSync(join('test', 'agentCertificates', f)));
+        });
     });
 });

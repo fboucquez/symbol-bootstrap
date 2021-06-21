@@ -15,12 +15,8 @@
  */
 import { lookup } from 'dns';
 import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger/Logger';
 import { ConfigPreset } from '../model';
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export interface RepositoryInfo {
     repositoryFactory: RepositoryFactory;
@@ -28,16 +24,19 @@ export interface RepositoryInfo {
     chainInfo: ChainInfo;
 }
 export class RemoteNodeService {
-    public async resolveCurrentFinalizationEpoch(presetData: ConfigPreset): Promise<number> {
+    constructor(private readonly logger: Logger) {}
+    public async resolveCurrentFinalizationEpoch(presetData: ConfigPreset, offline: boolean): Promise<number> {
+        if (offline) {
+            return presetData.lastKnownNetworkEpoch;
+        }
         const votingNode = presetData.nodes?.find((n) => n.voting);
         if (!votingNode) {
             return presetData.lastKnownNetworkEpoch;
         }
-        const remoteNodeService = new RemoteNodeService();
-        if (!(await remoteNodeService.isConnectedToInternet())) {
+        if (!(await this.isConnectedToInternet())) {
             return presetData.lastKnownNetworkEpoch;
         }
-        return (await remoteNodeService.getBestFinalizationEpoch(presetData.knownRestGateways)) || presetData.lastKnownNetworkEpoch;
+        return (await this.getBestFinalizationEpoch(presetData.knownRestGateways)) || presetData.lastKnownNetworkEpoch;
     }
 
     public async getBestFinalizationEpoch(urls: string[] | undefined): Promise<number | undefined> {
@@ -47,7 +46,7 @@ export class RemoteNodeService {
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
         const finalizationEpoch = repositoryInfo?.chainInfo.latestFinalizedBlock.finalizationEpoch;
         if (finalizationEpoch) {
-            logger.info(`The current network finalization epoch is ${finalizationEpoch}`);
+            this.logger.info(`The current network finalization epoch is ${finalizationEpoch}`);
         }
         return finalizationEpoch;
     }
@@ -57,7 +56,7 @@ export class RemoteNodeService {
         if (!repositoryInfo) {
             throw new Error(`No up and running node could be found out of: \n - ${urls.join('\n - ')}`);
         }
-        logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
+        this.logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
         return repositoryInfo;
     }
 
@@ -88,26 +87,24 @@ export class RemoteNodeService {
     }
 
     private async getKnownNodeRepositoryInfos(urls: string[]): Promise<RepositoryInfo[]> {
-        logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
+        this.logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
         return (
             await Promise.all(
-                urls.map(
-                    async (restGatewayUrl): Promise<RepositoryInfo | undefined> => {
-                        const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
-                        try {
-                            const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
-                            return {
-                                restGatewayUrl,
-                                repositoryFactory,
-                                chainInfo,
-                            };
-                        } catch (e) {
-                            const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}}`;
-                            logger.warn(message);
-                            return undefined;
-                        }
-                    },
-                ),
+                urls.map(async (restGatewayUrl): Promise<RepositoryInfo | undefined> => {
+                    const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
+                    try {
+                        const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
+                        return {
+                            restGatewayUrl,
+                            repositoryFactory,
+                            chainInfo,
+                        };
+                    } catch (e) {
+                        const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}`;
+                        this.logger.warn(message);
+                        return undefined;
+                    }
+                }),
             )
         )
             .filter((i) => i)

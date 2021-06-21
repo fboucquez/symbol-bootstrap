@@ -30,7 +30,7 @@ export interface DockerComposeService {
     command?: string;
     entrypoint?: string;
     hostname?: string;
-    environment?: any;
+    environment?: Record<string, string>;
     stop_signal?: string;
     volumes?: string[];
     ports?: string[];

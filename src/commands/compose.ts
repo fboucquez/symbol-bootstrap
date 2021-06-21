@@ -15,18 +15,28 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, CommandUtils, ComposeService } from '../service';
+import { IOptionFlag } from '@oclif/command/lib/flags';
+import { IBooleanFlag } from '@oclif/parser/lib/flags';
+import { BootstrapService, BootstrapUtils, ComposeService, LoggerFactory, LogType } from '../';
+import { BootstrapCommandUtils } from '../service';
 
 export default class Compose extends Command {
     static description = 'It generates the `docker-compose.yml` file from the configured network.';
 
     static examples = [`$ symbol-bootstrap compose`];
 
-    static flags = {
-        help: CommandUtils.helpFlag,
-        target: CommandUtils.targetFlag,
-        password: CommandUtils.passwordFlag,
-        noPassword: CommandUtils.noPasswordFlag,
+    static flags: {
+        help: IBooleanFlag<void>;
+        password: IOptionFlag<string | undefined>;
+        noPassword: IBooleanFlag<boolean>;
+        upgrade: IBooleanFlag<boolean>;
+        user: IOptionFlag<string>;
+        target: IOptionFlag<string>;
+    } = {
+        help: BootstrapCommandUtils.helpFlag,
+        target: BootstrapCommandUtils.targetFlag,
+        password: BootstrapCommandUtils.passwordFlag,
+        noPassword: BootstrapCommandUtils.noPasswordFlag,
         upgrade: flags.boolean({
             description: 'It regenerates the docker compose and utility files from the <target>/docker folder',
             default: ComposeService.defaultParams.upgrade,
@@ -40,13 +50,15 @@ export default class Compose extends Command {
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Compose);
-        BootstrapUtils.showBanner();
-        flags.password = await CommandUtils.resolvePassword(
+        const logger = LoggerFactory.getLogger(LogType.System, BootstrapUtils.defaultWorkingDir);
+        BootstrapCommandUtils.showBanner();
+        flags.password = await BootstrapCommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
-            CommandUtils.passwordPromptDefaultMessage,
+            BootstrapCommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(this.config.root).compose(flags);
+        await new BootstrapService(logger).compose(flags);
     }
 }

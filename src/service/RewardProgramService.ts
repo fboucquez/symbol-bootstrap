@@ -16,14 +16,19 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Address, Deadline, PlainMessage, Transaction, TransferTransaction, UInt64 } from 'symbol-sdk';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
-import { AnnounceService, TransactionFactory } from './AnnounceService';
-import { BootstrapUtils, KnownError } from './BootstrapUtils';
-import { ConfigLoader } from './ConfigLoader';
-
-const logger: Logger = LoggerFactory.getLogger();
+import {
+    Addresses,
+    AnnounceService,
+    BootstrapUtils,
+    ConfigLoader,
+    ConfigPreset,
+    Logger,
+    NodeAccount,
+    NodePreset,
+    RemoteNodeService,
+    TransactionFactory,
+} from '../';
+import { BootstrapAccountResolver } from './BootstrapAccountResolver';
 
 export type RewardProgramParams = {
     target: string;
@@ -43,33 +48,17 @@ export interface RewardProgramServiceTransactionFactoryParams {
     maxFee: UInt64;
 }
 
-export enum RewardProgram {
-    EarlyAdoption = 'EarlyAdoption',
-    Ecosystem = 'Ecosystem',
-    SuperNode = 'SuperNode',
-    MonitorOnly = 'MonitorOnly',
-}
-
 export class RewardProgramService implements TransactionFactory {
     public static readonly defaultParams: RewardProgramParams = {
         useKnownRestGateways: false,
-        target: BootstrapUtils.defaultTargetFolder,
+        target: 'target',
         url: 'http://localhost:3000',
     };
 
     private readonly configLoader: ConfigLoader;
 
-    constructor(protected readonly params: RewardProgramParams) {
-        this.configLoader = new ConfigLoader();
-    }
-
-    public static getRewardProgram(value: string): RewardProgram {
-        const programs = Object.values(RewardProgram) as RewardProgram[];
-        const program = programs.find((p) => p.toLowerCase() == value.toLowerCase());
-        if (program) {
-            return program;
-        }
-        throw new KnownError(`${value} is not a valid Reward program. Please use one of ${programs.join(', ')}`);
+    constructor(private readonly logger: Logger, protected readonly params: RewardProgramParams) {
+        this.configLoader = new ConfigLoader(logger);
     }
 
     public async enroll(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
@@ -77,15 +66,23 @@ export class RewardProgramService implements TransactionFactory {
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         if (!presetData.rewardProgramEnrollmentAddress) {
-            logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
+            this.logger.warn('This network does not have a reward program controller public key. Nodes cannot be registered.');
             return;
         }
-        await new AnnounceService().announce(
-            this.params.url,
+
+        const providedUrl = this.params.url;
+        const urls =
+            (this.params.useKnownRestGateways && presetData.knownRestGateways) || (providedUrl ? [providedUrl.replace(/\/$/, '')] : []);
+        if (!urls.length) {
+            throw new Error('URLs could not be resolved!');
+        }
+        const repositoryInfo = await new RemoteNodeService(this.logger).getBestRepositoryInfo(urls);
+        const repositoryFactory = repositoryInfo.repositoryFactory;
+
+        await new AnnounceService(this.logger, new BootstrapAccountResolver(this.logger)).announce(
+            repositoryFactory,
             this.params.maxFee,
-            this.params.useKnownRestGateways,
             this.params.ready,
-            this.params.target,
             this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,
@@ -103,7 +100,7 @@ export class RewardProgramService implements TransactionFactory {
         const transactions: Transaction[] = [];
         const networkType = presetData.networkType;
         if (!nodePreset.rewardProgram) {
-            logger.warn(`Node ${nodeAccount.name} hasn't been configured with rewardProgram: preset property.`);
+            this.logger.warn(`Node ${nodeAccount.name} hasn't been configured with rewardProgram: preset property.`);
             return transactions;
         }
 
@@ -113,11 +110,11 @@ export class RewardProgramService implements TransactionFactory {
         const rewardProgramEnrollmentAddress = Address.createFromRawAddress(presetData.rewardProgramEnrollmentAddress);
         const agentPublicKey = nodeAccount.transport.publicKey;
         if (!agentPublicKey) {
-            logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
+            this.logger.warn(`Cannot resolve harvester public key of node ${nodeAccount.name}`);
             return transactions;
         }
         if (!nodePreset.host) {
-            logger.warn(
+            this.logger.warn(
                 `Node ${nodeAccount.name} public host name hasn't been provided! Please use 'host: myNodeHost' custom preset param.`,
             );
             return transactions;
@@ -128,7 +125,7 @@ export class RewardProgramService implements TransactionFactory {
         const base64AgentCaCsrFile = readFileSync(join(certFolder, 'agent-ca.csr.pem'), 'base64');
         const plainMessage = `enroll ${agentUrl} ${base64AgentCaCsrFile}`;
         const message = PlainMessage.create(plainMessage);
-        logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
+        this.logger.info(`Creating enrolment transfer with message '${plainMessage}'`);
         const transaction: Transaction = TransferTransaction.create(
             deadline,
             rewardProgramEnrollmentAddress,

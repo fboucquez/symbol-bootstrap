@@ -15,9 +15,9 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, LinkService } from '../service';
-import { AnnounceService } from '../service/AnnounceService';
-import { CommandUtils } from '../service/CommandUtils';
+import { prompt } from 'inquirer';
+import { BootstrapService, LoggerFactory, LogType } from '../';
+import { BootstrapCommandUtils, LinkService } from '../service';
 
 export default class Link extends Command {
     static description = `It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.`;
@@ -25,24 +25,51 @@ export default class Link extends Command {
     static examples = [`$ symbol-bootstrap link`, `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap link --unlink --useKnownRestGateways`];
 
     static flags = {
-        help: CommandUtils.helpFlag,
-        target: CommandUtils.targetFlag,
+        help: BootstrapCommandUtils.helpFlag,
+        target: BootstrapCommandUtils.targetFlag,
         unlink: flags.boolean({
             description: 'Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer account',
             default: LinkService.defaultParams.unlink,
         }),
-        ...AnnounceService.flags,
+        ...BootstrapCommandUtils.announceFlags,
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Link);
-        BootstrapUtils.showBanner();
-        flags.password = await CommandUtils.resolvePassword(
+        BootstrapCommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(LogType.ConsoleLog);
+        flags.password = await BootstrapCommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
-            CommandUtils.passwordPromptDefaultMessage,
+            BootstrapCommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        return new BootstrapService(this.config.root).link(flags);
+        return new BootstrapService(logger).link({ ...flags, confirmUnlink: this.confirmUnlink });
     }
+    private confirmUnlink =
+        (params: { removeOldLinked?: boolean; ready?: boolean }) =>
+        async <T>(
+            accountName: string,
+            alreadyLinkedAccount: T,
+
+            print: (account: T) => string,
+        ): Promise<boolean> => {
+            if (params.removeOldLinked === undefined) {
+                return (
+                    params.ready ||
+                    (
+                        await prompt([
+                            {
+                                name: 'value',
+                                message: `Do you want to unlink the old ${accountName} ${print(alreadyLinkedAccount)}?`,
+                                type: 'confirm',
+                                default: false,
+                            },
+                        ])
+                    ).value
+                );
+            }
+            return params.removeOldLinked;
+        };
 }

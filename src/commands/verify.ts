@@ -15,11 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { BootstrapUtils, CommandUtils, VerifyService } from '../service';
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+import { BootstrapUtils, LoggerFactory, LogType, VerifyService } from '../';
+import { BootstrapCommandUtils } from '../service';
 
 export default class Verify extends Command {
     static description =
@@ -27,19 +24,15 @@ export default class Verify extends Command {
     static examples = [`$ symbol-bootstrap verify`];
 
     static flags = {
-        help: CommandUtils.helpFlag,
+        help: BootstrapCommandUtils.helpFlag,
     };
 
     public async run(): Promise<void> {
-        BootstrapUtils.showBanner();
-        const report = await new VerifyService(this.config.root).createReport();
-        logger.info(`OS: ${report.platform}`);
-        report.lines.forEach((line) => {
-            if (line.recommendation) {
-                logger.warn(`${line.header}  - Warning! - ${line.message} - ${line.recommendation}`);
-            } else {
-                logger.info(`${line.header} - OK! - ${line.message}`);
-            }
-        });
+        BootstrapCommandUtils.showBanner();
+        const workingDir = BootstrapUtils.defaultWorkingDir;
+        const logger = LoggerFactory.getLogger(LogType.System, workingDir);
+        const service = new VerifyService(logger);
+        const report = await service.createReport();
+        service.logReport(report, logger);
     }
 }

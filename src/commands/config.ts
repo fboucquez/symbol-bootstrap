@@ -15,50 +15,57 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
+import { IOptionFlag } from '@oclif/command/lib/flags';
+import { IBooleanFlag } from '@oclif/parser/lib/flags';
+import { BootstrapService, BootstrapUtils, ConfigService, LoggerFactory, LogType } from '../';
+import { BootstrapAccountResolver, BootstrapCommandUtils } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
 
     static examples = [
-        `$ symbol-bootstrap config -p bootstrap`,
+        `$ symbol-bootstrap config -p dualCurrency -a demo`,
         `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
     ];
-    //@typescript-eslint/explicit-module-boundary-types
-    static resolveFlags = (required: boolean) => ({
-        help: CommandUtils.helpFlag,
-        target: CommandUtils.targetFlag,
-        password: CommandUtils.passwordFlag,
-        noPassword: CommandUtils.noPasswordFlag,
-        preset: flags.enum({
+
+    static flags: {
+        help: IBooleanFlag<void>;
+        password: IOptionFlag<string | undefined>;
+        noPassword: IBooleanFlag<boolean>;
+        upgrade: IBooleanFlag<boolean>;
+        user: IOptionFlag<string>;
+        preset: IOptionFlag<string | undefined>;
+        assembly: IOptionFlag<string | undefined>;
+        customPreset: IOptionFlag<string | undefined>;
+        reset: IBooleanFlag<boolean>;
+        report: IBooleanFlag<boolean>;
+        target: IOptionFlag<string>;
+    } = {
+        help: BootstrapCommandUtils.helpFlag,
+        target: BootstrapCommandUtils.targetFlag,
+        password: BootstrapCommandUtils.passwordFlag,
+        noPassword: BootstrapCommandUtils.noPasswordFlag,
+        preset: flags.string({
             char: 'p',
-            description: `The network preset, can be provided via custom preset or cli parameter. ${
-                required ? '' : 'If not provided, the value is resolved from the target/preset.yml file.'
-            }`,
-            options: Object.keys(Preset).map((v) => v as Preset),
-            required: required,
+            description: `The network preset. It can be provided via custom preset or cli parameter. ${'If not provided, the value is resolved from the target/preset.yml file.'}`,
         }),
         assembly: flags.string({
             char: 'a',
-            description: `The assembly, example "dual" for testnet. ${
-                required ? '' : 'If not provided, the value is resolved from the target/preset.yml file.'
-            }`,
-            required: required,
+            description: `The assembly that define the node(s) layout. It can be provided via custom preset or cli parameter. ${'If not provided, the value is resolved from the target/preset.yml file.'}`,
         }),
         customPreset: flags.string({
             char: 'c',
-            description: `External preset file. Values in this file will override the provided presets`,
-            required: required,
+            description: `External preset file. Values in this file will override the provided presets.`,
         }),
         reset: flags.boolean({
             char: 'r',
-            description: 'It resets the configuration generating a new one',
+            description: 'It resets the configuration generating a new one.',
             default: ConfigService.defaultParams.reset,
         }),
 
         upgrade: flags.boolean({
-            description: `It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to keep your node up to date without dropping the local data. The original preset (-t), assembly (-a), and custom preset (-a) must be used. Backup the target folder before upgrading.`,
+            description: `It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to keep your node up to date without dropping the local data. Backup the target folder before upgrading.`,
             default: ConfigService.defaultParams.reset,
         }),
 
@@ -72,19 +79,20 @@ export default class Config extends Command {
             description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: BootstrapUtils.CURRENT_USER,
         }),
-    });
-
-    static flags = Config.resolveFlags(false);
+    };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Config);
-        BootstrapUtils.showBanner();
-        flags.password = await CommandUtils.resolvePassword(
+        const workingDir = BootstrapUtils.defaultWorkingDir;
+        const logger = LoggerFactory.getLogger(LogType.System, workingDir);
+        BootstrapCommandUtils.showBanner();
+        flags.password = await BootstrapCommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
-            CommandUtils.passwordPromptDefaultMessage,
+            BootstrapCommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(this.config.root).config(flags);
+        await new BootstrapService(logger).config({ ...flags, workingDir, accountResolver: new BootstrapAccountResolver(logger) });
     }
 }
