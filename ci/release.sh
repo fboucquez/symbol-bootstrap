@@ -7,7 +7,7 @@ VERSION="$(node_load_version)"
 DEV_BRANCH=dev
 RELEASE_BRANCH=main
 POST_RELEASE_BRANCH=main
-TRAVIS_REPO_SLUG=nemtech/symbol-bootstrap
+TRAVIS_REPO_SLUG=symbol/symbol-bootstrap
 log_env_variables
 npm test
 npm pack

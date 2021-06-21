@@ -1,0 +1,10 @@
+privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+nodes:
+    -
+        friendlyName: testprefix-dual-002
+        host: testprefix-dual-002.mytest.com
+        voting: true
+        harvesting: true
+        dockerComposeDebugMode: false
+        brokerDockerComposeDebugMode: false
+nemesisSeedFolder: nemesis-seed

@@ -1,0 +1,153 @@
+preset: custom-network-preset.yml
+domain: mycompany.com
+suffix: myc
+networkDescription: My Company Private Test Network
+networkType: 168
+nemesisGenerationHashSeed: 3EC4F5010EAD8F4439241F242611C292CE569587D571A80AD2E73511BE820387
+epochAdjustment: 1626086470
+rewardProgramControllerApiUrl: 'http://myc-node-monitoring.mycompany.com:7890'
+isNewNetwork: true
+faucetBalances:
+    - 449949995
+    - 750
+deploymentData:
+    type: AWS
+nodes:
+    -
+        number: 1
+        friendlyName: myc-demo--101
+        assembly: demo
+        hostname: myc-demo--101.mycompany.com
+        customPreset:
+            privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+            nodes:
+                -
+                    friendlyName: myc-demo--101
+                    host: myc-demo--101.mycompany.com
+                    voting: false
+                    harvesting: true
+                    dockerComposeDebugMode: false
+                    brokerDockerComposeDebugMode: false
+        nickName: demo
+        nodeType: HarvestingDemo
+        balances:
+            - 1000000
+            - 150
+        nodeSize: t3.xlarge
+        region: eu-east-1
+        rootBlockSize: 750
+    -
+        number: 2
+        friendlyName: myc-dual-301
+        assembly: dual
+        hostname: myc-dual-301.mycompany.com
+        customPreset:
+            privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+            nodes:
+                -
+                    friendlyName: myc-dual-301
+                    host: myc-dual-301.mycompany.com
+                    voting: false
+                    harvesting: true
+                    dockerComposeDebugMode: false
+                    brokerDockerComposeDebugMode: false
+        nickName: dual
+        nodeType: HarvestingDual
+        balances:
+            - 3000000
+            - 150
+        nodeSize: t3.xlarge
+        region: eu-west-1
+        rootBlockSize: 500
+    -
+        number: 3
+        friendlyName: myc-dual-302
+        assembly: dual
+        hostname: myc-dual-302.mycompany.com
+        customPreset:
+            privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+            nodes:
+                -
+                    friendlyName: myc-dual-302
+                    host: myc-dual-302.mycompany.com
+                    voting: false
+                    harvesting: true
+                    dockerComposeDebugMode: false
+                    brokerDockerComposeDebugMode: false
+        nickName: dual
+        nodeType: HarvestingDual
+        balances:
+            - 3000000
+            - 150
+        nodeSize: t3.xlarge
+        region: eu-west-1
+        rootBlockSize: 500
+    -
+        number: 4
+        friendlyName: myc-peer-101
+        assembly: peer
+        hostname: myc-peer-101.mycompany.com
+        customPreset:
+            privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+            nodes:
+                -
+                    friendlyName: myc-peer-101
+                    host: myc-peer-101.mycompany.com
+                    voting: true
+                    harvesting: false
+                    dockerComposeDebugMode: false
+                    brokerDockerComposeDebugMode: false
+        nickName: peer
+        nodeType: VotingNonHarvestingPeer
+        balances:
+            - 51000000
+            - 0
+        nodeSize: t3.large
+        region: us-west-1
+        rootBlockSize: 250
+    -
+        number: 5
+        friendlyName: myc-peer-102
+        assembly: peer
+        hostname: myc-peer-102.mycompany.com
+        customPreset:
+            privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+            nodes:
+                -
+                    friendlyName: myc-peer-102
+                    host: myc-peer-102.mycompany.com
+                    voting: true
+                    harvesting: false
+                    dockerComposeDebugMode: false
+                    brokerDockerComposeDebugMode: false
+        nickName: peer
+        nodeType: VotingNonHarvestingPeer
+        balances:
+            - 51000000
+            - 0
+        nodeSize: t3.large
+        region: us-west-1
+        rootBlockSize: 250
+    -
+        number: 6
+        friendlyName: myc-beacon-001
+        assembly: peer
+        hostname: myc-beacon-001.mycompany.com
+        customPreset:
+            privateKeySecurityMode: PROMPT_MAIN_TRANSPORT
+            nodes:
+                -
+                    friendlyName: myc-beacon-001
+                    host: myc-beacon-001.mycompany.com
+                    voting: true
+                    harvesting: true
+                    dockerComposeDebugMode: false
+                    brokerDockerComposeDebugMode: false
+        nickName: beacon
+        nodeType: VotingPeer
+        balances:
+            - 3000000
+            - 150
+        nodeSize: t3.xlarge
+        region: us-east-1
+        rootBlockSize: 250
