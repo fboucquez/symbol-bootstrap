@@ -24,4 +24,4 @@ EXAMPLE
   $ symbol-bootstrap resetData
 ```
 
-_See code: [src/commands/resetData.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.2/src/commands/resetData.ts)_
+_See code: [src/commands/resetData.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/resetData.ts)_

@@ -5,10 +5,10 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
 [![Downloads/week](https://img.shields.io/npm/dw/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
-[![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/nemtech/symbol-bootstrap/blob/master/package.json)
-[![Build Status](https://travis-ci.com/nemtech/symbol-bootstrap.svg?branch=main)](https://travis-ci.com/nemtech/symbol-bootstrap)
-[![Coverage Status](https://coveralls.io/repos/github/nemtech/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/nemtech/symbol-bootstrap?branch=main)
-[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://nemtech.github.io/symbol-bootstrap/)
+[![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json)
+[![Build](https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml/badge.svg)](https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml)
+[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
+[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://fboucquez.github.io/symbol-bootstrap/)
 
 <!-- toc -->
 * [symbol-bootstrap](#symbol-bootstrap)
@@ -68,7 +68,7 @@ Properties in each file override the previous values (by object deep merge).
 -   [`peer`](presets/assemblies/assembly-peer.yml): A standard peer-only node that contains 1 peer node.
 -   [`api`](presets/assemblies/assembly-api.yml): A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.
 -   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.
--   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer, web wallet and faucet for test and demonstration purposes.
+-   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer and faucet for test and demonstration purposes.
 -   [`multinode`](presets/assemblies/assembly-multinode.yml): A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
 
 ### Custom preset:
@@ -91,7 +91,6 @@ The folder structure is:
 -   `./databases`: The location where the mongo data is stored for the different database instances.
 -   `./docker`: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.
 -   `./explorers`: The generated explorer configuration.
--   `./wallets`: The generated wallet configuration.
 -   `./reports`: The location of the generated reports.
 
 Note: **The target folder should not be manually modified**. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset [guides](docs/presetGuides.md)!

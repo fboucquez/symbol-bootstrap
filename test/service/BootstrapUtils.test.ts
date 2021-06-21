@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { statSync } from 'fs';
 import * as _ from 'lodash';
 import 'mocha';
 import { it } from 'mocha';
+import * as nock from 'nock';
 import { totalmem } from 'os';
 import { Account, NetworkType } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
 import { ConfigAccount } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
 import assert = require('assert');
-import nock = require('nock');
 const logger = LoggerFactory.getLogger(LogType.Silent);
+
 describe('BootstrapUtils', () => {
     it('BootstrapUtils dockerUserId', async () => {
         const user1 = await BootstrapUtils.getDockerUserGroup(logger);
@@ -43,7 +44,7 @@ describe('BootstrapUtils', () => {
 
         for (let i = 0; i < 10; i++) {
             console.log();
-            const account = ConfigLoader.toConfig(Account.generateNewAccount(networkType));
+            const account = ConfigLoader.toConfigFromAccount(Account.generateNewAccount(networkType));
             balances.push({ ...account, balance: 1000000 });
         }
         console.log(BootstrapUtils.toYaml({ nemesisBalances: balances }));
@@ -66,7 +67,9 @@ describe('BootstrapUtils', () => {
 
         const expectedSize = 43970;
         async function download(): Promise<boolean> {
-            nock(url).get('/boat.png').replyWithFile(200, 'test/boat.png', { 'content-length': expectedSize.toString() });
+            nock(url)
+                .get('/boat.png')
+                .replyWithFile(200, __dirname + '/../boat.png', { 'content-length': expectedSize.toString() });
             const result = await BootstrapUtils.download(logger, url + '/boat.png', 'boat.png');
             expect(statSync('boat.png').size).eq(expectedSize);
             return result.downloaded;
@@ -112,6 +115,16 @@ describe('BootstrapUtils', () => {
         );
     });
 
+    it('Bootstrap.resolveWorkingDirPath', function () {
+        expect(BootstrapUtils.resolveWorkingDirPath(BootstrapUtils.defaultWorkingDir, '../some/path')).to.be.eq('../some/path');
+        expect(BootstrapUtils.resolveWorkingDirPath(BootstrapUtils.defaultWorkingDir, 'some/path')).to.be.eq('some/path');
+        expect(BootstrapUtils.resolveWorkingDirPath(BootstrapUtils.defaultWorkingDir, '/some/path')).to.be.eq('/some/path');
+
+        expect(BootstrapUtils.resolveWorkingDirPath('/my/absolute/workingdir', '../some/path')).to.be.eq('/my/absolute/some/path');
+        expect(BootstrapUtils.resolveWorkingDirPath('/my/absolute/workingdir', 'some/path')).to.be.eq('/my/absolute/workingdir/some/path');
+        expect(BootstrapUtils.resolveWorkingDirPath('/my/absolute/workingdir', '/some/path')).to.be.eq('/some/path');
+    });
+
     it('BootstrapUtils.computerMemory', async () => {
         const totalMemory = totalmem();
         expect(totalMemory).to.be.gt(1024 * 1024);
@@ -127,24 +140,24 @@ describe('BootstrapUtils', () => {
     });
 
     it('BootstrapUtils.loadYaml', async () => {
-        expect(CryptoUtils.encryptedCount(BootstrapUtils.loadYaml('test/encrypted.yml', '1234'))).to.be.eq(0);
+        expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('test/encrypted.yml', '1234'))).to.be.eq(0);
 
         try {
-            BootstrapUtils.loadYaml('test/encrypted.yml', 'abc');
+            await BootstrapUtils.loadYaml('test/encrypted.yml', 'abc');
             expect(1).eq(0);
         } catch (e) {
             expect(e.message).eq('Password is too short. It should have at least 4 characters!');
         }
 
         try {
-            BootstrapUtils.loadYaml('test/encrypted.yml', 'abcd');
+            await BootstrapUtils.loadYaml('test/encrypted.yml', 'abcd');
             expect(1).eq(0);
         } catch (e) {
             expect(e.message).eq('Cannot decrypt file test/encrypted.yml. Have you used the right password?');
         }
 
         try {
-            BootstrapUtils.loadYaml('test/encrypted.yml', '');
+            await BootstrapUtils.loadYaml('test/encrypted.yml', '');
             expect(1).eq(0);
         } catch (e) {
             expect(e.message).eq(
@@ -153,7 +166,7 @@ describe('BootstrapUtils', () => {
         }
 
         try {
-            BootstrapUtils.loadYaml('test/encrypted.yml', undefined);
+            await BootstrapUtils.loadYaml('test/encrypted.yml', undefined);
             expect(1).eq(0);
         } catch (e) {
             expect(e.message).eq(
@@ -161,7 +174,7 @@ describe('BootstrapUtils', () => {
             );
         }
 
-        expect(CryptoUtils.encryptedCount(BootstrapUtils.loadYaml('test/encrypted.yml', false))).to.be.eq(6);
+        expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('test/encrypted.yml', false))).to.be.eq(6);
     });
 
     it('mergeTest', async () => {

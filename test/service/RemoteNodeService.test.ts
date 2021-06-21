@@ -433,13 +433,13 @@ describe('RemoteNodeService', () => {
     afterEach(restore);
     it('getRestUrls online', async () => {
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
-            return ({
+            return {
                 getNodes(filter: NodeFilter, limit: number) {
                     expect(filter).eq(presetData.statisticsServiceRestFilter);
                     expect(limit).eq(presetData.statisticsServiceRestLimit);
                     return list;
                 },
-            } as unknown) as NodeApi;
+            } as unknown as NodeApi;
         });
 
         const service = new RemoteNodeService(logger, presetData, false);
@@ -457,13 +457,13 @@ describe('RemoteNodeService', () => {
     });
     it('getRestUrls offline', async () => {
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
-            return ({
+            return {
                 getNodes(filter: NodeFilter, limit: number) {
                     expect(filter).eq(presetData.statisticsServiceRestFilter);
                     expect(limit).eq(presetData.statisticsServiceRestLimit);
                     return list;
                 },
-            } as unknown) as NodeApi;
+            } as unknown as NodeApi;
         });
 
         const service = new RemoteNodeService(logger, presetData, true);
@@ -472,14 +472,14 @@ describe('RemoteNodeService', () => {
     });
     it('getPeerInfos online', async () => {
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
-            return ({
+            return {
                 getNodes(filter: NodeFilter, limit: number) {
                     expect(presetData.statisticsServicePeerFilter).eq('');
                     expect(filter).eq(undefined);
                     expect(limit).eq(presetData.statisticsServicePeerLimit);
                     return list;
                 },
-            } as unknown) as NodeApi;
+            } as unknown as NodeApi;
         });
 
         const service = new RemoteNodeService(logger, presetData, false);
@@ -534,13 +534,13 @@ describe('RemoteNodeService', () => {
     });
     it('getPeerInfos offline', async () => {
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
-            return ({
+            return {
                 getNodes(filter: NodeFilter, limit: number) {
                     expect(filter).eq(presetData.statisticsServicePeerFilter);
                     expect(limit).eq(presetData.statisticsServicePeerLimit);
                     return list;
                 },
-            } as unknown) as NodeApi;
+            } as unknown as NodeApi;
         });
 
         const service = new RemoteNodeService(logger, presetData, true);

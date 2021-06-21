@@ -13,6 +13,7 @@ services:
         volumes:
             - '../nodes/node:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
 networks:
     default:
         ipam:

@@ -15,6 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
+import { DockerComposeService } from './DockerCompose';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -28,8 +29,8 @@ export interface DockerServicePreset {
     openPort?: boolean | number | string;
     host?: string;
     excludeDockerService?: boolean;
-    environment?: any;
-    compose?: any;
+    environment?: Record<string, string>;
+    compose?: DockerComposeService;
     dockerComposeDebugMode?: boolean;
 }
 
@@ -338,6 +339,8 @@ export interface HttpsProxyPreset extends DockerServicePreset {
 
 export interface ExplorerPreset extends DockerServicePreset {
     // At least these properties.
+    restNodes?: string[];
+    defaultNode?: string;
     repeat?: number;
     name: string;
 }
@@ -354,6 +357,8 @@ export interface WalletPreset extends DockerServicePreset {
     repeat?: number;
     name: string;
     profiles?: WalletProfilePreset[];
+    defaultNodeUrl?: string;
+    restNodes?: { friendlyName: string; url: string; roles: number }[];
 }
 
 export interface FaucetPreset extends DockerServicePreset {
@@ -361,6 +366,7 @@ export interface FaucetPreset extends DockerServicePreset {
     gateway: string;
     repeat?: number;
     name: string;
+    privateKey?: string;
 }
 
 export interface PeerInfo {
@@ -458,11 +464,11 @@ export interface ConfigPreset extends CommonConfigPreset {
 
 export interface CustomPreset extends Partial<CommonConfigPreset> {
     nemesis?: DeepPartial<NemesisPreset>;
-    databases?: Partial<DatabasePreset>[];
-    nodes?: Partial<NodePreset>[];
-    gateways?: Partial<GatewayPreset>[];
-    explorers?: Partial<ExplorerPreset>[];
-    wallets?: Partial<WalletPreset>[];
-    faucets?: Partial<FaucetPreset>[];
-    httpsProxies?: Partial<HttpsProxyPreset>[];
+    databases?: DeepPartial<DatabasePreset>[];
+    nodes?: DeepPartial<NodePreset>[];
+    gateways?: DeepPartial<GatewayPreset>[];
+    explorers?: DeepPartial<ExplorerPreset>[];
+    wallets?: DeepPartial<WalletPreset>[];
+    faucets?: DeepPartial<FaucetPreset>[];
+    httpsProxies?: DeepPartial<HttpsProxyPreset>[];
 }

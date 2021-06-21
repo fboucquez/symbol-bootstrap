@@ -46,7 +46,8 @@ export type Network = Preset | CustomNetwork;
 export const assemblies: Record<Network, Assembly[]> = {
     [Preset.mainnet]: [Assembly.dual, Assembly.peer, Assembly.api],
     [Preset.testnet]: [Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
-    [Preset.bootstrap]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Preset.singleCurrency]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Preset.dualCurrency]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
     [CustomNetwork.custom]: [Assembly.dual, Assembly.peer, Assembly.api],
 };
 
@@ -127,7 +128,7 @@ export class Wizard {
         const network = await this.resolveNetwork(flags.network);
         const preset = await this.resolvePreset(network, flags.workingDir);
         const assembly = await this.resolveAssembly(network);
-        if (network == Preset.bootstrap) {
+        if (network == Preset.dualCurrency || network == Preset.singleCurrency) {
             this.logger.info('For a private network, just run: ');
             this.logger.info('');
             this.logger.info(`$ symbol-bootstrap start -p ${preset} -a ${assembly}`);
@@ -380,7 +381,7 @@ export class Wizard {
                         if (!value) {
                             return true;
                         }
-                        return CommandUtils.isValidPrivateKey(value);
+                        return BootstrapUtils.isValidPrivateKey(value);
                     },
                 },
             ]);
@@ -415,7 +416,8 @@ export class Wizard {
                     choices: [
                         { name: 'Mainnet Node', value: Preset.mainnet },
                         { name: 'Testnet Node', value: Preset.testnet },
-                        { name: 'Bootstrap Local Network', value: Preset.bootstrap },
+                        { name: 'Dual Currency Local Private Network', value: Preset.singleCurrency },
+                        { name: 'Single Currency Local Private Network', value: Preset.dualCurrency },
                         {
                             name: `Custom Network Node ('custom-network-preset.yml' file and 'nemesis-seed' folder are required)`,
                             value: CustomNetwork.custom,
@@ -465,13 +467,11 @@ export class Wizard {
                 default: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                 choices: [
                     {
-                        name:
-                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
+                        name: 'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
                         value: PrivateKeySecurityMode.PROMPT_MAIN,
                     },
                     {
-                        name:
-                            'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates. Other keys are encrypted. Recommended for most nodes',
+                        name: 'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates. Other keys are encrypted. Recommended for most nodes',
                         value: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                     },
                     { name: 'ENCRYPT: All keys are encrypted, only password would be asked', value: PrivateKeySecurityMode.ENCRYPT },
@@ -543,7 +543,7 @@ export class Wizard {
         );
     }
 
-    public async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
+    public async resolveFileContent(encoding: 'base64', message: string, notFoundMessage: string): Promise<string> {
         const { value } = await prompt([
             {
                 name: 'value',
@@ -569,9 +569,10 @@ export class Wizard {
         if (input.length > 50) {
             return `Input (${input.length}) is larger than 50`;
         }
-        const valid = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+(?:[A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(
-            input,
-        );
+        const valid =
+            /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+(?:[A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(
+                input,
+            );
         return valid ? true : `It's not a valid IP or hostname`;
     }
 

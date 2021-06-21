@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.1.2] - NEXT
+## [1.1.2] - Jan-14-2022
 
 **Milestone**: Mainnet(1.0.3.1)
 
@@ -13,11 +13,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | Symbol Bootstrap | v1.1.2  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 - Joeynet Testnet Release.
-- The `bootstrap` preset is not the default anymore. The name must be provided via --preset or as a custom preset field.
+- Added Node SSL Certificate check and upgrade. Added `renewCertificates` command to renew the certificates.
+- The `bootstrap` preset is not the default anymore. The name must be provided via `--preset` or as a custom preset field.
 - A 'safe' custom preset is cached in the target folder. It's not required when upgrading the node without a configuration change.
 - Added `--logger` option to the commands.
 - Assemblies are shared between all the presets.
-- Allowing user provided --preset and --assembly yml files. 
+- Allowing user provided `--preset` and `--assembly` yml files. 
+- Removed wallet from `demo` preset.
+- CI migrated from Travis to GitHub Actions.
 
 ## [1.1.1] - Nov-16-2021
 

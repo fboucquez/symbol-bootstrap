@@ -336,6 +336,7 @@ describe('Wizard', () => {
             StdUtils.keys.down,
             StdUtils.keys.down,
             StdUtils.keys.down,
+            StdUtils.keys.down,
             '\n',
             'custom-network-preset.yml',
             '\n',

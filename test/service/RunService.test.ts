@@ -18,8 +18,8 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { ConfigService, LoggerFactory, LogType } from '../../src';
-import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
+import { LoggerFactory, LogType } from '../../src';
+import { BootstrapService, BootstrapUtils, ConfigService, Preset, RunService, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('RunService', () => {
     const target = 'target/tests/BootstrapService.standard';
@@ -30,7 +30,7 @@ describe('RunService', () => {
             ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             reset: false,
             target,
             detached: true,
@@ -59,7 +59,7 @@ describe('RunService', () => {
             ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             reset: false,
             target,
             detached: true,

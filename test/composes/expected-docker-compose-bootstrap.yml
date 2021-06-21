@@ -27,11 +27,7 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        networks:
-            default:
-                aliases:
-                    - peer-node-0
-        hostname: peer-node-0
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
     peer-node-1:
         user: '1000:1000'
         container_name: peer-node-1
@@ -45,11 +41,7 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        networks:
-            default:
-                aliases:
-                    - peer-node-1
-        hostname: peer-node-1
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
     api-node-0:
         user: '1000:1000'
         container_name: api-node-0
@@ -61,14 +53,10 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-0
             - api-node-broker-0
-        networks:
-            default:
-                aliases:
-                    - api-node-0
-        hostname: api-node-0
     api-node-broker-0:
         user: '1000:1000'
         container_name: api-node-broker-0
@@ -82,6 +70,7 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-0
     rest-gateway-0:

@@ -18,7 +18,8 @@ import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
 import { dirname, join } from 'path';
-import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, LoggerFactory, LogType, ZipItem, ZipUtils } from '../';
+import { LoggerFactory, LogType } from '../logger';
+import { BootstrapAccountResolver, BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, ZipItem, ZipUtils } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -31,7 +32,7 @@ export default class Pack extends Command {
         `$ symbol-bootstrap pack -c custom-preset.yml`,
         `$ symbol-bootstrap pack -p testnet -a dual -c custom-preset.yml`,
         `$ symbol-bootstrap pack -p mainnet -a dual --password 1234 -c custom-preset.yml`,
-        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -c custom-preset.yml`,
+        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -p mainnet -a dual -c custom-preset.yml`,
     ];
 
     static flags = {
@@ -81,9 +82,10 @@ export default class Pack extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
+        const workingDir = BootstrapUtils.defaultWorkingDir;
         const service = new BootstrapService(logger);
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
-        const configResult = await service.config({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+        const configResult = await service.config({ ...flags, accountResolver: new BootstrapAccountResolver(logger), workingDir });
         await service.compose(flags, configResult.presetData);
 
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';
@@ -91,7 +93,7 @@ export default class Pack extends Command {
         if (flags.customPreset) {
             await BootstrapUtils.writeYaml(
                 noPrivateKeyTempFile,
-                CryptoUtils.removePrivateKeys(BootstrapUtils.loadYaml(flags.customPreset, flags.password)),
+                CryptoUtils.removePrivateKeys(await BootstrapUtils.loadYaml(flags.customPreset, flags.password)),
                 flags.password,
             );
         } else {
@@ -111,7 +113,7 @@ export default class Pack extends Command {
         ];
 
         await new ZipUtils(logger).zip(targetZip, zipItems);
-        await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
+        BootstrapUtils.deleteFile(noPrivateKeyTempFile);
         logger.info('');
         logger.info(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
         logger.info(`$ symbol-bootstrap start`);

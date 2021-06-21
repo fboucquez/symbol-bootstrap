@@ -273,7 +273,7 @@ describe('ReportService', () => {
         const params = {
             ...ConfigService.defaultParams,
             upgrade: true,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             customPresetObject: customPresetObject,
             target: target,
             report: true,

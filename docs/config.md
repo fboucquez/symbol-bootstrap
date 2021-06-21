@@ -25,8 +25,8 @@ OPTIONS
 
   -p, --preset=preset              The network preset. It can be provided via custom preset or cli parameter. If not
                                    provided, the value is resolved from the target/preset.yml file. Options are:
-                                   bootstrap, testnet, mainnet, my-custom-network.yml (advanced, only for custom
-                                   networks).
+                                   dualCurrency, singleCurrency, testnet, mainnet, my-custom-network.yml (advanced, only
+                                   for custom networks).
 
   -r, --reset                      It resets the configuration generating a new one.
 
@@ -54,7 +54,7 @@ OPTIONS
                                    local data. Backup the target folder before upgrading.
 
 EXAMPLES
-  $ symbol-bootstrap config -p bootstrap
+  $ symbol-bootstrap config -p dualCurrency -a demo
   $ symbol-bootstrap config -p testnet -a dual --password 1234
   $ symbol-bootstrap config -p mainnet -a peer -c custom-preset.yml
   $ symbol-bootstrap config -p mainnet -a my-custom-assembly.yml -c custom-preset.yml
@@ -62,4 +62,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual
 ```
 
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.2/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/config.ts)_

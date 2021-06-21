@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2021 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { prompt } from 'inquirer';
 import {
     AccountInfo,
     AccountKeyLinkTransaction,
@@ -27,11 +26,7 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
-import { AnnounceService, TransactionFactory } from './AnnounceService';
-import { BootstrapUtils } from './BootstrapUtils';
-import { ConfigLoader } from './ConfigLoader';
-import { VotingKeyAccount } from './VotingUtils';
-
+import { AccountResolver, AnnounceService, BootstrapAccountResolver, ConfigLoader, TransactionFactory, VotingKeyAccount } from '../service';
 /**
  * params necessary to announce link transactions network.
  */
@@ -46,6 +41,11 @@ export type LinkParams = {
     customPreset?: string;
     serviceProviderPublicKey?: string;
     removeOldLinked?: boolean; //TEST ONLY!
+    accountResolver?: AccountResolver;
+    confirmUnlink: <T>(params: {
+        removeOldLinked?: boolean;
+        ready?: boolean;
+    }) => (accountName: string, alreadyLinkedAccount: T, print: (account: T) => string) => Promise<boolean>;
 };
 
 export type KeyAccount = { publicKey: string };
@@ -67,12 +67,14 @@ export interface GenericNodeAccount {
 
 export class LinkService implements TransactionFactory {
     public static readonly defaultParams: LinkParams = {
-        target: BootstrapUtils.defaultTargetFolder,
+        target: 'target',
         useKnownRestGateways: false,
         ready: false,
         url: 'http://localhost:3000',
         maxFee: 100000,
         unlink: false,
+        confirmUnlink: (params: { removeOldLinked?: boolean; ready?: boolean }) => (): Promise<boolean> =>
+            Promise.resolve(params.removeOldLinked === undefined ? true : params.removeOldLinked),
     };
 
     private readonly configLoader: ConfigLoader;
@@ -87,7 +89,7 @@ export class LinkService implements TransactionFactory {
         const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         this.logger.info(`${this.params.unlink ? 'Unlinking' : 'Linking'} nodes`);
 
-        await new AnnounceService(this.logger).announce(
+        await new AnnounceService(this.logger, this.params.accountResolver || new BootstrapAccountResolver(this.logger)).announce(
             this.params.url,
             this.params.maxFee,
             this.params.useKnownRestGateways,
@@ -130,7 +132,11 @@ export class LinkService implements TransactionFactory {
         };
 
         this.logger.info(`Creating transactions for node: ${nodeName}, ca/main account: ${mainAccountAddress}`);
-        const transactions = await new LinkTransactionGenericFactory(this.logger, this.params).createGenericTransactions(
+        const transactions = await new LinkTransactionGenericFactory(
+            this.logger,
+            this.params.confirmUnlink(this.params),
+            this.params.unlink,
+        ).createGenericTransactions(
             nodeName,
             {
                 vrf: mainAccountInfo?.supplementalPublicKeys.vrf,
@@ -147,12 +153,10 @@ export class LinkService implements TransactionFactory {
         return transactions.sort((t1, t2) => t1.linkAction - t2.linkAction);
     }
 }
+export type ConfirmUnlink<T> = (accountName: string, alreadyLinkedAccount: T, print: (account: T) => string) => Promise<boolean>;
 
 export class LinkTransactionGenericFactory {
-    constructor(
-        private readonly logger: Logger,
-        private readonly params: { unlink: boolean; ready?: boolean; removeOldLinked?: boolean },
-    ) {}
+    constructor(private readonly logger: Logger, private readonly confirmUnlink: ConfirmUnlink<any>, private readonly unlink: boolean) {}
 
     public async createGenericTransactions<AccountKL, VRFKL, VotingKL>(
         nodeName: string,
@@ -185,7 +189,7 @@ export class LinkTransactionGenericFactory {
         }
         const votingPrint = (account: VotingKeyAccount) =>
             `public key ${account.publicKey}, start epoch ${account.startEpoch}, end epoch ${account.endEpoch}`;
-        if (this.params.unlink) {
+        if (this.unlink) {
             transactions.push(
                 ...(await this.addVotingKeyUnlinkTransactions(
                     currentMainAccountKeys?.voting || [],
@@ -326,7 +330,7 @@ export class LinkTransactionGenericFactory {
     ): Promise<T[]> {
         const transactions: T[] = [];
         const isAlreadyLinkedSameAccount = accountTobeLinked.publicKey.toUpperCase() === alreadyLinkedAccount?.publicKey.toUpperCase();
-        if (this.params.unlink) {
+        if (this.unlink) {
             if (alreadyLinkedAccount) {
                 if (isAlreadyLinkedSameAccount) {
                     const transaction = transactionFactory(accountTobeLinked, LinkAction.Unlink);
@@ -390,24 +394,5 @@ export class LinkTransactionGenericFactory {
             }
         }
         return transactions;
-    }
-
-    private async confirmUnlink<T>(accountName: string, alreadyLinkedAccount: T, print: (account: T) => string): Promise<boolean> {
-        if (this.params.removeOldLinked === undefined) {
-            return (
-                this.params.ready ||
-                (
-                    await prompt([
-                        {
-                            name: 'value',
-                            message: `Do you want to unlink the old ${accountName} ${print(alreadyLinkedAccount)}?`,
-                            type: 'confirm',
-                            default: false,
-                        },
-                    ])
-                ).value
-            );
-        }
-        return this.params.removeOldLinked;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2021 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,17 @@ import {
     UInt64,
     VotingKeyLinkTransaction,
 } from 'symbol-sdk';
-import { Assembly, LoggerFactory, LogType } from '../../src';
-import { BootstrapService, ConfigService, LinkService, LinkServiceTransactionFactoryParams, Preset } from '../../src/service';
+import {
+    Assembly,
+    BootstrapService,
+    ConfigService,
+    DefaultAccountResolver,
+    LinkServiceTransactionFactoryParams,
+    LoggerFactory,
+    LogType,
+    Preset,
+} from '../../src';
+import { LinkService } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const password = '1234';
 describe('LinkService', () => {
@@ -115,15 +124,17 @@ describe('LinkService', () => {
             target: 'target/tests/testnet-dual',
             password,
             reset: false,
+            offline: true,
             preset: Preset.testnet,
-            assembly: Assembly.dual,
+            assembly: 'dual',
+            accountResolver: new DefaultAccountResolver(),
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },
         };
         try {
             await new BootstrapService(logger).config(params);
-            await new BootstrapService(logger).link(params);
+            await new LinkService(logger, params).run();
         } catch (e) {
             expect(e.message.indexOf('No up and running node could be found out of:'), e.message).to.be.greaterThan(-1);
             expect(e.message.indexOf('http://localhost:3000'), e.message).to.be.greaterThan(-1);
@@ -372,6 +383,7 @@ describe('LinkService', () => {
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
 
             expect(lastKnownNetworkEpoch).gt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
+            console.log(lastKnownNetworkEpoch);
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
@@ -467,6 +479,7 @@ describe('LinkService', () => {
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
             expect(lastKnownNetworkEpoch).lt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
+            console.log(lastKnownNetworkEpoch);
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
@@ -731,7 +744,6 @@ describe('LinkService', () => {
         };
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
         const { addresses, presetData } = await new BootstrapService(logger).config(params);
-        expect(presetData.lastKnownNetworkEpoch).eq(lastKnownNetworkEpoch);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {

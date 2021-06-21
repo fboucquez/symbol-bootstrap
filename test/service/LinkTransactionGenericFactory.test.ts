@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { it } from 'mocha';
 import { LinkAction } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { LoggerFactory, LogType } from '../../src/logger';
 import { GenericNodeAccount, KeyAccount, LinkTransactionGenericFactory, VotingKeyAccount } from '../../src/service';
+
+const logger = LoggerFactory.getLogger(LogType.Silent);
 
 type GenericTransaction =
     | { name: string; action: LinkAction; publicKey: string }
     | { readonly endEpoch: number; name: string; action: LinkAction; readonly publicKey: string; readonly startEpoch: number };
-const logger = LoggerFactory.getLogger(LogType.Silent);
+
 describe('LinkTransactionGenericFactory', () => {
     it('should test overlaps', () => {
         expect(
@@ -68,10 +70,7 @@ describe('LinkTransactionGenericFactory', () => {
     it('creates generic transactions when empty', async () => {
         const currentLinkedAccounts: GenericNodeAccount = {};
         const toLinkNodeAccounts: GenericNodeAccount = {};
-        const transactions = await new LinkTransactionGenericFactory(logger, {
-            unlink: false,
-            ready: true,
-        }).createGenericTransactions(
+        const transactions = await new LinkTransactionGenericFactory(logger, async () => true, false).createGenericTransactions(
             'SomeName',
             currentLinkedAccounts,
             toLinkNodeAccounts,
@@ -90,10 +89,11 @@ describe('LinkTransactionGenericFactory', () => {
         unlink: boolean,
         expectedTransactions: GenericTransaction[],
     ) => {
-        const transactions: GenericTransaction[] = await new LinkTransactionGenericFactory(logger, {
-            unlink: unlink,
-            ready: true,
-        }).createGenericTransactions(
+        const transactions: GenericTransaction[] = await new LinkTransactionGenericFactory(
+            logger,
+            async () => true,
+            unlink,
+        ).createGenericTransactions(
             'SomeName',
             currentLinkedAccounts,
             toLinkNodeAccounts,

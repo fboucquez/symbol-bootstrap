@@ -16,13 +16,13 @@
 
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
-import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
+import { Assembly, BootstrapAccountResolver, BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
 
     static examples = [
-        `$ symbol-bootstrap config -p bootstrap`,
+        `$ symbol-bootstrap config -p dualCurrency -a demo`,
         `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
         `$ symbol-bootstrap config -p mainnet -a peer -c custom-preset.yml`,
         `$ symbol-bootstrap config -p mainnet -a my-custom-assembly.yml -c custom-preset.yml`,
@@ -86,6 +86,7 @@ export default class Config extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).config({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+        const workingDir = BootstrapUtils.defaultWorkingDir;
+        await new BootstrapService(logger).config({ ...flags, workingDir, accountResolver: new BootstrapAccountResolver(logger) });
     }
 }

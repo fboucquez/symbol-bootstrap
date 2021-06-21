@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import * as _ from 'lodash';
 import 'mocha';
 import { join } from 'path';
-import { Assembly, CustomPreset, LoggerFactory, LogType } from '../../src';
-import { ConfigService, CryptoUtils, Preset } from '../../src/service';
+import { CustomPreset, LoggerFactory, LogType } from '../../src';
+import { Assembly, ConfigService, CryptoUtils, Preset } from '../../src/service';
 // Local test utils
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -27,13 +27,14 @@ import { FileSystemTestUtils } from '../utils/FileSystemTestUtils';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ConfigService', () => {
-    it('ConfigService bootstrap run with optin_preset.yml', async () => {
+    it('ConfigService bootstrap run with custom_preset.yml', async () => {
         await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
-            preset: Preset.bootstrap,
+            offline: true,
+            preset: Preset.dualCurrency,
             target: 'target/tests/ConfigService.test.optin',
-            customPreset: './test/optin_preset.yml',
+            customPreset: './test/custom_preset.yml',
         }).run();
     });
 
@@ -41,6 +42,7 @@ describe('ConfigService', () => {
         await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            offline: true,
             target: 'target/tests/ConfigService.test.custom',
             customPreset: './test/override-currency-preset.yml',
         }).run();
@@ -50,6 +52,7 @@ describe('ConfigService', () => {
         await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            offline: true,
             target: 'target/tests/ConfigService.test.testnet',
             preset: Preset.testnet,
             assembly: Assembly.dual,
@@ -60,6 +63,7 @@ describe('ConfigService', () => {
         await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            offline: true,
             target: 'target/tests/ConfigService.test.mainnet',
             preset: Preset.mainnet,
             assembly: Assembly.dual,
@@ -70,9 +74,10 @@ describe('ConfigService', () => {
         const configResult = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            offline: true,
             password: '1111',
             target: 'target/tests/bootstrap',
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
         }).run();
 
         expect(configResult.addresses.mosaics?.length).eq(2);
@@ -82,9 +87,10 @@ describe('ConfigService', () => {
         const configResultUpgrade = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             upgrade: true,
+            offline: true,
             password: '1111',
             target: 'target/tests/bootstrap',
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
         }).run();
         expect(configResult.addresses).deep.eq(configResultUpgrade.addresses);
 
@@ -138,8 +144,10 @@ describe('ConfigService', () => {
         const configResult = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            offline: true,
             target: 'target/tests/ConfigService.bootstrap.repeat',
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
+            assembly: Assembly.multinode,
             customPreset: './test/repeat_preset.yml',
         }).run();
 
@@ -211,7 +219,7 @@ describe('ConfigService', () => {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.bootstrap.nemesis.balances',
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: Assembly.dual,
             customPresetObject: customPresetObject,
         }).run();
@@ -385,7 +393,7 @@ describe('ConfigService', () => {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.bootstrap.nemesis.balances.no.extra.gen.accounts',
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: Assembly.dual,
             customPresetObject: customPresetObject,
         }).run();
@@ -525,7 +533,7 @@ describe('ConfigService', () => {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.bootstrap.nemesis.balances',
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: Assembly.dual,
             customPresetObject: customPresetObject,
         }).run();
@@ -697,7 +705,7 @@ describe('ConfigService', () => {
                 ...ConfigService.defaultParams,
                 reset: true,
                 target: 'target/tests/ConfigService.bootstrap.invalid.nemesis.balances',
-                preset: Preset.bootstrap,
+                preset: Preset.dualCurrency,
                 assembly: Assembly.dual,
                 customPresetObject: customPresetObject,
             }).run();

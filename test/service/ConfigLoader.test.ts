@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { Assembly, LoggerFactory, LogType } from '../../src';
-import { ConfigAccount, PrivateKeySecurityMode } from '../../src/model';
+import { Assembly, DefaultAccountResolver, LoggerFactory, LogType } from '../../src';
+import { Addresses, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
-
+const accountResolver = new DefaultAccountResolver();
+const nodeName = 'node';
 const logger = LoggerFactory.getLogger(LogType.Silent);
-class ConfigLoaderMocked extends ConfigLoader {
-    public generateAccount = (
-        networkType: NetworkType,
-        securityMode: PrivateKeySecurityMode,
-        keyName: KeyName,
-        oldAccount: ConfigAccount | undefined,
-        privateKey: string | undefined,
-        publicKey: string | undefined,
-    ): ConfigAccount => super.generateAccount(networkType, securityMode, keyName, oldAccount, privateKey || 'a'.repeat(64), publicKey);
-}
 
 describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData no preset', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         try {
             await configLoader.createPresetData({
                 workingDir: BootstrapUtils.defaultWorkingDir,
@@ -47,14 +38,12 @@ describe('ConfigLoader', () => {
             });
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq(
-                'Preset value could not be resolved from target folder contents. Please provide the --preset parameter when running the config/start command.',
-            );
+            expect(e.message).eq('Preset value could not be resolved from target folder contents. Please provide the --preset parameter.');
         }
     });
 
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         try {
             await configLoader.createPresetData({
                 workingDir: BootstrapUtils.defaultWorkingDir,
@@ -73,7 +62,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData invalid assembly file', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         try {
             await configLoader.createPresetData({
                 workingDir: BootstrapUtils.defaultWorkingDir,
@@ -92,7 +81,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData invalid preset file', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         try {
             await configLoader.createPresetData({
                 workingDir: BootstrapUtils.defaultWorkingDir,
@@ -109,21 +98,21 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData bootstrap no assembly', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const presetData = await configLoader.createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             customPreset: undefined,
             customPresetObject: undefined,
             password: 'abc',
         });
         expect(presetData).to.not.be.undefined;
-        expect(presetData.preset).to.eq(Preset.bootstrap);
+        expect(presetData.preset).to.eq(Preset.dualCurrency);
         expect(presetData.assembly).to.eq(Assembly.multinode);
     });
 
     it('ConfigLoader loadPresetData testnet assembly', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const presetData = await configLoader.createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.testnet,
@@ -138,7 +127,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData testnet assembly using external files', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const presetData = await configLoader.createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
             preset: 'presets/testnet/network.yml',
@@ -153,7 +142,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader custom maxUnlockedAccounts', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const originalPresetData = await configLoader.createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.testnet,
@@ -226,7 +215,7 @@ describe('ConfigLoader', () => {
     });
 
     it('mergePreset', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         expect(
             configLoader.mergePresets(
                 { maxUnlockedAccounts: 1, inflation: { a: 1, c: 1, d: 1 } },
@@ -238,7 +227,7 @@ describe('ConfigLoader', () => {
     });
 
     it('mergePreset with node', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const merged = configLoader.mergePresets(
             {
                 maxUnlockedAccounts: 1,
@@ -263,7 +252,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader custom maxUnlockedAccounts', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const originalPresetData = await configLoader.createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.testnet,
@@ -336,7 +325,7 @@ describe('ConfigLoader', () => {
     });
 
     it('mergePreset', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         expect(
             configLoader.mergePresets(
                 { maxUnlockedAccounts: 1, inflation: { a: 1, c: 1, d: 1 } },
@@ -348,7 +337,7 @@ describe('ConfigLoader', () => {
     });
 
     it('mergePreset with node', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const merged = configLoader.mergePresets(
             {
                 maxUnlockedAccounts: 1,
@@ -373,10 +362,10 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const presetData = await configLoader.createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: undefined,
             customPreset: 'test/override-currency-preset.yml',
             customPresetObject: undefined,
@@ -389,11 +378,11 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData bootstrap custom too short!', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         try {
             await configLoader.createPresetData({
+                preset: Preset.dualCurrency,
                 workingDir: BootstrapUtils.defaultWorkingDir,
-                preset: Preset.bootstrap,
                 assembly: undefined,
                 customPreset: 'test/override-currency-preset.yml',
                 customPresetObject: undefined,
@@ -405,7 +394,7 @@ describe('ConfigLoader', () => {
     });
 
     it('applyIndex', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const context = { $index: 10 };
         expect(configLoader.applyValueTemplate(context, 'hello')).to.be.eq('hello');
         expect(configLoader.applyValueTemplate(context, 'index')).to.be.eq('index');
@@ -418,7 +407,7 @@ describe('ConfigLoader', () => {
     });
 
     it('expandServicesRepeat when repeat 3', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const services = [
             {
                 repeat: 3,
@@ -471,7 +460,7 @@ describe('ConfigLoader', () => {
     });
 
     it('expandServicesRepeat when repeat 0', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const services = [
             {
                 repeat: 0,
@@ -492,7 +481,7 @@ describe('ConfigLoader', () => {
     });
 
     it('expandServicesRepeat when no repeat', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const services = [
             {
                 apiNodeName: 'api-node-{{$index}}',
@@ -524,7 +513,7 @@ describe('ConfigLoader', () => {
     });
 
     it('applyValueTemplate when object', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const value = {
             _info: 'this file contains a list of api-node peers',
             knownPeers: [
@@ -547,7 +536,7 @@ describe('ConfigLoader', () => {
     });
 
     it('applyValueTemplate when array', async () => {
-        const configLoader = new ConfigLoaderMocked(logger);
+        const configLoader = new ConfigLoader(logger);
         const value = [
             {
                 _info: 'this file contains a list of api-node peers',
@@ -571,38 +560,44 @@ describe('ConfigLoader', () => {
         expect(configLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
     });
 
-    it('should migrated old addresses', () => {
-        const configLoader = new ConfigLoaderMocked(logger);
-        const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', false);
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false);
+    it('should migrated old addresses', async () => {
+        const configLoader = new ConfigLoader(logger);
+        const oldAddresses = (await BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', false)) as Addresses;
+        const newAddresses = (await BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false)) as Addresses;
         const addresses = configLoader.migrateAddresses(oldAddresses, NetworkType.TEST_NET);
+        newAddresses.nodes![1].transport = addresses.nodes![1]!.transport;
         expect(addresses).to.be.deep.eq(newAddresses);
     });
 
-    it('should migrated not migrate new addresses', () => {
-        const configLoader = new ConfigLoaderMocked(logger);
-        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false);
-        const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET);
+    it('should migrated not migrate new addresses', async () => {
+        const configLoader = new ConfigLoader(logger);
+        const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false) as Addresses;
+        const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET) as Addresses;
         expect(addresses).to.be.deep.eq(newAddresses);
     });
 
-    it('should generateAccount when old and new are different', () => {
+    it('should generateAccount when old and new are different', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = Account.generateNewAccount(networkType);
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            'node',
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
                 privateKey: oldAccount.privateKey,
             },
-            newAccount.privateKey,
-            newAccount.publicKey,
+            {
+                privateKey: newAccount.privateKey,
+                address: newAccount.address.plain(),
+                publicKey: newAccount.publicKey,
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -611,23 +606,28 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are different', () => {
+    it('should generateAccount when old and new are different', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = Account.generateNewAccount(networkType);
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
                 privateKey: oldAccount.privateKey,
             },
-            newAccount.privateKey,
-            newAccount.publicKey,
+            {
+                privateKey: newAccount.privateKey,
+                address: newAccount.address.plain(),
+                publicKey: newAccount.publicKey,
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -636,23 +636,28 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are same', () => {
+    it('should generateAccount when old and new are same', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
                 privateKey: oldAccount.privateKey,
             },
-            newAccount.privateKey,
-            newAccount.publicKey,
+            {
+                privateKey: newAccount.privateKey,
+                address: newAccount.address.plain(),
+                publicKey: newAccount.publicKey,
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -661,23 +666,27 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are same, new no private eky', () => {
+    it('should generateAccount when old and new are same, new no private eky', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
                 privateKey: oldAccount.privateKey,
             },
-            undefined,
-            newAccount.publicKey,
+            {
+                address: newAccount.address.plain(),
+                publicKey: newAccount.publicKey,
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -686,22 +695,27 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are same, old no private eky', () => {
+    it('should generateAccount when old and new are same, old no private key', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
             },
-            newAccount.privateKey,
-            newAccount.publicKey,
+            {
+                privateKey: newAccount.privateKey,
+                address: newAccount.address.plain(),
+                publicKey: newAccount.publicKey,
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -710,22 +724,26 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are same, old private key', () => {
+    it('should generateAccount when old and new are same, old private key', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
             },
-            undefined,
-            newAccount.publicKey,
+            {
+                publicKey: newAccount.publicKey,
+                address: newAccount.address.plain(),
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -733,23 +751,27 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are different, no private key new', () => {
+    it('should generateAccount when old and new are different, no private key new', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = Account.generateNewAccount(networkType);
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
                 privateKey: oldAccount.privateKey,
             },
-            undefined,
-            newAccount.publicKey,
+            {
+                publicKey: newAccount.publicKey,
+                address: newAccount.address.plain(),
+            },
         );
         expect(account).deep.eq({
             publicKey: newAccount.publicKey,
@@ -757,21 +779,22 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are different. No new account', () => {
+    it('should generateAccount when old and new are different. No new account', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
                 privateKey: oldAccount.privateKey,
             },
-            undefined,
             undefined,
         );
         expect(account).deep.eq({
@@ -781,20 +804,21 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount when old and new are different. No new account. Old without private', () => {
+    it('should generateAccount when old and new are different. No new account. Old without private', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
-        const account = configLoader.generateAccount(
+        const account = await configLoader.generateAccount(
+            accountResolver,
             networkType,
             securityMode,
             KeyName.Main,
+            nodeName,
             {
                 publicKey: oldAccount.publicKey,
                 address: oldAccount.address.plain(),
             },
-            undefined,
             undefined,
         );
         expect(account).deep.eq({
@@ -803,54 +827,108 @@ describe('ConfigLoader', () => {
         });
     });
 
-    it('should generateAccount brand new', () => {
+    it('should generateAccount brand new', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
-        const account = configLoader.generateAccount(networkType, securityMode, KeyName.Main, undefined, undefined, undefined);
+        const account = await configLoader.generateAccount(
+            accountResolver,
+            networkType,
+            securityMode,
+            KeyName.Main,
+            nodeName,
+            undefined,
+            undefined,
+        );
         expect(account.address).not.undefined;
         expect(account.privateKey).not.undefined;
         expect(account.privateKey).not.undefined;
     });
 
-    it('should generateAccount brand new on remote', () => {
+    it('should generateAccount brand new on remote', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
-        const account = configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined);
+        const account = await configLoader.generateAccount(
+            accountResolver,
+            networkType,
+            securityMode,
+            KeyName.Remote,
+            nodeName,
+            undefined,
+            undefined,
+        );
         expect(account.address).not.undefined;
         expect(account.privateKey).not.undefined;
         expect(account.privateKey).not.undefined;
     });
 
-    it('should generateAccount brand new on voting', () => {
+    it('should generateAccount brand new on voting', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN;
-        const account = configLoader.generateAccount(networkType, securityMode, KeyName.Voting, undefined, undefined, undefined);
+        const account = await configLoader.generateAccount(
+            accountResolver,
+            networkType,
+            securityMode,
+            KeyName.Voting,
+            nodeName,
+            undefined,
+            undefined,
+        );
         expect(account.address).not.undefined;
         expect(account.privateKey).not.undefined;
         expect(account.privateKey).not.undefined;
     });
 
-    it('should generateAccount raise error new', () => {
+    it('should generateAccount raise error new', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN;
-        expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Main, undefined, undefined, undefined)).throw;
+
+        try {
+            await configLoader.generateAccount(accountResolver, networkType, securityMode, KeyName.Main, nodeName, undefined, undefined);
+            expect(false).eq(true);
+        } catch (e) {
+            expect(e.message).eq(
+                "Account Main cannot be generated when Private Key Security Mode is PROMPT_MAIN. Account won't be stored anywhere!. Please use ENCRYPT, or provider your Main account with custom presets!",
+            );
+        }
     });
 
-    it('should generateAccount raise error new', () => {
+    it('should generateAccount raise error new', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
-        expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Transport, undefined, undefined, undefined)).throw;
+        expect(
+            async () =>
+                await configLoader.generateAccount(
+                    accountResolver,
+                    networkType,
+                    securityMode,
+                    KeyName.Transport,
+                    nodeName,
+                    undefined,
+                    undefined,
+                ),
+        ).throw;
     });
 
-    it('should generateAccount raise error new', () => {
+    it('should generateAccount raise error new', async () => {
         const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_ALL;
-        expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined)).throw;
+        expect(
+            async () =>
+                await configLoader.generateAccount(
+                    accountResolver,
+                    networkType,
+                    securityMode,
+                    KeyName.Remote,
+                    nodeName,
+                    undefined,
+                    undefined,
+                ),
+        ).throw;
     });
 });

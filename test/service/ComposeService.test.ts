@@ -199,7 +199,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             },
             target: 'target/tests/ComposeService-bootstrap.default',
             reset: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap.yml');
     });
@@ -219,7 +219,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             customPreset: './test/custom_compose_preset.yml',
             reset: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: Assembly.multinode,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom-compose.yml');
@@ -239,7 +239,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             target: 'target/tests/ComposeService-bootstrap.custom',
             customPreset: './test/custom_preset.yml',
             reset: false,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: Assembly.multinode,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
@@ -261,7 +261,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             assembly: Assembly.demo,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-demo.yml');
     });
@@ -274,7 +274,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             assembly: Assembly.dual,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-dual.yml');
     });
@@ -293,7 +293,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             reset: false,
             target: 'target/tests/ComposeService-bootstrap.repeat',
             password,
-            preset: Preset.bootstrap,
+            preset: Preset.dualCurrency,
             assembly: Assembly.multinode,
             customPreset: './test/repeat_preset.yml',
         };

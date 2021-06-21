@@ -69,11 +69,7 @@ services:
         volumes:
             - '../nodes/peer-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        networks:
-            default:
-                aliases:
-                    - peer-node-0
-        hostname: peer-node-0
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
     peer-node-1:
         user: '1000:1000'
         container_name: peer-node-1
@@ -87,11 +83,7 @@ services:
         volumes:
             - '../nodes/peer-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        networks:
-            default:
-                aliases:
-                    - peer-node-1
-        hostname: peer-node-1
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
     peer-node-2:
         user: '1000:1000'
         container_name: peer-node-2
@@ -105,11 +97,7 @@ services:
         volumes:
             - '../nodes/peer-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
-        networks:
-            default:
-                aliases:
-                    - peer-node-2
-        hostname: peer-node-2
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
     api-node-0:
         user: '1000:1000'
         container_name: api-node-0
@@ -121,14 +109,10 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-0
             - api-node-broker-0
-        networks:
-            default:
-                aliases:
-                    - api-node-0
-        hostname: api-node-0
     api-node-1:
         user: '1000:1000'
         container_name: api-node-1
@@ -140,14 +124,10 @@ services:
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-1
             - api-node-broker-1
-        networks:
-            default:
-                aliases:
-                    - api-node-1
-        hostname: api-node-1
     api-node-2:
         user: '1000:1000'
         container_name: api-node-2
@@ -159,14 +139,10 @@ services:
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-2
             - api-node-broker-2
-        networks:
-            default:
-                aliases:
-                    - api-node-2
-        hostname: api-node-2
     api-node-3:
         user: '1000:1000'
         container_name: api-node-3
@@ -178,14 +154,10 @@ services:
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-3
             - api-node-broker-3
-        networks:
-            default:
-                aliases:
-                    - api-node-3
-        hostname: api-node-3
     api-node-broker-0:
         user: '1000:1000'
         container_name: api-node-broker-0
@@ -199,6 +171,7 @@ services:
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-0
     api-node-broker-1:
@@ -214,6 +187,7 @@ services:
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-1
     api-node-broker-2:
@@ -229,6 +203,7 @@ services:
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-2
     api-node-broker-3:
@@ -244,6 +219,7 @@ services:
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'
             - './server:/symbol-commands:ro'
+            - '../nemesis/seed:/symbol-workdir/seed:ro'
         depends_on:
             - db-3
     rest-gateway-0:
@@ -377,7 +353,6 @@ services:
         environment:
             DEFAULT_NODE: 'http://rest-gateway-0:3000'
             DEFAULT_NODE_CLIENT: 'http://localhost:3000'
-            NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
             MAX_FEE: 5000000
@@ -387,6 +362,7 @@ services:
             EXPLORER_URL: 'http://localhost:90/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+            NATIVE_CURRENCY_NAME: cat.currency
         restart: 'on-failure:2'
         ports:
             - '100:4000'
@@ -399,7 +375,6 @@ services:
         environment:
             DEFAULT_NODE: 'http://rest-gateway-1:3001'
             DEFAULT_NODE_CLIENT: 'http://localhost:3001'
-            NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
             MAX_FEE: 5000000
@@ -409,6 +384,7 @@ services:
             EXPLORER_URL: 'http://localhost:91/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+            NATIVE_CURRENCY_NAME: cat.currency
         restart: 'on-failure:2'
         ports:
             - '101:4000'
@@ -421,7 +397,6 @@ services:
         environment:
             DEFAULT_NODE: 'http://rest-gateway-2:3002'
             DEFAULT_NODE_CLIENT: 'http://localhost:3002'
-            NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
             MAX_FEE: 5000000
@@ -431,6 +406,7 @@ services:
             EXPLORER_URL: 'http://localhost:92/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+            NATIVE_CURRENCY_NAME: cat.currency
         restart: 'on-failure:2'
         ports:
             - '102:4000'
@@ -443,7 +419,6 @@ services:
         environment:
             DEFAULT_NODE: 'http://rest-gateway-3:3003'
             DEFAULT_NODE_CLIENT: 'http://localhost:3003'
-            NATIVE_CURRENCY_NAME: cat.currency
             NATIVE_CURRENCY_OUT_MAX: 500000000
             NATIVE_CURRENCY_OUT_MIN: 100000000
             MAX_FEE: 5000000
@@ -453,6 +428,7 @@ services:
             EXPLORER_URL: 'http://localhost:93/'
             FAUCET_PRIVATE_KEY: MockMe
             NATIVE_CURRENCY_ID: Mockme2
+            NATIVE_CURRENCY_NAME: cat.currency
         restart: 'on-failure:2'
         ports:
             - '103:4000'

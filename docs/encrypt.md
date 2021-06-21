@@ -45,8 +45,8 @@ EXAMPLES
   $ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
 
 
-    $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap encrypt --source plain-custom-preset.yml --destination 
+   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap encrypt --source plain-custom-preset.yml --destination 
   encrypted-custom-preset.yml
 ```
 
-_See code: [src/commands/encrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.2/src/commands/encrypt.ts)_
+_See code: [src/commands/encrypt.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/encrypt.ts)_

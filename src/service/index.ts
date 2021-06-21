@@ -1,6 +1,8 @@
 // created from 'create-ts-index'
 
+export * from './AccountResolver';
 export * from './AnnounceService';
+export * from './BootstrapAccountResolver';
 export * from './BootstrapService';
 export * from './BootstrapUtils';
 export * from './CertificateService';
