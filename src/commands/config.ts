@@ -15,8 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, ConfigService, Preset } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
@@ -26,7 +25,7 @@ export default class Config extends Command {
         `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
     ];
-
+    //@typescript-eslint/explicit-module-boundary-types
     static resolveFlags = (required: boolean) => ({
         help: CommandUtils.helpFlag,
         target: CommandUtils.targetFlag,
@@ -66,12 +65,6 @@ export default class Config extends Command {
         report: flags.boolean({
             description: 'It generates reStructuredText (.rst) reports describing the configuration of each node.',
             default: ConfigService.defaultParams.report,
-        }),
-
-        pullImages: flags.boolean({
-            description:
-                'It pulls the utility images from DockerHub when running the configuration. It only affects alpha/dev docker images.',
-            default: ConfigService.defaultParams.pullImages,
         }),
 
         user: flags.string({

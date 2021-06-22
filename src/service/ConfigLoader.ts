@@ -202,22 +202,24 @@ export class ConfigLoader {
             oldStoredAccount?.privateKey?.toUpperCase(),
         );
         const newAccount = this.getAccount(networkType, publicKey?.toUpperCase(), privateKey?.toUpperCase());
+
+        const getAccountLog = (account: Account | PublicAccount) =>
+            `${keyName} Account ${account.address.plain()} Public Ley ${account.publicKey} `;
+
         if (oldAccount && !newAccount) {
-            logger.info(`Reusing ${keyName} account ${oldAccount.address.plain()}`);
+            logger.info(`Reusing ${getAccountLog(oldAccount)}...`);
             return this.toConfig(oldAccount);
         }
         if (!oldAccount && newAccount) {
-            logger.info(`${keyName} Account ${newAccount.address.plain()} has been provided`);
+            logger.info(`${getAccountLog(newAccount)} has been provided`);
             return this.toConfig(newAccount);
         }
         if (oldAccount && newAccount) {
             if (oldAccount.address.equals(newAccount.address)) {
-                logger.info(`Reusing ${keyName} account ${oldAccount.address.plain()}`);
+                logger.info(`Reusing ${getAccountLog(newAccount)}`);
                 return { ...this.toConfig(oldAccount), ...this.toConfig(newAccount) };
             }
-            logger.info(
-                `Old ${keyName} Account ${oldAccount.address.plain()} has been changed. New ${keyName} Account is ${newAccount.address.plain()}`,
-            );
+            logger.info(`Old ${getAccountLog(oldAccount)} has been changed. New ${getAccountLog(newAccount)} replaces it.`);
             return this.toConfig(newAccount);
         }
 
@@ -282,7 +284,7 @@ export class ConfigLoader {
         const nodeAccount: NodeAccount = {
             name,
             friendlyName,
-            roles: nodePreset.roles || '',
+            roles: ConfigLoader.resolveRoles(nodePreset),
             main: main,
             transport: transport,
         };
@@ -297,12 +299,6 @@ export class ConfigLoader {
                 oldNodeAccount?.remote,
                 nodePreset.remotePrivateKey,
                 nodePreset.remotePublicKey,
-            );
-        if (nodePreset.voting)
-            nodeAccount.voting = this.toConfig(
-                oldNodeAccount?.voting
-                    ? PublicAccount.createFromPublicKey(oldNodeAccount.voting.publicKey, networkType)
-                    : Account.generateNewAccount(networkType),
             );
         if (nodePreset.harvesting)
             nodeAccount.vrf = this.generateAccount(
@@ -569,7 +565,11 @@ export class ConfigLoader {
     public loadExistingPresetData(target: string, password: Password): ConfigPreset {
         const presetData = this.loadExistingPresetDataIfPreset(target, password);
         if (!presetData) {
-            throw new Error(`The file ${this.getGeneratedPresetLocation(target)} doesn't exist. Have you executed the 'config' command?`);
+            throw new Error(
+                `The file ${this.getGeneratedPresetLocation(
+                    target,
+                )} doesn't exist. Have you executed the 'config' command? Have you provided the right --target param?`,
+            );
         }
         return presetData;
     }
@@ -628,7 +628,11 @@ export class ConfigLoader {
     public loadExistingAddresses(target: string, password: Password): Addresses {
         const addresses = this.loadExistingAddressesIfPreset(target, password);
         if (!addresses) {
-            throw new Error(`The file ${this.getGeneratedAddressLocation(target)} doesn't exist. Have you executed the 'config' command?`);
+            throw new Error(
+                `The file ${this.getGeneratedAddressLocation(
+                    target,
+                )} doesn't exist. Have you executed the 'config' command? Have you provided the right --target param?`,
+            );
         }
         return addresses;
     }

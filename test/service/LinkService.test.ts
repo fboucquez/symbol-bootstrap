@@ -110,12 +110,12 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-dual',
             password,
             reset: false,
             preset: Preset.testnet,
             assembly: 'dual',
-
             customPresetObject: {
                 nodeUseRemoteAccount: true,
             },
@@ -124,7 +124,8 @@ describe('LinkService', () => {
             await new BootstrapService().config(params);
             await new BootstrapService().link(params);
         } catch (e) {
-            expect(e.message.indexOf('ECONNREFUSED'), `Not a connection error: ${e.message}`).to.be.greaterThan(-1);
+            expect(e.message.indexOf('No up and running node could be found out of:'), e.message).to.be.greaterThan(-1);
+            expect(e.message.indexOf('http://localhost:3000'), e.message).to.be.greaterThan(-1);
         }
     });
 
@@ -132,10 +133,12 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
             preset: Preset.testnet,
+            offline: true,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
             customPresetObject: {
                 nodeUseRemoteAccount: true,
@@ -145,27 +148,354 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const notLinkedAcccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+        const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
             maxFee: maxFee,
-            mainAccountInfo: notLinkedAcccountInfo,
-            removeOldLinked: true,
+            mainAccountInfo: notLinkedAccountInfo,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(3);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
-        assertVotingTransaction(transactions[2], LinkAction.Link, nodeAccount.voting!.publicKey, 1, 360);
+        expect(addresses!.nodes![0].voting?.length).eq(1);
+        assertVotingTransaction(
+            transactions[2],
+            LinkAction.Link,
+            addresses!.nodes![0].voting![0].publicKey,
+            presetData.lastKnownNetworkEpoch,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+        );
+    });
+
+    it('LinkService create transactions when dual + voting + lastKnownNetworkEpoch1', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            ready: true,
+            target: 'target/tests/testnet-dual-voting-network-1',
+            password,
+            reset: false,
+            offline: true,
+            preset: Preset.testnet,
+            customPreset: './test/unit-test-profiles/voting_preset.yml',
+            customPresetObject: {
+                lastKnownNetworkEpoch: 1,
+                nodeUseRemoteAccount: true,
+            },
+            assembly: 'dual',
+        };
+        const { addresses, presetData } = await new BootstrapService().config(params);
+        const maxFee = UInt64.fromUint(10);
+        const nodeAccount = addresses.nodes![0];
+        const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+        const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+            presetData,
+            deadline: Deadline.create(1),
+            nodeAccount: nodeAccount,
+            maxFee: maxFee,
+            mainAccountInfo: notLinkedAccountInfo,
+        };
+
+        const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+        expect(transactions.length).eq(3);
+        assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+        assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        expect(addresses!.nodes![0].voting?.length).eq(1);
+        expect(presetData.lastKnownNetworkEpoch).eq(1);
+        expect(presetData.votingKeyDesiredLifetime).eq(720);
+        assertVotingTransaction(
+            transactions[2],
+            LinkAction.Link,
+            addresses!.nodes![0].voting![0].publicKey,
+            presetData.lastKnownNetworkEpoch,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+        );
+    });
+
+    it('LinkService create transactions when dual + voting + upgrade (manual)', async () => {
+        const target = 'target/tests/testnet-dual-voting-upgrade-manual';
+        const maxFee = UInt64.fromUint(10);
+        {
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                offline: true,
+                target: target,
+                password,
+                reset: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    nodeUseRemoteAccount: true,
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(3);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+            expect(addresses!.nodes![0].voting?.length).eq(1);
+            assertVotingTransaction(
+                transactions[2],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![0].publicKey,
+                presetData.lastKnownNetworkEpoch,
+                presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+            );
+        }
+
+        {
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                target: target,
+                password,
+                upgrade: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    nodeUseRemoteAccount: true,
+                    lastKnownNetworkEpoch: 323 + 720 - 10, //in the future, last known Network Epoch is pretty high!
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+            expect(addresses!.nodes![0].voting?.length).eq(1);
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(2);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+        }
+    });
+
+    it('LinkService create transactions when dual + voting + upgrade with gap (automatic)', async () => {
+        const target = 'target/tests/testnet-dual-voting-upgrade-automatic-gap';
+        const maxFee = UInt64.fromUint(10);
+        let originalLasKnownNetworkEpoch: number;
+        {
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                offline: true,
+                target: target,
+                password,
+                reset: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    autoUpdateVotingKeys: true,
+                    nodeUseRemoteAccount: true,
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(3);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+            expect(addresses!.nodes![0].voting?.length).eq(1);
+            originalLasKnownNetworkEpoch = presetData.lastKnownNetworkEpoch;
+            assertVotingTransaction(
+                transactions[2],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![0].publicKey,
+                presetData.lastKnownNetworkEpoch,
+                presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+            );
+        }
+
+        {
+            const lastKnownNetworkEpoch = 323 + 720 - 10;
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                target: target,
+                password,
+                upgrade: true,
+                offline: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    nodeUseRemoteAccount: true,
+                    autoUpdateVotingKeys: true,
+                    lastKnownNetworkEpoch: lastKnownNetworkEpoch, //in the future, last known Network Epoch is pretty high!
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+            expect(addresses!.nodes![0].voting?.length).eq(2);
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(3);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+
+            expect(lastKnownNetworkEpoch).gt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
+            console.log(lastKnownNetworkEpoch);
+            assertVotingTransaction(
+                transactions[2],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![1].publicKey,
+                lastKnownNetworkEpoch,
+                lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+            );
+        }
+    });
+
+    it('LinkService create transactions when dual + voting + upgrade continue (automatic)', async () => {
+        const target = 'target/tests/testnet-dual-voting-upgrade-automatic-continue';
+        const maxFee = UInt64.fromUint(10);
+        let originalLasKnownNetworkEpoch: number;
+        {
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                offline: true,
+                target: target,
+                password,
+                reset: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    autoUpdateVotingKeys: true,
+                    nodeUseRemoteAccount: true,
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            expect(transactions.length).eq(3);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+            expect(addresses!.nodes![0].voting?.length).eq(1);
+            originalLasKnownNetworkEpoch = presetData.lastKnownNetworkEpoch;
+            assertVotingTransaction(
+                transactions[2],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![0].publicKey,
+                presetData.lastKnownNetworkEpoch,
+                presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+            );
+        }
+
+        {
+            // in the future, but before current files expires.
+            const lastKnownNetworkEpoch = 917 - 10;
+            const params = {
+                ...ConfigService.defaultParams,
+                ...LinkService.defaultParams,
+                ready: true,
+                target: target,
+                password,
+                upgrade: true,
+                offline: true,
+                preset: Preset.testnet,
+                customPreset: './test/unit-test-profiles/voting_preset.yml',
+                customPresetObject: {
+                    nodeUseRemoteAccount: true,
+                    autoUpdateVotingKeys: true,
+                    lastKnownNetworkEpoch: lastKnownNetworkEpoch, //in the future, last known Network Epoch is pretty high!
+                },
+                assembly: 'dual',
+            };
+            const { addresses, presetData } = await new BootstrapService().config(params);
+            const nodeAccount = addresses.nodes![0];
+            const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+            const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
+                presetData,
+                deadline: Deadline.create(1),
+                nodeAccount: nodeAccount,
+                maxFee: maxFee,
+                mainAccountInfo: notLinkedAccountInfo,
+            };
+            expect(addresses!.nodes![0].voting?.length).eq(2);
+            const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
+            // The original link needs to still be linked as it's current!
+            expect(transactions.length).eq(4);
+            assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+            assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+            expect(lastKnownNetworkEpoch).lt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
+            console.log(lastKnownNetworkEpoch);
+            assertVotingTransaction(
+                transactions[2],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![0].publicKey,
+                originalLasKnownNetworkEpoch,
+                originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+            );
+            assertVotingTransaction(
+                transactions[3],
+                LinkAction.Link,
+                addresses!.nodes![0].voting![1].publicKey,
+                originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime,
+                originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime + presetData.votingKeyDesiredLifetime - 1,
+            );
+        }
     });
 
     it('LinkService create transactions when dual + voting and already linked (different voting key)', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -186,7 +516,6 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -198,30 +527,41 @@ describe('LinkService', () => {
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.linked!.publicKey,
         );
-        assertTransaction(transactions[1], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
 
         assertTransaction(
-            transactions[2],
+            transactions[1],
             TransactionType.VRF_KEY_LINK,
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.vrf!.publicKey,
         );
-        assertTransaction(transactions[3], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
 
         assertVotingTransaction(
-            transactions[4],
+            transactions[2],
             LinkAction.Unlink,
             alreadyLinkedAccountInfoDto?.account.supplementalPublicKeys.voting!.publicKeys[0].publicKey,
             1,
             360,
         );
-        assertVotingTransaction(transactions[5], LinkAction.Link, nodeAccount.voting!.publicKey, 1, 360);
+        assertTransaction(transactions[3], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+        assertTransaction(transactions[4], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+
+        assertVotingTransaction(
+            transactions[5],
+            LinkAction.Link,
+            addresses!.nodes![0].voting![0].publicKey,
+            presetData.lastKnownNetworkEpoch,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+        );
+
+        expect(addresses!.nodes![0].voting?.length).eq(1);
     });
 
     it('LinkService create transactions when dual + voting and already linked (same voting key)', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -252,13 +592,7 @@ describe('LinkService', () => {
                         publicKey: 'AEC02D888F268EBDAD038E19BF2EE182E36F207F29BF05ABFC5E20EAF2D4F719',
                     },
                     voting: {
-                        publicKeys: [
-                            {
-                                publicKey: addresses!.nodes![0].voting!.publicKey,
-                                startEpoch: 1,
-                                endEpoch: 360,
-                            },
-                        ],
+                        publicKeys: [addresses!.nodes![0].voting![0]],
                     },
                 },
                 activityBuckets: [],
@@ -277,7 +611,6 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -289,14 +622,14 @@ describe('LinkService', () => {
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.linked!.publicKey,
         );
-        assertTransaction(transactions[1], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
-
         assertTransaction(
-            transactions[2],
+            transactions[1],
             TransactionType.VRF_KEY_LINK,
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.vrf!.publicKey,
         );
+        assertTransaction(transactions[2], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+
         assertTransaction(transactions[3], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
 
@@ -304,6 +637,8 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -334,13 +669,7 @@ describe('LinkService', () => {
                         publicKey: 'AEC02D888F268EBDAD038E19BF2EE182E36F207F29BF05ABFC5E20EAF2D4F719',
                     },
                     voting: {
-                        publicKeys: [
-                            {
-                                publicKey: addresses!.nodes![0].voting!.publicKey,
-                                startEpoch: 2,
-                                endEpoch: 400,
-                            },
-                        ],
+                        publicKeys: [{ ...addresses!.nodes![0].voting![0], startEpoch: 400, endEpoch: 500 }],
                     },
                 },
                 activityBuckets: [],
@@ -359,7 +688,6 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -371,29 +699,38 @@ describe('LinkService', () => {
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.linked!.publicKey,
         );
-        assertTransaction(transactions[1], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
 
         assertTransaction(
-            transactions[2],
+            transactions[1],
             TransactionType.VRF_KEY_LINK,
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.vrf!.publicKey,
         );
-        assertTransaction(transactions[3], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
         assertVotingTransaction(
-            transactions[4],
+            transactions[2],
             LinkAction.Unlink,
             alreadyLinkedAccountInfoDto?.account.supplementalPublicKeys.voting!.publicKeys[0].publicKey,
-            2,
             400,
+            500,
         );
-        assertVotingTransaction(transactions[5], LinkAction.Link, nodeAccount.voting!.publicKey, 1, 360);
+        assertTransaction(transactions[3], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
+        assertTransaction(transactions[4], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
+
+        assertVotingTransaction(
+            transactions[5],
+            LinkAction.Link,
+            nodeAccount.voting![0].publicKey,
+            presetData.lastKnownNetworkEpoch,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+        );
     });
 
     it('LinkService create transactions when dual + voting and already linked not removed', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
+            offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
             reset: false,
@@ -403,6 +740,7 @@ describe('LinkService', () => {
                 nodeUseRemoteAccount: true,
             },
             assembly: 'dual',
+            removeOldLinked: false,
         };
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -414,7 +752,6 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            removeOldLinked: false,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -425,6 +762,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-dual',
             password,
             reset: true,
@@ -437,14 +775,13 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const notLinkedAcccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+        const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
             maxFee: maxFee,
-            mainAccountInfo: notLinkedAcccountInfo,
-            removeOldLinked: true,
+            mainAccountInfo: notLinkedAccountInfo,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -457,6 +794,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-dual',
             password,
             reset: true,
@@ -476,7 +814,6 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            removeOldLinked: true,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -487,14 +824,13 @@ describe('LinkService', () => {
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.linked!.publicKey,
         );
-        assertTransaction(transactions[1], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
-
         assertTransaction(
-            transactions[2],
+            transactions[1],
             TransactionType.VRF_KEY_LINK,
             LinkAction.Unlink,
             alreadyLinkedAccountInfo.supplementalPublicKeys.vrf!.publicKey,
         );
+        assertTransaction(transactions[2], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
         assertTransaction(transactions[3], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
     });
 
@@ -502,6 +838,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-dual',
             password,
             reset: true,
@@ -510,6 +847,7 @@ describe('LinkService', () => {
                 nodeUseRemoteAccount: true,
             },
             assembly: 'dual',
+            removeOldLinked: false,
         };
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -521,7 +859,6 @@ describe('LinkService', () => {
             nodeAccount: nodeAccount,
             maxFee: maxFee,
             mainAccountInfo: alreadyLinkedAccountInfo,
-            removeOldLinked: false,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -532,6 +869,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-dual-not-remote',
             password,
             reset: false,
@@ -545,14 +883,13 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const notLinkedAcccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+        const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
             maxFee: maxFee,
-            mainAccountInfo: notLinkedAcccountInfo,
-            removeOldLinked: true,
+            mainAccountInfo: notLinkedAccountInfo,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
@@ -564,6 +901,7 @@ describe('LinkService', () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
             target: 'target/tests/testnet-api',
             password,
             reset: false,
@@ -576,64 +914,28 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         const maxFee = UInt64.fromUint(10);
 
-        const notLinkedAcccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+        const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: addresses.nodes![0],
             maxFee: maxFee,
-            mainAccountInfo: notLinkedAcccountInfo,
-            removeOldLinked: true,
+            mainAccountInfo: notLinkedAccountInfo,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(0);
     });
 
-    it('should test overlaps', function () {
-        expect(
-            LinkService.overlapsVotingAccounts(
-                { startEpoch: 1, endEpoch: 10, publicKey: 'A' },
-                { startEpoch: 1, endEpoch: 2, publicKey: 'A' },
-            ),
-        ).true;
-
-        expect(
-            LinkService.overlapsVotingAccounts(
-                { startEpoch: 1, endEpoch: 4, publicKey: 'A' },
-                { startEpoch: 4, endEpoch: 10, publicKey: 'A' },
-            ),
-        ).true;
-
-        expect(
-            LinkService.overlapsVotingAccounts(
-                { startEpoch: 1, endEpoch: 4, publicKey: 'A' },
-                { startEpoch: 5, endEpoch: 10, publicKey: 'A' },
-            ),
-        ).false;
-
-        expect(
-            LinkService.overlapsVotingAccounts(
-                { startEpoch: 11, endEpoch: 20, publicKey: 'A' },
-                { startEpoch: 5, endEpoch: 10, publicKey: 'A' },
-            ),
-        ).false;
-
-        expect(
-            LinkService.overlapsVotingAccounts(
-                { startEpoch: 10, endEpoch: 20, publicKey: 'A' },
-                { startEpoch: 5, endEpoch: 10, publicKey: 'A' },
-            ),
-        ).true;
-    });
-
     it('LinkService create transactions when api and voting', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
+            ready: true,
+            offline: true,
             target: 'target/tests/testnet-api-voting',
             password,
-            reset: false,
+            reset: true,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
             customPresetObject: {
@@ -644,19 +946,24 @@ describe('LinkService', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
-        const notLinkedAcccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
+        const notLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](notLinkedAccountDto);
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
             presetData,
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
             maxFee: maxFee,
-            mainAccountInfo: notLinkedAcccountInfo,
-            removeOldLinked: true,
+            mainAccountInfo: notLinkedAccountInfo,
         };
 
         const transactions = await new LinkService(params).createTransactions(transactionFactoryParams);
         expect(transactions.length).eq(2);
         assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
-        assertVotingTransaction(transactions[1], LinkAction.Link, nodeAccount.voting!.publicKey, 1, 360);
+        assertVotingTransaction(
+            transactions[1],
+            LinkAction.Link,
+            nodeAccount.voting![0].publicKey,
+            presetData.lastKnownNetworkEpoch,
+            presetData.lastKnownNetworkEpoch + presetData.votingKeyDesiredLifetime - 1,
+        );
     });
 });

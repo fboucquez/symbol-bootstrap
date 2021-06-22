@@ -41,9 +41,6 @@ OPTIONS
                                             can be provided in the command line (--password=XXXX) or disabled in the
                                             command line (--noPassword).
 
-  --pullImages                              It pulls the utility images from DockerHub when running the configuration.
-                                            It only affects alpha/dev docker images.
-
   --report                                  It generates reStructuredText (.rst) reports describing the configuration of
                                             each node.
 
@@ -58,4 +55,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual
 ```
 
-_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.6/src/commands/config.ts)_
+_See code: [src/commands/config.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.7/src/commands/config.ts)_

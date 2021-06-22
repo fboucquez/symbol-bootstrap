@@ -398,8 +398,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     dockerComposeVersion: number | string;
     dockerComposeServiceRestart: string;
     dockerComposeDebugMode: boolean;
-    votingKeyEndEpoch: number;
-    votingKeyStartEpoch: number;
     mongoComposeRunParam: string;
     peersP2PListLimit: number;
     peersApiListLimit: number;
@@ -418,8 +416,12 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     baseNamespace: string;
     rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
+    votingKeyDesiredLifetime: number;
+    votingKeyDesiredFutureLifetime: number; // How in the future voting key files need to be generated. By default, 1 months before expiring..
+    useExperimentalNativeVotingKeyGeneration?: boolean;
+    lastKnownNetworkEpoch: number;
+    autoUpdateVotingKeys: boolean;
     //Nested Objects
-
     knownRestGateways?: string[];
     inflation?: Record<string, number>;
     knownPeers?: Record<NodeType, PeerInfo[]>;
