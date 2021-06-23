@@ -41,9 +41,6 @@ OPTIONS
                                             can be provided in the command line (--password=XXXX) or disabled in the
                                             command line (--noPassword).
 
-  --pullImages                              It pulls the utility images from DockerHub when running the configuration.
-                                            It only affects alpha/dev docker images.
-
   --ready                                   If --ready is provided, the command will not ask offline confirmation.
 
   --report                                  It generates reStructuredText (.rst) reports describing the configuration of
@@ -62,4 +59,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -p mainnet -a dual -c custom-preset.yml
 ```
 
-_See code: [src/commands/pack.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.7/src/commands/pack.ts)_
+_See code: [src/commands/pack.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/pack.ts)_

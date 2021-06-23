@@ -4,18 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.7] - NEXT
-**Milestone**: Mainnet(1.0.1.0)
+## [1.0.8] - NEXT
 
--   Added multi voting key file support.
--   Added `updateVotingKeys` command.
+**Milestone**: Mainnet(1.0.1.0)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
-| Symbol Bootstrap | v1.0.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+| Symbol Bootstrap | v1.0.8  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 -   Added `wizard` command.
 -   Added `pack` command.
+
+## [1.0.7] - June-22-2021
+
+**Milestone**: Mainnet(1.0.1.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.7  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Added multi voting key file support.
+-   Added `updateVotingKeys` command.
 
 ## [1.0.6] - June-8-2021
 
