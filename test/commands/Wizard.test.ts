@@ -16,6 +16,7 @@
 
 import { expect } from '@oclif/test';
 import { stdin } from 'mock-stdin';
+import { Account, NetworkType } from 'symbol-sdk';
 import Wizard, { Network } from '../../src/commands/wizard';
 import { CustomPreset, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, Preset, RewardProgram } from '../../src/service';
@@ -60,7 +61,6 @@ describe('Wizard', () => {
             '\n',
             '\n',
             StdUtils.keys.down,
-            '\n',
             '\n',
             StdUtils.keys.down,
             '\n',
@@ -123,26 +123,22 @@ describe('Wizard', () => {
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
-    it('Generate use seed keys voting', async () => {
+    it('Generate private keys', async () => {
+        const toKey = (prefix: string | number, keySize = 64): string => {
+            return prefix.toString().padStart(keySize, '0');
+        };
+        let index = 0;
+        Wizard.generateAccount = (networkType: NetworkType) => {
+            return Account.createFromPrivateKey(toKey(++index), networkType);
+        };
         // assembly
         StdUtils.in([
             '\n',
             'y\n', //Are you offline.
             '\n',
-            StdUtils.keys.down,
-            StdUtils.keys.down,
             '\n',
-            'dragon situate error grid farm obtain speak mail creek ridge arrange grid crew box sugar play cram ranch evoke include creek breeze shadow critic',
-            '\n', // accept seed
-            '\n', // address selection
-            StdUtils.keys.down,
-            StdUtils.keys.down,
             '\n',
-            StdUtils.keys.down,
-            StdUtils.keys.down,
             '\n',
-            StdUtils.keys.down,
-            StdUtils.keys.down,
             '\n',
             'myhostname\n',
             'myfriendlyname\n',
@@ -169,11 +165,11 @@ describe('Wizard', () => {
                 {
                     friendlyName: 'myfriendlyname',
                     host: 'myhostname',
-                    mainPrivateKey: '91D8B10CC8F67FB4F42806DAAC59E57A074A999A8FC11F68230AD138AFC2E056',
-                    remotePrivateKey: 'B4CA246A890EA7AF48A0D869398ECD042DDD9C6443F1D29CAB6638D1741F27A2',
-                    transportPrivateKey: '5D487EB256C5D5B5C47E6884B9C22FAE4C8208B3742331369DCD4BE0423A29DF',
+                    mainPrivateKey: '0000000000000000000000000000000000000000000000000000000000000001',
+                    remotePrivateKey: '0000000000000000000000000000000000000000000000000000000000000004',
+                    transportPrivateKey: '0000000000000000000000000000000000000000000000000000000000000002',
                     voting: true,
-                    vrfPrivateKey: 'B47E0FD09B0D8566EA9058218E6CC57C0431913A9ED41E5D4FE131C54C8D306E',
+                    vrfPrivateKey: '0000000000000000000000000000000000000000000000000000000000000003',
                 },
             ],
             preset: Preset.mainnet,
