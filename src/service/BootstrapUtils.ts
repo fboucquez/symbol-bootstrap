@@ -160,7 +160,7 @@ export class BootstrapUtils {
                             });
                         });
 
-                        file.on('error', (err) => {
+                        file.on('error', (err: any) => {
                             file.close();
                             if (err.code === 'EEXIST') {
                                 reject(new Error('File already exists'));
@@ -170,7 +170,7 @@ export class BootstrapUtils {
                             }
                         });
                     } else {
-                        reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
+                        reject(new Error(`Server responded with ${response.statusCode} ${response.statusMessage || ''}`.trim()));
                     }
                 });
 
@@ -302,7 +302,7 @@ export class BootstrapUtils {
 
     public static sleep(ms: number): Promise<any> {
         // Create a promise that rejects in <ms> milliseconds
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
             }, ms);
@@ -396,8 +396,18 @@ export class BootstrapUtils {
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static runTemplate(template: string, templateContext: any): string {
-        const compiledTemplate = Handlebars.compile(template);
-        return compiledTemplate(templateContext);
+        try {
+            const compiledTemplate = Handlebars.compile(template);
+            return compiledTemplate(templateContext);
+        } catch (e) {
+            const securedTemplate = BootstrapUtils.secureString(template);
+            const securedContext = BootstrapUtils.secureString(BootstrapUtils.toYaml(templateContext));
+            const securedMessage = BootstrapUtils.secureString(e.message || 'Unknown');
+
+            const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
+            logger.error(`${message}\nContext: \n${securedContext}`);
+            throw new Error(message);
+        }
     }
 
     public static async mkdir(path: string): Promise<void> {
@@ -659,10 +669,16 @@ export class BootstrapUtils {
     }
 
     public static toHex(renderedText: string): string {
+        if (!renderedText) {
+            return '';
+        }
         const numberAsString = BootstrapUtils.toSimpleHex(renderedText);
         return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
     }
     public static toSimpleHex(renderedText: string): string {
+        if (!renderedText) {
+            return '';
+        }
         return renderedText.toString().split("'").join('').replace(/^(0x)/, '');
     }
 
@@ -673,7 +689,11 @@ export class BootstrapUtils {
 
     public static formatJson(string: string): string {
         // Validates and format the json string.
-        return JSON.stringify(JSON.parse(string), null, 2);
+        try {
+            return JSON.stringify(JSON.parse(string), null, 2);
+        } catch (e) {
+            throw new Error(`${e.message}:JSON\n ${string}`);
+        }
     }
 
     public static splitCsv(object: string): string[] {

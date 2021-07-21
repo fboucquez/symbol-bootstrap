@@ -14,6 +14,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 -   Added `wizard` command.
 -   Added `pack` command.
+-   Explorer `1.1.0` upgrade.
+-   Faucet `1.0.1` upgrade.
 
 ## [1.0.7] - June-22-2021
 
