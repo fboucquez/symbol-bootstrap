@@ -24,6 +24,7 @@ import {
     Convert,
     Deadline,
     LinkAction,
+    NamespaceId,
     Transaction,
     TransactionMapping,
     UInt64,
@@ -695,11 +696,30 @@ export class ConfigService {
         );
     }
 
+    private resolveCurrencyName(presetData: ConfigPreset): string {
+        const mosaicPreset = presetData.nemesis?.mosaics?.[0];
+        const currencyName = mosaicPreset?.name || presetData.currencyName;
+        if (!currencyName) {
+            throw new Error('Currency name could not be resolved!!');
+        }
+        return currencyName;
+    }
+
     private generateExplorers(presetData: ConfigPreset) {
         return Promise.all(
             (presetData.explorers || []).map(async (explorerPreset, index: number) => {
                 const copyFrom = join(this.root, 'config', 'explorer');
-                const templateContext = { ...presetData, ...explorerPreset };
+                const fullName = `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`;
+                const namespaceId = new NamespaceId(fullName);
+                const { restNodes, defaultNode } = this.resolveRests(presetData);
+                const templateContext = {
+                    namespaceName: fullName,
+                    namespaceId: namespaceId.toHex(),
+                    restNodes: restNodes,
+                    defaultNode: defaultNode,
+                    ...presetData,
+                    ...explorerPreset,
+                };
                 const name = templateContext.name || `explorer-${index}`;
                 const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetExplorersFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
@@ -709,9 +729,19 @@ export class ConfigService {
 
     private generateWallets(presetData: ConfigPreset) {
         return Promise.all(
-            (presetData.wallets || []).map(async (explorerPreset, index: number) => {
+            (presetData.wallets || []).map(async (walletPreset, index: number) => {
                 const copyFrom = join(this.root, 'config', 'wallet');
-                const templateContext = { ...presetData, ...explorerPreset };
+                const { restNodes, defaultNode } = this.resolveRests(presetData);
+                const templateContext = {
+                    namespaceName: `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`,
+                    defaultNodeUrl: defaultNode,
+                    restNodes: restNodes.map((url) => {
+                        return { url: url, roles: 2, friendlyName: new URL(url).hostname };
+                    }),
+                    ...presetData,
+                    ...walletPreset,
+                };
+
                 const name = templateContext.name || `wallet-${index}`;
                 const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
@@ -720,7 +750,7 @@ export class ConfigService {
                 await fsPromises.chmod(join(moveTo, 'network.conf.js'), 0o777);
                 await fsPromises.chmod(join(moveTo, 'profileImporter.html'), 0o777);
                 await Promise.all(
-                    (explorerPreset.profiles || []).map(async (profile) => {
+                    (walletPreset.profiles || []).map(async (profile) => {
                         if (!profile.name) {
                             throw new Error('Profile`s name must be provided in the wallets preset when creating wallet profiles.');
                         }
@@ -747,6 +777,18 @@ export class ConfigService {
                 );
             }),
         );
+    }
+
+    private resolveRests(presetData: ConfigPreset): { restNodes: string[]; defaultNode: string } {
+        const restNodes: string[] = [];
+        presetData.gateways?.forEach((restService) => {
+            const nodePreset = presetData.nodes?.find((g) => g.name == restService.apiNodeName);
+            restNodes.push(nodePreset?.restGatewayUrl || `http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
+        });
+        if (presetData.knownRestGateways) {
+            restNodes.push(...presetData.knownRestGateways);
+        }
+        return { restNodes: _.uniq(restNodes), defaultNode: restNodes[0] || 'http://localhost:3000' };
     }
 
     private cleanUpConfiguration(presetData: ConfigPreset) {

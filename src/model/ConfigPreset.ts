@@ -414,6 +414,9 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;
+    // This next 2 would be removed in a later merge.
+    currencyName?: string;
+    harvestingName?: string;
     rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
     votingKeyDesiredLifetime: number;
