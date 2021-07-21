@@ -170,7 +170,7 @@ export class BootstrapUtils {
                             }
                         });
                     } else {
-                        reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
+                        reject(new Error(`Server responded with ${response.statusCode} ${response.statusMessage || ''}`.trim()));
                     }
                 });
 
