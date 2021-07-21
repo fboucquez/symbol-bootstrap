@@ -124,6 +124,7 @@ const example = async () => {
         return signedTransaction;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const sendUnlink = async () => {
         const transferTransaction = AccountKeyLinkTransaction.create(
             deadline,

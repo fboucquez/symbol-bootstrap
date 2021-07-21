@@ -16,6 +16,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added `pack` command.
 -   Explorer `1.1.0` upgrade.
 -   Faucet `1.0.1` upgrade.
+-   Removed unused `sshpk` service and dependency.
+-   Removed unused `forge` service and dependency.
 
 ## [1.0.7] - June-22-2021
 

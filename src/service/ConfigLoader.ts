@@ -204,7 +204,7 @@ export class ConfigLoader {
         const newAccount = this.getAccount(networkType, publicKey?.toUpperCase(), privateKey?.toUpperCase());
 
         const getAccountLog = (account: Account | PublicAccount) =>
-            `${keyName} Account ${account.address.plain()} Public Ley ${account.publicKey} `;
+            `${keyName} Account ${account.address.plain()} Public Key ${account.publicKey} `;
 
         if (oldAccount && !newAccount) {
             logger.info(`Reusing ${getAccountLog(oldAccount)}...`);

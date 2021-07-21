@@ -45,16 +45,6 @@ export enum Network {
     privateNetwork = 'privateNetwork',
 }
 
-export enum ImportType {
-    PRIVATE_KEYS = 'privateKeys',
-    OPTIN_PAPER_WALLET = 'optinPaperWallet',
-    SYMBOL_PAPER_WALLET = 'symbolPaperWallet',
-}
-
-export interface DerivedAccount {
-    networkType: NetworkType;
-    account: Account;
-}
 export interface ProvidedAccounts {
     seeded: boolean;
     main: Account;
@@ -349,7 +339,7 @@ export default class Wizard extends Command {
         }
     }
 
-    public static generateAccount(networkType: NetworkType) {
+    public static generateAccount(networkType: NetworkType): Account {
         return Account.generateNewAccount(networkType);
     }
 
@@ -451,31 +441,6 @@ export default class Wizard extends Command {
         return responses.assembly;
     }
 
-    public static async resolveImportMode(): Promise<ImportType> {
-        const responses = await prompt([
-            {
-                name: 'mode',
-                message: 'How do you want to import your accounts?',
-                type: 'list',
-                default: ImportType.PRIVATE_KEYS,
-                choices: [
-                    {
-                        value: ImportType.PRIVATE_KEYS,
-                        name: 'Private Keys: The private Keys will be generated or entered.',
-                    },
-                    {
-                        value: ImportType.OPTIN_PAPER_WALLET,
-                        name: 'OptIn Paper Wallet (Pre-Launch): Only the main private key can be restored. Other keys will be generated.',
-                    },
-                    {
-                        value: ImportType.SYMBOL_PAPER_WALLET,
-                        name: 'Symbol Paper Wallet (Post-Launch): The main and secondary keys can be restored from the paper.',
-                    },
-                ],
-            },
-        ]);
-        return responses.mode;
-    }
     private static async isVoting(): Promise<boolean> {
         console.log(
             'Select whether your Symbol node should be a Voting node. Note: A Voting node requires the main account to hold at least 3 million XYMs. ',
