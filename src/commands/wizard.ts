@@ -181,7 +181,7 @@ export default class Wizard extends Command {
         const rewardProgram = assembly === 'dual' ? await Wizard.resolveRewardProgram() : undefined;
 
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await Wizard.resolveAllAccount(networkType, rewardProgram);
+        const accounts = await Wizard.resolveAllAccounts(networkType, rewardProgram);
 
         console.log();
         console.log(`These are your node's accounts:`);
@@ -284,7 +284,7 @@ export default class Wizard extends Command {
         return account as T;
     }
 
-    private static async resolveAllAccount(networkType: NetworkType, rewardProgram: RewardProgram | undefined): Promise<ProvidedAccounts> {
+    private static async resolveAllAccounts(networkType: NetworkType, rewardProgram: RewardProgram | undefined): Promise<ProvidedAccounts> {
         console.log();
         return {
             seeded: true,
