@@ -1,0 +1,55 @@
+{
+    "name": "symbol-bootstrap-core",
+    "version": "1.1.0-alpha.0",
+    "description": "Symbol Typescript/Javascript Library that allows you creating, configuring and running Symbol's simple node networks or nodes to be sync with existing networks.",
+    "main": "lib/index.js",
+    "bin": "lib/index.js",
+    "types": "lib/index.js",
+    "homepage": "https://github.com/symbol/symbol-bootstrap",
+    "bugs": "https://github.com/symbol/symbol-bootstrap/issues",
+    "scripts": {
+        "doc": "shx mkdir -p ts-docs && typedoc --out \"ts-docs\" src && touch ./ts-docs/.nojekyll",
+        "clean": "npx shx rm -rf ./lib",
+        "purge": "npx shx rm -rf lib coverage node_modules target .nyc_output logs.log ts-docs",
+        "watch": "tsc -p tsconfig.build.json --watch",
+        "compile": "tsc -p tsconfig.build.json",
+        "build": "npx shx rm -rf lib && npm run compile",
+        "lib": "npm run clean && npm run compile",
+        "version": "echo $npm_package_version",
+        "prettier": "prettier --write ./src",
+        "lint": "eslint --cache src/ --ext .ts",
+        "prepack": "npx shx rm -rf lib && npm run compile",
+        "lint:fix": "eslint src/ --ext .ts --fix",
+        "style:fix": "npm run create-index-files && npm run prettier && npm run lint:fix",
+        "create-index-files": "cti create ./src -b -n -e commands",
+        "test": "nyc --reporter=lcov --extension .ts mocha -r ts-node/register --timeout 600000 --forbid-only \"test/**/*.test.ts\""
+    },
+    "files": [
+        "/config",
+        "/presets",
+        "/lib"
+    ],
+    "keywords": [],
+    "author": "Fernando Boucquez <fboucquez@gmail.com>",
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">=12.0.0"
+    },
+    "mocha": {
+        "timeout": 40000
+    },
+    "dependencies": {
+        "archiver": "^5.3.0",
+        "handlebars": "^4.7.7",
+        "js-yaml": "^3.14.0",
+        "lodash": "^4.17.21",
+        "noble-ed25519": "^1.2.5",
+        "node-stream-zip": "^1.13.6",
+        "symbol-hd-wallets": "^0.14.1-alpha-202103052158",
+        "symbol-sdk": "^1.0.1",
+        "tslib": "^2.3.0",
+        "utf8": "^3.0.0",
+        "winston": "^3.3.3"
+    },
+    "gitHead": "b24acdda47ff73f56412c42b39f52dbf6d37686d"
+}

@@ -1,0 +1,38 @@
+{
+  "_info": "this file contains a list of api-node peers",
+  "knownPeers": [
+    {
+      "publicKey": "FF5A06408BB90FCEDD788BAF671158FF40AD7C6D3FA759CF2499C4DCB927617F",
+      "endpoint": {
+        "host": "testprefix-dual-001.mytest.com",
+        "port": 7900
+      },
+      "metadata": {
+        "name": "testprefix-dual-001",
+        "roles": "Api,Peer,Voting"
+      }
+    },
+    {
+      "publicKey": "58F24E664527181D46C19708EC523BA797443371E225FC7CB54682B1EDE8D3DF",
+      "endpoint": {
+        "host": "testprefix-dual-002.mytest.com",
+        "port": 7900
+      },
+      "metadata": {
+        "name": "testprefix-dual-002",
+        "roles": "Api,Peer,Voting"
+      }
+    },
+    {
+      "publicKey": "E39AC4E114EA4299A0F9169CF8CC039A345862AEBA319616E61B595A54B90411",
+      "endpoint": {
+        "host": "testprefix-demo-001.mytest.com",
+        "port": 7900
+      },
+      "metadata": {
+        "name": "testprefix-demo-001",
+        "roles": "Api,Peer"
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+preset: custom-network-preset.yml
+domain: mycompany.com
+suffix: myc
+networkDescription: My Company Private Test Network
+networkType: 168
+nemesisGenerationHashSeed: 3EC4F5010EAD8F4439241F242611C292CE569587D571A80AD2E73511BE820387
+epochAdjustment: 1626086470
+rewardProgramControllerApiUrl: 'http://myc-node-monitoring.mycompany.com:7890'
+isNewNetwork: true
+faucetBalances:
+    - 449949995
+    - 750
+deploymentData:
+    type: AWS
+nodeTypes:
+    - nickName: demo
+      nodeType: HarvestingDemo
+      balances:
+          - 1000000
+          - 150
+      total: 1
+      nodeSize: t3.xlarge
+      region: eu-east-1
+      rootBlockSize: 750
+    - nickName: dual
+      nodeType: HarvestingDual
+      balances:
+          - 3000000
+          - 150
+      total: 2
+      nodeSize: t3.xlarge
+      region: eu-west-1
+      rootBlockSize: 500
+    - nickName: peer
+      nodeType: VotingNonHarvestingPeer
+      balances:
+          - 51000000
+          - 0
+      total: 2
+      nodeSize: t3.large
+      region: us-west-1
+      rootBlockSize: 250
+    - nickName: beacon
+      nodeType: VotingPeer
+      balances:
+          - 3000000
+          - 150
+      total: 1
+      nodeSize: t3.xlarge
+      region: us-east-1
+      rootBlockSize: 250

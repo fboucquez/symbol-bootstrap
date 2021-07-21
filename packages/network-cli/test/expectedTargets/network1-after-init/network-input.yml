@@ -1,0 +1,25 @@
+preset: custom-network-preset.yml
+domain: mytest.com
+suffix: testprefix
+networkDescription: My Private Test Network
+networkType: 120
+nemesisGenerationHashSeed: 000000000000000000000000000000000000000000000000000000000000000A
+epochAdjustment: 1626575785
+isNewNetwork: true
+deploymentData:
+    type: CUSTOM
+faucetBalances:
+    - 392146430
+nodeTypes:
+    -
+        nickName: dual
+        nodeType: VotingDual
+        balances:
+            - 3000000
+        total: 2
+    -
+        nickName: demo
+        nodeType: HarvestingDemo
+        balances:
+            - 1000000
+        total: 1
