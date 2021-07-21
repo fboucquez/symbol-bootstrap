@@ -77,6 +77,8 @@
 					<li><a href="#concepts">Concepts</a></li>
 					<li><a href="#requirements">Requirements</a></li>
 					<li><a href="#usage">Usage</a></li>
+					<li><a href="#general-usage">General Usage</a></li>
+					<li><a href="#wizard">Wizard</a></li>
 					<li><a href="#e2e-testing-support">E2E Testing support</a></li>
 					<li><a href="#development">Development</a></li>
 					<li><a href="#commands">Commands</a></li>
@@ -192,6 +194,9 @@ USAGE
 ...
 </code></pre>
 				<!-- usagestop -->
+				<a href="#general-usage" id="general-usage" style="color: inherit; text-decoration: none;">
+					<h1>General Usage</h1>
+				</a>
 				<p>The general usage would be:</p>
 				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">config</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">bootstrap</span>
 <span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">compose</span>
@@ -202,6 +207,12 @@ USAGE
 </code></pre>
 				<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
 				<pre><code><span style="color: #001080">sudo</span><span style="color: #000000"> </span><span style="color: #001080">rm</span><span style="color: #000000"> -</span><span style="color: #001080">rf</span><span style="color: #000000"> ./</span><span style="color: #001080">target</span>
+</code></pre>
+				<a href="#wizard" id="wizard" style="color: inherit; text-decoration: none;">
+					<h1>Wizard</h1>
+				</a>
+				<p>If this is your first time creating a node, it&#39;s recommended to use the Wizard. Just follow the instructions:</p>
+				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">wizard</span>
 </code></pre>
 				<a href="#e2e-testing-support" id="e2e-testing-support" style="color: inherit; text-decoration: none;">
 					<h1>E2E Testing support</h1>
@@ -297,6 +308,7 @@ USAGE
 					<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
 					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
 					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
+					<li><a href="docs/pack.md"><code>symbol-bootstrap pack</code></a> - It configures and packages your node into a zip file that can be uploaded to the final node machine.</li>
 					<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
 					<li><a href="docs/resetData.md"><code>symbol-bootstrap resetData</code></a> - It removes the data keeping the generated configuration, certificates, keys and block 1.</li>
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
@@ -304,6 +316,7 @@ USAGE
 					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
 					<li><a href="docs/updateVotingKeys.md"><code>symbol-bootstrap updateVotingKeys</code></a> - It updates the voting files containing the voting keys when required.</li>
 					<li><a href="docs/verify.md"><code>symbol-bootstrap verify</code></a> - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.</li>
+					<li><a href="docs/wizard.md"><code>symbol-bootstrap wizard</code></a> - An utility command that will help you configuring node!</li>
 				</ul>
 				<!-- commandsstop -->
 				<pre><code>
@@ -341,6 +354,9 @@ USAGE
 						<a href="modules/commands_link.html">commands/link</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/commands_pack.html">commands/pack</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/commands_report.html">commands/report</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -360,6 +376,9 @@ USAGE
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/commands_verify.html">commands/verify</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/commands_wizard.html">commands/wizard</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/index.html">index</a>
@@ -460,6 +479,9 @@ USAGE
 					<li class=" tsd-kind-module">
 						<a href="modules/service_votingutils.html">service/<wbr>Voting<wbr>Utils</a>
 					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/service_ziputils.html">service/<wbr>Zip<wbr>Utils</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -474,6 +496,7 @@ USAGE
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
