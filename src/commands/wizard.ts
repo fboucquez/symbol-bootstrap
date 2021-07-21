@@ -18,7 +18,6 @@ import { Command, flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
-import { ExtendedKey, MnemonicPassPhrase, Network as SeedNetwork, Wallet } from 'symbol-hd-wallets';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
 import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset, RewardProgram } from '../service';
@@ -53,12 +52,8 @@ export enum ImportType {
 }
 
 export interface DerivedAccount {
-    optinMode: boolean;
     networkType: NetworkType;
     account: Account;
-    accountIndex: number;
-    changeIndex: number;
-    mnemonicPassPhrase: MnemonicPassPhrase;
 }
 export interface ProvidedAccounts {
     seeded: boolean;
@@ -186,7 +181,7 @@ export default class Wizard extends Command {
         const rewardProgram = assembly === 'dual' ? await Wizard.resolveRewardProgram() : undefined;
 
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await Wizard.resolveAccounts(networkType, rewardProgram);
+        const accounts = await Wizard.resolveAllAccounts(networkType, rewardProgram);
 
         console.log();
         console.log(`These are your node's accounts:`);
@@ -289,90 +284,42 @@ export default class Wizard extends Command {
         return account as T;
     }
 
-    private static async resolveAccounts(networkType: NetworkType, rewardProgram: RewardProgram | undefined): Promise<ProvidedAccounts> {
-        while (true) {
-            const importMode = await Wizard.resolveImportMode();
-            if (importMode === ImportType.OPTIN_PAPER_WALLET) {
-                {
-                    const derivedAccount = await Wizard.resolveDerivedAccount(networkType, true);
-                    if (derivedAccount) {
-                        return await Wizard.resolveAllAccount(networkType, derivedAccount, rewardProgram);
-                    }
-                }
-            } else if (importMode === ImportType.SYMBOL_PAPER_WALLET) {
-                {
-                    const derivedAccount = await Wizard.resolveDerivedAccount(networkType, false);
-                    if (derivedAccount) {
-                        return await Wizard.resolveAllAccount(networkType, derivedAccount, rewardProgram);
-                    }
-                }
-            } else if (importMode === ImportType.PRIVATE_KEYS) {
-                {
-                    return await Wizard.resolveAllAccount(networkType, undefined, rewardProgram);
-                }
-            }
-        }
-    }
-
-    private static async resolveAllAccount(
-        networkType: NetworkType,
-        derivedAccount: DerivedAccount | undefined,
-        rewardProgram: RewardProgram | undefined,
-    ): Promise<ProvidedAccounts> {
+    private static async resolveAllAccounts(networkType: NetworkType, rewardProgram: RewardProgram | undefined): Promise<ProvidedAccounts> {
         console.log();
         return {
             seeded: true,
-            main: derivedAccount
-                ? derivedAccount.account
-                : await this.resolveAccountFromSelection(
-                      networkType,
-                      derivedAccount,
-                      KeyName.Main,
-                      0,
-                      'It holds the tokens required to give the node its importance.',
-                  ),
+            main: await this.resolveAccountFromSelection(
+                networkType,
+                KeyName.Main,
+                'It holds the tokens required to give the node its importance.',
+            ),
             transport: await this.resolveAccountFromSelection(
                 networkType,
-                derivedAccount,
                 KeyName.Transport,
-                1,
                 'It is used by nodes for secure transport over TLS.',
             ),
-            vrf: await this.resolveAccountFromSelection(networkType, derivedAccount, KeyName.VRF, 2, 'It is required for harvesting.'),
+            vrf: await this.resolveAccountFromSelection(networkType, KeyName.VRF, 'It is required for harvesting.'),
             remote: await this.resolveAccountFromSelection(
                 networkType,
-                derivedAccount,
                 KeyName.Remote,
-                3,
                 'It is used to harvest and collect the rewards on behalf of the main account in remote harvesting.',
             ),
             agent: rewardProgram
                 ? await this.resolveAccountFromSelection(
                       networkType,
-                      derivedAccount,
-                      KeyName.Remote,
-                      4,
+                      KeyName.Agent,
                       'It is used to create TLS certificates request for the Controller to Agent communication.',
                   )
                 : undefined,
         };
     }
 
-    public static async resolveAccountFromSelection(
-        networkType: NetworkType,
-        derivedAccount: DerivedAccount | undefined,
-        keyName: KeyName,
-        changeIndex: number,
-        keyDescription: string,
-    ): Promise<Account> {
+    public static async resolveAccountFromSelection(networkType: NetworkType, keyName: KeyName, keyDescription: string): Promise<Account> {
         console.log(`${keyName} Key Pair: ${keyDescription}`);
         while (true) {
             const keyCreationChoices = [];
             keyCreationChoices.push({ name: 'Generating a new account', value: 'generate' });
             keyCreationChoices.push({ name: 'Entering a private key', value: 'manual' });
-            if (derivedAccount && !derivedAccount.optinMode) {
-                keyCreationChoices.push({ name: 'Deriving it from Symbol Paper Wallet seed', value: 'seed' });
-            }
             const { keyCreationMode } = await prompt([
                 {
                     name: 'keyCreationMode',
@@ -389,20 +336,7 @@ export default class Wizard extends Command {
                 return account;
             };
             if (keyCreationMode == 'generate') {
-                return log(Account.generateNewAccount(networkType), 'It will be stored in your custom preset. Keep file safe!');
-            }
-            if (keyCreationMode == 'seed' && derivedAccount) {
-                const seedAccount = Wizard.toAccountFromMnemonicPhrase(
-                    derivedAccount.mnemonicPassPhrase,
-                    networkType,
-                    derivedAccount.optinMode,
-                    derivedAccount.accountIndex,
-                    changeIndex,
-                );
-                return log(
-                    Account.createFromPrivateKey(seedAccount.privateKey, networkType),
-                    'It will be stored in your custom preset. Can be derived from the paper wallet if lost!',
-                );
+                return log(this.generateAccount(networkType), 'It will be stored in your custom preset. Keep file safe!');
             }
             // manual
             const account = await Wizard.resolveAccount(networkType, keyName);
@@ -413,6 +347,10 @@ export default class Wizard extends Command {
                 );
             }
         }
+    }
+
+    public static generateAccount(networkType: NetworkType) {
+        return Account.generateNewAccount(networkType);
     }
 
     public static async resolveAccount(networkType: NetworkType, keyName: KeyName): Promise<Account | undefined> {
@@ -563,103 +501,6 @@ export default class Wizard extends Command {
 
     public static getCustomPresetFile(): IOptionFlag<string> {
         return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
-    }
-
-    public static isValidPhrase(input: string): boolean | string {
-        if (!input) {
-            return true;
-        }
-        const words = input.trim().split(' ').length;
-        return words === 24 ? true : `Invalid phrase. It must have 24 words but got ${words}.`;
-    }
-
-    public static async resolveDerivedAccount(networkType: NetworkType, optinMode: boolean): Promise<DerivedAccount | undefined> {
-        try {
-            console.log(
-                'To generate the keys, enter the 24 words of the mnemonic phrase created when you opted in.\nYou can find them in the Paper Wallet. They will not be stored anywhere by this tool.\n',
-            );
-            let lastEnteredPhrase = '';
-            while (true) {
-                const phraseResponse = await prompt([
-                    {
-                        name: 'value',
-                        message: `Enter the mnemonic phrase for you Main account (or press enter to select the option again).`,
-                        type: 'input',
-                        default: lastEnteredPhrase || undefined,
-                        validate: (input) => Wizard.isValidPhrase(input),
-                    },
-                ]);
-                if (!phraseResponse.value) {
-                    return undefined;
-                }
-                lastEnteredPhrase = phraseResponse.value.trim();
-                const mnemonicPassPhrase = new MnemonicPassPhrase(lastEnteredPhrase);
-                const derivedAccounts = Wizard.findDerivedAccounts(mnemonicPassPhrase, networkType, optinMode, undefined, 0);
-
-                const choices = derivedAccounts.map((derivedAccounts) => ({
-                    value: derivedAccounts.account.address.plain(),
-                    name: derivedAccounts.account.address.plain(),
-                }));
-                choices.push({
-                    value: 'none',
-                    name: 'None of the above. Re-enter phrase',
-                });
-                const accountResponse = await prompt([
-                    {
-                        name: 'accountAddress',
-                        message: 'Select an account:',
-                        type: 'list',
-                        default: choices[0].value,
-                        choices: choices,
-                    },
-                ]);
-                const derivedAccount = derivedAccounts.find(
-                    (derivedAccount) => derivedAccount.account.address.plain() == accountResponse.accountAddress,
-                );
-                if (derivedAccount) {
-                    return derivedAccount;
-                }
-            }
-        } catch (e) {
-            throw new Error(`Symbol account cannot be created from phrase: ${e.message}`);
-        }
-    }
-
-    private static findDerivedAccounts(
-        mnemonicPassPhrase: MnemonicPassPhrase,
-        networkType: NetworkType,
-        optinMode: boolean,
-        expectedAccountIndex: number | undefined,
-        expectedChangeIndex: number | undefined,
-    ): DerivedAccount[] {
-        const accountIndexes: number[] = expectedAccountIndex === undefined ? Array.from(Array(20).keys()) : [expectedAccountIndex];
-        const changeIndexes: number[] = expectedChangeIndex === undefined ? Array.from(Array(20).keys()) : [expectedChangeIndex];
-
-        const derivedAccounts: DerivedAccount[] = [];
-        for (const accountIndex of accountIndexes) {
-            for (const changeIndex of changeIndexes) {
-                const account = Wizard.toAccountFromMnemonicPhrase(mnemonicPassPhrase, networkType, optinMode, accountIndex, changeIndex);
-                derivedAccounts.push({ networkType, optinMode, account, accountIndex, changeIndex, mnemonicPassPhrase });
-            }
-        }
-        return derivedAccounts;
-    }
-
-    public static toAccountFromMnemonicPhrase(
-        mnemonicPassPhrase: MnemonicPassPhrase,
-        networkType: NetworkType,
-        optinMode: boolean,
-        accountIndex: number,
-        changeIndex: number,
-    ): Account {
-        const coinIndex = networkType === NetworkType.MAIN_NET ? '4343' : '1';
-        const mnemonicSeed = mnemonicPassPhrase.toSeed().toString('hex');
-        const seedNetwork = optinMode ? SeedNetwork.BITCOIN : SeedNetwork.SYMBOL;
-        const extendedKey = ExtendedKey.createFromSeed(mnemonicSeed, seedNetwork);
-        const wallet = new Wallet(extendedKey);
-        const path = `m/44'/${coinIndex}'/${accountIndex}'/${changeIndex}'/0'`;
-        const privateKey = wallet.getChildAccountPrivateKey(path);
-        return Account.createFromPrivateKey(privateKey, networkType);
     }
 
     public static async resolveRewardProgram(): Promise<RewardProgram | undefined> {
