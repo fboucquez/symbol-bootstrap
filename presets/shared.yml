@@ -214,3 +214,8 @@ connectionPoolSize: 10
 maxSubscriptions: 300
 restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
 restDeploymentTool: symbol-bootstrap
+restProtocol: HTTP
+restSSLKeyPath: ''
+restSSLCertificatePath: ''
+restSSLKeyBase64: ''
+restSSLCertificateBase64: ''

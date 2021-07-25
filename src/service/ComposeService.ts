@@ -297,6 +297,39 @@ export class ComposeService {
         );
 
         await Promise.all(
+            (presetData.httpsProxies || [])
+                .filter((d) => !d.excludeDockerService)
+                .map(async (n) => {
+                    const internalPort = 443;
+                    const volumes = [vol(`../${targetGatewaysFolder}/https-proxy`, nodeWorkingDirectory, false)];
+                    services.push(
+                        await resolveService(n, {
+                            container_name: n.name,
+                            // user, // TODO fix the user permissions issue
+                            image: n.image,
+                            stop_signal: 'SIGINT',
+                            working_dir: nodeWorkingDirectory,
+                            ports: resolvePorts([
+                                { internalPort: 80, openPort: true },
+                                { internalPort: internalPort, openPort: n.openPort },
+                            ]),
+                            environment: {
+                                DOMAINS: n.domains,
+                                WEBSOCKET: n.webSocket,
+                                STAGE: n.stage,
+                                SERVER_NAMES_HASH_BUCKET_SIZE: n.serverNamesHashBucketSize,
+                            },
+                            restart: restart,
+                            volumes: volumes,
+                            depends_on: [presetData.gateways![0].name],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
+                            ...n.compose,
+                        }),
+                    );
+                }),
+        );
+
+        await Promise.all(
             (presetData.wallets || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {

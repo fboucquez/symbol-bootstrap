@@ -16,7 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
@@ -39,6 +39,11 @@ export const assemblies: Record<Preset, { value: string; description: string }[]
         { value: 'api', description: 'Api  Node' },
     ],
 };
+export enum HttpsOption {
+    Native = 'Native',
+    Automatic = 'Automatic',
+    None = 'None',
+}
 export enum Network {
     mainnet = 'mainnet',
     testnet = 'testnet',
@@ -123,9 +128,7 @@ export default class Wizard extends Command {
 
         if (!flags.skipPull) {
             const service = await new BootstrapService();
-            console.log();
-            console.log('Pulling catapult tools image before asking to go offline...');
-            console.log();
+            console.log('\nPulling catapult tools image before asking to go offline...\n');
             ConfigLoader.presetInfoLogged = true;
             await BootstrapUtils.pullImage(
                 service.resolveConfigPreset({
@@ -183,13 +186,44 @@ export default class Wizard extends Command {
         console.log();
         console.log();
 
-        const symbolHostRequired = !!rewardProgram;
+        const httpsOption: HttpsOption = await this.resolveHttpsOptions();
+        let httpsProxies;
+
+        const symbolHostNameRequired = httpsOption !== HttpsOption.None;
         const host = await Wizard.resolveHost(
-            `Enter the public hostname or IP of your future node. ${
-                symbolHostRequired ? 'This value is required when you are in a reward program!' : ''
+            `Enter the public domain name(eg. node-01.mysymbolnodes.com) that's pointing to your outbound host IP ${
+                symbolHostNameRequired ? 'This value is required when you are running on HTTPS!' : ''
             }`,
-            symbolHostRequired,
+            symbolHostNameRequired,
         );
+
+        let gateways;
+
+        if (httpsOption === HttpsOption.Native) {
+            // TODO ask keys and certs (file path or base64 encoded)
+            const restSSLKeyBase64 = await Wizard.resolveRestSSLKeyAsBase64();
+            const restSSLCertificateBase64 = await Wizard.resolveRestSSLCertAsBase64();
+            gateways = [
+                {
+                    restProtocol: 'HTTPS',
+                    restSSLKeyBase64,
+                    restSSLCertificateBase64,
+                },
+            ];
+        } else if (httpsOption === HttpsOption.Automatic) {
+            // Build httpProxies config here or alter
+            httpsProxies = [
+                {
+                    excludeDockerService: false,
+                    domains: `${host} -> http://rest-gateway:3000`,
+                    stage: 'production',
+                },
+            ];
+        } else {
+            // HttpsOption.None
+            console.log(`Warning! You've chosen to proceed with http, which is less secure in comparison to https.`);
+        }
+
         const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
         const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
         const voting = await Wizard.isVoting();
@@ -210,7 +244,11 @@ export default class Wizard extends Command {
                     agentPrivateKey: accounts.agent?.privateKey,
                 },
             ],
+
+            ...(gateways ? { gateways } : {}),
+            ...(httpsProxies ? { httpsProxies } : {}),
         };
+
         const defaultParams = ConfigService.defaultParams;
         await BootstrapUtils.writeYaml(customPresetFile, presetContent, password);
         console.log();
@@ -408,13 +446,11 @@ export default class Wizard extends Command {
                 default: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                 choices: [
                     {
-                        name:
-                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted. Recommended for Supernodes.',
+                        name: 'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted. Recommended for Supernodes.',
                         value: PrivateKeySecurityMode.PROMPT_MAIN,
                     },
                     {
-                        name:
-                            'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates and agent configuration. Other keys are encrypted. Recommended for regular nodes',
+                        name: 'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates and agent configuration. Other keys are encrypted. Recommended for regular nodes',
                         value: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                     },
                     { name: 'ENCRYPT: All keys are encrypted, only password would be asked', value: PrivateKeySecurityMode.ENCRYPT },
@@ -512,6 +548,37 @@ export default class Wizard extends Command {
         return host || undefined;
     }
 
+    public static async resolveRestSSLKeyAsBase64(): Promise<string> {
+        return this.resolveFileContent('base64', 'Enter your SSL key file path:', 'Invalid path, cannot find SSL key file!');
+    }
+
+    public static async resolveRestSSLCertAsBase64(): Promise<string> {
+        return this.resolveFileContent(
+            'base64',
+            'Enter your SSL Certificate file path:',
+            'Invalid path, cannot find SSL certificate file!',
+        );
+    }
+
+    public static async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
+        const { value } = await prompt([
+            {
+                name: 'value',
+                message: message,
+                type: 'input',
+                validate: (value) => {
+                    if (!existsSync(value)) {
+                        return notFoundMessage;
+                    }
+                    return true;
+                },
+            },
+        ]);
+
+        return readFileSync(value, encoding);
+    }
+
+    // TODO Refactor this
     public static isValidHost(input: string): boolean | string {
         if (input.trim() == '') {
             return 'Host is required.';
@@ -519,9 +586,10 @@ export default class Wizard extends Command {
         if (input.length > 50) {
             return `Input (${input.length}) is larger than 50`;
         }
-        const valid = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(
-            input,
-        );
+        const valid =
+            /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(
+                input,
+            );
         return valid ? true : `It's not a valid IP or hostname`;
     }
 
@@ -545,5 +613,29 @@ export default class Wizard extends Command {
             },
         ]);
         return friendlyName;
+    }
+
+    public static async resolveHttpsOptions(): Promise<HttpsOption> {
+        // TODO work on these messages, should be concise and clearer
+        console.log(
+            'Your REST Gateway should be running on HTTPS (which is a secure protocol) so that it can be recognized by the Symbol Explorer.',
+        );
+        const { value } = await prompt([
+            {
+                name: 'value',
+                message: 'Select your HTTPS setup method:',
+                type: 'list',
+                default: HttpsOption.Native,
+                choices: [
+                    { name: 'Native support, I have the SSL certificate and key.', value: HttpsOption.Native },
+                    {
+                        name: `Automatic, all of your keys and certs will be generated/renewed automatically, using letsencyrpt.`,
+                        value: HttpsOption.Automatic,
+                    },
+                    { name: 'None', value: HttpsOption.None },
+                ],
+            },
+        ]);
+        return value;
     }
 }
