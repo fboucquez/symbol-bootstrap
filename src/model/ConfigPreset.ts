@@ -318,10 +318,10 @@ export interface GatewayConfigPreset {
     restDeploymentTool: string;
     restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
     restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
-    restProtocol?: string;
-    restSSLKeyPath?: string; // TODO think about this should this be static?
-    restSSLCertificatePath?: string; // TODO think about this should this be static?
-
+    restProtocol: string;
+    restSSLPath: string;
+    restSSLKeyFileName: string;
+    restSSLCertificateFileName: string;
     restSSLKeyBase64?: string;
     restSSLCertificateBase64?: string;
 }
@@ -333,10 +333,10 @@ export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfi
     apiNodeHost: string;
     databaseHost: string;
     name: string;
+    httpsProxy?: boolean | number;
 }
 
 export interface HttpsProxyPreset extends DockerServicePreset {
-    image?: string;
     name?: string;
     domains: string;
     stage: string;
@@ -409,6 +409,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     symbolAgentImage: string;
     symbolRestImage: string;
     symbolFaucetImage: string;
+    httpsPortalImage: string;
 
     dockerComposeVersion: number | string;
     dockerComposeServiceRestart: string;

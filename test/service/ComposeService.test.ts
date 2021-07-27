@@ -158,6 +158,20 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-testnet-supernode-compose.yml');
     });
 
+    it('Compose testnet httpsProxy', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/testnet-https-proxy',
+            password,
+            customPreset: './test/unit-test-profiles/https-proxy.yml',
+            reset: false,
+            preset: Preset.testnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-testnet-httpsproxy-compose.yml');
+    });
+
     it('Compose testnet dual voting', async () => {
         const params = {
             ...ConfigService.defaultParams,

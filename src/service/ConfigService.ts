@@ -693,11 +693,19 @@ export class ConfigService {
                     ['node.crt.pem', 'node.key.pem', 'ca.cert.pem'],
                 );
 
-                //TODO generate ssl key and certificate files
                 if (gatewayPreset.restProtocol === 'HTTPS') {
-                    // TODO check restSSLKeyBase64 and restSSLCertificateBase64 values exists! if not throw error
-                    fs.writeFileSync(join(moveTo, 'restSSL.key.pem'), gatewayPreset.restSSLKeyBase64, 'base64');
-                    fs.writeFileSync(join(moveTo, 'restSSL.cert.pem'), gatewayPreset.restSSLCertificateBase64, 'base64');
+                    if (gatewayPreset.restSSLKeyBase64 && gatewayPreset.restSSLCertificateBase64) {
+                        fs.writeFileSync(join(moveTo, presetData.restSSLKeyFileName), gatewayPreset.restSSLKeyBase64, 'base64');
+                        fs.writeFileSync(
+                            join(moveTo, presetData.restSSLCertificateFileName),
+                            gatewayPreset.restSSLCertificateBase64,
+                            'base64',
+                        );
+                    } else {
+                        console.log(
+                            `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to target/gateways folder.`,
+                        );
+                    }
                 }
             }),
         );

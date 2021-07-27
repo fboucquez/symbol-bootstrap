@@ -109,6 +109,10 @@ export class ComposeService {
                 });
         };
 
+        const resolveHttpsProxyDomains = (fromDomain: string, toDomain: string): string => {
+            return `${fromDomain} -> ${toDomain}`;
+        };
+
         const resolveService = async (
             servicePreset: DockerServicePreset,
             rawService: DockerComposeService,
@@ -293,6 +297,32 @@ export class ComposeService {
                             ...n.compose,
                         }),
                     );
+                    if (n.httpsProxy) {
+                        if (presetData.httpsProxies?.length) {
+                            if (presetData.nodes?.length && presetData.nodes[0].host) {
+                                const httpsProxyPreset = presetData.httpsProxies[0];
+                                httpsProxyPreset.excludeDockerService = false;
+                                const restGatewayDomains = resolveHttpsProxyDomains(
+                                    presetData.nodes[0].host,
+                                    `http://${n.name}:${internalPort}`,
+                                );
+                                if (httpsProxyPreset.domains) {
+                                    // domains already defined
+                                    if (httpsProxyPreset.domains.indexOf(n.name) < 0) {
+                                        // if rest-gateway not in the domains then add it
+                                        httpsProxyPreset.domains += ',' + restGatewayDomains;
+                                    }
+                                } else {
+                                    httpsProxyPreset.domains = restGatewayDomains;
+                                }
+                                if (typeof n.httpsProxy === 'number' && httpsProxyPreset.openPort === 3001) {
+                                    httpsProxyPreset.openPort = n.httpsProxy;
+                                }
+                            } else {
+                                throw new Error(`HTTPS on ${n.name} is enabled, 'host' property must be set to a valid DNS record.`);
+                            }
+                        }
+                    }
                 }),
         );
 
@@ -301,12 +331,13 @@ export class ComposeService {
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
                     const internalPort = 443;
+
                     const volumes = [vol(`../${targetGatewaysFolder}/https-proxy`, nodeWorkingDirectory, false)];
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
                             // user, // TODO fix the user permissions issue
-                            image: n.image,
+                            image: presetData.httpsPortalImage,
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
                             ports: resolvePorts([

@@ -20,3 +20,11 @@ gateways:
       databaseHost: 'db'
       openPort: true
       ipv4_address: 172.20.0.25
+httpsProxies:
+    - name: 'https-proxy'
+      excludeDockerService: true #disabled as default
+      openPort: 3001
+      #domains: 'symbol-node.example.com -> http://rest-gateway:3000'
+      stage: 'production'
+      webSocket: 'true'
+      serverNamesHashBucketSize: 128
