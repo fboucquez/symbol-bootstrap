@@ -60,7 +60,7 @@ export enum Assembly {
     peer = 'peer',
 }
 
-export const defaultAssembly: Record<string, Assembly> = {
+export const defaultAssembly: Record<string, string> = {
     [Preset.bootstrap]: Assembly.multinode,
 };
 
@@ -79,12 +79,13 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
+    workingDir: string;
     offline?: boolean;
-    preset?: Preset;
+    preset?: string;
     target: string;
     password?: string;
     user: string;
-    assembly?: Assembly;
+    assembly?: string;
     customPreset?: string;
     customPresetObject?: CustomPreset;
 }
@@ -97,6 +98,7 @@ export interface ConfigResult {
 export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
+        workingDir: BootstrapUtils.defaultWorkingDir,
         report: false,
         offline: false,
         reset: false,
@@ -203,6 +205,7 @@ export class ConfigService {
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
         return this.configLoader.createPresetData({
             ...this.params,
+            workingDir: this.params.workingDir,
             password: password,
             oldPresetData,
         });
@@ -235,14 +238,16 @@ export class ConfigService {
         }
     }
 
-    private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses, isUpgrade: boolean) {
+    private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses, isUpgrade: boolean): Promise<void> {
         const target = this.params.target;
         const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
         await BootstrapUtils.mkdir(nemesisSeedFolder);
-        if (presetData.nemesis) {
+        if (ConfigLoader.shouldCreateNemesis(presetData)) {
             if (isUpgrade) {
                 this.logger.info('Nemesis data cannot be generated when upgrading...');
             } else {
+                BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
+                await BootstrapUtils.mkdir(nemesisSeedFolder);
                 await this.generateNemesisConfig(presetData, addresses);
                 await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
             }
@@ -251,26 +256,41 @@ export class ConfigService {
         if (isUpgrade) {
             this.logger.info('Upgrading genesis on upgrade!');
         }
-        await BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
-        await BootstrapUtils.mkdir(nemesisSeedFolder);
-        if (presetData.nemesisSeedFolder) {
+
+        const resolvePresetNemesisSeedFolder = (): string | undefined => {
+            if (!presetData.nemesisSeedFolder) {
+                return undefined;
+            }
+            return BootstrapUtils.resolveWorkingDirPath(this.params.workingDir, presetData.nemesisSeedFolder);
+        };
+
+        const presetNemesisSeedFolder = resolvePresetNemesisSeedFolder();
+        if (presetNemesisSeedFolder) {
             await this.validateSeedFolder(
-                presetData.nemesisSeedFolder,
-                `Is the provided preset nemesisSeedFolder: ${presetData.nemesisSeedFolder} a valid seed folder?`,
+                presetNemesisSeedFolder,
+                `Is the provided preset nemesisSeedFolder: ${presetNemesisSeedFolder} a valid seed folder?`,
             );
-            this.logger.info(`Using custom nemesis seed folder in ${presetData.nemesisSeedFolder}`);
-            await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
-            return;
-        }
-        const finalNemesisSeed = join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed');
-        if (existsSync(finalNemesisSeed)) {
-            await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
+            this.logger.info(`Using custom nemesis seed folder in ${presetNemesisSeedFolder}`);
+            BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
+            await BootstrapUtils.mkdir(nemesisSeedFolder);
+            await BootstrapUtils.generateConfiguration({}, presetNemesisSeedFolder, nemesisSeedFolder);
             await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
             return;
         }
-        this.logger.warn(`Seed for preset ${presetData.preset} could not be found in ${finalNemesisSeed}`);
-
-        throw new Error('Seed could not be found!!!!');
+        if (BootstrapUtils.isYmlFile(presetData.preset)) {
+            throw new KnownError(`Seed for preset ${presetData.preset} could not be found. Please provide 'nemesisSeedFolder'!`);
+        } else {
+            const networkNemesisSeed = join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed');
+            if (existsSync(networkNemesisSeed)) {
+                BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
+                await BootstrapUtils.mkdir(nemesisSeedFolder);
+                await BootstrapUtils.generateConfiguration({}, networkNemesisSeed, nemesisSeedFolder);
+                await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
+                return;
+            }
+            this.logger.warn(`Seed for preset ${presetData.preset} could not be found in ${networkNemesisSeed}`);
+            throw new Error('Seed could not be found!!!!');
+        }
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses, remoteNodeService: RemoteNodeService): Promise<void> {
@@ -430,7 +450,7 @@ export class ConfigService {
             nodePreset,
             currentFinalizationEpoch,
             undefined,
-            presetData.nemesis != undefined,
+            ConfigLoader.shouldCreateNemesis(presetData),
         );
     }
 

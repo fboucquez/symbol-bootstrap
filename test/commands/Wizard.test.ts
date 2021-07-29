@@ -18,7 +18,11 @@ import { expect } from '@oclif/test';
 import { Account, NetworkType } from 'symbol-sdk';
 import { Assembly, BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
 import { Network, Wizard } from '../../src/commands/wizard';
+// Including a test util class that it's not compiled.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { StdUtils } from '../utils/StdUtils';
+
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Wizard', () => {
     const testFolder = 'target/wizardTest';
@@ -61,6 +65,7 @@ describe('Wizard', () => {
         const password = '11111';
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         await new Wizard(logger).execute({
+            workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -120,6 +125,7 @@ describe('Wizard', () => {
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await wizard.execute({
+            workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -178,6 +184,7 @@ describe('Wizard', () => {
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await wizard.execute({
+            workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -243,6 +250,7 @@ describe('Wizard', () => {
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await wizard.execute({
+            workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -320,5 +328,75 @@ describe('Wizard', () => {
         it('should return error when given hostname is an invalid a subdomain', () => {
             expect(wizard.isValidHost('2-.example.com')).to.be.eq("It's not a valid IP or hostname");
         });
+    });
+
+    it('Provide custom network dual provided private keys', async () => {
+        // assembly
+        StdUtils.in([
+            StdUtils.keys.down,
+            StdUtils.keys.down,
+            StdUtils.keys.down,
+            '\n',
+            'custom-network-preset.yml',
+            '\n',
+            '\n',
+            '\n',
+            StdUtils.keys.down,
+            '\n',
+            'AAA3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
+            'y\n',
+            StdUtils.keys.down,
+            '\n',
+            'BBB3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
+            'y\n',
+            StdUtils.keys.down,
+            '\n',
+            'CCC3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
+            'y\n',
+            StdUtils.keys.down,
+            '\n',
+            'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
+            'y\n',
+            StdUtils.keys.down, // resolveHttpsOptions select none down 1/2
+            StdUtils.keys.down, // resolveHttpsOptions select none down 2/2
+            '\n',
+            'myhostname.org\n',
+            'myfriendlyname\n',
+            '\n',
+            'y\n', //Voting!
+            '\n',
+            'n\n',
+            'n\n',
+        ]);
+
+        const password = '11111';
+        const customPresetFile = `${testFolder}/wizard-custom.yml`;
+        await new Wizard(logger).execute({
+            workingDir: 'test/customNetwork',
+            customPreset: customPresetFile,
+            network: undefined,
+            noPassword: false,
+            skipPull: true,
+            target: `${testFolder}/target`,
+            password: password,
+        });
+        const expectedCustomPreset: CustomPreset = {
+            assembly: Assembly.dual,
+            nodes: [
+                {
+                    friendlyName: 'myfriendlyname',
+                    host: 'myhostname.org',
+                    voting: true,
+                    mainPrivateKey: 'AAA3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                    remotePrivateKey: 'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                    transportPrivateKey: 'BBB3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                    vrfPrivateKey: 'CCC3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                },
+            ],
+            preset: 'custom-network-preset.yml',
+            privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
+        };
+        const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
+        expect(customPreset).deep.eq(expectedCustomPreset);
     });
 });

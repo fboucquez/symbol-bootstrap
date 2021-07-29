@@ -15,7 +15,6 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Assembly, Preset } from '../service';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -57,7 +56,7 @@ export interface DatabasePreset extends DockerServicePreset {
 
 export interface NemesisPreset {
     binDirectory: string;
-    mosaics?: MosaicPreset[];
+    mosaics: MosaicPreset[];
     balances?: Record<string, number>;
     transactions?: Record<string, string>;
     nemesisSignerPrivateKey: string;
@@ -373,9 +372,9 @@ export type DeepPartial<T> = {
 
 export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPreset {
     version: number; // file version
-    bootstrapVersion: number;
-    preset: Preset;
-    assembly: Assembly;
+    bootstrapVersion: string;
+    preset: string;
+    assembly: string;
     privateKeySecurityMode?: string;
     votingKeysDirectory: string;
     sinkAddress?: string;
@@ -441,7 +440,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
 
 export interface ConfigPreset extends CommonConfigPreset {
     // Nested objects!
-    nemesis?: NemesisPreset;
+    nemesis: NemesisPreset;
     databases?: DatabasePreset[];
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];

@@ -20,7 +20,6 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 * [Wizard](#wizard)
 * [E2E Testing support](#e2e-testing-support)
 * [Development](#development)
-* [Commands](#commands)
 * [Command Topics](#command-topics)
 <!-- tocstop -->
 
@@ -185,6 +184,12 @@ Although some combinations can be done, they may not be really useful. Examples 
 
 -   `$ symbol-bootstrap start -p mainnet -a multinode`
 -   `$ symbol-bootstrap start -p testnet -a multinode`
+
+A custom network preset file can also be provided. This is useful when you have your own custom Symbol network, and you want other nodes to join.
+For this case, you provide your own `networkPreset.yml` and nemesis feed folder. The node admin can then run:
+
+-   `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
+
 
 # Wizard
 

@@ -2,9 +2,7 @@ networkDescription: Symbol Mainnet
 baseNamespace: symbol
 batchVerificationRandomSource: /dev/urandom
 currencyMosaicId: 6BED913FA20223F8
-currencyName: xym
 harvestBeneficiaryPercentage: 25
-harvestingName: xym
 harvestingMosaicId: 6BED913FA20223F8
 epochAdjustment: 1615853185s
 enableRevoteOnBoot: false
@@ -130,6 +128,16 @@ treasuryReissuanceTransactionSignatures:
     - C0BAE301EC15B514C5685A661BC3E23A6596CE9DC412A83F67A8C8611A4415B1B0447E8C09D2816CAE0D750C4AB1ED8FE9C85C05D448C2114147A2C935030708
     - A317F4EB085C8D3D80435669EF54C6C9C9AD9B57165B14CF051F43879D0112E3A79591DD6D469BFAA850891FA2CB601BA58CD1BAEBFF5D84C49179AC7FE14706
     - FDB98C472D0B98FDD766DA177366DEB2DB0E79721BD73DA96A84622A98932DA75BAA327BA9E23D448C6F25344654A6F17F7734C14D1530B327F911A97B4DE30A
+nemesis:
+    mosaics:
+        -
+            name: xym
+            divisibility: 6
+            duration: 0
+            supply: 7842928625000000
+            isTransferable: true
+            isSupplyMutable: false
+            isRestrictable: false
 inflation:
     starting-at-height-2: 0
     starting-at-height-5760: 191997042

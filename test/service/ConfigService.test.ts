@@ -16,8 +16,14 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { join } from 'path';
 import { Assembly, LoggerFactory, LogType } from '../../src';
 import { ConfigService, CryptoUtils, Preset } from '../../src/service';
+// Local test utils
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { FileSystemTestUtils } from '../utils/FileSystemTestUtils';
+
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ConfigService', () => {
     it('ConfigService bootstrap run with optin_preset.yml', async () => {
@@ -84,6 +90,47 @@ describe('ConfigService', () => {
         expect(CryptoUtils.removePrivateKeys(configResultUpgrade.presetData)).deep.eq(
             CryptoUtils.removePrivateKeys(configResult.presetData),
         );
+    });
+
+    it('ConfigService custom network yml file', async () => {
+        const target = 'target/tests/ConfigService.test.customNetwork';
+        const workingDir = 'test/customNetwork';
+        await new ConfigService(logger, {
+            ...ConfigService.defaultParams,
+            workingDir: workingDir,
+            reset: true,
+            password: '1111',
+            target: target,
+            preset: 'custom-network-preset.yml',
+            assembly: Assembly.dual,
+        }).run();
+        FileSystemTestUtils.assertSameFolder({
+            expectFolder: join(workingDir, 'nemesis-seed'),
+            actualFolder: join(target, 'nemesis', 'seed'),
+        });
+    });
+
+    it('ConfigService custom network yml file invalid seed folder', async () => {
+        const target = 'target/tests/ConfigService.test.customNetwork';
+        const workingDir = 'test/customNetwork';
+
+        try {
+            await new ConfigService(logger, {
+                ...ConfigService.defaultParams,
+                workingDir: workingDir,
+                customPresetObject: {
+                    nemesisSeedFolder: 'nemesis-seed-invalid',
+                },
+                reset: true,
+                password: '1111',
+                target: target,
+                preset: 'custom-network-preset.yml',
+                assembly: Assembly.dual,
+            }).run();
+            expect(false).to.be.eq(true); // should have raised an error!
+        } catch (e) {
+            expect(e.message).eq('test/customNetwork/nemesis-seed-invalid folder does not exist');
+        }
     });
 
     it('ConfigService bootstrap repeat', async () => {

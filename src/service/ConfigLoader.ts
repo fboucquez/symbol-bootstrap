@@ -30,7 +30,7 @@ import {
 } from '../model';
 import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
-import { Assembly, defaultAssembly, KeyName, Preset } from './ConfigService';
+import { Assembly, defaultAssembly, KeyName } from './ConfigService';
 import { CryptoUtils } from './CryptoUtils';
 
 export class ConfigLoader {
@@ -84,7 +84,8 @@ export class ConfigLoader {
             presetData.nemesisGenerationHashSeed = addresses.nemesisGenerationHashSeed;
         }
         const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
-        if (presetData.nemesis) {
+        const shouldCreateNemesis = ConfigLoader.shouldCreateNemesis(presetData);
+        if (shouldCreateNemesis) {
             addresses.nemesisSigner = this.generateAccount(
                 networkType,
                 privateKeySecurityMode,
@@ -107,23 +108,20 @@ export class ConfigLoader {
         const nemesisSignerAddress = Address.createFromPublicKey(presetData.nemesisSignerPublicKey, networkType);
 
         if (!presetData.currencyMosaicId)
-            presetData.currencyMosaicId = BootstrapUtils.toHex(
-                MosaicId.createFromNonce(MosaicNonce.createFromNumber(0), nemesisSignerAddress).toHex(),
-            );
+            presetData.currencyMosaicId = MosaicId.createFromNonce(MosaicNonce.createFromNumber(0), nemesisSignerAddress).toHex();
+
         if (!presetData.harvestingMosaicId) {
             if (!presetData.nemesis) {
                 throw new Error('nemesis must be defined!');
             }
             if (presetData.nemesis.mosaics && presetData.nemesis.mosaics.length > 1) {
-                presetData.harvestingMosaicId = BootstrapUtils.toHex(
-                    MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), nemesisSignerAddress).toHex(),
-                );
+                presetData.harvestingMosaicId = MosaicId.createFromNonce(MosaicNonce.createFromNumber(1), nemesisSignerAddress).toHex();
             } else {
                 presetData.harvestingMosaicId = presetData.currencyMosaicId;
             }
         }
 
-        if (presetData.nemesis) {
+        if (shouldCreateNemesis) {
             if (oldAddresses) {
                 if (!oldPresetData) {
                     throw new Error('oldPresetData must be defined when upgrading!');
@@ -168,6 +166,14 @@ export class ConfigLoader {
         }
 
         return addresses;
+    }
+    public static shouldCreateNemesis(presetData: ConfigPreset): boolean {
+        return (
+            presetData.nemesis &&
+            !presetData.nemesisSeedFolder &&
+            (BootstrapUtils.isYmlFile(presetData.preset) ||
+                !existsSync(join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed')))
+        );
     }
 
     public generateAddresses(networkType: NetworkType, privateKeySecurityMode: PrivateKeySecurityMode, size: number): ConfigAccount[] {
@@ -357,19 +363,26 @@ export class ConfigLoader {
         return BootstrapUtils.loadYaml(customPreset, password);
     }
 
-    public static loadAssembly(preset: string, assembly: string): CustomPreset {
+    public static loadAssembly(preset: string, assembly: string, workingDir: string): CustomPreset {
         const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', 'assemblies', `assembly-${assembly}.yml`);
         const errorMessage = `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`;
-        return this.loadBundledPreset(fileLocation, errorMessage);
+        return this.loadBundledPreset(assembly, fileLocation, workingDir, errorMessage);
     }
 
-    public static loadNetworkPreset(preset: string): CustomPreset {
+    public static loadNetworkPreset(preset: string, workingDir: string): CustomPreset {
         const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, `network.yml`);
         const errorMessage = `Preset '${preset}' does not exist. Have you provided the right --preset <preset> ?`;
-        return this.loadBundledPreset(fileLocation, errorMessage);
+        return this.loadBundledPreset(preset, fileLocation, workingDir, errorMessage);
     }
 
-    private static loadBundledPreset(bundledLocation: string, errorMessage: string): CustomPreset {
+    private static loadBundledPreset(presetFile: string, bundledLocation: string, workingDir: string, errorMessage: string): CustomPreset {
+        if (BootstrapUtils.isYmlFile(presetFile)) {
+            const assemblyFile = BootstrapUtils.resolveWorkingDirPath(workingDir, presetFile);
+            if (!existsSync(assemblyFile)) {
+                throw new KnownError(errorMessage);
+            }
+            return BootstrapUtils.loadYaml(assemblyFile, false);
+        }
         if (existsSync(bundledLocation)) {
             return BootstrapUtils.loadYaml(bundledLocation, false);
         }
@@ -392,9 +405,10 @@ export class ConfigLoader {
         return presetData;
     }
     public createPresetData(params: {
+        workingDir: string;
         password: Password;
-        preset?: Preset;
-        assembly?: Assembly;
+        preset?: string;
+        assembly?: string;
         customPreset?: string;
         customPresetObject?: CustomPreset;
         oldPresetData?: ConfigPreset;
@@ -411,9 +425,9 @@ export class ConfigLoader {
         }
 
         const sharedPreset = ConfigLoader.loadSharedPreset();
-        const networkPreset = ConfigLoader.loadNetworkPreset(preset);
+        const networkPreset = ConfigLoader.loadNetworkPreset(preset, params.workingDir);
 
-        const assembly: Assembly =
+        const assembly =
             params.assembly ||
             params.customPresetObject?.assembly ||
             customPresetFileObject?.assembly ||
@@ -426,7 +440,7 @@ export class ConfigLoader {
             );
         }
 
-        const assemblyPreset = ConfigLoader.loadAssembly(preset, assembly);
+        const assemblyPreset = ConfigLoader.loadAssembly(preset, assembly, params.workingDir);
         const providedCustomPreset = this.mergePresets(customPresetFileObject, customPresetObject);
         const resolvedCustomPreset = _.isEmpty(providedCustomPreset) ? oldPresetData?.customPresetCache || {} : providedCustomPreset;
         const presetData = this.mergePresets(sharedPreset, networkPreset, assemblyPreset, resolvedCustomPreset) as ConfigPreset;
@@ -563,10 +577,14 @@ export class ConfigLoader {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public expandServicesRepeat(context: any, services: any[]): any[] {
         return _.flatMap(services || [], (service) => {
-            if (service.repeat === 0) {
+            if (!_.isObject(service)) {
+                return service;
+            }
+            const repeat = (service as any).repeat;
+            if (repeat === 0) {
                 return [];
             }
-            return _.range(service.repeat || 1).map((index) => {
+            return _.range(repeat || 1).map((index) => {
                 return _.omit(
                     _.mapValues(service, (v: any) =>
                         this.applyValueTemplate(

@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { LoggerFactory, LogType } from '../../src';
+import { ConfigService, LoggerFactory, LogType } from '../../src';
 import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('RunService', () => {
@@ -27,6 +27,7 @@ describe('RunService', () => {
     it('healthCheck', async () => {
         const bootstrapService = new BootstrapService(logger);
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
             preset: Preset.bootstrap,
@@ -55,6 +56,7 @@ describe('RunService', () => {
     it('resetData', async () => {
         const bootstrapService = new BootstrapService(logger);
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
             preset: Preset.bootstrap,

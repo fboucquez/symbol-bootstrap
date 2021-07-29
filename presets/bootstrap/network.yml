@@ -7,8 +7,6 @@ maxHarvesterBalance: 50000000000000
 networkType: 152
 minVoterBalance: 50000
 baseNamespace: 'cat'
-currencyName: 'currency'
-harvestingName: 'harvest'
 explorerUrl: http://localhost:90/
 faucetUrl: http://localhost:100/
 beneficiaryAddress: ''
@@ -18,8 +16,7 @@ lastKnownNetworkEpoch: 1
 restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer'
 nemesis:
     mosaics:
-        - name: '{{currencyName}}'
-          repeat: 1
+        - name: 'currency'
           divisibility: 6
           duration: 0
           supply: 8998999998000000
@@ -27,8 +24,7 @@ nemesis:
           isSupplyMutable: false
           isRestrictable: false
           accounts: 5
-        - name: '{{harvestingName}}'
-          repeat: 1
+        - name: 'harvest'
           divisibility: 3
           duration: 0
           supply: 15000000

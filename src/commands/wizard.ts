@@ -18,28 +18,20 @@ import { Command, flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
 import { existsSync, readFileSync } from 'fs';
 import { prompt } from 'inquirer';
+import { join } from 'path';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
 import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
 
-export const assemblies: Record<Preset, { value: string; description: string }[]> = {
-    [Preset.bootstrap]: [
-        { value: '', description: 'Default: A network with 2 peers, a api, a broker, a mongo db, and a Rest Gateway' },
-        { value: 'full', description: 'Full: A complete network with a private Explorer, Faucet and Wallet' },
-        { value: 'light', description: 'Light: A light network with a dual, a mongo dn and a rest gateway' },
-    ],
-    [Preset.mainnet]: [
-        { value: 'dual', description: 'Dual Node' },
-        { value: 'peer', description: 'Peer Node' },
-        { value: 'api', description: 'Api  Node' },
-    ],
-    [Preset.testnet]: [
-        { value: 'dual', description: 'Dual Node' },
-        { value: 'peer', description: 'Peer Node' },
-        { value: 'api', description: 'Api  Node' },
-    ],
+export const assembliesDescriptions: Record<Assembly, string> = {
+    [Assembly.dual]: 'Dual Node',
+    [Assembly.peer]: 'Peer Node',
+    [Assembly.api]: 'Api Node',
+    [Assembly.demo]: 'Demo Node',
+    [Assembly.multinode]: 'Multinode Node. A docker compose that includes one api, one rest and two peers.',
 };
+
 export enum HttpsOption {
     Native = 'Native',
     Automatic = 'Automatic',
@@ -49,7 +41,15 @@ export enum Network {
     mainnet = 'mainnet',
     testnet = 'testnet',
     localNetwork = 'localNetwork',
+    customNetwork = 'customNetwork',
 }
+
+export const assemblies: Record<Network, Assembly[]> = {
+    [Network.mainnet]: [Assembly.dual, Assembly.peer, Assembly.api],
+    [Network.testnet]: [Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Network.localNetwork]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Network.customNetwork]: [Assembly.dual, Assembly.peer, Assembly.api],
+};
 
 export interface ProvidedAccounts {
     seeded: boolean;
@@ -59,10 +59,11 @@ export interface ProvidedAccounts {
     transport: Account;
 }
 
-export const networkToPreset: Record<Network, Preset> = {
+export const networkToPreset: Record<Network, string> = {
     [Network.localNetwork]: Preset.bootstrap,
     [Network.mainnet]: Preset.mainnet,
     [Network.testnet]: Preset.testnet,
+    [Network.customNetwork]: 'custom-network-preset.yml',
 };
 export default class WizardCommand extends Command {
     static description = 'An utility command that will help you configuring node!';
@@ -81,26 +82,29 @@ export default class WizardCommand extends Command {
         }),
         logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
-    public static getCustomPresetFile(): IOptionFlag<string> {
-        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
-    }
+
     public static getNetworkIdFlag(): IOptionFlag<Network | undefined> {
         return flags.string({
             description: 'The node or network you want to create',
-            options: [Network.mainnet, Network.testnet, Network.localNetwork],
+            options: Object.values(Network),
         }) as IOptionFlag<Network | undefined>;
+    }
+
+    public static getCustomPresetFile(): IOptionFlag<string> {
+        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
     }
 
     public async run(): Promise<void> {
         const flags = this.parse(WizardCommand).flags;
         const logger = LoggerFactory.getLogger(flags.logger);
-        return new Wizard(logger).execute(flags);
+        return new Wizard(logger).execute({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
     }
 }
 
 export class Wizard {
     constructor(private readonly logger: Logger) {}
     public async execute(flags: {
+        workingDir: string;
         noPassword: boolean;
         skipPull?: boolean;
         target: string;
@@ -128,12 +132,12 @@ export class Wizard {
         }
 
         const network = await this.resolveNetwork(flags.network);
-        const preset = networkToPreset[network];
-        const assembly = await this.resolveAssembly(preset);
+        const preset = await this.resolvePreset(network, flags.workingDir);
+        const assembly = await this.resolveAssembly(network);
         if (network == Network.localNetwork) {
-            this.logger.info('For a local network, just run: ');
+            this.logger.info('For a private network, just run: ');
             this.logger.info('');
-            this.logger.info(`$ symbol-bootstrap start -b ${preset} -a ${assembly}`);
+            this.logger.info(`$ symbol-bootstrap start -p ${preset} -a ${assembly}`);
             return;
         }
 
@@ -270,7 +274,7 @@ export class Wizard {
         this.logger.info('Remember to delete the plain-custom-preset.yml file after used!!!');
 
         this.logger.info(
-            `You can edit this file to further customize it. Read more https://github.com/nemtech/symbol-bootstrap/blob/main/docs/presetGuides.md`,
+            `You can edit this file to further customize it. Read more https://github.com/symbol/symbol-bootstrap/blob/main/docs/presetGuides.md`,
         );
         this.logger.info('');
         this.logger.info(
@@ -419,12 +423,44 @@ export class Wizard {
                         { name: 'Mainnet Node', value: Network.mainnet },
                         { name: 'Testnet Node', value: Network.testnet },
                         { name: 'Local Network', value: Network.localNetwork },
+                        {
+                            name: `Custom Network Node ('custom-network-preset.yml' file and 'nemesis-seed' folder are required)`,
+                            value: Network.customNetwork,
+                        },
                     ],
                 },
             ]);
             return responses.network;
         }
         return providedNetwork;
+    }
+
+    public async resolvePreset(network: Network, workingDir: string): Promise<string> {
+        if (network === Network.customNetwork) {
+            this.logger.info(
+                `Enter the network preset you want to join. If you don't know have the network preset, ask the network admin for the file and nemesis seed. :\n`,
+            );
+            const responses = await prompt([
+                {
+                    name: 'networkPresetFile',
+                    message: 'Enter the network a network:',
+                    type: 'input',
+                    validate(input: string): string | boolean {
+                        const fileLocation = join(workingDir, input);
+                        if (!BootstrapUtils.isYmlFile(fileLocation)) {
+                            return `${fileLocation} is not a yaml file`;
+                        }
+                        if (!existsSync(fileLocation)) {
+                            return `${fileLocation} doesn't exist`;
+                        }
+                        return true;
+                    },
+                    default: networkToPreset[network],
+                },
+            ]);
+            return responses.networkPresetFile;
+        }
+        return networkToPreset[network];
     }
 
     public async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {
@@ -452,17 +488,17 @@ export class Wizard {
         return mode;
     }
 
-    public async resolveAssembly(preset: Preset): Promise<Assembly> {
+    public async resolveAssembly(network: Network): Promise<string> {
         this.logger.info('Select the assembly to be created:\n');
         const responses = await prompt([
             {
                 name: 'assembly',
                 message: 'Select an assembly:',
                 type: 'list',
-                default: assemblies[preset][0].value,
-                choices: assemblies[preset].map(({ value, description }) => ({
+                default: assemblies[network][0],
+                choices: assemblies[network].map((value) => ({
                     value: value,
-                    name: description,
+                    name: assembliesDescriptions[value],
                 })),
             },
         ]);

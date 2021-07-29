@@ -54,7 +54,6 @@ faucets:
       environment:
           DEFAULT_NODE: 'http://rest-gateway:3000'
           DEFAULT_NODE_CLIENT: 'http://localhost:3000'
-          NATIVE_CURRENCY_NAME: '{{baseNamespace}}.{{currencyName}}'
           NATIVE_CURRENCY_OUT_MAX: 500000000
           NATIVE_CURRENCY_OUT_MIN: 100000000
           MAX_FEE: 5000000

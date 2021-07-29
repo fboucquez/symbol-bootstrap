@@ -281,4 +281,31 @@ describe('ReportService', () => {
 
         await assertReport(params, 'bootstrap-voting');
     });
+
+    it('ReportService custom network dual', async () => {
+        const target = 'target/tests/ReportService.customNetwork.dual.report';
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            restDeploymentToolVersion: 'abc',
+            nodes: [
+                {
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    voting: false,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            upgrade: true,
+            workingDir: 'test/customNetwork',
+            preset: 'custom-network-preset.yml',
+            customPresetObject: customPresetObject,
+            assembly: Assembly.dual,
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'custom-network-dual');
+    });
 });
