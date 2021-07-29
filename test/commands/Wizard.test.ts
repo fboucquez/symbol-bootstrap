@@ -28,7 +28,7 @@ export const StdUtils = {
         left: '\u001b[D',
         right: '\u001b[C',
     }),
-    in: (responses: string[]) => {
+    in: (responses: string[]): void => {
         let k = 0;
 
         const s = stdin();

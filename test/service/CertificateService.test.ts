@@ -19,25 +19,10 @@ import { deepStrictEqual } from 'assert';
 import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import * as sshpk from 'sshpk';
-import { Account, Convert, NetworkType } from 'symbol-sdk';
-import {
-    BootstrapUtils,
-    CertificateMetadata,
-    CertificateService,
-    ConfigLoader,
-    ForgeCertificateService,
-    NodeCertificates,
-    Preset,
-} from '../../src/service';
+import { Account, NetworkType } from 'symbol-sdk';
+import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
 
 describe('CertificateService', () => {
-    it('forge create certificate', async () => {
-        await BootstrapUtils.deleteFolder('./target/tests/unitTests');
-        const service = new ForgeCertificateService({ target: './target/tests/unitTests' });
-        await service.run('peer-node');
-    });
-
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;
         const output = BootstrapUtils.loadFileAsText(outputFile);
@@ -52,18 +37,6 @@ describe('CertificateService', () => {
                 publicKey: '5F4F8760D675F6836D4C07576F88B179BFE4471EDFBA4ECD2399C8F1EF02EE71',
             },
         ]);
-    });
-
-    it('parse public key', async () => {
-        const nodeCertKey: any = sshpk.parseKey(
-            '-----BEGIN PUBLIC KEY-----\n' +
-                'MCowBQYDK2VwAyEAxpp0FX4tsApDzLYEAH2MNDItqWk2/fnhwAeTj0cT/qk=\n' +
-                '-----END PUBLIC KEY-----\n',
-            'pem',
-        );
-        const publicKey = Convert.uint8ToHex(nodeCertKey.parts[0].data);
-        expect('C69A74157E2DB00A43CCB604007D8C34322DA96936FDF9E1C007938F4713FEA9').be.eq(publicKey);
-        console.log(publicKey);
     });
 
     it('createCertificates', async () => {
