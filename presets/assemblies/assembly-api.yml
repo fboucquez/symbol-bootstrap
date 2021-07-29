@@ -2,7 +2,7 @@ databases:
     - name: 'db'
       openPort: false
 nodes:
-    - harvesting: true
+    - harvesting: false
       api: true
       name: 'node'
       databaseHost: 'db'
@@ -16,7 +16,7 @@ gateways:
       apiNodeName: 'node'
       apiNodeHost: 'node'
       apiNodeBrokerHost: 'broker'
-      description: 'catapult public test network'
+      description: '{{$networkDescription}}'
       databaseHost: 'db'
       openPort: true
       ipv4_address: 172.20.0.25

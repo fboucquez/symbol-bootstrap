@@ -341,7 +341,7 @@ config-node.properties
     memtableMemoryBudget; 0MB
     maxWriteBatchSize; 5MB
     **localnode**; ; ;
-    host; peer-node-0; string; Node host (leave empty to auto-detect IP).
+    host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-peer-node-0; string; Node friendly name (leave empty to use address).
     version; ; uint32_t; Node version.
     roles; Peer,Voting; ionet::NodeRoles; Node roles.

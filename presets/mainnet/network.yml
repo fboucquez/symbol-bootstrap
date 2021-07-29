@@ -1,4 +1,4 @@
-assemblies: 'api, dual, peer'
+networkDescription: Symbol Mainnet
 baseNamespace: symbol
 batchVerificationRandomSource: /dev/urandom
 currencyMosaicId: 6BED913FA20223F8
@@ -29,7 +29,7 @@ minVotingKeyLifetime: 112
 maxVotingKeyLifetime: 360
 votingKeyDesiredLifetime: 360
 votingKeyDesiredFutureLifetime: 60
-lastKnownNetworkEpoch: 467
+lastKnownNetworkEpoch: 504
 stepDuration: 5m
 maxBlockFutureTime: 300ms
 maxAccountRestrictionValues: 100

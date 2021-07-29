@@ -52,6 +52,18 @@ export enum Preset {
     mainnet = 'mainnet',
 }
 
+export enum Assembly {
+    api = 'api',
+    demo = 'demo',
+    dual = 'dual',
+    multinode = 'multinode',
+    peer = 'peer',
+}
+
+export const defaultAssembly: Record<string, string> = {
+    [Preset.bootstrap]: Assembly.multinode,
+};
+
 export enum KeyName {
     Main = 'Main',
     Remote = 'Remote',
@@ -67,8 +79,9 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
+    workingDir?: string;
     offline?: boolean;
-    preset?: Preset;
+    preset?: string;
     target: string;
     password?: string;
     user: string;
@@ -85,6 +98,7 @@ export interface ConfigResult {
 export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
+        workingDir: BootstrapUtils.defaultWorkingDir,
         report: false,
         offline: false,
         reset: false,
@@ -191,6 +205,7 @@ export class ConfigService {
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
         return this.configLoader.createPresetData({
             ...this.params,
+            workingDir: this.params.workingDir || BootstrapUtils.defaultWorkingDir,
             password: password,
             oldPresetData,
         });

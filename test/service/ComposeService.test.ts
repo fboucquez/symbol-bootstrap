@@ -18,7 +18,7 @@ import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType } from '../../src';
 import { DockerCompose } from '../../src/model';
 import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
@@ -26,7 +26,7 @@ describe('ComposeService', () => {
     const password = '1234';
 
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
-        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params });
+        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params, workingDir: BootstrapUtils.defaultWorkingDir });
         const dockerCompose = await new ComposeService(logger, params).run(presetData);
         Object.values(dockerCompose.services).forEach((service) => {
             if (service.mem_limit) {
@@ -74,7 +74,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         };
         await assertDockerCompose(params, 'expected-testnet-dual-compose.yml');
     });
@@ -87,7 +87,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             preset: Preset.testnet,
-            assembly: 'api',
+            assembly: Assembly.api,
         };
         await assertDockerCompose(params, 'expected-testnet-api-compose.yml');
     });
@@ -100,7 +100,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             preset: Preset.testnet,
-            assembly: 'peer',
+            assembly: Assembly.peer,
         };
         await assertDockerCompose(params, 'expected-testnet-peer-compose.yml');
     });
@@ -113,7 +113,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             preset: Preset.mainnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         };
         await assertDockerCompose(params, 'expected-mainnet-dual-compose.yml');
     });
@@ -126,7 +126,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             preset: Preset.mainnet,
-            assembly: 'api',
+            assembly: Assembly.api,
         };
         await assertDockerCompose(params, 'expected-mainnet-api-compose.yml');
     });
@@ -139,7 +139,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             password,
             reset: false,
             preset: Preset.mainnet,
-            assembly: 'peer',
+            assembly: Assembly.peer,
         };
         await assertDockerCompose(params, 'expected-mainnet-peer-compose.yml');
     });
@@ -153,7 +153,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             customPreset: './test/unit-test-profiles/https-proxy.yml',
             reset: false,
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         };
         await assertDockerCompose(params, 'expected-testnet-httpsproxy-compose.yml');
     });
@@ -167,7 +167,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             customPreset: './test/unit-test-profiles/native-ssl.yml',
             reset: false,
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         };
         await assertDockerCompose(params, 'expected-testnet-native-ssl-compose.yml');
     });
@@ -181,7 +181,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             reset: false,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         };
         await assertDockerCompose(params, 'expected-testnet-voting-compose.yml');
     });
@@ -220,6 +220,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             customPreset: './test/custom_compose_preset.yml',
             reset: false,
             preset: Preset.bootstrap,
+            assembly: Assembly.multinode,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom-compose.yml');
     });
@@ -239,11 +240,12 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             customPreset: './test/custom_preset.yml',
             reset: false,
             preset: Preset.bootstrap,
+            assembly: Assembly.multinode,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
     });
 
-    it('Compose bootstrap full with debug on', async () => {
+    it('Compose bootstrap demo with debug on', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
@@ -255,13 +257,26 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                     },
                 ],
             },
-            target: 'target/tests/ComposeService-bootstrap.full',
+            target: 'target/tests/ComposeService-bootstrap.demo',
             password,
             reset: false,
-            assembly: 'full',
+            assembly: Assembly.demo,
             preset: Preset.bootstrap,
         };
-        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-full.yml');
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-demo.yml');
+    });
+    it('Compose bootstrap dual', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            customPresetObject: {},
+            target: 'target/tests/ComposeService-bootstrap.dual',
+            password,
+            reset: false,
+            assembly: Assembly.dual,
+            preset: Preset.bootstrap,
+        };
+        await assertDockerCompose(params, 'expected-docker-compose-bootstrap-dual.yml');
     });
 
     it('Compose bootstrap repeat', async () => {
@@ -279,6 +294,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             target: 'target/tests/ComposeService-bootstrap.repeat',
             password,
             preset: Preset.bootstrap,
+            assembly: Assembly.multinode,
             customPreset: './test/repeat_preset.yml',
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-repeat.yml');

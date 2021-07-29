@@ -1,7 +1,7 @@
 {
   "network": {
     "name": "mainnet",
-    "description": "catapult public main network"
+    "description": "Symbol Mainnet"
   },
   "port": 3000,
   "protocol": "HTTP",

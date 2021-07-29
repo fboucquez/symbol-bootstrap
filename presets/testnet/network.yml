@@ -1,4 +1,4 @@
-assemblies: 'api, dual, peer'
+networkDescription: Symbol Testnet
 baseNamespace: symbol
 batchVerificationRandomSource: /dev/urandom
 currencyMosaicId: 091F837E059AE13C
@@ -27,7 +27,7 @@ importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
 votingKeyDesiredFutureLifetime: 120
-lastKnownNetworkEpoch: 723
+lastKnownNetworkEpoch: 504
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m
