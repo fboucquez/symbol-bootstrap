@@ -702,9 +702,18 @@ export class ConfigService {
                             'base64',
                         );
                     } else {
-                        console.log(
-                            `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to target/gateways folder.`,
-                        );
+                        if (
+                            !existsSync(join(moveTo, presetData.restSSLKeyFileName)) &&
+                            !existsSync(join(moveTo, presetData.restSSLCertificateFileName))
+                        ) {
+                            logger.warn(
+                                `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to target/gateways folder.`,
+                            );
+                        } else {
+                            logger.info(
+                                `Native SSL certificates for gateway ${gatewayPreset.name} have been previously provided. Reusing...`,
+                            );
+                        }
                     }
                 }
             }),
@@ -824,7 +833,10 @@ export class ConfigService {
         });
         (presetData.gateways || []).forEach(({ name }) => {
             const configFolder = BootstrapUtils.getTargetGatewayFolder(target, false, name);
-            BootstrapUtils.deleteFolder(configFolder);
+            BootstrapUtils.deleteFolder(configFolder, [
+                join(configFolder, presetData.restSSLKeyFileName),
+                join(configFolder, presetData.restSSLCertificateFileName),
+            ]);
         });
     }
 }
