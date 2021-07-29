@@ -6,11 +6,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [1.1.2] - NEXT
 
-**Milestone**: Mainnet(1.0.3.0)
+**Milestone**: Mainnet(1.0.3.1)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.1.2  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- The `bootstrap` preset is not the default anymore. The name must be provided via --preset or as a custom preset field.
+- A 'safe' custom preset is cached in the target folder. It's not required when upgrading the node without a configuration change.
 
 ## [1.1.1] - Nov-16-2021
 

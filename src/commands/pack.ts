@@ -28,16 +28,16 @@ export default class Pack extends Command {
 
     static examples = [
         `$ symbol-bootstrap pack`,
-        `$ symbol-bootstrap pack -p bootstrap -c custom-preset.yml`,
+        `$ symbol-bootstrap pack -c custom-preset.yml`,
         `$ symbol-bootstrap pack -p testnet -a dual -c custom-preset.yml`,
         `$ symbol-bootstrap pack -p mainnet -a dual --password 1234 -c custom-preset.yml`,
-        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -p mainnet -a dual -c custom-preset.yml`,
+        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -c custom-preset.yml`,
     ];
 
     static flags = {
         ...Compose.flags,
         ...Clean.flags,
-        ...Config.resolveFlags(true),
+        ...Config.flags,
         ready: flags.boolean({
             description: 'If --ready is provided, the command will not ask offline confirmation.',
         }),
@@ -46,9 +46,7 @@ export default class Pack extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Pack);
         BootstrapUtils.showBanner();
-        const preset = flags.preset;
-        const assembly = flags.assembly;
-        const targetZip = join(dirname(flags.target), `${preset}-${assembly || 'default'}-node.zip`);
+        const targetZip = join(dirname(flags.target), `symbol-node.zip`);
 
         if (existsSync(targetZip)) {
             throw new Error(
@@ -112,7 +110,7 @@ export default class Pack extends Command {
         await ZipUtils.zip(targetZip, zipItems);
         await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
         console.log();
-        console.log(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
-        console.log(`$ symbol-bootstrap start -p ${preset}${assembly ? ` -a ${assembly}` : ''} -c ${configOnlyCustomPresetFileName}`);
+        console.log(`You can unzip it in your node's machine and run:`);
+        console.log(`$ symbol-bootstrap start`);
     }
 }

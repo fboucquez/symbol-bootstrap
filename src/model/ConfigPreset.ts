@@ -449,6 +449,7 @@ export interface ConfigPreset extends CommonConfigPreset {
     wallets?: WalletPreset[];
     faucets?: FaucetPreset[];
     httpsProxies?: HttpsProxyPreset[];
+    customPresetCache?: CustomPreset;
 }
 
 export interface CustomPreset extends Partial<CommonConfigPreset> {
