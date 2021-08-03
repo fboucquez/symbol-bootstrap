@@ -204,6 +204,7 @@ export default class Wizard extends Command {
                     gateways: [
                         {
                             restProtocol: 'HTTPS',
+                            openPort: 3001,
                             restSSLKeyBase64,
                             restSSLCertificateBase64,
                         },

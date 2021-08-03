@@ -172,6 +172,20 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-testnet-httpsproxy-compose.yml');
     });
 
+    it('Compose testnet native ssl', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/testnet-native-ssl',
+            password,
+            customPreset: './test/unit-test-profiles/native-ssl.yml',
+            reset: false,
+            preset: Preset.testnet,
+            assembly: 'dual',
+        };
+        await assertDockerCompose(params, 'expected-testnet-native-ssl-compose.yml');
+    });
+
     it('Compose testnet dual voting', async () => {
         const params = {
             ...ConfigService.defaultParams,
