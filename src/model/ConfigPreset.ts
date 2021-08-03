@@ -333,7 +333,7 @@ export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfi
     apiNodeHost: string;
     databaseHost: string;
     name: string;
-    httpsProxy?: boolean | number;
+    httpsProxy?: boolean;
 }
 
 export interface HttpsProxyPreset extends DockerServicePreset {

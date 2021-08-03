@@ -315,9 +315,6 @@ export class ComposeService {
                                 } else {
                                     httpsProxyPreset.domains = restGatewayDomains;
                                 }
-                                if (typeof n.httpsProxy === 'number' && httpsProxyPreset.openPort === 3001) {
-                                    httpsProxyPreset.openPort = n.httpsProxy;
-                                }
                             } else {
                                 throw new Error(`HTTPS on ${n.name} is enabled, 'host' property must be set to a valid DNS record.`);
                             }

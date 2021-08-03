@@ -706,8 +706,8 @@ export class ConfigService {
                             !existsSync(join(moveTo, presetData.restSSLKeyFileName)) &&
                             !existsSync(join(moveTo, presetData.restSSLCertificateFileName))
                         ) {
-                            logger.warn(
-                                `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to target/gateways folder.`,
+                            throw new KnownError(
+                                `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to ${moveTo} folder.`,
                             );
                         } else {
                             logger.info(
