@@ -318,7 +318,7 @@ export interface GatewayConfigPreset {
     restDeploymentTool: string;
     restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
     restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
-    restProtocol: string;
+    restProtocol: 'HTTPS' | 'HTTP';
     restSSLPath: string;
     restSSLKeyFileName: string;
     restSSLCertificateFileName: string;
@@ -333,7 +333,6 @@ export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfi
     apiNodeHost: string;
     databaseHost: string;
     name: string;
-    httpsProxy?: boolean;
 }
 
 export interface HttpsProxyPreset extends DockerServicePreset {
@@ -466,5 +465,5 @@ export interface CustomPreset extends Partial<CommonConfigPreset> {
     explorers?: Partial<ExplorerPreset>[];
     wallets?: Partial<WalletPreset>[];
     faucets?: Partial<FaucetPreset>[];
-    httpsProxies?: HttpsProxyPreset[];
+    httpsProxies?: Partial<HttpsProxyPreset>[];
 }

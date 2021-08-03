@@ -236,9 +236,9 @@ describe('Wizard', () => {
                     vrfPrivateKey: '0000000000000000000000000000000000000000000000000000000000000003',
                 },
             ],
-            gateways: [
+            httpsProxies: [
                 {
-                    httpsProxy: true,
+                    excludeDockerService: false,
                 },
             ],
             preset: Preset.mainnet,

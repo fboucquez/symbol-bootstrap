@@ -274,12 +274,11 @@ export class ComposeService {
                     }
                 }),
         );
-
+        const restInternalPort = 3000; // Move to shared?
         await Promise.all(
             (presetData.gateways || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
-                    const internalPort = 3000;
                     const volumes = [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory, false)];
                     services.push(
                         await resolveService(n, {
@@ -289,7 +288,7 @@ export class ComposeService {
                             command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
-                            ports: resolvePorts([{ internalPort: internalPort, openPort: n.openPort }]),
+                            ports: resolvePorts([{ internalPort: restInternalPort, openPort: n.openPort }]),
                             restart: restart,
                             volumes: volumes,
                             depends_on: [n.databaseHost],
@@ -297,29 +296,6 @@ export class ComposeService {
                             ...n.compose,
                         }),
                     );
-                    if (n.httpsProxy) {
-                        if (presetData.httpsProxies?.length) {
-                            if (presetData.nodes?.length && presetData.nodes[0].host) {
-                                const httpsProxyPreset = presetData.httpsProxies[0];
-                                httpsProxyPreset.excludeDockerService = false;
-                                const restGatewayDomains = resolveHttpsProxyDomains(
-                                    presetData.nodes[0].host,
-                                    `http://${n.name}:${internalPort}`,
-                                );
-                                if (httpsProxyPreset.domains) {
-                                    // domains already defined
-                                    if (httpsProxyPreset.domains.indexOf(n.name) < 0) {
-                                        // if rest-gateway not in the domains then add it
-                                        httpsProxyPreset.domains += ',' + restGatewayDomains;
-                                    }
-                                } else {
-                                    httpsProxyPreset.domains = restGatewayDomains;
-                                }
-                            } else {
-                                throw new Error(`HTTPS on ${n.name} is enabled, 'host' property must be set to a valid DNS record.`);
-                            }
-                        }
-                    }
                 }),
         );
 
@@ -328,8 +304,19 @@ export class ComposeService {
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
                     const internalPort = 443;
-
+                    const host = n.host || presetData.nodes?.[0]?.host;
+                    if (!host) {
+                        throw new Error(
+                            `HTTPS Proxy ${n.name} is invalid, 'host' property could not be resolved. It must be set to a valid DNS record.`,
+                        );
+                    }
                     const volumes = [vol(`../${targetGatewaysFolder}/https-proxy`, nodeWorkingDirectory, false)];
+                    const domains: string | undefined =
+                        n.domains ||
+                        presetData.gateways?.map((g) => resolveHttpsProxyDomains(host, `http://${g.name}:${restInternalPort}`))[0];
+                    if (!domains) {
+                        throw new Error(`HTTPS Proxy ${n.name} is invalid, 'domains' property could not be resolved!`);
+                    }
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
@@ -342,7 +329,7 @@ export class ComposeService {
                                 { internalPort: internalPort, openPort: n.openPort },
                             ]),
                             environment: {
-                                DOMAINS: n.domains,
+                                DOMAINS: domains,
                                 WEBSOCKET: n.webSocket,
                                 STAGE: n.stage,
                                 SERVER_NAMES_HASH_BUCKET_SIZE: n.serverNamesHashBucketSize,

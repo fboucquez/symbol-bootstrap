@@ -196,29 +196,35 @@ export default class Wizard extends Command {
             symbolHostNameRequired,
         );
 
-        let gateways;
+        const resolveHttpsCustomPreset = async (): Promise<CustomPreset> => {
+            if (httpsOption === HttpsOption.Native) {
+                const restSSLKeyBase64 = await Wizard.resolveRestSSLKeyAsBase64();
+                const restSSLCertificateBase64 = await Wizard.resolveRestSSLCertAsBase64();
+                return {
+                    gateways: [
+                        {
+                            restProtocol: 'HTTPS',
+                            restSSLKeyBase64,
+                            restSSLCertificateBase64,
+                        },
+                    ],
+                };
+            } else if (httpsOption === HttpsOption.Automatic) {
+                return {
+                    httpsProxies: [
+                        {
+                            excludeDockerService: false,
+                        },
+                    ],
+                };
+            } else {
+                // HttpsOption.None
+                console.log(`Warning! You've chosen to proceed with http, which is less secure in comparison to https.`);
+                return {};
+            }
+        };
 
-        if (httpsOption === HttpsOption.Native) {
-            const restSSLKeyBase64 = await Wizard.resolveRestSSLKeyAsBase64();
-            const restSSLCertificateBase64 = await Wizard.resolveRestSSLCertAsBase64();
-            gateways = [
-                {
-                    restProtocol: 'HTTPS',
-                    restSSLKeyBase64,
-                    restSSLCertificateBase64,
-                },
-            ];
-        } else if (httpsOption === HttpsOption.Automatic) {
-            gateways = [
-                {
-                    httpsProxy: true,
-                },
-            ];
-        } else {
-            // HttpsOption.None
-            console.log(`Warning! You've chosen to proceed with http, which is less secure in comparison to https.`);
-        }
-
+        const httpsCustomPreset = await resolveHttpsCustomPreset();
         const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
         const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
         const voting = await Wizard.isVoting();
@@ -239,8 +245,7 @@ export default class Wizard extends Command {
                     agentPrivateKey: accounts.agent?.privateKey,
                 },
             ],
-
-            ...(gateways ? { gateways } : {}),
+            ...httpsCustomPreset,
         };
 
         const defaultParams = ConfigService.defaultParams;
