@@ -219,5 +219,3 @@ restProtocol: HTTP
 restSSLPath: '/symbol-workdir'
 restSSLKeyFileName: 'restSSL.key'
 restSSLCertificateFileName: 'restSSL.crt'
-restSSLKeyBase64: ''
-restSSLCertificateBase64: ''
