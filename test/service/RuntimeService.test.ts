@@ -25,6 +25,12 @@ describe('RuntimeService', async () => {
         }
     });
 
+    it('exec when invalid ignore error', async () => {
+        const result = await service.exec('wrong!', true);
+        expect(result.stderr.indexOf('wrong!')).not.eq(-1);
+        expect(result.stdout).eq('');
+    });
+
     it('spawn when valid', async () => {
         const response = await service.spawn({ command: 'echo', args: ['ABC'], useLogger: true, logPrefix: '', shell: true });
         expect(response).eq('ABC\n');
