@@ -25,6 +25,7 @@ import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
+import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { PortService } from './PortService';
 /**
@@ -90,9 +91,11 @@ export class RunService {
             logger.info(`Docker compose ${dockerFile} does not exist. Cannot check the status of the service.`);
             return;
         }
+        if (!(await this.checkCertificates())) {
+            throw new Error(`Certificates are about to expire. Check the logs!`);
+        }
         const dockerCompose: DockerCompose = BootstrapUtils.fromYaml(await BootstrapUtils.readTextFile(dockerFile));
         const services = Object.values(dockerCompose.services);
-
         const timeout = this.params.timeout || RunService.defaultParams.timeout || 0;
         const started = await BootstrapUtils.poll(() => this.runOneCheck(services), timeout, pollIntervalMs);
         if (!started) {
@@ -100,6 +103,32 @@ export class RunService {
         } else {
             logger.info('Network is running!');
         }
+    }
+
+    private async checkCertificates(): Promise<boolean> {
+        const presetData = this.configLoader.loadExistingPresetData(this.params.target, false);
+        const service = new CertificateService({ target: this.params.target, user: BootstrapUtils.CURRENT_USER });
+        const allServicesChecks: Promise<boolean>[] = (presetData.nodes || []).map(async (nodePreset) => {
+            const name = nodePreset.name;
+            const certFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
+            const willExpireReport = await service.willCertificateExpire(
+                presetData.symbolServerImage,
+                certFolder,
+                CertificateService.NODE_CERTIFICATE_FILE_NAME,
+                presetData.certificateExpirationWarningInDays,
+            );
+            if (willExpireReport.willExpire) {
+                logger.warn(
+                    `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. You need to renew it.`,
+                );
+            } else {
+                logger.info(
+                    `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire on ${willExpireReport.expirationDate}. No need to renew it yet.`,
+                );
+            }
+            return !willExpireReport.willExpire;
+        });
+        return (await Promise.all(allServicesChecks)).every((t) => t);
     }
 
     private async runOneCheck(services: DockerComposeService[]): Promise<boolean> {

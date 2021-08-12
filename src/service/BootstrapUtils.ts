@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { spawn } from 'child_process';
+import { exec, ExecException, spawn } from 'child_process';
 import { textSync } from 'figlet';
 import {
     createWriteStream,
@@ -34,7 +34,6 @@ import * as _ from 'lodash';
 import { totalmem } from 'os';
 import { basename, dirname, join, resolve } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
-import * as util from 'util';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
@@ -44,8 +43,6 @@ const version = require('../../package.json').version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const exec = util.promisify(require('child_process').exec);
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export type Password = string | false | undefined;
@@ -264,13 +261,14 @@ export class BootstrapUtils {
         return rootFolder;
     }
 
-    public static async runImageUsingExec({
+    public static runImageUsingExec({
         catapultAppFolder,
         image,
         userId,
         workdir,
         cmds,
         binds,
+        ignoreErrors,
     }: {
         catapultAppFolder?: string;
         image: string;
@@ -278,6 +276,7 @@ export class BootstrapUtils {
         workdir?: string;
         cmds: string[];
         binds: string[];
+        ignoreErrors?: boolean;
     }): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
@@ -287,7 +286,7 @@ export class BootstrapUtils {
             .map((a) => `"${a}"`)
             .join(' ')}`;
         logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
-        return await this.exec(runCommand);
+        return this.exec(runCommand, ignoreErrors);
     }
 
     public static toAns1(privateKey: string): string {
@@ -501,10 +500,14 @@ export class BootstrapUtils {
         return (await this.exec(runCommand)).stdout;
     }
 
-    public static async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
+    public static exec(runCommand: string, ignoreErrors?: boolean): Promise<{ stdout: string; stderr: string }> {
         logger.debug(`Exec command: ${runCommand}`);
-        const { stdout, stderr } = await exec(runCommand);
-        return { stdout, stderr };
+        return new Promise((promiseResolve, promiseReject) => {
+            exec(runCommand, (error: ExecException | null, stdout: string, stderr: string) => {
+                if (error && !ignoreErrors) promiseReject(error);
+                else promiseResolve({ stdout, stderr });
+            });
+        });
     }
 
     public static async spawn(command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {

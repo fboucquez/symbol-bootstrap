@@ -23,6 +23,25 @@ import { Account, NetworkType } from 'symbol-sdk';
 import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
 
 describe('CertificateService', () => {
+    const target = 'target/tests/CertificateService.test';
+    const presetData = new ConfigLoader().createPresetData({
+        root: '.',
+        preset: Preset.testnet,
+        assembly: 'dual',
+        password: 'abc',
+    });
+    const networkType = NetworkType.TEST_NET;
+    const keys: NodeCertificates = {
+        main: ConfigLoader.toConfig(
+            Account.createFromPrivateKey('E095162875BB1D98CA5E0941670E01C1B0DBDF86DF7B3BEDA4A93635F8E51A03', networkType),
+        ),
+        transport: ConfigLoader.toConfig(
+            Account.createFromPrivateKey('415F253ABF0FB2DFD39D7F409EFA2E88769873CAEB45617313B98657A1476A15', networkType),
+        ),
+    };
+    const randomSerial = '4C87E5C49034B711E2DA38D116366829DA144B\n'.toLowerCase();
+    const name = 'test-node';
+
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;
         const output = BootstrapUtils.loadFileAsText(outputFile);
@@ -40,26 +59,10 @@ describe('CertificateService', () => {
     });
 
     it('createCertificates', async () => {
-        const target = 'target/tests/CertificateService.test';
-        await BootstrapUtils.deleteFolder(target);
-        const service = new CertificateService('.', { target: target, user: await BootstrapUtils.getDockerUserGroup() });
-        const presetData = new ConfigLoader().createPresetData({
-            root: '.',
-            preset: Preset.bootstrap,
-            password: 'abc',
-        });
-        const networkType = NetworkType.TEST_NET;
-        const keys: NodeCertificates = {
-            main: ConfigLoader.toConfig(
-                Account.createFromPrivateKey('E095162875BB1D98CA5E0941670E01C1B0DBDF86DF7B3BEDA4A93635F8E51A03', networkType),
-            ),
-            transport: ConfigLoader.toConfig(
-                Account.createFromPrivateKey('415F253ABF0FB2DFD39D7F409EFA2E88769873CAEB45617313B98657A1476A15', networkType),
-            ),
-        };
+        BootstrapUtils.deleteFolder(target);
 
-        const randomSerial = '4C87E5C49034B711E2DA38D116366829DA144B\n'.toLowerCase();
-        await service.run(networkType, presetData.symbolServerImage, 'test-node', keys, target, randomSerial);
+        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        await service.run(presetData, name, keys, false, target, randomSerial);
 
         const expectedMetadata: CertificateMetadata = {
             version: 1,
@@ -73,19 +76,12 @@ describe('CertificateService', () => {
             'ca.cert.pem',
             'ca.cnf',
             'ca.pubkey.pem',
-            'index.txt',
-            'index.txt.attr',
-            'index.txt.attr.old',
-            'index.txt.old',
             'metadata.yml',
-            'new_certs',
             'node.cnf',
             'node.crt.pem',
             'node.csr.pem',
             'node.full.crt.pem',
             'node.key.pem',
-            'serial.dat',
-            'serial.dat.old',
         ]);
 
         const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem'];
@@ -96,5 +92,48 @@ describe('CertificateService', () => {
             .forEach((f) => {
                 expect(readFileSync(join(target, f)), `Different fields: ${f}`).deep.eq(readFileSync(join('test', 'nodeCertificates', f)));
             });
+    });
+
+    it('createCertificates expiration warnings', async () => {
+        BootstrapUtils.deleteFolder(target);
+        const nodeCertificateExpirationInDays = presetData.nodeCertificateExpirationInDays;
+        const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
+
+        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        await service.run(presetData, name, keys, false, target, randomSerial);
+
+        async function willExpire(certificateFileName: string, certificateExpirationWarningInDays: number): Promise<boolean> {
+            const report = await service.willCertificateExpire(
+                presetData.symbolServerImage,
+                target,
+                certificateFileName,
+                certificateExpirationWarningInDays,
+            );
+            expect(report.expirationDate.endsWith(' GMT')).eq(true);
+            return report.willExpire;
+        }
+
+        expect(await willExpire(CertificateService.NODE_CERTIFICATE_FILE_NAME, nodeCertificateExpirationInDays - 1)).eq(false);
+        expect(await willExpire(CertificateService.NODE_CERTIFICATE_FILE_NAME, nodeCertificateExpirationInDays + 1)).eq(true);
+        expect(await willExpire(CertificateService.CA_CERTIFICATE_FILE_NAME, caCertificateExpirationInDays - 1)).eq(false);
+        expect(await willExpire(CertificateService.CA_CERTIFICATE_FILE_NAME, caCertificateExpirationInDays + 1)).eq(true);
+    });
+
+    it('create and renew certificates', async () => {
+        const target = 'target/tests/CertificateService.test';
+        BootstrapUtils.deleteFolder(target);
+        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
+
+        // First time generation
+        expect(await service.run({ ...presetData, nodeCertificateExpirationInDays: 10 }, name, keys, true, target)).eq(true);
+
+        //Renew is not required
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 9 }, name, keys, true, target)).eq(false);
+
+        //Renew is required but not auto-upgrade
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, false, target)).eq(false);
+
+        //Renew is required and auto-upgrade
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, true, target)).eq(true);
     });
 });

@@ -271,16 +271,12 @@ export class ConfigService {
 
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
-            (addresses.nodes || []).map(async (account) => {
-                return await new CertificateService(this.root, this.params).run(
-                    presetData.networkType,
-                    presetData.symbolServerImage,
-                    account.name,
-                    {
-                        main: account.main,
-                        transport: account.transport,
-                    },
-                );
+            (addresses.nodes || []).map((account) => {
+                const providedCertificates = {
+                    main: account.main,
+                    transport: account.transport,
+                };
+                return new CertificateService(this.params).run(presetData, account.name, providedCertificates, false);
             }),
         );
     }

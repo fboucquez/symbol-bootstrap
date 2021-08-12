@@ -86,7 +86,9 @@ enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 rewardProgramAgentPort: 7881
 enableRevoteOnBoot: true
-
+caCertificateExpirationInDays: 7300 # 20 years
+nodeCertificateExpirationInDays: 375 # 1.02 years
+certificateExpirationWarningInDays: 30 # certificates are allowed to be renewed 30 before expiring
 # config database
 databaseName: catapult
 maxWriterThreads: 8
