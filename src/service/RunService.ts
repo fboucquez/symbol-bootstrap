@@ -211,7 +211,7 @@ export class RunService {
     }
 
     public async stop(): Promise<void> {
-        const args = ['down'];
+        const args = ['stop'];
         if (await this.beforeRun(args, true)) await this.basicRun(args);
     }
 
