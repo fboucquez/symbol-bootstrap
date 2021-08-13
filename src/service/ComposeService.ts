@@ -310,7 +310,6 @@ export class ComposeService {
                             `HTTPS Proxy ${n.name} is invalid, 'host' property could not be resolved. It must be set to a valid DNS record.`,
                         );
                     }
-                    const volumes = [vol(`../${targetGatewaysFolder}/https-proxy`, nodeWorkingDirectory, false)];
                     const domains: string | undefined =
                         n.domains ||
                         presetData.gateways?.map((g) => resolveHttpsProxyDomains(host, `http://${g.name}:${restInternalPort}`))[0];
@@ -320,10 +319,8 @@ export class ComposeService {
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
-                            // user, // TODO fix the user permissions issue
                             image: presetData.httpsPortalImage,
                             stop_signal: 'SIGINT',
-                            working_dir: nodeWorkingDirectory,
                             ports: resolvePorts([
                                 { internalPort: 80, openPort: true },
                                 { internalPort: internalPort, openPort: n.openPort },
@@ -335,7 +332,6 @@ export class ComposeService {
                                 SERVER_NAMES_HASH_BUCKET_SIZE: n.serverNamesHashBucketSize,
                             },
                             restart: restart,
-                            volumes: volumes,
                             depends_on: [presetData.gateways![0].name],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,

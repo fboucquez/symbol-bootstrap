@@ -71,7 +71,7 @@ symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
 symbolFaucetImage: symbolplatform/symbol-faucet:1.0.1-alpha
 symbolAgentImage: symbolplatform/symbol-node-rewards-agent:2.0.0
 mongoImage: mongo:4.4.3-bionic
-httpsPortalImage: steveltn/https-portal:1
+httpsPortalImage: steveltn/https-portal:1.19
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
