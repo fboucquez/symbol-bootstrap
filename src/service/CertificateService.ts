@@ -81,7 +81,7 @@ export class CertificateService {
                     logger.info(
                         `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. Renewing...`,
                     );
-                    await this.createCertificate(presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
+                    await this.createCertificate(true, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
                     return true;
                 } else {
                     logger.warn(
@@ -96,12 +96,13 @@ export class CertificateService {
                 return false;
             }
         } else {
-            await this.createCertificate(presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
+            await this.createCertificate(false, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
             return true;
         }
     }
 
     private async createCertificate(
+        renew: boolean,
         presetData: CertificateConfigPreset,
         certFolder: string,
         name: string,
@@ -127,10 +128,11 @@ export class CertificateService {
             'generating the server Node certificates',
         );
 
-        BootstrapUtils.deleteFolder(certFolder);
+        if (!renew) {
+            BootstrapUtils.deleteFolder(certFolder);
+        }
+
         await BootstrapUtils.mkdir(certFolder);
-        const newCertsFolder = join(certFolder, 'new_certs');
-        await BootstrapUtils.mkdir(newCertsFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
@@ -141,7 +143,11 @@ export class CertificateService {
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
         );
 
-        const command = this.createCertCommands(presetData.caCertificateExpirationInDays, presetData.nodeCertificateExpirationInDays);
+        const command = this.createCertCommands(
+            renew,
+            presetData.caCertificateExpirationInDays,
+            presetData.nodeCertificateExpirationInDays,
+        );
         await BootstrapUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
 
         const { stdout, stderr } = await this.runOpenSslCommand(
@@ -160,7 +166,7 @@ export class CertificateService {
         if (certificates.length != 2) {
             throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
         }
-        logger.info(`Certificate for node ${name} created`);
+        logger.info(renew ? `Certificate for node ${name} renewed` : `Certificate for node ${name} created`);
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
@@ -194,9 +200,16 @@ export class CertificateService {
         }
     }
 
-    private createCertCommands(caCertificateExpirationInDays: number, nodeCertificateExpirationInDays: number): string {
-        return `set -ex
+    private createCertCommands(renew: boolean, caCertificateExpirationInDays: number, nodeCertificateExpirationInDays: number): string {
+        const createCaCertificate = renew
+            ? `openssl x509 -in ${CertificateService.CA_CERTIFICATE_FILE_NAME}  -text -noout`
+            : `# create CA cert and self-sign it
+    openssl req -config ca.cnf -keyform PEM -key ca.key.pem -new -x509 -days ${caCertificateExpirationInDays} -out ${CertificateService.CA_CERTIFICATE_FILE_NAME}
+    openssl x509 -in ${CertificateService.CA_CERTIFICATE_FILE_NAME}  -text -noout
+    `;
+        return `set -e
 
+mkdir new_certs
 chmod 700 new_certs
 touch index.txt.attr
 touch index.txt
@@ -206,9 +219,7 @@ cat ca.der | openssl pkey -inform DER -outform PEM -out ca.key.pem
 openssl pkey -inform pem -in ca.key.pem -text -noout
 openssl pkey -in ca.key.pem -pubout -out ca.pubkey.pem
 
-# create CA cert and self-sign it
-openssl req -config ca.cnf -keyform PEM -key ca.key.pem -new -x509 -days ${caCertificateExpirationInDays} -out ${CertificateService.CA_CERTIFICATE_FILE_NAME}
-openssl x509 -in ${CertificateService.CA_CERTIFICATE_FILE_NAME}  -text -noout
+${createCaCertificate}
 
 # create node key
 cat node.der | openssl pkey -inform DER -outform PEM -out node.key.pem
