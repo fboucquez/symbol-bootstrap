@@ -65,9 +65,8 @@ services:
                 ipv4_address: 172.20.0.25
     https-proxy:
         container_name: https-proxy
-        image: 'steveltn/https-portal:1'
+        image: 'steveltn/https-portal:1.19'
         stop_signal: SIGINT
-        working_dir: /symbol-workdir
         ports:
             - '80:80'
             - '3001:443'
@@ -77,8 +76,6 @@ services:
             STAGE: production
             SERVER_NAMES_HASH_BUCKET_SIZE: 128
         restart: 'on-failure:2'
-        volumes:
-            - '../gateways/https-proxy:/symbol-workdir:rw'
         depends_on:
             - rest-gateway
 networks:
