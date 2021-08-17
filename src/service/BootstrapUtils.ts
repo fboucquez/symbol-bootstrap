@@ -304,6 +304,8 @@ export class BootstrapUtils {
         // Create a promise that rejects in <ms> milliseconds
         return new Promise<void>((resolve) => {
             setTimeout(() => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
                 resolve();
             }, ms);
         });

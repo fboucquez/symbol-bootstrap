@@ -109,6 +109,10 @@ export class ComposeService {
                 });
         };
 
+        const resolveHttpsProxyDomains = (fromDomain: string, toDomain: string): string => {
+            return `${fromDomain} -> ${toDomain}`;
+        };
+
         const resolveService = async (
             servicePreset: DockerServicePreset,
             rawService: DockerComposeService,
@@ -270,12 +274,11 @@ export class ComposeService {
                     }
                 }),
         );
-
+        const restInternalPort = 3000; // Move to shared?
         await Promise.all(
             (presetData.gateways || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
-                    const internalPort = 3000;
                     const volumes = [vol(`../${targetGatewaysFolder}/${n.name}`, nodeWorkingDirectory, false)];
                     services.push(
                         await resolveService(n, {
@@ -285,10 +288,51 @@ export class ComposeService {
                             command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
-                            ports: resolvePorts([{ internalPort: internalPort, openPort: n.openPort }]),
+                            ports: resolvePorts([{ internalPort: restInternalPort, openPort: n.openPort }]),
                             restart: restart,
                             volumes: volumes,
                             depends_on: [n.databaseHost],
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
+                            ...n.compose,
+                        }),
+                    );
+                }),
+        );
+
+        await Promise.all(
+            (presetData.httpsProxies || [])
+                .filter((d) => !d.excludeDockerService)
+                .map(async (n) => {
+                    const internalPort = 443;
+                    const host = n.host || presetData.nodes?.[0]?.host;
+                    if (!host) {
+                        throw new Error(
+                            `HTTPS Proxy ${n.name} is invalid, 'host' property could not be resolved. It must be set to a valid DNS record.`,
+                        );
+                    }
+                    const domains: string | undefined =
+                        n.domains ||
+                        presetData.gateways?.map((g) => resolveHttpsProxyDomains(host, `http://${g.name}:${restInternalPort}`))[0];
+                    if (!domains) {
+                        throw new Error(`HTTPS Proxy ${n.name} is invalid, 'domains' property could not be resolved!`);
+                    }
+                    services.push(
+                        await resolveService(n, {
+                            container_name: n.name,
+                            image: presetData.httpsPortalImage,
+                            stop_signal: 'SIGINT',
+                            ports: resolvePorts([
+                                { internalPort: 80, openPort: true },
+                                { internalPort: internalPort, openPort: n.openPort },
+                            ]),
+                            environment: {
+                                DOMAINS: domains,
+                                WEBSOCKET: n.webSocket,
+                                STAGE: n.stage,
+                                SERVER_NAMES_HASH_BUCKET_SIZE: n.serverNamesHashBucketSize,
+                            },
+                            restart: restart,
+                            depends_on: [presetData.gateways![0].name],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),

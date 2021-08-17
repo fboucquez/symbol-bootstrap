@@ -65,12 +65,13 @@ maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
 symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.1.0
-symbolRestImage: symbolplatform/symbol-rest:2.3.6
+symbolRestImage: symbolplatform/symbol-rest:2.3.7-alpha
 symbolExplorerImage: symbolplatform/symbol-explorer:1.1.0-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
 symbolFaucetImage: symbolplatform/symbol-faucet:1.0.1-alpha
 symbolAgentImage: symbolplatform/symbol-node-rewards-agent:2.0.0
 mongoImage: mongo:4.4.3-bionic
+httpsPortalImage: steveltn/https-portal:1.19
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -214,3 +215,7 @@ connectionPoolSize: 10
 maxSubscriptions: 300
 restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
 restDeploymentTool: symbol-bootstrap
+restProtocol: HTTP
+restSSLPath: '/symbol-workdir'
+restSSLKeyFileName: 'restSSL.key'
+restSSLCertificateFileName: 'restSSL.crt'

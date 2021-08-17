@@ -28,6 +28,11 @@ services:
         depends_on:
             - db
             - broker
+        networks:
+            default:
+                aliases:
+                    - symbol-node-2.rockbear.io
+        hostname: symbol-node-2.rockbear.io
     broker:
         user: '1000:1000'
         container_name: broker
@@ -49,7 +54,7 @@ services:
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:
-            - '3000:3000'
+            - '3001:3000'
         restart: 'on-failure:2'
         volumes:
             - '../gateways/rest-gateway:/symbol-workdir:rw'

@@ -318,6 +318,12 @@ export interface GatewayConfigPreset {
     restDeploymentTool: string;
     restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
     restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
+    restProtocol: 'HTTPS' | 'HTTP';
+    restSSLPath: string;
+    restSSLKeyFileName: string;
+    restSSLCertificateFileName: string;
+    restSSLKeyBase64?: string;
+    restSSLCertificateBase64?: string;
 }
 
 export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfigPreset> {
@@ -327,6 +333,14 @@ export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfi
     apiNodeHost: string;
     databaseHost: string;
     name: string;
+}
+
+export interface HttpsProxyPreset extends DockerServicePreset {
+    name?: string;
+    domains: string;
+    stage: string;
+    webSocket?: string;
+    serverNamesHashBucketSize?: number;
 }
 
 export interface ExplorerPreset extends DockerServicePreset {
@@ -394,6 +408,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     symbolAgentImage: string;
     symbolRestImage: string;
     symbolFaucetImage: string;
+    httpsPortalImage: string;
 
     dockerComposeVersion: number | string;
     dockerComposeServiceRestart: string;
@@ -439,6 +454,7 @@ export interface ConfigPreset extends CommonConfigPreset {
     explorers?: ExplorerPreset[];
     wallets?: WalletPreset[];
     faucets?: FaucetPreset[];
+    httpsProxies?: HttpsProxyPreset[];
 }
 
 export interface CustomPreset extends Partial<CommonConfigPreset> {
@@ -449,4 +465,5 @@ export interface CustomPreset extends Partial<CommonConfigPreset> {
     explorers?: Partial<ExplorerPreset>[];
     wallets?: Partial<WalletPreset>[];
     faucets?: Partial<FaucetPreset>[];
+    httpsProxies?: Partial<HttpsProxyPreset>[];
 }

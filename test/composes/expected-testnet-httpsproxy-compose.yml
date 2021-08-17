@@ -28,6 +28,11 @@ services:
         depends_on:
             - db
             - broker
+        networks:
+            default:
+                aliases:
+                    - symbol-node-2.rockbear.io
+        hostname: symbol-node-2.rockbear.io
     broker:
         user: '1000:1000'
         container_name: broker
@@ -58,6 +63,21 @@ services:
         networks:
             default:
                 ipv4_address: 172.20.0.25
+    https-proxy:
+        container_name: https-proxy
+        image: 'steveltn/https-portal:1.19'
+        stop_signal: SIGINT
+        ports:
+            - '80:80'
+            - '3001:443'
+        environment:
+            DOMAINS: 'symbol-node-2.rockbear.io -> http://rest-gateway:3000'
+            WEBSOCKET: 'true'
+            STAGE: production
+            SERVER_NAMES_HASH_BUCKET_SIZE: 128
+        restart: 'on-failure:2'
+        depends_on:
+            - rest-gateway
 networks:
     default:
         ipam:

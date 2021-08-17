@@ -4,6 +4,9 @@
     "description": "catapult development network"
   },
   "port": 3000,
+  "protocol": "HTTP",
+  "sslKeyPath": "/symbol-workdir/restSSL.key",
+  "sslCertificatePath": "/symbol-workdir/restSSL.crt",
   "crossDomain": {
     "allowedHosts": [
       "*"

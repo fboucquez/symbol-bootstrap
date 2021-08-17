@@ -692,6 +692,30 @@ export class ConfigService {
                     [],
                     ['node.crt.pem', 'node.key.pem', 'ca.cert.pem'],
                 );
+
+                if (gatewayPreset.restProtocol === 'HTTPS') {
+                    if (gatewayPreset.restSSLKeyBase64 && gatewayPreset.restSSLCertificateBase64) {
+                        fs.writeFileSync(join(moveTo, presetData.restSSLKeyFileName), gatewayPreset.restSSLKeyBase64, 'base64');
+                        fs.writeFileSync(
+                            join(moveTo, presetData.restSSLCertificateFileName),
+                            gatewayPreset.restSSLCertificateBase64,
+                            'base64',
+                        );
+                    } else {
+                        if (
+                            !existsSync(join(moveTo, presetData.restSSLKeyFileName)) &&
+                            !existsSync(join(moveTo, presetData.restSSLCertificateFileName))
+                        ) {
+                            throw new KnownError(
+                                `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to ${moveTo} folder.`,
+                            );
+                        } else {
+                            logger.info(
+                                `Native SSL certificates for gateway ${gatewayPreset.name} have been previously provided. Reusing...`,
+                            );
+                        }
+                    }
+                }
             }),
         );
     }
@@ -809,7 +833,10 @@ export class ConfigService {
         });
         (presetData.gateways || []).forEach(({ name }) => {
             const configFolder = BootstrapUtils.getTargetGatewayFolder(target, false, name);
-            BootstrapUtils.deleteFolder(configFolder);
+            BootstrapUtils.deleteFolder(configFolder, [
+                join(configFolder, presetData.restSSLKeyFileName),
+                join(configFolder, presetData.restSSLCertificateFileName),
+            ]);
         });
     }
 }

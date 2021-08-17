@@ -16,7 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
@@ -39,6 +39,11 @@ export const assemblies: Record<Preset, { value: string; description: string }[]
         { value: 'api', description: 'Api  Node' },
     ],
 };
+export enum HttpsOption {
+    Native = 'Native',
+    Automatic = 'Automatic',
+    None = 'None',
+}
 export enum Network {
     mainnet = 'mainnet',
     testnet = 'testnet',
@@ -123,9 +128,7 @@ export default class Wizard extends Command {
 
         if (!flags.skipPull) {
             const service = await new BootstrapService();
-            console.log();
-            console.log('Pulling catapult tools image before asking to go offline...');
-            console.log();
+            console.log('\nPulling catapult tools image before asking to go offline...\n');
             ConfigLoader.presetInfoLogged = true;
             await BootstrapUtils.pullImage(
                 service.resolveConfigPreset({
@@ -183,13 +186,46 @@ export default class Wizard extends Command {
         console.log();
         console.log();
 
-        const symbolHostRequired = !!rewardProgram;
+        const httpsOption: HttpsOption = await this.resolveHttpsOptions();
+
+        const symbolHostNameRequired = httpsOption !== HttpsOption.None;
         const host = await Wizard.resolveHost(
-            `Enter the public hostname or IP of your future node. ${
-                symbolHostRequired ? 'This value is required when you are in a reward program!' : ''
+            `Enter the public domain name(eg. node-01.mysymbolnodes.com) that's pointing to your outbound host IP ${
+                symbolHostNameRequired ? 'This value is required when you are running on HTTPS!' : ''
             }`,
-            symbolHostRequired,
+            symbolHostNameRequired,
         );
+
+        const resolveHttpsCustomPreset = async (): Promise<CustomPreset> => {
+            if (httpsOption === HttpsOption.Native) {
+                const restSSLKeyBase64 = await Wizard.resolveRestSSLKeyAsBase64();
+                const restSSLCertificateBase64 = await Wizard.resolveRestSSLCertAsBase64();
+                return {
+                    gateways: [
+                        {
+                            restProtocol: 'HTTPS',
+                            openPort: 3001,
+                            restSSLKeyBase64,
+                            restSSLCertificateBase64,
+                        },
+                    ],
+                };
+            } else if (httpsOption === HttpsOption.Automatic) {
+                return {
+                    httpsProxies: [
+                        {
+                            excludeDockerService: false,
+                        },
+                    ],
+                };
+            } else {
+                // HttpsOption.None
+                console.log(`Warning! You've chosen to proceed with http, which is less secure in comparison to https.`);
+                return {};
+            }
+        };
+
+        const httpsCustomPreset = await resolveHttpsCustomPreset();
         const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
         const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
         const voting = await Wizard.isVoting();
@@ -210,7 +246,9 @@ export default class Wizard extends Command {
                     agentPrivateKey: accounts.agent?.privateKey,
                 },
             ],
+            ...httpsCustomPreset,
         };
+
         const defaultParams = ConfigService.defaultParams;
         await BootstrapUtils.writeYaml(customPresetFile, presetContent, password);
         console.log();
@@ -512,6 +550,37 @@ export default class Wizard extends Command {
         return host || undefined;
     }
 
+    public static async resolveRestSSLKeyAsBase64(): Promise<string> {
+        return this.resolveFileContent('base64', 'Enter your SSL key file path:', 'Invalid path, cannot find SSL key file!');
+    }
+
+    public static async resolveRestSSLCertAsBase64(): Promise<string> {
+        return this.resolveFileContent(
+            'base64',
+            'Enter your SSL Certificate file path:',
+            'Invalid path, cannot find SSL certificate file!',
+        );
+    }
+
+    public static async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
+        const { value } = await prompt([
+            {
+                name: 'value',
+                message: message,
+                type: 'input',
+                validate: (value) => {
+                    if (!existsSync(value)) {
+                        return notFoundMessage;
+                    }
+                    return true;
+                },
+            },
+        ]);
+
+        return readFileSync(value, encoding);
+    }
+
+    // TODO Refactor this
     public static isValidHost(input: string): boolean | string {
         if (input.trim() == '') {
             return 'Host is required.';
@@ -545,5 +614,29 @@ export default class Wizard extends Command {
             },
         ]);
         return friendlyName;
+    }
+
+    public static async resolveHttpsOptions(): Promise<HttpsOption> {
+        // TODO work on these messages, should be concise and clearer
+        console.log(
+            'Your REST Gateway should be running on HTTPS (which is a secure protocol) so that it can be recognized by the Symbol Explorer.',
+        );
+        const { value } = await prompt([
+            {
+                name: 'value',
+                message: 'Select your HTTPS setup method:',
+                type: 'list',
+                default: HttpsOption.Native,
+                choices: [
+                    { name: 'Native support, I have the SSL certificate and key.', value: HttpsOption.Native },
+                    {
+                        name: `Automatic, all of your keys and certs will be generated/renewed automatically, using letsencyrpt.`,
+                        value: HttpsOption.Automatic,
+                    },
+                    { name: 'None', value: HttpsOption.None },
+                ],
+            },
+        ]);
+        return value;
     }
 }

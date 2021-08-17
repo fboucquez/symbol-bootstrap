@@ -20,6 +20,7 @@ import { KnownError } from './BootstrapUtils';
 
 export class CryptoUtils {
     private static readonly ENCRYPT_PREFIX = 'ENCRYPTED:';
+    private static readonly ENCRYPTABLE_KEYS = ['privateKey', 'restSSLKeyBase64'];
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static encrypt(value: any, password: string, fieldName?: string): any {
@@ -34,7 +35,7 @@ export class CryptoUtils {
             return _.mapValues(value, (value: any, name: string) => CryptoUtils.encrypt(value, password, name));
         }
 
-        if (this.isPrivateKeyField(value, fieldName)) {
+        if (this.isEncryptableKeyField(value, fieldName)) {
             return CryptoUtils.ENCRYPT_PREFIX + Crypto.encrypt(value, password);
         }
         return value;
@@ -81,7 +82,7 @@ export class CryptoUtils {
                     const isBlacklisted =
                         !blacklistNames.length ||
                         blacklistNames.find((blacklistName) => name.toLowerCase().indexOf(blacklistName.toLowerCase()) > -1);
-                    return !isBlacklisted || !this.isPrivateKeyField(value, name);
+                    return !isBlacklisted || !this.isEncryptableKeyField(value, name);
                 }),
                 (value: any, name: string) => {
                     const isBlacklisted =
@@ -106,7 +107,7 @@ export class CryptoUtils {
         if (_.isObject(value)) {
             return _.mapValues(value, (value: any, name: string) => CryptoUtils.decrypt(value, password, name));
         }
-        if (this.isPrivateKeyField(value, fieldName) && value.startsWith(CryptoUtils.ENCRYPT_PREFIX)) {
+        if (this.isEncryptableKeyField(value, fieldName) && value.startsWith(CryptoUtils.ENCRYPT_PREFIX)) {
             let decryptedValue;
             try {
                 const encryptedValue = value.substring(CryptoUtils.ENCRYPT_PREFIX.length);
@@ -134,13 +135,17 @@ export class CryptoUtils {
         if (_.isObject(value)) {
             return _.sum(Object.entries(value).map(([fieldName, value]) => this.encryptedCount(value, fieldName)));
         }
-        if (this.isPrivateKeyField(value, fieldName) && value.startsWith(CryptoUtils.ENCRYPT_PREFIX)) {
+        if (this.isEncryptableKeyField(value, fieldName) && value.startsWith(CryptoUtils.ENCRYPT_PREFIX)) {
             return 1;
         }
         return 0;
     }
 
-    private static isPrivateKeyField(value: any, fieldName: string | undefined) {
-        return _.isString(value) && fieldName && fieldName.toLowerCase().endsWith('privatekey');
+    private static isEncryptableKeyField(value: any, fieldName: string | undefined) {
+        return (
+            _.isString(value) &&
+            fieldName &&
+            CryptoUtils.ENCRYPTABLE_KEYS.some((key) => fieldName.toLowerCase().endsWith(key.toLowerCase()))
+        );
     }
 }
