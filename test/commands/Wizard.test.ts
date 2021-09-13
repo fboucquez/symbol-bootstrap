@@ -85,7 +85,7 @@ describe('Wizard', () => {
             StdUtils.keys.down, // resolveHttpsOptions select none down 1/2
             StdUtils.keys.down, // resolveHttpsOptions select none down 2/2
             '\n',
-            'myhostname\n',
+            'myhostname.org\n',
             'myfriendlyname\n',
             '\n',
             'y\n', //Voting!
@@ -109,7 +109,7 @@ describe('Wizard', () => {
             nodes: [
                 {
                     friendlyName: 'myfriendlyname',
-                    host: 'myhostname',
+                    host: 'myhostname.org',
                     voting: true,
                     mainPrivateKey: 'AAA3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
                     remotePrivateKey: 'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
@@ -146,7 +146,7 @@ describe('Wizard', () => {
             StdUtils.keys.down, // resolveHttpsOptions select none down 1
             StdUtils.keys.down, // resolveHttpsOptions select none down 2
             '\n',
-            'myhostname\n',
+            'myhostname.org\n',
             'myfriendlyname\n',
             '\n',
             'y\n',
@@ -170,7 +170,7 @@ describe('Wizard', () => {
             nodes: [
                 {
                     friendlyName: 'myfriendlyname',
-                    host: 'myhostname',
+                    host: 'myhostname.org',
                     mainPrivateKey: '0000000000000000000000000000000000000000000000000000000000000001',
                     remotePrivateKey: '0000000000000000000000000000000000000000000000000000000000000004',
                     transportPrivateKey: '0000000000000000000000000000000000000000000000000000000000000002',
@@ -204,7 +204,7 @@ describe('Wizard', () => {
             '\n',
             StdUtils.keys.down, // resolveHttpsOptions select Automatic
             '\n',
-            'myhostname\n',
+            'myhostname.org\n',
             'myfriendlyname\n',
             '\n',
             'y\n',
@@ -230,7 +230,7 @@ describe('Wizard', () => {
             nodes: [
                 {
                     friendlyName: 'myfriendlyname',
-                    host: 'myhostname',
+                    host: 'myhostname.org',
                     mainPrivateKey: '0000000000000000000000000000000000000000000000000000000000000001',
                     remotePrivateKey: '0000000000000000000000000000000000000000000000000000000000000004',
                     transportPrivateKey: '0000000000000000000000000000000000000000000000000000000000000002',
@@ -267,7 +267,7 @@ describe('Wizard', () => {
             '\n',
             '\n',
             '\n', // resolveHttpsOptions select Native
-            'myhostname\n',
+            'myhostname.org\n',
             './test/certificates/restSsl.key\n',
             './test/certificates/restSsl.crt\n',
             'myfriendlyname\n',
@@ -295,7 +295,7 @@ describe('Wizard', () => {
             nodes: [
                 {
                     friendlyName: 'myfriendlyname',
-                    host: 'myhostname',
+                    host: 'myhostname.org',
                     mainPrivateKey: '0000000000000000000000000000000000000000000000000000000000000001',
                     remotePrivateKey: '0000000000000000000000000000000000000000000000000000000000000004',
                     transportPrivateKey: '0000000000000000000000000000000000000000000000000000000000000002',
@@ -318,5 +318,45 @@ describe('Wizard', () => {
         console.log(BootstrapUtils.toYaml(expectedCustomPreset));
         const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
+    });
+
+    describe('isValidHost', () => {
+        // valid cases
+        it('should return true when given hostname is a valid IP address', () => {
+            expect(Wizard.isValidHost('10.10.10.10')).to.be.true;
+        });
+
+        it('should return true when given hostname is a valid domain name', () => {
+            expect(Wizard.isValidHost('example.com')).to.be.true;
+        });
+
+        it('should return true when given hostname is a valid numeric only domain name', () => {
+            expect(Wizard.isValidHost('1000.org')).to.be.true;
+        });
+
+        it('should return true when given hostname is a valid a subdomain', () => {
+            expect(Wizard.isValidHost('mynode.example.com')).to.be.true;
+        });
+
+        it('should return true when given hostname is a valid a subdomain starting with number', () => {
+            expect(Wizard.isValidHost('2.example.com')).to.be.true;
+        });
+
+        // invalid cases
+        it('should return error when given hostname is an invalid IP address', () => {
+            expect(Wizard.isValidHost('256.10.10.10')).to.be.eq("It's not a valid IP or hostname");
+        });
+
+        it('should return error when given hostname does not have an extension', () => {
+            expect(Wizard.isValidHost('example')).to.be.eq("It's not a valid IP or hostname");
+        });
+
+        it('should return error when given hostname is an invalid domain name', () => {
+            expect(Wizard.isValidHost('symbol-harvesting-.org')).to.be.eq("It's not a valid IP or hostname");
+        });
+
+        it('should return error when given hostname is an invalid a subdomain', () => {
+            expect(Wizard.isValidHost('2-.example.com')).to.be.eq("It's not a valid IP or hostname");
+        });
     });
 });
