@@ -42,6 +42,7 @@ blockGenerationTargetTime: 30s
 defaultDynamicFeeMultiplier: 100
 rootNamespaceRentalFeePerBlock: 2
 childNamespaceRentalFee: 100000
+totalVotingBalanceCalculationFix: 402000
 mosaicRentalFee: 500000
 throttlingBurst: 80
 throttlingRate: 60

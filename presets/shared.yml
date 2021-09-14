@@ -64,7 +64,7 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.1.0
+symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.2.0
 symbolRestImage: symbolplatform/symbol-rest:2.3.6
 symbolExplorerImage: symbolplatform/symbol-explorer:0.6.3-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
@@ -86,6 +86,7 @@ enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
 rewardProgramAgentPort: 7881
 enableRevoteOnBoot: true
+totalVotingBalanceCalculationFix: 0
 
 # config database
 databaseName: catapult
@@ -101,7 +102,7 @@ peersApiListLimit: 10
 shortLivedCacheMessageDuration: 10m
 messageSynchronizationMaxResponseSize: 20MB
 finalizationSize: 10000
-finalizationThreshold: 7000
+finalizationThreshold: 6700
 maxHashesPerPoint: 256
 prevoteBlocksMultiple: 4
 nonVotingUnfinalizedBlocksDuration: 8m
@@ -163,9 +164,9 @@ delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
-minPartnerNodeVersion: 1.0.0.0
+minPartnerNodeVersion: 1.0.1.0
 maxPartnerNodeVersion: 1.0.255.255
-serverVersion: 1.0.1.0
+serverVersion: 1.0.2.0
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20
