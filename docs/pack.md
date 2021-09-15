@@ -59,4 +59,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -p mainnet -a dual -c custom-preset.yml
 ```
 
-_See code: [src/commands/pack.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/pack.ts)_
+_See code: [src/commands/pack.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.0/src/commands/pack.ts)_
