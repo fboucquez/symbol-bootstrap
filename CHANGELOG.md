@@ -20,6 +20,16 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Removed unused `forge` service and dependency.
 -   Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
 
+## [1.0.9] - Sep-15-2021
+
+**Milestone**: Mainnet(1.0.2.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.9  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Hot fix `updateVotingKeys` command bug.
+
 ## [1.0.8] - Sep-14-2021
 
 **Milestone**: Mainnet(1.0.2.0)

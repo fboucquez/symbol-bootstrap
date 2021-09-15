@@ -60,7 +60,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         const root = this.config.root;
         const existingPreset = configLoader.loadExistingPresetData(target, password);
         const preset = existingPreset.preset;
-        if (preset) {
+        if (!preset) {
             throw new Error(`Network preset could not be resolved!`);
         }
         // Adds new shared/network properties to the existing preset. This is for upgrades..
