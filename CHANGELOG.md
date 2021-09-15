@@ -4,13 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.8] - NEXT
+## [1.1.0] - NEXT
 
-**Milestone**: Mainnet(1.0.1.0)
+**Milestone**: Mainnet(1.0.2.0)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
-| Symbol Bootstrap | v1.0.8  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+| Symbol Bootstrap | v1.1.0  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 -   Added `wizard` command.
 -   Added `pack` command.
@@ -19,6 +19,18 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Removed unused `sshpk` service and dependency.
 -   Removed unused `forge` service and dependency.
 -   Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
+
+## [1.0.8] - Sep-14-2021
+
+**Milestone**: Mainnet(1.0.2.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.8  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Fixed `updateVotingKeys` command when upgrading from `1.0.6`.
+- Catapult `1.0.2.0` upgrade.
+- Updated `minPartnerNodeVersion` to `1.0.1.0`. Older Catapult clients will be rejected.
 
 ## [1.0.7] - June-22-2021
 

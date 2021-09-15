@@ -86,7 +86,7 @@ config-finalization.properties
     enableVoting; true
     enableRevoteOnBoot; false
     size; 10'000
-    threshold; 7'000
+    threshold; 6'700
     stepDuration; 4m
     shortLivedCacheMessageDuration; 10m
     messageSynchronizationMaxResponseSize; 20MB
@@ -652,6 +652,8 @@ config-network.properties
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
     harvestNetworkFeeSinkAddress; TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
+    **fork_heights**; ; ;
+    totalVotingBalanceCalculationFix; 398'520; uint32_t; Height of fork to fix TotalVotingBalance calculation.
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
@@ -739,7 +741,7 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 1.0.0.0; ;
+    minPartnerNodeVersion; 1.0.1.0; ;
     maxPartnerNodeVersion; 1.0.255.255; ;
     trustedHosts; 127.0.0.1, 172.20.0.25; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1, 172.20.0.25; unordered_set<string>; Networks that should be treated as local.
@@ -755,7 +757,7 @@ config-node.properties
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-    version; 1.0.1.0; uint32_t; Node version.
+    version; 1.0.2.0; uint32_t; Node version.
     roles; Peer,Api,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.

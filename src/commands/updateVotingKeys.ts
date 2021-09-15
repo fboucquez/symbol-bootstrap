@@ -15,10 +15,13 @@
  */
 
 import { Command, flags } from '@oclif/command';
+import { join } from 'path';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
+import { ConfigPreset } from '../model';
 import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
+
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class UpdateVotingKeys extends Command {
@@ -54,7 +57,17 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         const target = flags.target;
         const configLoader = new ConfigLoader();
         const addressesLocation = configLoader.getGeneratedAddressLocation(target);
-        const presetData = configLoader.loadExistingPresetData(target, password);
+        const root = this.config.root;
+        const existingPreset = configLoader.loadExistingPresetData(target, password);
+        const preset = existingPreset.preset;
+        if (preset) {
+            throw new Error(`Network preset could not be resolved!`);
+        }
+        // Adds new shared/network properties to the existing preset. This is for upgrades..
+        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
+        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
+        const presetData = configLoader.mergePresets(sharedPreset, networkPreset, existingPreset) as ConfigPreset;
+
         const addresses = configLoader.loadExistingAddresses(target, password);
         const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
 
