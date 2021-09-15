@@ -653,7 +653,7 @@ config-network.properties
     harvestNetworkFeeSinkAddress; TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
     **fork_heights**; ; ;
-    totalVotingBalanceCalculationFix; 402'000; uint32_t; Height of fork to fix TotalVotingBalance calculation.
+    totalVotingBalanceCalculationFix; 398'520; uint32_t; Height of fork to fix TotalVotingBalance calculation.
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
