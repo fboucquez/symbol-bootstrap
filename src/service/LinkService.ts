@@ -46,6 +46,7 @@ export type LinkParams = {
     useKnownRestGateways: boolean;
     ready?: boolean;
     customPreset?: string;
+    operatingPublicKey?: string;
     removeOldLinked?: boolean; //TEST ONLY!
 };
 
@@ -99,6 +100,7 @@ export class LinkService implements TransactionFactory {
             this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,
+            this.params.operatingPublicKey,
         );
     }
     public async createTransactions({
