@@ -35,18 +35,40 @@ describe('Announce Service', () => {
 
     afterEach(restore);
 
+    const password = '1234';
+    const params = {
+        ...ConfigService.defaultParams,
+        ready: true,
+        target: 'target/tests/testnet-dual',
+        password,
+        reset: false,
+        offline: true,
+        preset: Preset.testnet,
+        customPresetObject: {
+            lastKnownNetworkEpoch: 1,
+            nodeUseRemoteAccount: true,
+            nodes: [
+                {
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        },
+        assembly: 'dual',
+    };
+
     const url = 'http://localhost:3000';
     const maxFee = 2_000_000;
     const useKnownRestGateways = false;
     const networkType = NetworkType.TEST_NET;
     const epochAdjustment = 1_616_694_977;
     const networkGenerationHash = '3B5E1FA6445653C971A50687E75E6D09FB30481055E3990C84B25E9222DC1155';
-    const mainPublicKey = '97F7A7D4BBDDE72A892179749C2F12B53C07B86E8FAE048B3E83067FCB63B938';
+    const mainPublicKey = Account.createFromPrivateKey(params.customPresetObject.nodes[0].mainPrivateKey, networkType).publicKey;
+
     const operatingAccount = Account.createFromPrivateKey('6A9A60768C36769C2D756B0CE4DEE3C50CCE2B08A60CFA259289AA4D2706F3C5', networkType);
     const cosigner1 = Account.createFromPrivateKey('41C0163B6A057A4E7B6264AC5BB36C44E0245F8552242BF6A163617C4D616ED3', networkType);
     const cosigner2 = Account.createFromPrivateKey('2FBDC1419F22BC049F6E869B144778277C5930D8D07D55E99ADD2282399FDCF5', networkType);
     const currencyMosaicId = new MosaicId('091F837E059AE13C');
-    const password = '1234';
 
     const singleTransactionFactory = {
         createTransactions(): Promise<Transaction[]> {
@@ -93,20 +115,12 @@ describe('Announce Service', () => {
             Promise.resolve(({
                 repositoryFactory: {
                     getNetworkType() {
-                        return {
-                            toPromise() {
-                                return Promise.resolve(networkType);
-                            },
-                        };
+                        return of(networkType);
                     },
                     createTransactionRepository: stub(),
                     createReceiptRepository: stub(),
                     getEpochAdjustment() {
-                        return {
-                            toPromise() {
-                                return Promise.resolve(epochAdjustment);
-                            },
-                        };
+                        return of(epochAdjustment);
                     },
                     createListener() {
                         return {
@@ -115,48 +129,32 @@ describe('Announce Service', () => {
                         };
                     },
                     getCurrencies() {
-                        return {
-                            toPromise() {
-                                return Promise.resolve({
-                                    currency: new Currency({
-                                        mosaicId: currencyMosaicId,
-                                        divisibility: 6,
-                                        transferable: true,
-                                        supplyMutable: false,
-                                        restrictable: false,
-                                    }),
-                                });
-                            },
-                        };
+                        return of({
+                            currency: new Currency({
+                                mosaicId: currencyMosaicId,
+                                divisibility: 6,
+                                transferable: true,
+                                supplyMutable: false,
+                                restrictable: false,
+                            }),
+                        });
                     },
                     createNetworkRepository() {
                         return {
                             getTransactionFees() {
-                                return {
-                                    toPromise() {
-                                        return { minFeeMultiplier: 10 };
-                                    },
-                                };
+                                return of({ minFeeMultiplier: 10 });
                             },
                         };
                     },
                     createChainRepository() {
                         return {
                             getChainInfo() {
-                                return {
-                                    toPromise() {
-                                        return { latestFinalizedBlock: 10 };
-                                    },
-                                };
+                                return of({ latestFinalizedBlock: 10 });
                             },
                         };
                     },
                     getGenerationHash() {
-                        return {
-                            toPromise() {
-                                return Promise.resolve(networkGenerationHash);
-                            },
-                        };
+                        return of(networkGenerationHash);
                     },
                 },
             } as unknown) as RepositoryInfo),
@@ -167,21 +165,6 @@ describe('Announce Service', () => {
                 mosaics: [new Mosaic(currencyMosaicId, UInt64.fromUint(100_000_000))],
             }),
         );
-    };
-
-    const params = {
-        ...ConfigService.defaultParams,
-        ready: true,
-        target: 'target/tests/testnet-dual',
-        password,
-        reset: false,
-        offline: true,
-        preset: Preset.testnet,
-        customPresetObject: {
-            lastKnownNetworkEpoch: 1,
-            nodeUseRemoteAccount: true,
-        },
-        assembly: 'dual',
     };
 
     it('Main account regular - Announces simple transaction when single transaction given', async () => {
