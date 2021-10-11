@@ -158,7 +158,7 @@ export class AnnounceService {
             const mainAccount = PublicAccount.createFromPublicKey(nodeAccount.main.publicKey, presetData.networkType);
             if (operatingPublicKey) {
                 logger.info(
-                    `The Operating Account[public key:${operatingPublicKey}] is creating transactions on behalf of your node account[public key:${mainAccount.publicKey}].  Signers and cosigners may see a warning when signing the transactions on the Wallets!`,
+                    `The Operating Account[public key: ${operatingPublicKey}] is creating transactions on behalf of your node account[public key: ${mainAccount.publicKey}].  Signers and cosigners may see a warning when signing the transactions on the Wallets!`,
                 );
             }
             const operatingPublicAccount = operatingPublicKey
@@ -275,7 +275,7 @@ export class AnnounceService {
                         defaultMaxFee,
                     ).toAggregate(account.publicAccount);
 
-                const announced = await this.announceAggregateBonded(
+                await this.announceAggregateBonded(
                     signerAccount,
                     () => [...transactions.map((t) => t.toAggregate(mainAccount)), zeroAmountInnerTransaction(operatingAccount)],
                     requiredCosignatures,
@@ -292,9 +292,6 @@ export class AnnounceService {
                     ready,
                     nodeAccount.name,
                 );
-                if (!announced) {
-                    continue;
-                }
             } else {
                 if (multisigAccountInfo) {
                     const bestCosigner = await this.getMultisigBestCosigner(
@@ -312,7 +309,7 @@ export class AnnounceService {
                     logger.info(`Cosigner ${bestCosigner.address.plain()} is initializing the transactions.`);
                     if (cosigners.length >= multisigAccountInfo.minApproval) {
                         //agg complete
-                        const announced = await this.announceAggregateComplete(
+                        await this.announceAggregateComplete(
                             bestCosigner,
                             () => transactions.map((t) => t.toAggregate(mainAccount)),
                             deadline,
@@ -329,12 +326,9 @@ export class AnnounceService {
                             cosigners.length - 1,
                             cosigners,
                         );
-                        if (!announced) {
-                            continue;
-                        }
                     } else {
                         //agg bonded
-                        const announced = await this.announceAggregateBonded(
+                        await this.announceAggregateBonded(
                             bestCosigner,
                             () => transactions.map((t) => t.toAggregate(mainAccount)),
                             multisigAccountInfo.minApproval,
@@ -351,14 +345,11 @@ export class AnnounceService {
                             ready,
                             nodeAccount.name,
                         );
-                        if (!announced) {
-                            continue;
-                        }
                     }
                 } else {
                     const signerAccount = await resolveMainAccount();
                     if (transactions.length == 1) {
-                        const announced = await this.announceSimple(
+                        await this.announceSimple(
                             signerAccount,
                             transactions[0],
                             providedMaxFee,
@@ -370,11 +361,8 @@ export class AnnounceService {
                             ready,
                             nodeAccount.name,
                         );
-                        if (!announced) {
-                            continue;
-                        }
                     } else {
-                        const announced = await this.announceAggregateComplete(
+                        await this.announceAggregateComplete(
                             signerAccount,
                             () => transactions.map((t) => t.toAggregate(mainAccount)),
                             deadline,
@@ -390,9 +378,6 @@ export class AnnounceService {
                             nodeAccount.name,
                             0,
                         );
-                        if (!announced) {
-                            continue;
-                        }
                     }
                 }
             }
@@ -534,7 +519,7 @@ export class AnnounceService {
         let lockFundsTransaction: Transaction = LockFundsTransaction.create(
             deadline,
             currency.createRelative(10),
-            UInt64.fromUint(1000),
+            UInt64.fromUint(5760),
             signedAggregateTransaction,
             networkType,
             defaultMaxFee,
