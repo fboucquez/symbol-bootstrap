@@ -143,10 +143,6 @@ export class AnnounceService {
             logger.info(`Node's minFeeMultiplier is ${minFeeMultiplier}`);
         }
 
-        if (operatingPublicKey) {
-            logger.info(`Operating public key is ${operatingPublicKey}`);
-        }
-
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
         if (generationHash?.toUpperCase() !== presetData.nemesisGenerationHashSeed?.toUpperCase()) {
             throw new Error(
@@ -160,6 +156,11 @@ export class AnnounceService {
             }
             const nodePreset = (presetData.nodes || [])[index];
             const mainAccount = PublicAccount.createFromPublicKey(nodeAccount.main.publicKey, presetData.networkType);
+            if (operatingPublicKey) {
+                logger.info(
+                    `The Operating Account[public key:${operatingPublicKey}] is creating transactions on behalf of your node account[public key:${mainAccount.publicKey}].  Signers and cosigners may see a warning when signing the transactions on the Wallets!`,
+                );
+            }
             const operatingPublicAccount = operatingPublicKey
                 ? PublicAccount.createFromPublicKey(operatingPublicKey, presetData.networkType)
                 : undefined;
