@@ -143,6 +143,10 @@ export class AnnounceService {
             logger.info(`Node's minFeeMultiplier is ${minFeeMultiplier}`);
         }
 
+        if (operatingPublicKey) {
+            logger.info(`Operating public key is ${operatingPublicKey}`);
+        }
+
         const generationHash = await repositoryFactory.getGenerationHash().toPromise();
         if (generationHash?.toUpperCase() !== presetData.nemesisGenerationHashSeed?.toUpperCase()) {
             throw new Error(
@@ -682,7 +686,7 @@ export class AnnounceService {
                 ])
             ).value;
         if (!response) {
-            logger.info(`Ignoring transaction for node ${nodeName}`);
+            logger.info(`Ignoring transaction for node[${nodeName}]`);
         }
         return response;
     }

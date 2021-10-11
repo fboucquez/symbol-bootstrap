@@ -100,6 +100,7 @@ export class LinkService implements TransactionFactory {
             this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,
+            'some',
             this.params.operatingPublicKey,
         );
     }
