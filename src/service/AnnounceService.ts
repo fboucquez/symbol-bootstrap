@@ -156,14 +156,18 @@ export class AnnounceService {
             }
             const nodePreset = (presetData.nodes || [])[index];
             const mainAccount = PublicAccount.createFromPublicKey(nodeAccount.main.publicKey, presetData.networkType);
-            if (operatingPublicKey) {
-                logger.info(
-                    `The Operating Account[public key: ${operatingPublicKey}] is creating transactions on behalf of your node account[public key: ${mainAccount.publicKey}].  Signers and cosigners may see a warning when signing the transactions on the Wallets!`,
-                );
-            }
             const operatingPublicAccount = operatingPublicKey
                 ? PublicAccount.createFromPublicKey(operatingPublicKey, presetData.networkType)
                 : undefined;
+            if (operatingPublicAccount) {
+                logger.info(
+                    `The Operating Account ${CommandUtils.formatAccount(
+                        operatingPublicAccount,
+                    )} is creating transactions on behalf of your node account ${CommandUtils.formatAccount(
+                        mainAccount,
+                    )}.  Signers and cosigners may see a warning when signing the transactions on the Wallets!`,
+                );
+            }
             const announcerPublicAccount = operatingPublicAccount ? operatingPublicAccount : mainAccount;
             const noFundsMessage = faucetUrl
                 ? `Does your node signing address have any network coin? Send ${tokenAmount} tokens to ${announcerPublicAccount.address.plain()} via ${faucetUrl}/?recipient=${announcerPublicAccount.address.plain()}`
@@ -171,12 +175,16 @@ export class AnnounceService {
             const announcerAccountInfo = await this.getAccountInfo(repositoryFactory, announcerPublicAccount.address);
 
             if (!announcerAccountInfo) {
-                logger.error(`Node signing account ${announcerPublicAccount.address.plain()} is not valid. \n\n${noFundsMessage}`);
+                logger.error(
+                    `Node signing account ${CommandUtils.formatAccount(announcerPublicAccount)} is not valid. \n\n${noFundsMessage}`,
+                );
                 continue;
             }
             if (this.isAccountEmpty(announcerAccountInfo, currencyMosaicId)) {
                 logger.error(
-                    `Node signing account ${announcerPublicAccount.address.plain()} does not have enough currency. Mosaic id: ${currencyMosaicId}. \n\n${noFundsMessage}`,
+                    `Node signing account ${CommandUtils.formatAccount(
+                        announcerPublicAccount,
+                    )} does not have enough currency. Mosaic id: ${currencyMosaicId}. \n\n${noFundsMessage}`,
                 );
                 continue;
             }
@@ -185,7 +193,7 @@ export class AnnounceService {
                 ? announcerAccountInfo
                 : await this.getAccountInfo(repositoryFactory, mainAccount.address);
             if (!mainAccountInfo) {
-                logger.error(`Main account ${mainAccount.address.plain()} is not valid. \n\n${noFundsMessage}`);
+                logger.error(`Main account ${CommandUtils.formatAccount(mainAccount)} is not valid. \n\n${noFundsMessage}`);
                 continue;
             }
 
@@ -232,19 +240,8 @@ export class AnnounceService {
             const cosigners: Account[] = [];
 
             if (operatingPublicAccount) {
-                // ask for operatingAccount private key
-                const operatingAccount = Account.createFromPrivateKey(
-                    await CommandUtils.resolvePrivateKey(
-                        networkType,
-                        operatingPublicAccount,
-                        KeyName.Operating,
-                        '',
-                        'signing a transaction',
-                    ),
-                    networkType,
-                );
-                let signerAccount: Account = operatingAccount;
-                let requiredCosignatures = 1; // mainAccount
+                let signerAccount: Account;
+                let requiredCosignatures = 1; // for mainAccount
                 if (multisigAccountInfo) {
                     const bestCosigner = await this.getMultisigBestCosigner(
                         multisigAccountInfo,
@@ -258,14 +255,26 @@ export class AnnounceService {
                         logger.info(`There is no cosigner with enough tokens to announce!`);
                         continue;
                     }
-                    logger.info(`Cosigner ${bestCosigner.address.plain()} is initializing the transactions.`);
+                    logger.info(`Cosigner ${CommandUtils.formatAccount(bestCosigner.publicAccount)} is initializing the transactions.`);
                     signerAccount = bestCosigner; // override with a cosigner when multisig
                     requiredCosignatures = multisigAccountInfo.minApproval;
+                } else {
+                    // ask for operatingAccount private key
+                    signerAccount = Account.createFromPrivateKey(
+                        await CommandUtils.resolvePrivateKey(
+                            networkType,
+                            operatingPublicAccount,
+                            KeyName.Operating,
+                            '',
+                            'signing a transaction',
+                        ),
+                        networkType,
+                    );
                 }
                 const mainMultisigAccountInfo = await this.getMultisigAccount(repositoryFactory, mainAccount.address);
                 requiredCosignatures += mainMultisigAccountInfo?.minApproval || 0; // mainAccount.minApproval
 
-                const zeroAmountInnerTransaction = (account: Account): Transaction =>
+                const zeroAmountInnerTransaction = (account: PublicAccount): Transaction =>
                     TransferTransaction.create(
                         deadline,
                         account.address, // self transfer
@@ -273,11 +282,11 @@ export class AnnounceService {
                         PlainMessage.create(''),
                         networkType,
                         defaultMaxFee,
-                    ).toAggregate(account.publicAccount);
+                    ).toAggregate(account);
 
                 await this.announceAggregateBonded(
                     signerAccount,
-                    () => [...transactions.map((t) => t.toAggregate(mainAccount)), zeroAmountInnerTransaction(operatingAccount)],
+                    () => [...transactions.map((t) => t.toAggregate(mainAccount)), zeroAmountInnerTransaction(operatingPublicAccount)],
                     requiredCosignatures,
                     deadline,
                     networkType,
@@ -306,7 +315,7 @@ export class AnnounceService {
                         logger.info(`There is no cosigner with enough tokens to announce!`);
                         continue;
                     }
-                    logger.info(`Cosigner ${bestCosigner.address.plain()} is initializing the transactions.`);
+                    logger.info(`Cosigner ${CommandUtils.formatAccount(bestCosigner.publicAccount)} is initializing the transactions.`);
                     if (cosigners.length >= multisigAccountInfo.minApproval) {
                         //agg complete
                         await this.announceAggregateComplete(
@@ -684,7 +693,7 @@ export class AnnounceService {
         networkType: NetworkType,
         repositoryFactory: RepositoryFactory,
         currencyMosaicId: MosaicId | undefined,
-    ) {
+    ): Promise<Account | undefined> {
         logger.info(
             `${accountName} is a multisig account with Address: ${
                 msigAccountInfo.minApproval
@@ -696,7 +705,7 @@ export class AnnounceService {
         );
         cosigners.push(...(await this.promptAccounts(networkType, msigAccountInfo.cosignatoryAddresses, msigAccountInfo.minApproval)));
         if (!cosigners.length) {
-            return null;
+            return undefined;
         }
         return await this.getBestCosigner(repositoryFactory, cosigners, currencyMosaicId);
     }

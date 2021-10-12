@@ -332,7 +332,7 @@ describe('Announce Service', () => {
                 [
                     match({ signer: { publicKey: mainPublicKey } }),
                     match({ signer: { publicKey: mainPublicKey } }),
-                    match({ signer: { publicKey: bestCosigner.publicKey } }),
+                    match({ signer: { publicKey: operatingAccount.publicKey } }),
                 ],
                 match.any,
             ),
