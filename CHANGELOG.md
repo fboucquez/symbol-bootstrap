@@ -16,6 +16,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 -   Added `pack` command.
 -   Explorer `1.1.0` upgrade.
 -   Faucet `1.0.1` upgrade.
+-   Removed node reward support.
 -   Removed unused `sshpk` service and dependency.
 -   Removed unused `forge` service and dependency.
 -   Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`

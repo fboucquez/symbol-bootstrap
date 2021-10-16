@@ -35,7 +35,6 @@ import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
-import { AgentCertificateService } from './AgentCertificateService';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
@@ -44,7 +43,6 @@ import { CryptoUtils } from './CryptoUtils';
 import { NemgenService } from './NemgenService';
 import { RemoteNodeService } from './RemoteNodeService';
 import { ReportService } from './ReportService';
-import { RewardProgramService } from './RewardProgramService';
 import { VotingService } from './VotingService';
 
 /**
@@ -62,7 +60,6 @@ export enum KeyName {
     Transport = 'Transport',
     Voting = 'Voting',
     VRF = 'VRF',
-    Agent = 'Agent',
     NemesisSigner = 'Nemesis Signer',
     NemesisAccount = 'Nemesis Account',
 }
@@ -157,7 +154,6 @@ export class ConfigService {
 
             this.cleanUpConfiguration(presetData);
             await this.generateNodeCertificates(presetData, addresses);
-            await this.generateAgentCertificates(presetData, addresses);
             await this.generateNodes(presetData, addresses);
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData);
@@ -285,23 +281,6 @@ export class ConfigService {
         );
     }
 
-    private async generateAgentCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
-        await Promise.all(
-            (addresses.nodes || []).map(async (account, index) => {
-                const node = presetData.nodes?.[index];
-                if (node?.rewardProgram && account.agent)
-                    await new AgentCertificateService(this.root, this.params).run(
-                        presetData.networkType,
-                        presetData.symbolServerImage,
-                        account.name,
-                        {
-                            agent: account.agent,
-                        },
-                    );
-            }),
-        );
-    }
-
     private async generateNodeConfiguration(
         account: NodeAccount,
         index: number,
@@ -354,29 +333,6 @@ export class ConfigService {
         }
         if (!templateContext.networkheight) {
             excludeFiles.push('config-networkheight.properties');
-        }
-
-        if (nodePreset.rewardProgram) {
-            if (!nodePreset.host) {
-                throw new Error(
-                    `Cannot create reward program configuration. You need to provide a host field in preset: ${nodePreset.name}`,
-                );
-            }
-            const restService = presetData.gateways?.find((g) => g.apiNodeName == nodePreset.name);
-            if (!restService) {
-                throw new Error(
-                    `Cannot create reward program configuration. There is not rest gateway for the api node: ${nodePreset.name}`,
-                );
-            }
-
-            const rewardProgram = RewardProgramService.getRewardProgram(nodePreset.rewardProgram);
-            templateContext.restGatewayUrl = nodePreset.restGatewayUrl || `http://${restService.host || nodePreset.host}:3000`;
-            templateContext.rewardProgram = rewardProgram;
-            templateContext.serverVersion = nodePreset.serverVersion || presetData.serverVersion;
-            templateContext.mainPublicKey = account.main.publicKey;
-            const copyFrom = join(this.root, 'config', 'agent');
-            const agentConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'agent');
-            await BootstrapUtils.generateConfiguration(templateContext, copyFrom, agentConfig, []);
         }
 
         const serverRecoveryConfig = {
@@ -807,7 +763,7 @@ export class ConfigService {
         const restNodes: string[] = [];
         presetData.gateways?.forEach((restService) => {
             const nodePreset = presetData.nodes?.find((g) => g.name == restService.apiNodeName);
-            restNodes.push(nodePreset?.restGatewayUrl || `http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
+            restNodes.push(`http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
         });
         if (presetData.knownRestGateways) {
             restNodes.push(...presetData.knownRestGateways);
