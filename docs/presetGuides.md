@@ -331,7 +331,7 @@ If this is you case, you can tell Bootstrap to not store these keys with the `pr
 The `privateKeySecurityMode` defines which Private Keys can be encrypted and stored in the `target/addresses.yml`:
 -   `ENCRYPT`: All private Keys are encrypted and stored in the target's `addresses.yml` file. Bootstrap will have them to be used when required. This is Bootstrap's default behaviour.
 -   `PROMPT_MAIN`: Main Private Keys are not stored in the target's `addresses.yml` file. Bootstrap will prompt for the Main Private Key when generating certificates, or transactions need to be signed in the `link` and `enrolProgram` commands.
--   `PROMPT_MAIN_TRANSPORT`: Main and transport private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` and `enrolProgram` commands. The transport private key will be asked when upgrading supernode agents.
+-   `PROMPT_MAIN_TRANSPORT`: Main and transport private keys are not stored in the target's `addresses.yml` file. Bootstrap will request the main private key when certificates are generated, or transactions need to be signed by the `link` commands.
 -   `PROMPT_ALL`: No Private Key is stored in the target's `addresses.yml` file. Bootstrap will prompt for the Private Keys when they are required in the different commands.
 
 When using the `PROMPT` security modes Bootstrap may ask for private keys when running the different commands. This may not be suitable for automatic scripting.

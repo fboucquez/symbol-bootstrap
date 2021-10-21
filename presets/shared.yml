@@ -69,7 +69,6 @@ symbolRestImage: symbolplatform/symbol-rest:2.3.7-alpha
 symbolExplorerImage: symbolplatform/symbol-explorer:1.1.0-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
 symbolFaucetImage: symbolplatform/symbol-faucet:1.0.1-alpha
-symbolAgentImage: symbolplatform/symbol-node-rewards-agent:2.0.0
 mongoImage: mongo:4.4.3-bionic
 httpsPortalImage: steveltn/https-portal:1.19
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
@@ -85,7 +84,6 @@ dataDirectory: ./data
 votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
-rewardProgramAgentPort: 7881
 enableRevoteOnBoot: true
 totalVotingBalanceCalculationFix: 0
 

@@ -144,20 +144,6 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-mainnet-peer-compose.yml');
     });
 
-    it('Compose testnet supernode', async () => {
-        const params = {
-            ...ConfigService.defaultParams,
-            ...LinkService.defaultParams,
-            target: 'target/tests/testnet-supernode',
-            password,
-            customPreset: './test/unit-test-profiles/supernode.yml',
-            reset: false,
-            preset: Preset.testnet,
-            assembly: 'dual',
-        };
-        await assertDockerCompose(params, 'expected-testnet-supernode-compose.yml');
-    });
-
     it('Compose testnet httpsProxy', async () => {
         const params = {
             ...ConfigService.defaultParams,

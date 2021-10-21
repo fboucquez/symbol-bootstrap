@@ -1,6 +1,5 @@
 // created from 'create-ts-index'
 
-export * from './AgentCertificateService';
 export * from './AnnounceService';
 export * from './BootstrapService';
 export * from './BootstrapUtils';
@@ -15,7 +14,6 @@ export * from './NemgenService';
 export * from './PortService';
 export * from './RemoteNodeService';
 export * from './ReportService';
-export * from './RewardProgramService';
 export * from './RunService';
 export * from './VerifyService';
 export * from './VotingService';
