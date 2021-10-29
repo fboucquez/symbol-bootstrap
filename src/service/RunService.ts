@@ -15,7 +15,6 @@
  */
 
 import { chmodSync, existsSync } from 'fs';
-import * as https from 'https';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
@@ -143,41 +142,6 @@ export class RunService {
                                 return true;
                             } catch (e) {
                                 logger.warn(`Rest ${testUrl} is NOT up and running YET: ${e.message}`);
-                                return false;
-                            }
-                        }
-                        if (service.container_name.indexOf('node-agent') > -1) {
-                            const url = 'https://localhost:' + externalPort;
-
-                            const testUrl = `${url}/metadata`;
-                            logger.info(`Testing ${testUrl}`);
-                            try {
-                                const response = await new Promise<string>((resolve, reject) => {
-                                    try {
-                                        const req = https.request(testUrl, { rejectUnauthorized: false, timeout: 1000 }, (res) => {
-                                            let str = '';
-                                            res.on('data', (chunk) => {
-                                                str += chunk;
-                                            });
-
-                                            res.on('end', () => {
-                                                resolve(str);
-                                            });
-                                        });
-                                        req.on('error', reject);
-                                        req.end();
-                                    } catch (e) {
-                                        reject(e);
-                                    }
-                                });
-                                const metadata = JSON.parse(response);
-                                if (metadata.authorized || !metadata.rewardProgram || !metadata.mainPublicKey) {
-                                    throw new Error(`Invalid response ${response}`);
-                                }
-                                logger.info(`Agent ${testUrl} is up and running...`);
-                                return true;
-                            } catch (e) {
-                                logger.warn(`Agent ${testUrl} is NOT up and running YET: ${e.message}`);
                                 return false;
                             }
                         }

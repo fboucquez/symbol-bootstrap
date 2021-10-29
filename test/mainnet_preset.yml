@@ -1,5 +1,3 @@
 privateKeySecurityMode: ENCRYPT
 nodes:
     - voting: true
-      rewardProgram: 'supernode'
-      host: mySuperNodeHostName

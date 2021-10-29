@@ -15,7 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Preset, RewardProgram } from '../service';
+import { Preset } from '../service';
 import { NodeType } from './NodeType';
 
 export enum PrivateKeySecurityMode {
@@ -248,7 +248,6 @@ export interface NodeConfigPreset {
     maxProofSize: number;
     maxTransactionsPerBlock: number;
     localNetworks: string;
-    rewardProgramAgentPort: number;
 }
 
 export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPreset> {
@@ -276,9 +275,6 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
 
-    agentPrivateKey?: string;
-    agentPublicKey?: string;
-
     //Broker specific
     brokerName?: string;
     brokerHost?: string;
@@ -287,17 +283,6 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     brokerExcludeDockerService?: boolean;
     brokerCompose?: any;
     brokerDockerComposeDebugMode?: boolean;
-
-    //Reward program
-    rewardProgram?: RewardProgram;
-    rewardProgramAgentIpv4_address?: string;
-    rewardProgramAgentOpenPort?: boolean | number | string;
-    rewardProgramAgentExcludeDockerService?: boolean;
-    rewardProgramAgentCompose?: any;
-    rewardProgramAgentHost?: string;
-    rewardProgramAgentDockerComposeDebugMode?: boolean;
-    agentUrl?: string; //calculated if not provided.
-    restGatewayUrl?: string; // calculated if not provided;
 }
 
 export interface GatewayConfigPreset {
@@ -405,7 +390,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     symbolWalletImage: string;
     symbolServerImage: string;
     symbolExplorerImage: string;
-    symbolAgentImage: string;
     symbolRestImage: string;
     symbolFaucetImage: string;
     httpsPortalImage: string;
@@ -432,7 +416,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     // This next 2 would be removed in a later merge.
     currencyName?: string;
     harvestingName?: string;
-    rewardProgramEnrollmentAddress?: string;
     networkType: NetworkType;
     votingKeyDesiredLifetime: number;
     votingKeyDesiredFutureLifetime: number; // How in the future voting key files need to be generated. By default, 1 months before expiring..

@@ -235,43 +235,6 @@ export class ComposeService {
                             ),
                         );
                     }
-
-                    if (n.rewardProgram) {
-                        const volumes = [vol(`../${targetNodesFolder}/${n.name}/agent`, nodeWorkingDirectory, false)];
-
-                        const rewardProgramAgentCommand = `/app/agent-linux.bin --config agent.properties`;
-                        services.push(
-                            await resolveService(
-                                {
-                                    ipv4_address: n.rewardProgramAgentIpv4_address,
-                                    openPort: n.rewardProgramAgentOpenPort,
-                                    excludeDockerService: n.rewardProgramAgentExcludeDockerService,
-                                    host: n.rewardProgramAgentHost,
-                                },
-                                {
-                                    user: user,
-                                    container_name: n.name + '-agent',
-                                    image: presetData.symbolAgentImage,
-                                    working_dir: nodeWorkingDirectory,
-                                    entrypoint: rewardProgramAgentCommand,
-                                    ports: resolvePorts([
-                                        {
-                                            internalPort: n.rewardProgramAgentPort || presetData.rewardProgramAgentPort,
-                                            openPort: _.isUndefined(n.rewardProgramAgentOpenPort) ? true : n.rewardProgramAgentOpenPort,
-                                        },
-                                    ]),
-                                    stop_signal: 'SIGINT',
-                                    restart: restart,
-                                    volumes: volumes,
-                                    ...this.resolveDebugOptions(
-                                        presetData.dockerComposeDebugMode,
-                                        n.rewardProgramAgentDockerComposeDebugMode,
-                                    ),
-                                    ...n.rewardProgramAgentCompose,
-                                },
-                            ),
-                        );
-                    }
                 }),
         );
         const restInternalPort = 3000; // Move to shared?

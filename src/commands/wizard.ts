@@ -20,7 +20,7 @@ import { existsSync, readFileSync } from 'fs';
 import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
-import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset, RewardProgram } from '../service';
+import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
 
 export const assemblies: Record<Preset, { value: string; description: string }[]> = {
     [Preset.bootstrap]: [
@@ -56,7 +56,6 @@ export interface ProvidedAccounts {
     remote: Account;
     vrf: Account;
     transport: Account;
-    agent?: Account;
 }
 
 export const networkToPreset: Record<Network, Preset> = {
@@ -147,7 +146,7 @@ export default class Wizard extends Command {
                 await prompt([
                     {
                         name: 'offlineNow',
-                        message: `Symbol Bootstrap is about to start working with sensitive information (private keys or mnemonic phrases) so it is highly recommended that you disconnect from the network before continuing. Say YES if you are offline or if you don't care.`,
+                        message: `Symbol Bootstrap is about to start working with sensitive information (private keys) so it is highly recommended that you disconnect from the network before continuing. Say YES if you are offline or if you don't care.`,
                         type: 'confirm',
                         default: true,
                     },
@@ -171,10 +170,8 @@ export default class Wizard extends Command {
             false,
         );
 
-        const rewardProgram = assembly === 'dual' ? await Wizard.resolveRewardProgram() : undefined;
-
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await Wizard.resolveAllAccounts(networkType, rewardProgram);
+        const accounts = await Wizard.resolveAllAccounts(networkType);
 
         console.log();
         console.log(`These are your node's accounts:`);
@@ -182,7 +179,6 @@ export default class Wizard extends Command {
         Wizard.logAccount(accounts.vrf, KeyName.VRF, false);
         Wizard.logAccount(accounts.remote, KeyName.Remote, false);
         Wizard.logAccount(accounts.transport, KeyName.Transport, false);
-        Wizard.logAccount(accounts.agent, KeyName.Agent, false);
         console.log();
         console.log();
 
@@ -238,12 +234,10 @@ export default class Wizard extends Command {
                     host: host,
                     voting: voting,
                     friendlyName: friendlyName,
-                    rewardProgram: rewardProgram,
                     mainPrivateKey: accounts.main.privateKey,
                     vrfPrivateKey: accounts.vrf.privateKey,
                     remotePrivateKey: accounts.remote.privateKey,
                     transportPrivateKey: accounts.transport.privateKey,
-                    agentPrivateKey: accounts.agent?.privateKey,
                 },
             ],
             ...httpsCustomPreset,
@@ -295,12 +289,6 @@ export default class Wizard extends Command {
         console.log('To complete the registration, you need to link your keys (online):');
         console.log();
         console.log(`$ symbol-bootstrap link --useKnownRestGateways -c ${customPresetFile}`);
-        if (rewardProgram == RewardProgram.SuperNode) {
-            console.log();
-            console.log('To enroll to the supernode program, run (online):');
-            console.log();
-            console.log(`$ symbol-bootstrap enrollRewardProgram  --useKnownRestGateways -c ${customPresetFile}`);
-        }
         console.log();
     }
     public static logAccount<T extends Account | PublicAccount | undefined>(account: T, keyName: KeyName, showPrivateKeys: boolean): T {
@@ -312,7 +300,7 @@ export default class Wizard extends Command {
         return account as T;
     }
 
-    private static async resolveAllAccounts(networkType: NetworkType, rewardProgram: RewardProgram | undefined): Promise<ProvidedAccounts> {
+    private static async resolveAllAccounts(networkType: NetworkType): Promise<ProvidedAccounts> {
         console.log();
         return {
             seeded: true,
@@ -332,13 +320,6 @@ export default class Wizard extends Command {
                 KeyName.Remote,
                 'It is used to harvest and collect the rewards on behalf of the main account in remote harvesting.',
             ),
-            agent: rewardProgram
-                ? await this.resolveAccountFromSelection(
-                      networkType,
-                      KeyName.Agent,
-                      'It is used to create TLS certificates request for the Controller to Agent communication.',
-                  )
-                : undefined,
         };
     }
 
@@ -447,12 +428,12 @@ export default class Wizard extends Command {
                 choices: [
                     {
                         name:
-                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted. Recommended for Supernodes.',
+                            'PROMPT_MAIN: Bootstrap may ask for the Main private key when doing certificates upgrades. Other keys are encrypted.',
                         value: PrivateKeySecurityMode.PROMPT_MAIN,
                     },
                     {
                         name:
-                            'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates and agent configuration. Other keys are encrypted. Recommended for regular nodes',
+                            'PROMPT_MAIN_TRANSPORT: Bootstrap may ask for the Main and Transport private keys when regenerating certificates. Other keys are encrypted. Recommended for most nodes',
                         value: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
                     },
                     { name: 'ENCRYPT: All keys are encrypted, only password would be asked', value: PrivateKeySecurityMode.ENCRYPT },
@@ -504,33 +485,6 @@ export default class Wizard extends Command {
 
     public static getCustomPresetFile(): IOptionFlag<string> {
         return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
-    }
-
-    public static async resolveRewardProgram(): Promise<RewardProgram | undefined> {
-        const { value } = await prompt([
-            {
-                name: 'value',
-                message: 'Select your Symbol Reward Program:',
-                type: 'list',
-                default: 'None',
-                choices: [
-                    { name: 'None. Just a standard node.', value: 'None' },
-                    { name: RewardProgram.SuperNode, value: RewardProgram.SuperNode },
-                    {
-                        name: RewardProgram.EarlyAdoption + ' (only if you have pre-enrolled using the Nis1 Transfer transaction)',
-                        value: RewardProgram.EarlyAdoption,
-                    },
-                    {
-                        name: RewardProgram.Ecosystem + ' (only if you have pre-enrolled using the Nis1 Transfer transaction)',
-                        value: RewardProgram.Ecosystem,
-                    },
-                ],
-            },
-        ]);
-        if (value === 'None') {
-            return undefined;
-        }
-        return value;
     }
 
     public static async resolveHost(message: string, required: boolean): Promise<string> {

@@ -19,7 +19,7 @@ import { stdin } from 'mock-stdin';
 import { Account, NetworkType } from 'symbol-sdk';
 import Wizard, { Network } from '../../src/commands/wizard';
 import { CustomPreset, PrivateKeySecurityMode } from '../../src/model';
-import { BootstrapUtils, Preset, RewardProgram } from '../../src/service';
+import { BootstrapUtils, Preset } from '../../src/service';
 
 export const StdUtils = {
     keys: Object.freeze({
@@ -62,8 +62,6 @@ describe('Wizard', () => {
             '\n',
             StdUtils.keys.down,
             '\n',
-            StdUtils.keys.down,
-            '\n',
             'AAA3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
             'y\n',
             StdUtils.keys.down,
@@ -77,10 +75,6 @@ describe('Wizard', () => {
             StdUtils.keys.down,
             '\n',
             'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
-            'y\n',
-            StdUtils.keys.down,
-            '\n',
-            'EEE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1\n',
             'y\n',
             StdUtils.keys.down, // resolveHttpsOptions select none down 1/2
             StdUtils.keys.down, // resolveHttpsOptions select none down 2/2
@@ -115,8 +109,6 @@ describe('Wizard', () => {
                     remotePrivateKey: 'DDD3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
                     transportPrivateKey: 'BBB3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
                     vrfPrivateKey: 'CCC3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
-                    agentPrivateKey: 'EEE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
-                    rewardProgram: RewardProgram.SuperNode,
                 },
             ],
             preset: Preset.mainnet,
@@ -138,7 +130,6 @@ describe('Wizard', () => {
         StdUtils.in([
             '\n',
             'y\n', //Are you offline.
-            '\n',
             '\n',
             '\n',
             '\n',
@@ -197,7 +188,6 @@ describe('Wizard', () => {
         StdUtils.in([
             '\n',
             'y\n', //Are you offline.
-            '\n',
             '\n',
             '\n',
             '\n',
