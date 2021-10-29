@@ -94,9 +94,9 @@ export class AnnounceService {
             description: `This command uses the encrypted addresses.yml to resolve the main private key. If the main private is only stored in the custom preset, you can provide it using this param. Otherwise, the command may ask for it when required.`,
             required: false,
         }),
-        operatingPublicKey: flags.string({
+        serviceProviderPublicKey: flags.string({
             description:
-                'Public key of the operating account, used when the transaction announcer(operating account) is different than the main account private key holder',
+                'Public key of the service provider account, used when the transaction announcer(service provider account) is different than the main account private key holder',
         }),
     };
 
@@ -110,7 +110,7 @@ export class AnnounceService {
         addresses: Addresses,
         transactionFactory: TransactionFactory,
         tokenAmount = 'some',
-        operatingPublicKey?: string,
+        serviceProviderPublicKey?: string,
     ): Promise<void> {
         AnnounceService.onProcessListener();
         if (!presetData.nodes || !presetData.nodes?.length) {
@@ -156,22 +156,20 @@ export class AnnounceService {
             }
             const nodePreset = (presetData.nodes || [])[index];
             const mainAccount = PublicAccount.createFromPublicKey(nodeAccount.main.publicKey, presetData.networkType);
-            const operatingPublicAccount = operatingPublicKey
-                ? PublicAccount.createFromPublicKey(operatingPublicKey, presetData.networkType)
+            const serviceProviderPublicAccount = serviceProviderPublicKey
+                ? PublicAccount.createFromPublicKey(serviceProviderPublicKey, presetData.networkType)
                 : undefined;
-            if (operatingPublicAccount) {
+            if (serviceProviderPublicAccount) {
                 logger.info(
-                    `The Operating Account ${CommandUtils.formatAccount(
-                        operatingPublicAccount,
-                    )} is creating transactions on behalf of your node account ${CommandUtils.formatAccount(
-                        mainAccount,
-                    )}.  Signers and cosigners may see a warning when signing the transactions on the Wallets!`,
+                    `The Service Provider Account ${CommandUtils.formatAccount(
+                        serviceProviderPublicAccount,
+                    )} is creating transactions on behalf of your node account ${CommandUtils.formatAccount(mainAccount)}.`,
                 );
             }
-            const announcerPublicAccount = operatingPublicAccount ? operatingPublicAccount : mainAccount;
+            const announcerPublicAccount = serviceProviderPublicAccount ? serviceProviderPublicAccount : mainAccount;
             const noFundsMessage = faucetUrl
-                ? `Does your node signing address have any network coin? Send ${tokenAmount} tokens to ${announcerPublicAccount.address.plain()} via ${faucetUrl}/?recipient=${announcerPublicAccount.address.plain()}`
-                : `Does your node signing address have any network coin? Send ${tokenAmount} tokens to ${announcerPublicAccount.address.plain()} .`;
+                ? `Your account does not have enough XYM to complete this transaction. Send ${tokenAmount} tokens to ${announcerPublicAccount.address.plain()} via ${faucetUrl}/?recipient=${announcerPublicAccount.address.plain()}`
+                : `Your account does not have enough XYM to complete this transaction. Send ${tokenAmount} tokens to ${announcerPublicAccount.address.plain()} .`;
             const announcerAccountInfo = await this.getAccountInfo(repositoryFactory, announcerPublicAccount.address);
 
             if (!announcerAccountInfo) {
@@ -239,14 +237,14 @@ export class AnnounceService {
 
             const cosigners: Account[] = [];
 
-            if (operatingPublicAccount) {
+            if (serviceProviderPublicAccount) {
                 let signerAccount: Account;
                 let requiredCosignatures = 1; // for mainAccount
                 if (multisigAccountInfo) {
                     const bestCosigner = await this.getMultisigBestCosigner(
                         multisigAccountInfo,
                         cosigners,
-                        'Operating account',
+                        'Service provider account',
                         networkType,
                         repositoryFactory,
                         currencyMosaicId,
@@ -259,12 +257,12 @@ export class AnnounceService {
                     signerAccount = bestCosigner; // override with a cosigner when multisig
                     requiredCosignatures = multisigAccountInfo.minApproval;
                 } else {
-                    // ask for operatingAccount private key
+                    // ask for serviceProviderAccount private key
                     signerAccount = Account.createFromPrivateKey(
                         await CommandUtils.resolvePrivateKey(
                             networkType,
-                            operatingPublicAccount,
-                            KeyName.Operating,
+                            serviceProviderPublicAccount,
+                            KeyName.ServiceProvider,
                             '',
                             'signing a transaction',
                         ),
@@ -286,7 +284,10 @@ export class AnnounceService {
 
                 await this.announceAggregateBonded(
                     signerAccount,
-                    () => [...transactions.map((t) => t.toAggregate(mainAccount)), zeroAmountInnerTransaction(operatingPublicAccount)],
+                    () => [
+                        ...transactions.map((t) => t.toAggregate(mainAccount)),
+                        zeroAmountInnerTransaction(serviceProviderPublicAccount),
+                    ],
                     requiredCosignatures,
                     deadline,
                     networkType,

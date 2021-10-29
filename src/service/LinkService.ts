@@ -46,7 +46,7 @@ export type LinkParams = {
     useKnownRestGateways: boolean;
     ready?: boolean;
     customPreset?: string;
-    operatingPublicKey?: string;
+    serviceProviderPublicKey?: string;
     removeOldLinked?: boolean; //TEST ONLY!
 };
 
@@ -101,7 +101,7 @@ export class LinkService implements TransactionFactory {
             addresses,
             this,
             'some',
-            this.params.operatingPublicKey,
+            this.params.serviceProviderPublicKey,
         );
     }
     public async createTransactions({

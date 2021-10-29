@@ -65,7 +65,10 @@ describe('Announce Service', () => {
     const networkGenerationHash = '3B5E1FA6445653C971A50687E75E6D09FB30481055E3990C84B25E9222DC1155';
     const mainPublicKey = Account.createFromPrivateKey(params.customPresetObject.nodes[0].mainPrivateKey, networkType).publicKey;
 
-    const operatingAccount = Account.createFromPrivateKey('6A9A60768C36769C2D756B0CE4DEE3C50CCE2B08A60CFA259289AA4D2706F3C5', networkType);
+    const serviceProviderAccount = Account.createFromPrivateKey(
+        '6A9A60768C36769C2D756B0CE4DEE3C50CCE2B08A60CFA259289AA4D2706F3C5',
+        networkType,
+    );
     const cosigner1 = Account.createFromPrivateKey('41C0163B6A057A4E7B6264AC5BB36C44E0245F8552242BF6A163617C4D616ED3', networkType);
     const cosigner2 = Account.createFromPrivateKey('2FBDC1419F22BC049F6E869B144778277C5930D8D07D55E99ADD2282399FDCF5', networkType);
     const currencyMosaicId = new MosaicId('091F837E059AE13C');
@@ -247,13 +250,13 @@ describe('Announce Service', () => {
         expect(tsAnnounce.calledOnceWith(match({ signerPublicKey: bestCosigner.publicKey }), match.any)).to.be.true;
     });
 
-    it('Operating account regular - Announces aggregate bonded', async () => {
+    it('Service provider account regular - Announces aggregate bonded', async () => {
         const transactionFactory = multipleTransactionFactory;
 
         const { addresses, presetData } = await new BootstrapService().config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
-        stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(operatingAccount.privateKey));
+        stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(serviceProviderAccount.privateKey));
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const tsAnnounceBonded = stub(TransactionService.prototype, 'announceAggregateBonded').returns(of({} as AggregateTransaction));
         const announceAggregateBonded = spy(announceService, <any>'announceAggregateBonded');
@@ -268,26 +271,26 @@ describe('Announce Service', () => {
             addresses,
             transactionFactory,
             'some',
-            operatingAccount.publicKey,
+            serviceProviderAccount.publicKey,
         );
 
         expect(announceAggregateBonded.called).to.be.true;
-        expect(tsAnnounce.calledOnceWith(match({ signerPublicKey: operatingAccount.publicKey }), match.any)).to.be.true;
-        expect(tsAnnounceBonded.calledOnceWith(match({ signerPublicKey: operatingAccount.publicKey }), match.any)).to.be.true;
+        expect(tsAnnounce.calledOnceWith(match({ signerPublicKey: serviceProviderAccount.publicKey }), match.any)).to.be.true;
+        expect(tsAnnounceBonded.calledOnceWith(match({ signerPublicKey: serviceProviderAccount.publicKey }), match.any)).to.be.true;
         expect(
             createBonded.calledWith(
                 match.any,
                 [
                     match({ signer: { publicKey: mainPublicKey } }),
                     match({ signer: { publicKey: mainPublicKey } }),
-                    match({ signer: { publicKey: operatingAccount.publicKey } }),
+                    match({ signer: { publicKey: serviceProviderAccount.publicKey } }),
                 ],
                 match.any,
             ),
         ).to.be.true;
     });
 
-    it('Operating account multisig - Announces aggregate bonded', async () => {
+    it('Service provider account multisig - Announces aggregate bonded', async () => {
         const transactionFactory = multipleTransactionFactory;
         const cosigns = [cosigner1, cosigner2];
         const bestCosigner = cosigner1;
@@ -320,7 +323,7 @@ describe('Announce Service', () => {
             addresses,
             transactionFactory,
             'some',
-            operatingAccount.publicKey,
+            serviceProviderAccount.publicKey,
         );
 
         expect(announceAggregateBonded.called).to.be.true;
@@ -332,7 +335,7 @@ describe('Announce Service', () => {
                 [
                     match({ signer: { publicKey: mainPublicKey } }),
                     match({ signer: { publicKey: mainPublicKey } }),
-                    match({ signer: { publicKey: operatingAccount.publicKey } }),
+                    match({ signer: { publicKey: serviceProviderAccount.publicKey } }),
                 ],
                 match.any,
             ),

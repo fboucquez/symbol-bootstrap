@@ -65,7 +65,7 @@ export enum KeyName {
     Agent = 'Agent',
     NemesisSigner = 'Nemesis Signer',
     NemesisAccount = 'Nemesis Account',
-    Operating = 'Operating',
+    ServiceProvider = 'Service Provider',
 }
 
 export interface ConfigParams {
