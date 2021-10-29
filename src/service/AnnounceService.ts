@@ -53,7 +53,7 @@ export interface TransactionFactoryParams {
     presetData: ConfigPreset;
     nodePreset: NodePreset;
     nodeAccount: NodeAccount;
-    mainAccountInfo: AccountInfo;
+    mainAccountInfo?: AccountInfo; // the main account is brand new. It's likely that the service provider account it's being used.
     mainAccount: PublicAccount;
     deadline: Deadline;
     target: string;
@@ -191,8 +191,7 @@ export class AnnounceService {
                 ? announcerAccountInfo
                 : await this.getAccountInfo(repositoryFactory, mainAccount.address);
             if (!mainAccountInfo) {
-                logger.error(`Main account ${CommandUtils.formatAccount(mainAccount)} is not valid. \n\n${noFundsMessage}`);
-                continue;
+                logger.info(`Main account ${CommandUtils.formatAccount(mainAccount)} is brand new. There are no records on the chain yet.`);
             }
 
             const defaultMaxFee = UInt64.fromUint(providedMaxFee || 0);
