@@ -46,6 +46,7 @@ export type LinkParams = {
     useKnownRestGateways: boolean;
     ready?: boolean;
     customPreset?: string;
+    serviceProviderPublicKey?: string;
     removeOldLinked?: boolean; //TEST ONLY!
 };
 
@@ -56,7 +57,7 @@ const logger: Logger = LoggerFactory.getLogger(LogType.System);
 export interface LinkServiceTransactionFactoryParams {
     presetData: ConfigPreset;
     nodeAccount: NodeAccount;
-    mainAccountInfo: AccountInfo;
+    mainAccountInfo?: AccountInfo;
     deadline: Deadline;
     maxFee: UInt64;
     latestFinalizedBlockEpoch?: number;
@@ -99,6 +100,8 @@ export class LinkService implements TransactionFactory {
             this.configLoader.mergePresets(presetData, customPreset),
             addresses,
             this,
+            'some',
+            this.params.serviceProviderPublicKey,
         );
     }
     public async createTransactions({
@@ -110,6 +113,7 @@ export class LinkService implements TransactionFactory {
         latestFinalizedBlockEpoch,
     }: LinkServiceTransactionFactoryParams): Promise<Transaction[]> {
         const networkType = presetData.networkType;
+        const mainAccountAddress = nodeAccount.main.address;
         const nodeName = nodeAccount.name;
 
         const remoteTransactionFactory = ({ publicKey }: KeyAccount, action: LinkAction): AccountKeyLinkTransaction =>
@@ -129,13 +133,13 @@ export class LinkService implements TransactionFactory {
             );
         };
 
-        logger.info(`Creating transactions for node: ${nodeName}, ca/main account: ${mainAccountInfo.address.plain()}`);
+        logger.info(`Creating transactions for node: ${nodeName}, ca/main account: ${mainAccountAddress}`);
         const transactions = await new LinkTransactionGenericFactory(this.params).createGenericTransactions(
             nodeName,
             {
-                vrf: mainAccountInfo.supplementalPublicKeys.vrf,
-                remote: mainAccountInfo.supplementalPublicKeys.linked,
-                voting: mainAccountInfo.supplementalPublicKeys.voting,
+                vrf: mainAccountInfo?.supplementalPublicKeys.vrf,
+                remote: mainAccountInfo?.supplementalPublicKeys.linked,
+                voting: mainAccountInfo?.supplementalPublicKeys.voting || [],
             },
             nodeAccount,
             latestFinalizedBlockEpoch || presetData.lastKnownNetworkEpoch,

@@ -62,6 +62,7 @@ export enum KeyName {
     VRF = 'VRF',
     NemesisSigner = 'Nemesis Signer',
     NemesisAccount = 'Nemesis Account',
+    ServiceProvider = 'Service Provider',
 }
 
 export interface ConfigParams {
