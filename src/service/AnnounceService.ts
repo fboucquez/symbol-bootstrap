@@ -358,7 +358,7 @@ export class AnnounceService {
                 } else {
                     const signerAccount = await resolveMainAccount();
                     if (transactions.length == 1) {
-                        if (transactions[0] instanceof MultisigAccountModificationTransaction) {
+                        if (transactions[0].type === TransactionType.MULTISIG_ACCOUNT_MODIFICATION) {
                             const multisigModificationTx = transactions[0] as MultisigAccountModificationTransaction;
                             await this.announceAggregateBonded(
                                 signerAccount,
