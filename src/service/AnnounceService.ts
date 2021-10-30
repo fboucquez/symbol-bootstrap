@@ -28,6 +28,7 @@ import {
     Mosaic,
     MosaicId,
     MultisigAccountInfo,
+    MultisigAccountModificationTransaction,
     NetworkType,
     PlainMessage,
     PublicAccount,
@@ -45,7 +46,7 @@ import LoggerFactory from '../logger/LoggerFactory';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
-import { RemoteNodeService } from './RemoteNodeService';
+import { TransactionUtils } from './TransactionUtils';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -119,8 +120,7 @@ export class AnnounceService {
         }
         const url = providedUrl.replace(/\/$/, '');
         const urls = (useKnownRestGateways && presetData.knownRestGateways) || [url];
-        const repositoryInfo = await new RemoteNodeService().getBestRepositoryInfo(urls);
-        const repositoryFactory = repositoryInfo.repositoryFactory;
+        const repositoryFactory = await TransactionUtils.getRepositoryFactory(urls);
         const networkType = await repositoryFactory.getNetworkType().toPromise();
         const transactionRepository = repositoryFactory.createTransactionRepository();
         const transactionService = new TransactionService(transactionRepository, repositoryFactory.createReceiptRepository());
@@ -195,7 +195,7 @@ export class AnnounceService {
             }
 
             const defaultMaxFee = UInt64.fromUint(providedMaxFee || 0);
-            const multisigAccountInfo = await this.getMultisigAccount(repositoryFactory, announcerPublicAccount.address);
+            const multisigAccountInfo = await TransactionUtils.getMultisigAccount(repositoryFactory, announcerPublicAccount.address);
             const params: TransactionFactoryParams = {
                 presetData,
                 nodePreset,
@@ -268,7 +268,7 @@ export class AnnounceService {
                         networkType,
                     );
                 }
-                const mainMultisigAccountInfo = await this.getMultisigAccount(repositoryFactory, mainAccount.address);
+                const mainMultisigAccountInfo = await TransactionUtils.getMultisigAccount(repositoryFactory, mainAccount.address);
                 requiredCosignatures += mainMultisigAccountInfo?.minApproval || 0; // mainAccount.minApproval
 
                 const zeroAmountInnerTransaction = (account: PublicAccount): Transaction =>
@@ -358,18 +358,39 @@ export class AnnounceService {
                 } else {
                     const signerAccount = await resolveMainAccount();
                     if (transactions.length == 1) {
-                        await this.announceSimple(
-                            signerAccount,
-                            transactions[0],
-                            providedMaxFee,
-                            minFeeMultiplier,
-                            generationHash,
-                            currency,
-                            transactionService,
-                            listener,
-                            ready,
-                            nodeAccount.name,
-                        );
+                        if (transactions[0] instanceof MultisigAccountModificationTransaction) {
+                            const multisigModificationTx = transactions[0] as MultisigAccountModificationTransaction;
+                            await this.announceAggregateBonded(
+                                signerAccount,
+                                () => transactions.map((t) => t.toAggregate(mainAccount)),
+                                (multisigModificationTx.addressAdditions || []).length + (multisigModificationTx.minApprovalDelta || 0),
+                                deadline,
+                                networkType,
+                                defaultMaxFee,
+                                providedMaxFee,
+                                minFeeMultiplier,
+                                cosigners,
+                                generationHash,
+                                currency,
+                                transactionService,
+                                listener,
+                                ready,
+                                nodeAccount.name,
+                            );
+                        } else {
+                            await this.announceSimple(
+                                signerAccount,
+                                transactions[0],
+                                providedMaxFee,
+                                minFeeMultiplier,
+                                generationHash,
+                                currency,
+                                transactionService,
+                                listener,
+                                ready,
+                                nodeAccount.name,
+                            );
+                        }
                     } else {
                         await this.announceAggregateComplete(
                             signerAccount,
@@ -457,18 +478,6 @@ export class AnnounceService {
     private async getAccountInfo(repositoryFactory: RepositoryFactory, mainAccountAddress: Address): Promise<AccountInfo | undefined> {
         try {
             return await repositoryFactory.createAccountRepository().getAccountInfo(mainAccountAddress).toPromise();
-        } catch (e) {
-            return undefined;
-        }
-    }
-
-    private async getMultisigAccount(
-        repositoryFactory: RepositoryFactory,
-        mainAccountAddress: Address,
-    ): Promise<MultisigAccountInfo | undefined> {
-        try {
-            const info = await repositoryFactory.createMultisigRepository().getMultisigAccountInfo(mainAccountAddress).toPromise();
-            return info.isMultisig() ? info : undefined;
         } catch (e) {
             return undefined;
         }

@@ -25,6 +25,7 @@ import {
     RemoteNodeService,
     RepositoryInfo,
 } from '../../src/service';
+import { TransactionUtils } from '../../src/service/TransactionUtils';
 
 describe('Announce Service', () => {
     let announceService: AnnounceService;
@@ -224,7 +225,7 @@ describe('Announce Service', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
-        stub(announceService, <any>'getMultisigAccount').returns(
+        stub(TransactionUtils, <any>'getMultisigAccount').returns(
             Promise.resolve({
                 minApproval: 2,
             }),
@@ -298,7 +299,7 @@ describe('Announce Service', () => {
         const { addresses, presetData } = await new BootstrapService().config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
-        stub(announceService, <any>'getMultisigAccount').returns(
+        stub(TransactionUtils, <any>'getMultisigAccount').returns(
             Promise.resolve({
                 minApproval: 2,
             }),
