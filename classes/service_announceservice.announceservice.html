@@ -96,11 +96,17 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_announceservice.announceservice.html#announce" class="tsd-kind-icon">announce</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#announceaggregatebonded" class="tsd-kind-icon">announce<wbr>Aggregate<wbr>Bonded</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#announceaggregatecomplete" class="tsd-kind-icon">announce<wbr>Aggregate<wbr>Complete</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#announcesimple" class="tsd-kind-icon">announce<wbr>Simple</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getaccountinfo" class="tsd-kind-icon">get<wbr>Account<wbr>Info</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getbestcosigner" class="tsd-kind-icon">get<wbr>Best<wbr>Cosigner</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getmultisigaccount" class="tsd-kind-icon">get<wbr>Multisig<wbr>Account</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#getmultisigbestcosigner" class="tsd-kind-icon">get<wbr>Multisig<wbr>Best<wbr>Cosigner</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#gettransactiondescription" class="tsd-kind-icon">get<wbr>Transaction<wbr>Description</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#isaccountempty" class="tsd-kind-icon">is<wbr>Account<wbr>Empty</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_announceservice.announceservice.html#promptaccounts" class="tsd-kind-icon">prompt<wbr>Accounts</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_announceservice.announceservice.html#shouldannounce" class="tsd-kind-icon">should<wbr>Announce</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_announceservice.announceservice.html#isvalidprivatekey" class="tsd-kind-icon">is<wbr>Valid<wbr>Private<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="service_announceservice.announceservice.html#onprocesslistener" class="tsd-kind-icon">on<wbr>Process<wbr>Listener</a></li>
 							</ul>
@@ -130,10 +136,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 					<a name="flags" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> flags</h3>
-					<div class="tsd-signature tsd-kind-icon">flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>maxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<div class="tsd-signature tsd-kind-icon">flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>maxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>serviceProviderPublicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L68">src/service/AnnounceService.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L74">src/service/AnnounceService.ts:74</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -155,6 +161,9 @@
 								<h5>ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li class="tsd-parameter">
+								<h5>service<wbr>Provider<wbr>Public<wbr>Key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+							<li class="tsd-parameter">
 								<h5>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li class="tsd-parameter">
@@ -170,13 +179,13 @@
 					<a name="announce" class="tsd-anchor"></a>
 					<h3>announce</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">announce<span class="tsd-signature-symbol">(</span>providedUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a>, addresses<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_addresses.addresses.html" class="tsd-signature-type" data-tsd-kind="Interface">Addresses</a>, transactionFactory<span class="tsd-signature-symbol">: </span><a href="../interfaces/service_announceservice.transactionfactory.html" class="tsd-signature-type" data-tsd-kind="Interface">TransactionFactory</a>, tokenAmount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">announce<span class="tsd-signature-symbol">(</span>providedUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a>, addresses<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_addresses.addresses.html" class="tsd-signature-type" data-tsd-kind="Interface">Addresses</a>, transactionFactory<span class="tsd-signature-symbol">: </span><a href="../interfaces/service_announceservice.transactionfactory.html" class="tsd-signature-type" data-tsd-kind="Interface">TransactionFactory</a>, tokenAmount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, serviceProviderPublicKey<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L92">src/service/AnnounceService.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L103">src/service/AnnounceService.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -208,8 +217,215 @@
 								<li>
 									<h5>tokenAmount: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x27;some&#x27;</span></h5>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> serviceProviderPublicKey: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="announceaggregatebonded" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> announce<wbr>Aggregate<wbr>Bonded</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">announce<wbr>Aggregate<wbr>Bonded<span class="tsd-signature-symbol">(</span>signerAccount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Account</span>, transactionFactory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span>, requiredCosignatures<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, deadline<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Deadline</span>, networkType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NetworkType</span>, defaultMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">UInt64</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, minFeeMultiplier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, cosigners<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">[]</span>, generationHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, currency<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Currency</span>, transactionService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TransactionService</span>, listener<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IListener</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, nodeName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L502">src/service/AnnounceService.ts:502</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>signerAccount: <span class="tsd-signature-type">Account</span></h5>
+								</li>
+								<li>
+									<h5>transactionFactory: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>requiredCosignatures: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>deadline: <span class="tsd-signature-type">Deadline</span></h5>
+								</li>
+								<li>
+									<h5>networkType: <span class="tsd-signature-type">NetworkType</span></h5>
+								</li>
+								<li>
+									<h5>defaultMaxFee: <span class="tsd-signature-type">UInt64</span></h5>
+								</li>
+								<li>
+									<h5>providedMaxFee: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>minFeeMultiplier: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>cosigners: <span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>generationHash: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>currency: <span class="tsd-signature-type">Currency</span></h5>
+								</li>
+								<li>
+									<h5>transactionService: <span class="tsd-signature-type">TransactionService</span></h5>
+								</li>
+								<li>
+									<h5>listener: <span class="tsd-signature-type">IListener</span></h5>
+								</li>
+								<li>
+									<h5>ready: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>nodeName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="announceaggregatecomplete" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> announce<wbr>Aggregate<wbr>Complete</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">announce<wbr>Aggregate<wbr>Complete<span class="tsd-signature-symbol">(</span>signer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Account</span>, transactionFactory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span>, deadline<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Deadline</span>, networkType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NetworkType</span>, defaultMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">UInt64</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, minFeeMultiplier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, generationHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, currency<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Currency</span>, transactionService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TransactionService</span>, listener<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IListener</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, nodeName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, requiredCosignatures<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, cosigners<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L568">src/service/AnnounceService.ts:568</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>signer: <span class="tsd-signature-type">Account</span></h5>
+								</li>
+								<li>
+									<h5>transactionFactory: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">[]</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>deadline: <span class="tsd-signature-type">Deadline</span></h5>
+								</li>
+								<li>
+									<h5>networkType: <span class="tsd-signature-type">NetworkType</span></h5>
+								</li>
+								<li>
+									<h5>defaultMaxFee: <span class="tsd-signature-type">UInt64</span></h5>
+								</li>
+								<li>
+									<h5>providedMaxFee: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>minFeeMultiplier: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>generationHash: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>currency: <span class="tsd-signature-type">Currency</span></h5>
+								</li>
+								<li>
+									<h5>transactionService: <span class="tsd-signature-type">TransactionService</span></h5>
+								</li>
+								<li>
+									<h5>listener: <span class="tsd-signature-type">IListener</span></h5>
+								</li>
+								<li>
+									<h5>ready: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>nodeName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> requiredCosignatures: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> cosigners: <span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="announcesimple" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> announce<wbr>Simple</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">announce<wbr>Simple<span class="tsd-signature-symbol">(</span>signer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Account</span>, transaction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span>, providedMaxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, minFeeMultiplier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, generationHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, currency<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Currency</span>, transactionService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TransactionService</span>, listener<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IListener</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, nodeName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L614">src/service/AnnounceService.ts:614</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>signer: <span class="tsd-signature-type">Account</span></h5>
+								</li>
+								<li>
+									<h5>transaction: <span class="tsd-signature-type">Transaction</span></h5>
+								</li>
+								<li>
+									<h5>providedMaxFee: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>minFeeMultiplier: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>generationHash: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>currency: <span class="tsd-signature-type">Currency</span></h5>
+								</li>
+								<li>
+									<h5>transactionService: <span class="tsd-signature-type">TransactionService</span></h5>
+								</li>
+								<li>
+									<h5>listener: <span class="tsd-signature-type">IListener</span></h5>
+								</li>
+								<li>
+									<h5>ready: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>nodeName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -223,7 +439,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L446">src/service/AnnounceService.ts:446</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L457">src/service/AnnounceService.ts:457</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -249,7 +465,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L466">src/service/AnnounceService.ts:466</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L477">src/service/AnnounceService.ts:477</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -278,7 +494,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L454">src/service/AnnounceService.ts:454</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L465">src/service/AnnounceService.ts:465</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -295,6 +511,73 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="getmultisigbestcosigner" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Multisig<wbr>Best<wbr>Cosigner</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Multisig<wbr>Best<wbr>Cosigner<span class="tsd-signature-symbol">(</span>msigAccountInfo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MultisigAccountInfo</span>, cosigners<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">[]</span>, accountName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, networkType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NetworkType</span>, repositoryFactory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RepositoryFactory</span>, currencyMosaicId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MosaicId</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L689">src/service/AnnounceService.ts:689</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>msigAccountInfo: <span class="tsd-signature-type">MultisigAccountInfo</span></h5>
+								</li>
+								<li>
+									<h5>cosigners: <span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>accountName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>networkType: <span class="tsd-signature-type">NetworkType</span></h5>
+								</li>
+								<li>
+									<h5>repositoryFactory: <span class="tsd-signature-type">RepositoryFactory</span></h5>
+								</li>
+								<li>
+									<h5>currencyMosaicId: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MosaicId</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Account</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="gettransactiondescription" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Transaction<wbr>Description</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Transaction<wbr>Description<span class="tsd-signature-symbol">(</span>transaction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span>, signedTransaction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SignedTransaction</span>, currency<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Currency</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L648">src/service/AnnounceService.ts:648</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transaction: <span class="tsd-signature-type">Transaction</span></h5>
+								</li>
+								<li>
+									<h5>signedTransaction: <span class="tsd-signature-type">SignedTransaction</span></h5>
+								</li>
+								<li>
+									<h5>currency: <span class="tsd-signature-type">Currency</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="isaccountempty" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> is<wbr>Account<wbr>Empty</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -304,7 +587,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L483">src/service/AnnounceService.ts:483</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L494">src/service/AnnounceService.ts:494</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -330,7 +613,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L387">src/service/AnnounceService.ts:387</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L398">src/service/AnnounceService.ts:398</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -349,6 +632,41 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="shouldannounce" class="tsd-anchor"></a>
+					<h3>should<wbr>Announce</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">should<wbr>Announce<span class="tsd-signature-symbol">(</span>transaction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transaction</span>, signedTransaction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SignedTransaction</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span>, currency<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Currency</span>, nodeName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L664">src/service/AnnounceService.ts:664</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transaction: <span class="tsd-signature-type">Transaction</span></h5>
+								</li>
+								<li>
+									<h5>signedTransaction: <span class="tsd-signature-type">SignedTransaction</span></h5>
+								</li>
+								<li>
+									<h5>ready: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>currency: <span class="tsd-signature-type">Currency</span></h5>
+								</li>
+								<li>
+									<h5>nodeName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="isvalidprivatekey" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Valid<wbr>Private<wbr>Key</h3>
@@ -359,7 +677,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L442">src/service/AnnounceService.ts:442</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L453">src/service/AnnounceService.ts:453</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -382,7 +700,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/9c199f6/src/service/AnnounceService.ts#L63">src/service/AnnounceService.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/56239ef/src/service/AnnounceService.ts#L69">src/service/AnnounceService.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -419,6 +737,15 @@
 								<a href="service_announceservice.announceservice.html#announce" class="tsd-kind-icon">announce</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="service_announceservice.announceservice.html#announceaggregatebonded" class="tsd-kind-icon">announce<wbr>Aggregate<wbr>Bonded</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="service_announceservice.announceservice.html#announceaggregatecomplete" class="tsd-kind-icon">announce<wbr>Aggregate<wbr>Complete</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="service_announceservice.announceservice.html#announcesimple" class="tsd-kind-icon">announce<wbr>Simple</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="service_announceservice.announceservice.html#getaccountinfo" class="tsd-kind-icon">get<wbr>Account<wbr>Info</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -428,10 +755,19 @@
 								<a href="service_announceservice.announceservice.html#getmultisigaccount" class="tsd-kind-icon">get<wbr>Multisig<wbr>Account</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="service_announceservice.announceservice.html#getmultisigbestcosigner" class="tsd-kind-icon">get<wbr>Multisig<wbr>Best<wbr>Cosigner</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="service_announceservice.announceservice.html#gettransactiondescription" class="tsd-kind-icon">get<wbr>Transaction<wbr>Description</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="service_announceservice.announceservice.html#isaccountempty" class="tsd-kind-icon">is<wbr>Account<wbr>Empty</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="service_announceservice.announceservice.html#promptaccounts" class="tsd-kind-icon">prompt<wbr>Accounts</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="service_announceservice.announceservice.html#shouldannounce" class="tsd-kind-icon">should<wbr>Announce</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="service_announceservice.announceservice.html#isvalidprivatekey" class="tsd-kind-icon">is<wbr>Valid<wbr>Private<wbr>Key</a>
