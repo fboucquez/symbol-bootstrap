@@ -20,9 +20,9 @@ OPTIONS
   -D, --addressDeletions=addressDeletions              Cosignatory accounts addresses to be removed (separated by a
                                                        comma).
 
-  -a, --minApprovalDelta=minApprovalDelta              Number of signatures needed to approve a transaction. If the
-                                                       account is already multisig, enter the number of cosignatories to
-                                                       add or remove.
+  -a, --minApprovalDelta=minApprovalDelta              Delta of signatures needed to approve a transaction. 0 means no
+                                                       change, a positive(+) number means increment and a negative(-)
+                                                       number means decrement to the actual value.
 
   -c, --customPreset=customPreset                      This command uses the encrypted addresses.yml to resolve the main
                                                        private key. If the main private is only stored in the custom
@@ -31,9 +31,9 @@ OPTIONS
 
   -h, --help                                           It shows the help of this command.
 
-  -r, --minRemovalDelta=minRemovalDelta                Number of signatures needed to remove a cosignatory. If the
-                                                       account is already multisig, enter the number of cosignatories to
-                                                       add or remove.
+  -r, --minRemovalDelta=minRemovalDelta                Delta of signatures needed to remove a cosignatory. 0 means no
+                                                       change, a positive(+) number means increment and a negative(-)
+                                                       number means decrement to the actual value.
 
   -t, --target=target                                  [default: target] The target folder where the symbol-bootstrap
                                                        network is generated

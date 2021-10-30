@@ -31,7 +31,7 @@ export type ModifyMultisigParams = {
     target: string;
     password?: string;
     url: string;
-    maxFee?: number | undefined;
+    maxFee?: number;
     useKnownRestGateways: boolean;
     ready?: boolean;
     customPreset?: string;
@@ -114,20 +114,18 @@ export class ModifyMultisigService implements TransactionFactory {
     }
 
     public async resolveDelta(name: string, message: string, delta?: number): Promise<number> {
-        const resolution =
-            delta !== undefined
-                ? delta
-                : (
-                      await prompt([
-                          {
-                              name,
-                              message,
-                              type: 'number',
-                              default: 0,
-                          },
-                      ])
-                  )[name];
-        return resolution;
+        return delta !== undefined
+            ? delta
+            : (
+                  await prompt([
+                      {
+                          name,
+                          message,
+                          type: 'number',
+                          default: 0,
+                      },
+                  ])
+              )[name];
     }
 
     public async resolveAddressAdditions(networkType: NetworkType, cosigners?: string): Promise<UnresolvedAddress[]> {
