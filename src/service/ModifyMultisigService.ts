@@ -170,15 +170,16 @@ export class ModifyMultisigService implements TransactionFactory {
         cosigners?: string,
     ): Promise<UnresolvedAddress[]> {
         const resolution =
-            cosigners ||
-            (
-                await prompt([
-                    {
-                        name,
-                        message,
-                    },
-                ])
-            )[name];
+            cosigners !== undefined
+                ? cosigners
+                : (
+                      await prompt([
+                          {
+                              name,
+                              message,
+                          },
+                      ])
+                  )[name];
         if (!resolution) {
             return [];
         }
@@ -232,7 +233,7 @@ export class ModifyMultisigService implements TransactionFactory {
 
         for (const addressToRemove of addressDeletions || []) {
             if (!currentMultisigInfo?.cosignatoryAddresses.some((ca) => ca && ca.plain() === addressToRemove.plain())) {
-                throw new Error(`Cannot remove cosignatory! ${addressToRemove.plain()} is not a cosignatory!`);
+                throw new Error(`Cannot remove cosignatory! ${addressToRemove.plain()} is not an actual cosignatory!`);
             }
         }
 

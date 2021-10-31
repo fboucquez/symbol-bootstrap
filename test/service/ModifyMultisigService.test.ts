@@ -108,10 +108,24 @@ describe('ModifyMultisigService', () => {
         expect(tx.minApprovalDelta).to.be.eq(-1);
     });
 
-    it('Modifies minApproval and minRemoval of the current multisig account', async () => {
+    it('Modifies minApproval and minRemoval of the current multisig account with prompt for the address additions/deletions', async () => {
         StdUtils.in(['\n', '\n']); // for addressDeletions, addressAdditions
 
         const tx = await commonStub(undefined, undefined, -1, -1, {
+            minApproval: 2,
+            minRemoval: 2,
+            cosignatoryAddresses: [cosigner1.address],
+        });
+
+        expect(tx.type).to.be.eq(TransactionType.MULTISIG_ACCOUNT_MODIFICATION);
+        expect(tx.addressAdditions.length).to.be.eq(0);
+        expect(tx.addressDeletions.length).to.be.eq(0);
+        expect(tx.minRemovalDelta).to.be.eq(-1);
+        expect(tx.minApprovalDelta).to.be.eq(-1);
+    });
+
+    it('Modifies minApproval and minRemoval of the current multisig account with no prompts', async () => {
+        const tx = await commonStub('', '', -1, -1, {
             minApproval: 2,
             minRemoval: 2,
             cosignatoryAddresses: [cosigner1.address],
