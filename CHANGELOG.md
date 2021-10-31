@@ -12,14 +12,17 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.1.0  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   Added `wizard` command.
--   Added `pack` command.
--   Explorer `1.1.0` upgrade.
--   Faucet `1.0.1` upgrade.
--   Removed node reward support.
--   Removed unused `sshpk` service and dependency.
--   Removed unused `forge` service and dependency.
--   Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
+- Added `wizard` command.
+- Added `pack` command.
+- Added `modifyMultisig` command.
+- Added `--serviceProviderPublicKey` to `link` command.
+- Rest `2.3.7` upgrade.
+- Explorer `1.1.0` upgrade.
+- Faucet `1.0.1` upgrade.
+- Removed node reward support.
+- Removed unused `sshpk` service and dependency.
+- Removed unused `forge` service and dependency.
+- Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
 
 ## [1.0.9] - Sep-15-2021
 
