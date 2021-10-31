@@ -19,6 +19,7 @@ import { BootstrapUtils } from './BootstrapUtils';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
+import { ModifyMultisigParams, ModifyMultisigService } from './ModifyMultisigService';
 import { ReportParams, ReportService } from './ReportService';
 import { RunParams, RunService } from './RunService';
 
@@ -81,6 +82,22 @@ export class BootstrapService {
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
         await new LinkService(config).run(passedPresetData, passedAddresses);
+    }
+
+    /**
+     * It converts main account into multisig account or modifies multisig structure
+     *
+     * @param config the params passed
+     * @param passedPresetData  the created preset if you know it, otherwise will load the latest one resolved from the target folder.
+     * @param passedAddresses  the created addresses if you know it, otherwise will load the latest one resolved from the target folder.
+     */
+
+    public async modifyMultisig(
+        config: ModifyMultisigParams = ModifyMultisigService.defaultParams,
+        passedPresetData?: ConfigPreset | undefined,
+        passedAddresses?: Addresses | undefined,
+    ): Promise<void> {
+        await new ModifyMultisigService(config).run(passedPresetData, passedAddresses);
     }
 
     /**

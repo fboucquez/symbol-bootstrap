@@ -137,7 +137,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/1.1.0 linux-x64 node-v12.22.1
+symbol-bootstrap/1.1.0 linux-x64 node-v12.22.6
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -283,6 +283,7 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap healthCheck`](docs/healthCheck.md) - It checks if the services created with docker compose are up and running.
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
 * [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
+* [`symbol-bootstrap modifyMultisig`](docs/modifyMultisig.md) - Create or modify a multisig account
 * [`symbol-bootstrap pack`](docs/pack.md) - It configures and packages your node into a zip file that can be uploaded to the final node machine.
 * [`symbol-bootstrap report`](docs/report.md) - it generates reStructuredText (.rst) reports describing the configuration of each node.
 * [`symbol-bootstrap resetData`](docs/resetData.md) - It removes the data keeping the generated configuration, certificates, keys and block 1.
