@@ -15,40 +15,11 @@
  */
 
 import { expect } from '@oclif/test';
-import { stdin } from 'mock-stdin';
 import { Account, NetworkType } from 'symbol-sdk';
 import Wizard, { Network } from '../../src/commands/wizard';
 import { CustomPreset, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, Preset } from '../../src/service';
-
-export const StdUtils = {
-    keys: Object.freeze({
-        up: '\u001b[A',
-        down: '\u001b[B',
-        left: '\u001b[D',
-        right: '\u001b[C',
-    }),
-    in: (responses: string[]): void => {
-        let k = 0;
-
-        const s = stdin();
-        function sendAnswer() {
-            setTimeout(function () {
-                const text = responses[k];
-                if (typeof text !== 'string') {
-                    throw new Error('Should give only text responses ' + JSON.stringify(responses, null, 2));
-                }
-                s.send(text);
-                k += 1;
-                if (k < responses.length) {
-                    sendAnswer();
-                }
-            }, 0);
-        }
-
-        sendAnswer();
-    },
-};
+import { StdUtils } from '../utils/StdUtils';
 
 describe('Wizard', () => {
     const testFolder = 'target/wizardTest';

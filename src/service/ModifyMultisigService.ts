@@ -15,7 +15,14 @@
  */
 
 import { prompt } from 'inquirer';
-import { Address, MultisigAccountModificationTransaction, NetworkType, Transaction, UnresolvedAddress } from 'symbol-sdk';
+import {
+    Address,
+    MultisigAccountInfo,
+    MultisigAccountModificationTransaction,
+    NetworkType,
+    Transaction,
+    UnresolvedAddress,
+} from 'symbol-sdk';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
@@ -23,6 +30,7 @@ import { Addresses, ConfigPreset } from '../model';
 import { AnnounceService, TransactionFactory, TransactionFactoryParams } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { TransactionUtils } from './TransactionUtils';
 
 /**
  * params necessary to announce multisig account modification transaction to network.
@@ -77,13 +85,22 @@ export class ModifyMultisigService implements TransactionFactory {
             this.params.serviceProviderPublicKey,
         );
     }
-    public async createTransactions({ presetData, deadline, maxFee }: TransactionFactoryParams): Promise<Transaction[]> {
+    public async createTransactions({ presetData, deadline, maxFee, mainAccount }: TransactionFactoryParams): Promise<Transaction[]> {
         const networkType = presetData.networkType;
 
         const addressAdditions = await this.resolveAddressAdditions(networkType, this.params.addressAdditions);
         const addressDeletions = await this.resolveAddressDeletions(networkType, this.params.addressDeletions);
         const minApprovalDelta = await this.resolveMinApprovalDelta(this.params.minApprovalDelta);
         const minRemovalDelta = await this.resolveMinRemovalDelta(this.params.minRemovalDelta);
+
+        const url = this.params.url.replace(/\/$/, '');
+        const urls = (this.params.useKnownRestGateways && presetData.knownRestGateways) || [url];
+        const multisigInfo = await TransactionUtils.getMultisigAccount(
+            await TransactionUtils.getRepositoryFactory(urls),
+            mainAccount.address,
+        );
+
+        this.validateParams(addressAdditions, addressDeletions, minRemovalDelta, minApprovalDelta, multisigInfo);
 
         logger.info(
             `Creating multisig account modification transaction [addressAdditions: "${addressAdditions
@@ -185,5 +202,60 @@ export class ModifyMultisigService implements TransactionFactory {
             throw new Error(`Address ${addressString} invalid network type. Expected ${networkType} but got ${address.networkType}`);
         }
         return address;
+    }
+
+    protected validateParams(
+        addressAdditions?: UnresolvedAddress[],
+        addressDeletions?: UnresolvedAddress[],
+        minRemovalDelta?: number,
+        minApprovalDelta?: number,
+        currentMultisigInfo?: MultisigAccountInfo,
+    ): void {
+        // calculate new min approval
+        const newMinApproval = currentMultisigInfo ? currentMultisigInfo.minApproval + (minApprovalDelta || 0) : minApprovalDelta || 0;
+
+        // calculate new min approval
+        const newMinRemoval = currentMultisigInfo ? currentMultisigInfo.minRemoval + (minRemovalDelta || 0) : minRemovalDelta || 0;
+
+        // calculate the delta of added cosigners
+        const numberOfAddedCosigners = (addressAdditions?.length || 0) - (addressDeletions?.length || 0);
+
+        const newCosignatoryNumber = currentMultisigInfo
+            ? currentMultisigInfo.cosignatoryAddresses.length + numberOfAddedCosigners
+            : numberOfAddedCosigners;
+
+        for (const addressToAdd of addressAdditions || []) {
+            if (currentMultisigInfo?.cosignatoryAddresses.some((ca) => ca && ca.plain() === addressToAdd.plain())) {
+                throw new Error(`Cannot add cosignatory! ${addressToAdd.plain()} is already a cosignatory!`);
+            }
+        }
+
+        for (const addressToRemove of addressDeletions || []) {
+            if (!currentMultisigInfo?.cosignatoryAddresses.some((ca) => ca && ca.plain() === addressToRemove.plain())) {
+                throw new Error(`Cannot remove cosignatory! ${addressToRemove.plain()} is not a cosignatory!`);
+            }
+        }
+
+        if (newCosignatoryNumber < newMinApproval) {
+            throw new Error(
+                `There are ${
+                    newMinApproval - newCosignatoryNumber
+                } more required cosignatories than available cosignatories for min. approval. Please add cosignatories or reduce the min. approval delta.`,
+            );
+        }
+
+        if (newCosignatoryNumber < newMinRemoval) {
+            throw new Error(
+                `There are ${
+                    newMinRemoval - newCosignatoryNumber
+                }  more required cosignatories than available cosignatories for min removal. Please add cosignatories or reduce the min. removal delta.`,
+            );
+        }
+
+        if (newCosignatoryNumber > 0 && (newMinApproval == 0 || newMinRemoval == 0)) {
+            throw new Error(
+                `Minimum approval and/or minimum removal cannot be set to 0 while there are ${newCosignatoryNumber} cosignatories in your list.`,
+            );
+        }
     }
 }
