@@ -22,8 +22,11 @@ describe('NetworkPresetUpgrade', () => {
         const root = './';
         const presetLocation = `${root}/presets/${preset}/network.yml`;
         const networkPreset: ConfigPreset = BootstrapUtils.loadYaml(presetLocation, false);
-
-        const epoch = await new RemoteNodeService().getBestFinalizationEpoch(networkPreset.knownRestGateways);
+        networkPreset.statisticsServiceRestLimit = 3;
+        networkPreset.statisticsServiceRestFilter = 'preferred';
+        const remoteNodeService = new RemoteNodeService(false);
+        const urls = await remoteNodeService.getRestUrls(networkPreset);
+        const epoch = await remoteNodeService.getBestFinalizationEpoch(urls);
         if (!epoch) {
             throw new Error('Epoch could not be resolved!!');
         }

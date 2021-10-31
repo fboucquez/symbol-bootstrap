@@ -119,8 +119,8 @@ export class AnnounceService {
             return;
         }
         const url = providedUrl.replace(/\/$/, '');
-        const urls = (useKnownRestGateways && presetData.knownRestGateways) || [url];
-        const repositoryFactory = await TransactionUtils.getRepositoryFactory(urls);
+        const repositoryInfo = await new RemoteNodeService(false).getBestRepositoryInfo(useKnownRestGateways ? undefined : url, presetData);
+        const repositoryFactory = repositoryInfo.repositoryFactory;
         const networkType = await repositoryFactory.getNetworkType().toPromise();
         const transactionRepository = repositoryFactory.createTransactionRepository();
         const transactionService = new TransactionService(transactionRepository, repositoryFactory.createReceiptRepository());

@@ -34,7 +34,7 @@ import {
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, NodePreset, NodeType } from '../model';
+import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, PeerInfo } from '../model';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
@@ -133,6 +133,11 @@ export class ConfigService {
             }
 
             const oldPresetData = this.configLoader.loadExistingPresetDataIfPreset(target, password);
+            if (oldPresetData) {
+                // HACK! https://github.com/symbol/symbol-bootstrap/pull/270 would fix this!
+                delete oldPresetData.knownPeers;
+                delete oldPresetData.knownRestGateways;
+            }
             const oldAddresses = this.configLoader.loadExistingAddressesIfPreset(target, password);
 
             if (oldAddresses && !oldPresetData) {
@@ -153,12 +158,14 @@ export class ConfigService {
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
+            const remoteNodeService = new RemoteNodeService(this.params.offline);
+
             this.cleanUpConfiguration(presetData);
             await this.generateNodeCertificates(presetData, addresses);
-            await this.generateNodes(presetData, addresses);
+            await this.generateNodes(presetData, addresses, remoteNodeService);
             await this.generateGateways(presetData);
-            await this.generateExplorers(presetData);
-            await this.generateWallets(presetData);
+            await this.generateExplorers(presetData, remoteNodeService);
+            await this.generateWallets(presetData, remoteNodeService);
             const isUpgrade = !!oldPresetData || !!oldAddresses;
             await this.resolveNemesis(presetData, addresses, isUpgrade);
             await this.copyNemesis(addresses);
@@ -254,22 +261,35 @@ export class ConfigService {
         throw new Error('Seed could not be found!!!!');
     }
 
-    private async generateNodes(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
-        const currentFinalizationEpoch = this.params.offline
-            ? presetData.lastKnownNetworkEpoch
-            : await new RemoteNodeService().resolveCurrentFinalizationEpoch(presetData);
+    private async generateNodes(presetData: ConfigPreset, addresses: Addresses, remoteNodeService: RemoteNodeService): Promise<void> {
+        const currentFinalizationEpoch = await remoteNodeService.resolveCurrentFinalizationEpoch(presetData);
+        const externalPeers: PeerInfo[] = await remoteNodeService.getPeerInfos(presetData);
+        const localPeers: PeerInfo[] = (presetData.nodes || []).map((nodePresetData, index) => {
+            const node = (addresses.nodes || [])[index];
+            return {
+                publicKey: node.main.publicKey,
+                endpoint: {
+                    host: nodePresetData.host || '',
+                    port: 7900,
+                },
+                metadata: {
+                    name: nodePresetData.friendlyName || '',
+                    roles: ConfigLoader.resolveRoles(nodePresetData),
+                },
+            };
+        });
+        const allPeers = _.uniqBy([...externalPeers, ...localPeers], (p) => p.publicKey);
         await Promise.all(
-            (addresses.nodes || []).map(
-                async (account, index) =>
-                    await this.generateNodeConfiguration(account, index, presetData, addresses, currentFinalizationEpoch),
+            (addresses.nodes || []).map((account, index) =>
+                this.generateNodeConfiguration(account, index, presetData, currentFinalizationEpoch, allPeers),
             ),
         );
     }
 
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
-            (addresses.nodes || []).map(async (account) => {
-                return await new CertificateService(this.root, this.params).run(
+            (addresses.nodes || []).map((account) => {
+                return new CertificateService(this.root, this.params).run(
                     presetData.networkType,
                     presetData.symbolServerImage,
                     account.name,
@@ -286,8 +306,8 @@ export class ConfigService {
         account: NodeAccount,
         index: number,
         presetData: ConfigPreset,
-        addresses: Addresses,
         currentFinalizationEpoch: number | undefined,
+        knownPeers: PeerInfo[],
     ) {
         const copyFrom = join(this.root, 'config', 'node');
         const name = account.name;
@@ -354,25 +374,29 @@ export class ConfigService {
 
         logger.info(`Generating ${name} server configuration`);
         await BootstrapUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
+
+        const isApi = (nodePresetData: PeerInfo): boolean => nodePresetData.metadata.roles.includes('Api');
+        const peers = knownPeers.filter((peer) => isApi(peer) && peer.publicKey != account.main.publicKey);
         const peersP2PFile = await this.generateP2PFile(
-            presetData,
-            addresses,
+            peers,
             presetData.peersP2PListLimit,
             serverConfig,
-            NodeType.PEER_NODE,
-            (nodePresetData) => !!nodePresetData.syncsource && nodePresetData != nodePreset,
+            `this file contains a list of peers`,
             'peers-p2p.json',
         );
+
+        const apiPeers = knownPeers.filter((peer) => !isApi(peer) && peer.publicKey != account.main.publicKey);
         const peersApiFile = await this.generateP2PFile(
-            presetData,
-            addresses,
+            apiPeers,
             presetData.peersApiListLimit,
             serverConfig,
-            NodeType.API_NODE,
-            (nodePresetData) => nodePresetData.api && nodePresetData != nodePreset,
+            `this file contains a list of api peers`,
             'peers-api.json',
         );
 
+        if (!peers.length && !apiPeers.length) {
+            logger.warn('The peer lists could not be resolved. peers-p2p.json and peers-api.json are empty!');
+        }
         if (nodePreset.brokerName) {
             logger.info(`Generating ${nodePreset.brokerName} broker configuration`);
             await BootstrapUtils.generateConfiguration(
@@ -395,38 +419,10 @@ export class ConfigService {
         );
     }
 
-    private async generateP2PFile(
-        presetData: ConfigPreset,
-        addresses: Addresses,
-        listLimit: number,
-        outputFolder: string,
-        type: NodeType,
-        nodePresetDataFunction: (nodePresetData: NodePreset) => boolean,
-        jsonFileName: string,
-    ) {
-        const thisNetworkKnownPeers = (presetData.nodes || [])
-            .map((nodePresetData, index) => {
-                if (!nodePresetDataFunction(nodePresetData)) {
-                    return undefined;
-                }
-                const node = (addresses.nodes || [])[index];
-                return {
-                    publicKey: node.main.publicKey,
-                    endpoint: {
-                        host: nodePresetData.host || '',
-                        port: 7900,
-                    },
-                    metadata: {
-                        name: nodePresetData.friendlyName,
-                        roles: ConfigLoader.resolveRoles(nodePresetData),
-                    },
-                };
-            })
-            .filter((i) => i);
-        const globalKnownPeers = presetData.knownPeers?.[type] || [];
+    private async generateP2PFile(knownPeers: PeerInfo[], listLimit: number, outputFolder: string, info: string, jsonFileName: string) {
         const data = {
-            _info: `this file contains a list of ${type} peers`,
-            knownPeers: _.sampleSize([...thisNetworkKnownPeers, ...globalKnownPeers], listLimit),
+            _info: info,
+            knownPeers: _.sampleSize(knownPeers, listLimit),
         };
         const peerFile = join(outputFolder, `resources`, jsonFileName);
         await fs.promises.writeFile(peerFile, JSON.stringify(data, null, 2));
@@ -686,13 +682,13 @@ export class ConfigService {
         return currencyName;
     }
 
-    private generateExplorers(presetData: ConfigPreset) {
+    private generateExplorers(presetData: ConfigPreset, remoteNodeService: RemoteNodeService) {
         return Promise.all(
             (presetData.explorers || []).map(async (explorerPreset, index: number) => {
                 const copyFrom = join(this.root, 'config', 'explorer');
                 const fullName = `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`;
                 const namespaceId = new NamespaceId(fullName);
-                const { restNodes, defaultNode } = this.resolveRests(presetData);
+                const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
                 const templateContext = {
                     namespaceName: fullName,
                     namespaceId: namespaceId.toHex(),
@@ -708,11 +704,11 @@ export class ConfigService {
         );
     }
 
-    private generateWallets(presetData: ConfigPreset) {
+    private generateWallets(presetData: ConfigPreset, remoteNodeService: RemoteNodeService) {
         return Promise.all(
             (presetData.wallets || []).map(async (walletPreset, index: number) => {
                 const copyFrom = join(this.root, 'config', 'wallet');
-                const { restNodes, defaultNode } = this.resolveRests(presetData);
+                const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
                 const templateContext = {
                     namespaceName: `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`,
                     defaultNodeUrl: defaultNode,
@@ -760,15 +756,16 @@ export class ConfigService {
         );
     }
 
-    private resolveRests(presetData: ConfigPreset): { restNodes: string[]; defaultNode: string } {
+    private async resolveRests(
+        presetData: ConfigPreset,
+        remoteNodeService: RemoteNodeService,
+    ): Promise<{ restNodes: string[]; defaultNode: string }> {
         const restNodes: string[] = [];
         presetData.gateways?.forEach((restService) => {
             const nodePreset = presetData.nodes?.find((g) => g.name == restService.apiNodeName);
             restNodes.push(`http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
         });
-        if (presetData.knownRestGateways) {
-            restNodes.push(...presetData.knownRestGateways);
-        }
+        restNodes.push(...(await remoteNodeService.getRestUrls(presetData)));
         return { restNodes: _.uniq(restNodes), defaultNode: restNodes[0] || 'http://localhost:3000' };
     }
 

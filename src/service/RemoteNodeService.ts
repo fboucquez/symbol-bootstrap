@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import fetch from 'cross-fetch';
 import { lookup } from 'dns';
-import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp } from 'symbol-sdk';
+import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp, RoleType } from 'symbol-sdk';
+import { Configuration, NodeApi, NodeListFilter, RequestContext, RestClientUtils } from 'symbol-statistics-service-typescript-fetch-client';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
-import { ConfigPreset } from '../model';
+import { ConfigPreset, PeerInfo } from '../model';
+import { KnownError } from './BootstrapUtils';
 
 const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
@@ -28,20 +31,23 @@ export interface RepositoryInfo {
     chainInfo: ChainInfo;
 }
 export class RemoteNodeService {
+    constructor(private readonly offline: boolean | undefined) {}
+    private restUrls: string[] | undefined;
+
     public async resolveCurrentFinalizationEpoch(presetData: ConfigPreset): Promise<number> {
         const votingNode = presetData.nodes?.find((n) => n.voting);
-        if (!votingNode) {
+        if (!votingNode || this.offline) {
             return presetData.lastKnownNetworkEpoch;
         }
-        const remoteNodeService = new RemoteNodeService();
-        if (!(await remoteNodeService.isConnectedToInternet())) {
+        if (!(await this.isConnectedToInternet())) {
             return presetData.lastKnownNetworkEpoch;
         }
-        return (await remoteNodeService.getBestFinalizationEpoch(presetData.knownRestGateways)) || presetData.lastKnownNetworkEpoch;
+        const urls = await this.getRestUrls(presetData);
+        return (await this.getBestFinalizationEpoch(urls)) || presetData.lastKnownNetworkEpoch;
     }
 
-    public async getBestFinalizationEpoch(urls: string[] | undefined): Promise<number | undefined> {
-        if (!urls || !urls.length) {
+    public async getBestFinalizationEpoch(urls: string[]): Promise<number | undefined> {
+        if (!urls.length) {
             return undefined;
         }
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
@@ -52,7 +58,8 @@ export class RemoteNodeService {
         return finalizationEpoch;
     }
 
-    public async getBestRepositoryInfo(urls: string[]): Promise<RepositoryInfo> {
+    public async getBestRepositoryInfo(url: string | undefined, presetData: ConfigPreset): Promise<RepositoryInfo> {
+        const urls = url ? [url] : await this.getRestUrls(presetData);
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
         if (!repositoryInfo) {
             throw new Error(`No up and running node could be found out of: \n - ${urls.join('\n - ')}`);
@@ -88,6 +95,9 @@ export class RemoteNodeService {
     }
 
     private async getKnownNodeRepositoryInfos(urls: string[]): Promise<RepositoryInfo[]> {
+        if (!urls.length) {
+            throw new KnownError('There are not known nodes!');
+        }
         logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
         return (
             await Promise.all(
@@ -102,7 +112,7 @@ export class RemoteNodeService {
                                 chainInfo,
                             };
                         } catch (e) {
-                            const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}}`;
+                            const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}`;
                             logger.warn(message);
                             return undefined;
                         }
@@ -112,5 +122,106 @@ export class RemoteNodeService {
         )
             .filter((i) => i)
             .map((i) => i as RepositoryInfo);
+    }
+
+    public async getRestUrls(presetData: ConfigPreset): Promise<string[]> {
+        if (this.restUrls) {
+            return this.restUrls;
+        }
+        const urls = [...(presetData.knownRestGateways || [])];
+        const statisticsServiceUrl = presetData.statisticsServiceUrl;
+        if (statisticsServiceUrl && !this.offline) {
+            const client = this.createNodeApiRestClient(statisticsServiceUrl);
+            try {
+                const nodes = await client.getNodes(
+                    presetData.statisticsServiceRestFilter as NodeListFilter,
+                    presetData.statisticsServiceRestLimit,
+                );
+                urls.push(...nodes.map((n) => n.apiStatus?.restGatewayUrl).filter((url): url is string => !!url));
+            } catch (e) {
+                logger.warn(
+                    `There has been an error connecting to statistics ${statisticsServiceUrl}. Rest urls cannot be resolved! Error ${e.message}`,
+                );
+            }
+        }
+        if (!urls) {
+            throw new Error('Rest URLS could not be resolved!');
+        }
+        this.restUrls = urls;
+        return urls;
+    }
+
+    /**
+     * Return user friendly role type list
+     * @param role combined node role types
+     */
+    public static getNodeRoles(role: number): string {
+        const roles: string[] = [];
+        if ((RoleType.PeerNode.valueOf() & role) != 0) {
+            roles.push('Peer');
+        }
+        if ((RoleType.ApiNode.valueOf() & role) != 0) {
+            roles.push('Api');
+        }
+        if ((RoleType.VotingNode.valueOf() & role) != 0) {
+            roles.push('Voting');
+        }
+        return roles.join(',');
+    }
+
+    public async getPeerInfos(presetData: ConfigPreset): Promise<PeerInfo[]> {
+        const statisticsServiceUrl = presetData.statisticsServiceUrl;
+        const knownPeers = [...(presetData.knownPeers || [])];
+        if (statisticsServiceUrl && !this.offline) {
+            const client = this.createNodeApiRestClient(statisticsServiceUrl);
+            try {
+                const nodes = await client.getNodes(
+                    presetData.statisticsServicePeerFilter as NodeListFilter,
+                    presetData.statisticsServicePeerLimit,
+                );
+                const peerInfos = nodes
+                    .map((n): PeerInfo | undefined => {
+                        if (!n.peerStatus?.isAvailable || !n.publicKey || !n.port || !n.friendlyName || !n.roles) {
+                            return undefined;
+                        }
+                        return {
+                            publicKey: n.publicKey,
+                            endpoint: {
+                                host: n.host || '',
+                                port: n.port,
+                            },
+                            metadata: {
+                                name: n.friendlyName,
+                                roles: RemoteNodeService.getNodeRoles(n.roles),
+                            },
+                        };
+                    })
+                    .filter((peerInfo): peerInfo is PeerInfo => !!peerInfo);
+                knownPeers.push(...peerInfos);
+            } catch (e) {
+                const error = await RestClientUtils.getErrorFromFetchResponse(e);
+                logger.warn(
+                    `There has been an error connecting to statistics ${statisticsServiceUrl}. Peers cannot be resolved! Error ${error.message}`,
+                );
+            }
+        }
+        return knownPeers;
+    }
+
+    public createNodeApiRestClient(statisticsServiceUrl: string): NodeApi {
+        return new NodeApi(
+            new Configuration({
+                fetchApi: fetch as any,
+                basePath: statisticsServiceUrl,
+                middleware: [
+                    {
+                        pre: (context: RequestContext): Promise<void> => {
+                            logger.info(`Getting nodes information from ${context.url}`);
+                            return Promise.resolve();
+                        },
+                    },
+                ],
+            }),
+        );
     }
 }
