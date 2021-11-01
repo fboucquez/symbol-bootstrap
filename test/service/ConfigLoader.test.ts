@@ -279,7 +279,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are different', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = Account.generateNewAccount(networkType);
@@ -304,7 +304,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are different', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = Account.generateNewAccount(networkType);
@@ -329,7 +329,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are same', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
@@ -354,7 +354,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are same, new no private eky', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
@@ -379,7 +379,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are same, old no private eky', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
@@ -403,7 +403,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are same, old private key', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = oldAccount;
@@ -426,7 +426,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are different, no private key new', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const newAccount = Account.generateNewAccount(networkType);
@@ -450,7 +450,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are different. No new account', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const account = configLoader.generateAccount(
@@ -474,7 +474,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount when old and new are different. No new account. Old without private', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
         const account = configLoader.generateAccount(
@@ -496,7 +496,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount brand new', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Main, undefined, undefined, undefined);
         expect(account.address).not.undefined;
@@ -506,7 +506,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount brand new on remote', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined);
         expect(account.address).not.undefined;
@@ -516,7 +516,7 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount brand new on voting', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Voting, undefined, undefined, undefined);
         expect(account.address).not.undefined;
@@ -526,21 +526,21 @@ describe('ConfigLoader', () => {
 
     it('should generateAccount raise error new', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN;
         expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Main, undefined, undefined, undefined)).throw;
     });
 
     it('should generateAccount raise error new', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
         expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Transport, undefined, undefined, undefined)).throw;
     });
 
     it('should generateAccount raise error new', () => {
         const configLoader = new ConfigLoader();
-        const networkType = NetworkType.MIJIN_TEST;
+        const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_ALL;
         expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined)).throw;
     });

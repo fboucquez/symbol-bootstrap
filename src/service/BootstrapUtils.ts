@@ -740,14 +740,6 @@ export class BootstrapUtils {
                 return 'public';
             case NetworkType.TEST_NET:
                 return 'public-test';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijin-test';
-            case NetworkType.PRIVATE:
-                return 'private';
-            case NetworkType.PRIVATE_TEST:
-                return 'private-test';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
     }
@@ -758,14 +750,6 @@ export class BootstrapUtils {
                 return 'public';
             case NetworkType.TEST_NET:
                 return 'publicTest';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijinTest';
-            case NetworkType.PRIVATE:
-                return 'private';
-            case NetworkType.PRIVATE_TEST:
-                return 'privateTest';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
     }

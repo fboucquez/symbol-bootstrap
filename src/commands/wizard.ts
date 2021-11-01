@@ -47,7 +47,7 @@ export enum HttpsOption {
 export enum Network {
     mainnet = 'mainnet',
     testnet = 'testnet',
-    privateNetwork = 'privateNetwork',
+    localNetwork = 'localNetwork',
 }
 
 export interface ProvidedAccounts {
@@ -59,7 +59,7 @@ export interface ProvidedAccounts {
 }
 
 export const networkToPreset: Record<Network, Preset> = {
-    [Network.privateNetwork]: Preset.bootstrap,
+    [Network.localNetwork]: Preset.bootstrap,
     [Network.mainnet]: Preset.mainnet,
     [Network.testnet]: Preset.testnet,
 };
@@ -118,8 +118,8 @@ export default class Wizard extends Command {
         const network = await Wizard.resolveNetwork(flags.network);
         const preset = networkToPreset[network];
         const assembly = await Wizard.resolveAssembly(preset);
-        if (network == Network.privateNetwork) {
-            console.log('For a private network, just run: ');
+        if (network == Network.localNetwork) {
+            console.log('For a local network, just run: ');
             console.log('');
             console.log(`$ symbol-bootstrap start -b ${preset}${assembly ? ` -a ${assembly}` : ''}`);
             return;
@@ -409,7 +409,7 @@ export default class Wizard extends Command {
                     choices: [
                         { name: 'Mainnet Node', value: Network.mainnet },
                         { name: 'Testnet Node', value: Network.testnet },
-                        { name: 'Private Network', value: Network.privateNetwork },
+                        { name: 'Local Network', value: Network.localNetwork },
                     ],
                 },
             ]);
@@ -479,7 +479,7 @@ export default class Wizard extends Command {
     public static getNetworkIdFlag(): IOptionFlag<Network | undefined> {
         return flags.string({
             description: 'The node or network you want to create',
-            options: [Network.mainnet, Network.testnet, Network.privateNetwork],
+            options: [Network.mainnet, Network.testnet, Network.localNetwork],
         }) as IOptionFlag<Network | undefined>;
     }
 

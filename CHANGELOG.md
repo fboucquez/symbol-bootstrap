@@ -26,6 +26,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added statistic service integration.
 - Removed node static list from `mainnet` and `testnet` preset. The node lists are resolved using the statistic service.
 - Updated explorer and faucet urls.
+- Removed private and mijin network types support.
 
 ## [1.0.9] - Sep-15-2021
 
