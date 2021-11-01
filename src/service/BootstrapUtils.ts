@@ -747,9 +747,9 @@ export class BootstrapUtils {
     public static getNetworkName(networkType: NetworkType): string {
         switch (networkType) {
             case NetworkType.MAIN_NET:
-                return 'public';
+                return 'mainnet';
             case NetworkType.TEST_NET:
-                return 'publicTest';
+                return 'testnet';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
     }

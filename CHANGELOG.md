@@ -16,7 +16,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `pack` command.
 - Added `modifyMultisig` command.
 - Added `--serviceProviderPublicKey` to `link` command.
-- Rest `2.3.7` upgrade.
+- Rest `2.3.8` upgrade.
 - Explorer `1.1.0` upgrade.
 - Faucet `1.0.1` upgrade.
 - Removed node reward support.

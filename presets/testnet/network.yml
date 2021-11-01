@@ -50,7 +50,7 @@ nonVotingUnfinalizedBlocksDuration: 10m
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
 restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
-faucetUrl: 'http://testnet.symbol.tools'
+faucetUrl: 'https://testnet.symbol.tools'
 explorerUrl: 'https://testnet.symbol.fyi'
 statisticsServiceUrl: 'https://testnet.symbol.services'
 knownRestGateways: []

@@ -100,7 +100,7 @@ export default class Wizard extends Command {
         BootstrapUtils.showBanner();
         console.log('Welcome to the Symbol Bootstrap wizard! This command will:');
         console.log(' - Guide you through the configuration process.');
-        console.log(' - Import Paper Wallet seeds.');
+        console.log(' - Import or generate private keys.');
         console.log(` - Create a custom preset and show you the way to launch your node!`);
         console.log();
         const target = flags.target;
