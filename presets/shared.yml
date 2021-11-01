@@ -218,3 +218,7 @@ restProtocol: HTTP
 restSSLPath: '/symbol-workdir'
 restSSLKeyFileName: 'restSSL.key'
 restSSLCertificateFileName: 'restSSL.crt'
+statisticsServicePeerFilter: ''
+statisticsServicePeerLimit: 50
+statisticsServiceRestFilter: suggested
+statisticsServiceRestLimit: 10

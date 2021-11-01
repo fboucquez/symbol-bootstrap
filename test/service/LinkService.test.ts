@@ -371,7 +371,6 @@ describe('LinkService', () => {
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
 
             expect(lastKnownNetworkEpoch).gt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
-            console.log(lastKnownNetworkEpoch);
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
@@ -467,7 +466,6 @@ describe('LinkService', () => {
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
             expect(lastKnownNetworkEpoch).lt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
-            console.log(lastKnownNetworkEpoch);
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,

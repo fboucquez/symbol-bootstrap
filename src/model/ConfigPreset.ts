@@ -16,7 +16,6 @@
 
 import { NetworkType } from 'symbol-sdk';
 import { Preset } from '../service';
-import { NodeType } from './NodeType';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -422,10 +421,17 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     useExperimentalNativeVotingKeyGeneration?: boolean;
     lastKnownNetworkEpoch: number;
     autoUpdateVotingKeys: boolean;
-    //Nested Objects
-    knownRestGateways?: string[];
+    statisticsServiceUrl?: string;
+    statisticsServicePeerLimit: number;
+    statisticsServicePeerFilter?: string;
+    statisticsServiceRestLimit: number;
+    statisticsServiceRestFilter?: string;
+
+    // Nested Objects
     inflation?: Record<string, number>;
-    knownPeers?: Record<NodeType, PeerInfo[]>;
+    // Allows hardcoded list. For new networks and for possible fallbacks.
+    knownRestGateways?: string[];
+    knownPeers?: PeerInfo[];
 }
 
 export interface ConfigPreset extends CommonConfigPreset {

@@ -356,9 +356,14 @@ export class ConfigLoader {
 
     public mergePresets(object: ConfigPreset, ...otherArgs: (CustomPreset | undefined)[]): any {
         const presets: (CustomPreset | undefined)[] = [object, ...otherArgs];
-        const inflation: Record<string, number> = presets.reverse().find((p) => p?.inflation)?.inflation || {};
+        const reversed = _.reverse(presets);
+        const inflation = reversed.find((p) => p?.inflation)?.inflation || {};
+        const knownRestGateways = reversed.find((p) => p?.knownRestGateways)?.knownRestGateways || [];
+        const knownPeers = reversed.find((p) => p?.knownPeers)?.knownPeers || [];
         const presetData = _.merge(object, ...otherArgs);
         presetData.inflation = inflation;
+        presetData.knownRestGateways = knownRestGateways;
+        presetData.knownPeers = knownPeers;
         return presetData;
     }
 
