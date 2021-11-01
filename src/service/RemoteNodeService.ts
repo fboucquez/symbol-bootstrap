@@ -31,19 +31,19 @@ export interface RepositoryInfo {
     chainInfo: ChainInfo;
 }
 export class RemoteNodeService {
-    constructor(private readonly offline: boolean | undefined) {}
+    constructor(private readonly presetData: ConfigPreset, private readonly offline: boolean | undefined) {}
     private restUrls: string[] | undefined;
 
-    public async resolveCurrentFinalizationEpoch(presetData: ConfigPreset): Promise<number> {
-        const votingNode = presetData.nodes?.find((n) => n.voting);
+    public async resolveCurrentFinalizationEpoch(): Promise<number> {
+        const votingNode = this.presetData.nodes?.find((n) => n.voting);
         if (!votingNode || this.offline) {
-            return presetData.lastKnownNetworkEpoch;
+            return this.presetData.lastKnownNetworkEpoch;
         }
         if (!(await this.isConnectedToInternet())) {
-            return presetData.lastKnownNetworkEpoch;
+            return this.presetData.lastKnownNetworkEpoch;
         }
-        const urls = await this.getRestUrls(presetData);
-        return (await this.getBestFinalizationEpoch(urls)) || presetData.lastKnownNetworkEpoch;
+        const urls = await this.getRestUrls();
+        return (await this.getBestFinalizationEpoch(urls)) || this.presetData.lastKnownNetworkEpoch;
     }
 
     public async getBestFinalizationEpoch(urls: string[]): Promise<number | undefined> {
@@ -58,8 +58,8 @@ export class RemoteNodeService {
         return finalizationEpoch;
     }
 
-    public async getBestRepositoryInfo(url: string | undefined, presetData: ConfigPreset): Promise<RepositoryInfo> {
-        const urls = url ? [url] : await this.getRestUrls(presetData);
+    public async getBestRepositoryInfo(url: string | undefined): Promise<RepositoryInfo> {
+        const urls = url ? [url] : await this.getRestUrls();
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
         if (!repositoryInfo) {
             throw new Error(`No up and running node could be found out of: \n - ${urls.join('\n - ')}`);
@@ -124,19 +124,19 @@ export class RemoteNodeService {
             .map((i) => i as RepositoryInfo);
     }
 
-    public async getRestUrls(presetData: ConfigPreset): Promise<string[]> {
+    public async getRestUrls(): Promise<string[]> {
         if (this.restUrls) {
             return this.restUrls;
         }
+        const presetData = this.presetData;
         const urls = [...(presetData.knownRestGateways || [])];
         const statisticsServiceUrl = presetData.statisticsServiceUrl;
         if (statisticsServiceUrl && !this.offline) {
             const client = this.createNodeApiRestClient(statisticsServiceUrl);
             try {
-                const nodes = await client.getNodes(
-                    presetData.statisticsServiceRestFilter as NodeListFilter,
-                    presetData.statisticsServiceRestLimit,
-                );
+                const filter = presetData.statisticsServiceRestFilter as NodeListFilter;
+                const limit = presetData.statisticsServiceRestLimit;
+                const nodes = await client.getNodes(filter ? filter : undefined, limit);
                 urls.push(...nodes.map((n) => n.apiStatus?.restGatewayUrl).filter((url): url is string => !!url));
             } catch (e) {
                 logger.warn(
@@ -169,16 +169,16 @@ export class RemoteNodeService {
         return roles.join(',');
     }
 
-    public async getPeerInfos(presetData: ConfigPreset): Promise<PeerInfo[]> {
+    public async getPeerInfos(): Promise<PeerInfo[]> {
+        const presetData = this.presetData;
         const statisticsServiceUrl = presetData.statisticsServiceUrl;
         const knownPeers = [...(presetData.knownPeers || [])];
         if (statisticsServiceUrl && !this.offline) {
             const client = this.createNodeApiRestClient(statisticsServiceUrl);
             try {
-                const nodes = await client.getNodes(
-                    presetData.statisticsServicePeerFilter as NodeListFilter,
-                    presetData.statisticsServicePeerLimit,
-                );
+                const filter = presetData.statisticsServicePeerFilter as NodeListFilter;
+                const limit = presetData.statisticsServicePeerLimit;
+                const nodes = await client.getNodes(filter ? filter : undefined, limit);
                 const peerInfos = nodes
                     .map((n): PeerInfo | undefined => {
                         if (!n.peerStatus?.isAvailable || !n.publicKey || !n.port || !n.friendlyName || !n.roles) {

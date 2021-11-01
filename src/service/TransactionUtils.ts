@@ -15,11 +15,12 @@
  */
 
 import { Address, MultisigAccountInfo, RepositoryFactory } from 'symbol-sdk';
+import { ConfigPreset } from '../model';
 import { RemoteNodeService } from './RemoteNodeService';
 
 export class TransactionUtils {
-    public static async getRepositoryFactory(urls: string[]): Promise<RepositoryFactory> {
-        const repositoryInfo = await new RemoteNodeService().getBestRepositoryInfo(urls);
+    public static async getRepositoryFactory(presetData: ConfigPreset, url: string | undefined): Promise<RepositoryFactory> {
+        const repositoryInfo = await new RemoteNodeService(presetData, false).getBestRepositoryInfo(url);
         return repositoryInfo.repositoryFactory;
     }
 

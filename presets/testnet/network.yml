@@ -24,7 +24,7 @@ importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
 votingKeyDesiredFutureLifetime: 120
-lastKnownNetworkEpoch: 721
+lastKnownNetworkEpoch: 723
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m
@@ -479,5 +479,3 @@ inflation:
     starting-at-height-109897799: 2
     starting-at-height-110160299: 1
     starting-at-height-110422799: 0
-statisticsServiceRestLimit: 3
-statisticsServiceRestFilter: preferred

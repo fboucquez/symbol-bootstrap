@@ -94,12 +94,11 @@ export class ModifyMultisigService implements TransactionFactory {
         const minRemovalDelta = await this.resolveMinRemovalDelta(this.params.minRemovalDelta);
 
         const url = this.params.url.replace(/\/$/, '');
-        const urls = (this.params.useKnownRestGateways && presetData.knownRestGateways) || [url];
-        const multisigInfo = await TransactionUtils.getMultisigAccount(
-            await TransactionUtils.getRepositoryFactory(urls),
-            mainAccount.address,
+        const repositoryFactory = await TransactionUtils.getRepositoryFactory(
+            presetData,
+            this.params.useKnownRestGateways ? undefined : url,
         );
-
+        const multisigInfo = await TransactionUtils.getMultisigAccount(repositoryFactory, mainAccount.address);
         this.validateParams(addressAdditions, addressDeletions, minRemovalDelta, minApprovalDelta, multisigInfo);
 
         logger.info(

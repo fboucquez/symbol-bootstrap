@@ -17,9 +17,11 @@
 import { expect } from 'chai';
 import 'mocha';
 import { it } from 'mocha';
+import { join } from 'path';
 import { restore, stub } from 'sinon';
 import { NodeApi } from 'symbol-statistics-service-typescript-fetch-client';
-import { BootstrapService, ConfigService, Preset, RemoteNodeService } from '../../src/service';
+import { ConfigPreset } from '../../src';
+import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
 
 const list = [
     {
@@ -401,41 +403,35 @@ const list = [
         __v: 0,
     },
 ];
-
-const password = '1234';
-const params = {
-    ...ConfigService.defaultParams,
-    ready: true,
-    target: 'target/tests/remote-node-service-testnet-dual',
-    password,
-    reset: false,
-    offline: true,
-    preset: Preset.testnet,
-    customPresetObject: {
-        lastKnownNetworkEpoch: 1,
-        nodeUseRemoteAccount: true,
-        nodes: [
-            {
-                mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
-                friendlyName: 'myFriendlyName',
-            },
-        ],
-        knownRestGateways: ['http://staticRest1:3000', 'https://staticRest2:3001'],
-        knownPeers: [
-            {
-                publicKey: 'AAAAE7EAEEAE61EF0C50B4D05931F4325F69081B1B074D31E094C4B21E8CFB3D',
-                endpoint: { host: 'someStaticPeer', port: 7900 },
-                metadata: { name: 'someStaticPeer', roles: 'Peer,Api' },
-            },
-        ],
-    },
-    assembly: 'dual',
+const customPresetObject = {
+    lastKnownNetworkEpoch: 1,
+    nodeUseRemoteAccount: true,
+    nodes: [
+        {
+            mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+            friendlyName: 'myFriendlyName',
+        },
+    ],
+    knownRestGateways: ['http://staticRest1:3000', 'https://staticRest2:3001'],
+    knownPeers: [
+        {
+            publicKey: 'AAAAE7EAEEAE61EF0C50B4D05931F4325F69081B1B074D31E094C4B21E8CFB3D',
+            endpoint: { host: 'someStaticPeer', port: 7900 },
+            metadata: { name: 'someStaticPeer', roles: 'Peer,Api' },
+        },
+    ],
 };
+const preset = Preset.testnet;
+const root = './';
+const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
+const sharedPresetLocation = join(root, 'presets', 'shared.yml');
+const sharedPreset = BootstrapUtils.loadYaml(sharedPresetLocation, false);
+const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
+const presetData: ConfigPreset = new ConfigLoader().mergePresets(sharedPreset, networkPreset, customPresetObject);
 
 describe('RemoteNodeService', () => {
     afterEach(restore);
     it('getRestUrls online', async () => {
-        const { presetData } = await new BootstrapService().config(params);
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
             return ({
                 getNodes(filter: NodeFilter, limit: number) {
@@ -446,8 +442,8 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(false);
-        const urls = await service.getRestUrls(presetData);
+        const service = new RemoteNodeService(presetData, false);
+        const urls = await service.getRestUrls();
         expect(urls).deep.eq([
             'http://staticRest1:3000',
             'https://staticRest2:3001',
@@ -460,7 +456,6 @@ describe('RemoteNodeService', () => {
         ]);
     });
     it('getRestUrls offline', async () => {
-        const { presetData } = await new BootstrapService().config(params);
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
             return ({
                 getNodes(filter: NodeFilter, limit: number) {
@@ -471,24 +466,24 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(true);
-        const urls = await service.getRestUrls(presetData);
+        const service = new RemoteNodeService(presetData, true);
+        const urls = await service.getRestUrls();
         expect(urls).deep.eq(['http://staticRest1:3000', 'https://staticRest2:3001']);
     });
     it('getPeerInfos online', async () => {
-        const { presetData } = await new BootstrapService().config(params);
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
             return ({
                 getNodes(filter: NodeFilter, limit: number) {
-                    expect(filter).eq(presetData.statisticsServicePeerFilter);
+                    expect(presetData.statisticsServicePeerFilter).eq('');
+                    expect(filter).eq(undefined);
                     expect(limit).eq(presetData.statisticsServicePeerLimit);
                     return list;
                 },
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(false);
-        const peerInfos = await service.getPeerInfos(presetData);
+        const service = new RemoteNodeService(presetData, false);
+        const peerInfos = await service.getPeerInfos();
         expect(peerInfos).deep.eq([
             {
                 publicKey: 'AAAAE7EAEEAE61EF0C50B4D05931F4325F69081B1B074D31E094C4B21E8CFB3D',
@@ -538,7 +533,6 @@ describe('RemoteNodeService', () => {
         ]);
     });
     it('getPeerInfos offline', async () => {
-        const { presetData } = await new BootstrapService().config(params);
         stub(RemoteNodeService.prototype, 'createNodeApiRestClient').callsFake(() => {
             return ({
                 getNodes(filter: NodeFilter, limit: number) {
@@ -549,8 +543,8 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(true);
-        const peerInfos = await service.getPeerInfos(presetData);
+        const service = new RemoteNodeService(presetData, true);
+        const peerInfos = await service.getPeerInfos();
         expect(peerInfos).deep.eq([
             {
                 publicKey: 'AAAAE7EAEEAE61EF0C50B4D05931F4325F69081B1B074D31E094C4B21E8CFB3D',

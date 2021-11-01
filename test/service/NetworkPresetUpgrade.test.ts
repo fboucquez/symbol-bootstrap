@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 import { it } from 'mocha';
+import { join } from 'path';
 import { ConfigPreset } from '../../src/model';
-import { BootstrapUtils, Preset, RemoteNodeService } from '../../src/service';
+import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
 
 describe('NetworkPresetUpgrade', () => {
     const patchNetworkPreset = async (preset: Preset): Promise<void> => {
         const root = './';
-        const presetLocation = `${root}/presets/${preset}/network.yml`;
-        const networkPreset: ConfigPreset = BootstrapUtils.loadYaml(presetLocation, false);
-        networkPreset.statisticsServiceRestLimit = 3;
-        networkPreset.statisticsServiceRestFilter = 'preferred';
-        const remoteNodeService = new RemoteNodeService(false);
-        const urls = await remoteNodeService.getRestUrls(networkPreset);
+        const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
+        const sharedPresetLocation = join(root, 'presets', 'shared.yml');
+        const sharedPreset = BootstrapUtils.loadYaml(sharedPresetLocation, false);
+        const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
+        const configPreset: ConfigPreset = new ConfigLoader().mergePresets(sharedPreset, networkPreset);
+        const remoteNodeService = new RemoteNodeService(configPreset, false);
+        const urls = await remoteNodeService.getRestUrls();
         const epoch = await remoteNodeService.getBestFinalizationEpoch(urls);
         if (!epoch) {
             throw new Error('Epoch could not be resolved!!');
         }
         networkPreset.lastKnownNetworkEpoch = epoch;
-        await BootstrapUtils.writeYaml(presetLocation, networkPreset, undefined);
+        await BootstrapUtils.writeYaml(networkPresetLocation, networkPreset, undefined);
     };
     it('should patch testnet lastKnownNetworkEpoch', () => {
         return patchNetworkPreset(Preset.testnet);

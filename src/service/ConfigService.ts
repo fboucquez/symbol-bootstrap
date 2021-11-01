@@ -158,7 +158,7 @@ export class ConfigService {
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
-            const remoteNodeService = new RemoteNodeService(this.params.offline);
+            const remoteNodeService = new RemoteNodeService(presetData, this.params.offline);
 
             this.cleanUpConfiguration(presetData);
             await this.generateNodeCertificates(presetData, addresses);
@@ -262,8 +262,8 @@ export class ConfigService {
     }
 
     private async generateNodes(presetData: ConfigPreset, addresses: Addresses, remoteNodeService: RemoteNodeService): Promise<void> {
-        const currentFinalizationEpoch = await remoteNodeService.resolveCurrentFinalizationEpoch(presetData);
-        const externalPeers: PeerInfo[] = await remoteNodeService.getPeerInfos(presetData);
+        const currentFinalizationEpoch = await remoteNodeService.resolveCurrentFinalizationEpoch();
+        const externalPeers: PeerInfo[] = await remoteNodeService.getPeerInfos();
         const localPeers: PeerInfo[] = (presetData.nodes || []).map((nodePresetData, index) => {
             const node = (addresses.nodes || [])[index];
             return {
@@ -765,7 +765,7 @@ export class ConfigService {
             const nodePreset = presetData.nodes?.find((g) => g.name == restService.apiNodeName);
             restNodes.push(`http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
         });
-        restNodes.push(...(await remoteNodeService.getRestUrls(presetData)));
+        restNodes.push(...(await remoteNodeService.getRestUrls()));
         return { restNodes: _.uniq(restNodes), defaultNode: restNodes[0] || 'http://localhost:3000' };
     }
 
