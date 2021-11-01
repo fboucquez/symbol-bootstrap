@@ -49,9 +49,9 @@ maxChildNamespaces: 100
 nonVotingUnfinalizedBlocksDuration: 10m
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
-faucetUrl: 'http://faucet.testnet.symboldev.network'
-explorerUrl: 'http://explorer.testnet.symboldev.network'
 restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
+faucetUrl: 'http://testnet.symbol.tools'
+explorerUrl: 'https://testnet.symbol.fyi'
 statisticsServiceUrl: 'https://testnet.symbol.services'
 knownRestGateways: []
 knownPeers: []

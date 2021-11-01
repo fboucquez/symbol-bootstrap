@@ -23,6 +23,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Removed unused `sshpk` service and dependency.
 - Removed unused `forge` service and dependency.
 - Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
+- Added statistic service integration.
+- Removed node static list from `mainnet` and `testnet` preset. The node lists are resolved using the statistic service.
+- Updated explorer and faucet urls.
 
 ## [1.0.9] - Sep-15-2021
 
