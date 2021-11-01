@@ -86,15 +86,25 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="service_remotenodeservice.remotenodeservice.html#resturls" class="tsd-kind-icon">rest<wbr>Urls</a></li>
+							</ul>
+						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#createnodeapirestclient" class="tsd-kind-icon">create<wbr>Node<wbr>Api<wbr>Rest<wbr>Client</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#getbestfinalizationepoch" class="tsd-kind-icon">get<wbr>Best<wbr>Finalization<wbr>Epoch</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#getbestrepositoryinfo" class="tsd-kind-icon">get<wbr>Best<wbr>Repository<wbr>Info</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_remotenodeservice.remotenodeservice.html#getknownnoderepositoryinfos" class="tsd-kind-icon">get<wbr>Known<wbr>Node<wbr>Repository<wbr>Infos</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#getpeerinfos" class="tsd-kind-icon">get<wbr>Peer<wbr>Infos</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#getresturls" class="tsd-kind-icon">get<wbr>Rest<wbr>Urls</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#isconnectedtointernet" class="tsd-kind-icon">is<wbr>Connected<wbr>ToInternet</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="service_remotenodeservice.remotenodeservice.html#resolvecurrentfinalizationepoch" class="tsd-kind-icon">resolve<wbr>Current<wbr>Finalization<wbr>Epoch</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="service_remotenodeservice.remotenodeservice.html#sortbyheight" class="tsd-kind-icon">sort<wbr>ByHeight</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_remotenodeservice.remotenodeservice.html#getnoderoles" class="tsd-kind-icon">get<wbr>Node<wbr>Roles</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,36 +116,84 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Remote<wbr>Node<wbr>Service<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="service_remotenodeservice.remotenodeservice.html" class="tsd-signature-type" data-tsd-kind="Class">RemoteNodeService</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="service_remotenodeservice.remotenodeservice.html" class="tsd-signature-type" data-tsd-kind="Class">RemoteNodeService</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getbestfinalizationepoch" class="tsd-anchor"></a>
-					<h3>get<wbr>Best<wbr>Finalization<wbr>Epoch</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Best<wbr>Finalization<wbr>Epoch<span class="tsd-signature-symbol">(</span>urls<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Remote<wbr>Node<wbr>Service<span class="tsd-signature-symbol">(</span>presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a>, offline<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="service_remotenodeservice.remotenodeservice.html" class="tsd-signature-type" data-tsd-kind="Class">RemoteNodeService</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/a84483b/src/service/RemoteNodeService.ts#L43">src/service/RemoteNodeService.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L33">src/service/RemoteNodeService.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>urls: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>presetData: <a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a></h5>
+								</li>
+								<li>
+									<h5>offline: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="service_remotenodeservice.remotenodeservice.html" class="tsd-signature-type" data-tsd-kind="Class">RemoteNodeService</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="resturls" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> rest<wbr>Urls</h3>
+					<div class="tsd-signature tsd-kind-icon">rest<wbr>Urls<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L35">src/service/RemoteNodeService.ts:35</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="createnodeapirestclient" class="tsd-anchor"></a>
+					<h3>create<wbr>Node<wbr>Api<wbr>Rest<wbr>Client</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Node<wbr>Api<wbr>Rest<wbr>Client<span class="tsd-signature-symbol">(</span>statisticsServiceUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NodeApi</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L211">src/service/RemoteNodeService.ts:211</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>statisticsServiceUrl: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NodeApi</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getbestfinalizationepoch" class="tsd-anchor"></a>
+					<h3>get<wbr>Best<wbr>Finalization<wbr>Epoch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Best<wbr>Finalization<wbr>Epoch<span class="tsd-signature-symbol">(</span>urls<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L49">src/service/RemoteNodeService.ts:49</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>urls: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -146,19 +204,19 @@
 					<a name="getbestrepositoryinfo" class="tsd-anchor"></a>
 					<h3>get<wbr>Best<wbr>Repository<wbr>Info</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Best<wbr>Repository<wbr>Info<span class="tsd-signature-symbol">(</span>urls<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/service_remotenodeservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Best<wbr>Repository<wbr>Info<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/service_remotenodeservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/a84483b/src/service/RemoteNodeService.ts#L55">src/service/RemoteNodeService.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L61">src/service/RemoteNodeService.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>urls: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>url: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/service_remotenodeservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -175,7 +233,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/a84483b/src/service/RemoteNodeService.ts#L90">src/service/RemoteNodeService.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L97">src/service/RemoteNodeService.ts:97</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -189,6 +247,40 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getpeerinfos" class="tsd-anchor"></a>
+					<h3>get<wbr>Peer<wbr>Infos</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Peer<wbr>Infos<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/model_configpreset.peerinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerInfo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L172">src/service/RemoteNodeService.ts:172</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/model_configpreset.peerinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerInfo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getresturls" class="tsd-anchor"></a>
+					<h3>get<wbr>Rest<wbr>Urls</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Rest<wbr>Urls<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L127">src/service/RemoteNodeService.ts:127</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="isconnectedtointernet" class="tsd-anchor"></a>
 					<h3>is<wbr>Connected<wbr>ToInternet</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -198,7 +290,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/a84483b/src/service/RemoteNodeService.ts#L78">src/service/RemoteNodeService.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L85">src/service/RemoteNodeService.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -209,21 +301,15 @@
 					<a name="resolvecurrentfinalizationepoch" class="tsd-anchor"></a>
 					<h3>resolve<wbr>Current<wbr>Finalization<wbr>Epoch</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Current<wbr>Finalization<wbr>Epoch<span class="tsd-signature-symbol">(</span>presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Current<wbr>Finalization<wbr>Epoch<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/a84483b/src/service/RemoteNodeService.ts#L31">src/service/RemoteNodeService.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L37">src/service/RemoteNodeService.ts:37</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>presetData: <a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -238,7 +324,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/a84483b/src/service/RemoteNodeService.ts#L64">src/service/RemoteNodeService.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L71">src/service/RemoteNodeService.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -248,6 +334,37 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/service_remotenodeservice.repositoryinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">RepositoryInfo</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getnoderoles" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Node<wbr>Roles</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Node<wbr>Roles<span class="tsd-signature-symbol">(</span>role<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/ee7cf94/src/service/RemoteNodeService.ts#L158">src/service/RemoteNodeService.ts:158</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return user friendly role type list</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>role: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>combined node role types</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -274,6 +391,12 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="service_remotenodeservice.remotenodeservice.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="service_remotenodeservice.remotenodeservice.html#resturls" class="tsd-kind-icon">rest<wbr>Urls</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="service_remotenodeservice.remotenodeservice.html#createnodeapirestclient" class="tsd-kind-icon">create<wbr>Node<wbr>Api<wbr>Rest<wbr>Client</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="service_remotenodeservice.remotenodeservice.html#getbestfinalizationepoch" class="tsd-kind-icon">get<wbr>Best<wbr>Finalization<wbr>Epoch</a>
 							</li>
@@ -284,6 +407,12 @@
 								<a href="service_remotenodeservice.remotenodeservice.html#getknownnoderepositoryinfos" class="tsd-kind-icon">get<wbr>Known<wbr>Node<wbr>Repository<wbr>Infos</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="service_remotenodeservice.remotenodeservice.html#getpeerinfos" class="tsd-kind-icon">get<wbr>Peer<wbr>Infos</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="service_remotenodeservice.remotenodeservice.html#getresturls" class="tsd-kind-icon">get<wbr>Rest<wbr>Urls</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="service_remotenodeservice.remotenodeservice.html#isconnectedtointernet" class="tsd-kind-icon">is<wbr>Connected<wbr>ToInternet</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -291,6 +420,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="service_remotenodeservice.remotenodeservice.html#sortbyheight" class="tsd-kind-icon">sort<wbr>ByHeight</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="service_remotenodeservice.remotenodeservice.html#getnoderoles" class="tsd-kind-icon">get<wbr>Node<wbr>Roles</a>
 							</li>
 						</ul>
 					</li>
@@ -319,13 +451,17 @@
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>
