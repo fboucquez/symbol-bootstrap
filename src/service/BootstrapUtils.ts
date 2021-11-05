@@ -735,13 +735,7 @@ export class BootstrapUtils {
     }
 
     public static getNetworkIdentifier(networkType: NetworkType): string {
-        switch (networkType) {
-            case NetworkType.MAIN_NET:
-                return 'public';
-            case NetworkType.TEST_NET:
-                return 'public-test';
-        }
-        throw new Error(`Invalid Network Type ${networkType}`);
+        return BootstrapUtils.getNetworkName(networkType);
     }
 
     public static getNetworkName(networkType: NetworkType): string {

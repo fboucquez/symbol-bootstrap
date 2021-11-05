@@ -1,6 +1,6 @@
 {
   "network": {
-    "name": "public",
+    "name": "mainnet",
     "description": "catapult public main network"
   },
   "port": 3000,

@@ -60,11 +60,22 @@ export class ConfigLoader {
         if (!presetData.harvestNetworkFeeSinkAddress) {
             presetData.harvestNetworkFeeSinkAddress = addresses.sinkAddress;
         }
+        if (!presetData.harvestNetworkFeeSinkAddressV1) {
+            presetData.harvestNetworkFeeSinkAddressV1 = presetData.harvestNetworkFeeSinkAddress;
+        }
+
         if (!presetData.mosaicRentalFeeSinkAddress) {
             presetData.mosaicRentalFeeSinkAddress = addresses.sinkAddress;
         }
+        if (!presetData.mosaicRentalFeeSinkAddressV1) {
+            presetData.mosaicRentalFeeSinkAddressV1 = presetData.mosaicRentalFeeSinkAddress;
+        }
+
         if (!presetData.namespaceRentalFeeSinkAddress) {
             presetData.namespaceRentalFeeSinkAddress = addresses.sinkAddress;
+        }
+        if (!presetData.namespaceRentalFeeSinkAddressV1) {
+            presetData.namespaceRentalFeeSinkAddressV1 = presetData.namespaceRentalFeeSinkAddress;
         }
 
         presetData.networkIdentifier = BootstrapUtils.getNetworkIdentifier(presetData.networkType);

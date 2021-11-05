@@ -13,8 +13,11 @@ maxMosaicAtomicUnits: 8999999999000000
 minHarvesterBalance: 10000000000
 minVoterBalance: 3000000000000
 nemesisGenerationHashSeed: 3B5E1FA6445653C971A50687E75E6D09FB30481055E3990C84B25E9222DC1155
+harvestNetworkFeeSinkAddressV1: TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA
 harvestNetworkFeeSinkAddress: TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA
+namespaceRentalFeeSinkAddressV1: TATBDUEWS2X2BKKBPVB7SY4Z626YCAERGA3IF5A
 namespaceRentalFeeSinkAddress: TATBDUEWS2X2BKKBPVB7SY4Z626YCAERGA3IF5A
+mosaicRentalFeeSinkAddressV1: TAFNXW3VXVFTGTVGATKQAR75ALQX7DQXQJRWWTA
 mosaicRentalFeeSinkAddress: TAFNXW3VXVFTGTVGATKQAR75ALQX7DQXQJRWWTA
 nemesisSignerPublicKey: 2267B24107405779DDF0D8FBEABD8142B97105F356F3737B1FC02220E8F90FF2
 networkType: 152
@@ -47,6 +50,8 @@ minProofSize: 0
 syncTimeout: 5m
 maxChildNamespaces: 100
 nonVotingUnfinalizedBlocksDuration: 10m
+treasuryReissuanceEpoch: 0
+treasuryReissuanceEpochIneligibleVoterAddresses: []
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
 restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
@@ -55,6 +60,9 @@ explorerUrl: 'https://testnet.symbol.fyi'
 statisticsServiceUrl: 'https://testnet.symbol.services'
 knownRestGateways: []
 knownPeers: []
+treasuryReissuanceTransactionSignatures: []
+treasuryReissuanceFallbackTransactionSignatures: []
+
 inflation:
     starting-at-height-2: 0
     starting-at-height-5760: 191997042

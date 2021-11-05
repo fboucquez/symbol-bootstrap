@@ -404,8 +404,11 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     votingUnfinalizedBlocksDuration?: string;
     nemesisSignerPublicKey: string;
     nemesisGenerationHashSeed: string;
+    harvestNetworkFeeSinkAddressV1?: string;
     harvestNetworkFeeSinkAddress?: string;
+    mosaicRentalFeeSinkAddressV1?: string;
     mosaicRentalFeeSinkAddress?: string;
+    namespaceRentalFeeSinkAddressV1?: string;
     namespaceRentalFeeSinkAddress?: string;
     networkIdentifier: string;
     networkName: string;
