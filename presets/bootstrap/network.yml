@@ -124,6 +124,14 @@ faucets:
           BLACKLIST_MOSAIC_IDS: '[]'
           EXPLORER_URL: 'http://localhost:{{add $index 90}}/'
       openPort: '{{add $index 100}}'
+httpsProxies:
+    - name: 'https-proxy'
+      excludeDockerService: true #disabled as default
+      openPort: 3001
+      #domains: 'symbol-node.example.com -> http://rest-gateway:3000'
+      stage: 'production'
+      webSocket: 'true'
+      serverNamesHashBucketSize: 128
 inflation:
     starting-at-height-1: 0
     starting-at-height-10000: 0

@@ -19,8 +19,8 @@ import { BootstrapUtils } from './BootstrapUtils';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
+import { ModifyMultisigParams, ModifyMultisigService } from './ModifyMultisigService';
 import { ReportParams, ReportService } from './ReportService';
-import { RewardProgramParams, RewardProgramService } from './RewardProgramService';
 import { RunParams, RunService } from './RunService';
 
 export type StartParams = ConfigParams & ComposeParams & RunParams;
@@ -38,6 +38,15 @@ export class BootstrapService {
      */
     public async config(config: ConfigParams = ConfigService.defaultParams): Promise<ConfigResult> {
         return new ConfigService(this.root, config).run();
+    }
+
+    /**
+     * It resolves the preset used for preventive configuration.
+     *
+     * @param config the params of the config command.
+     */
+    public resolveConfigPreset(config: ConfigParams = ConfigService.defaultParams): ConfigPreset {
+        return new ConfigService(this.root, config).resolveConfigPreset(false);
     }
 
     /**
@@ -76,18 +85,19 @@ export class BootstrapService {
     }
 
     /**
-     * It calls a running service announcing the registration of the nodes to the supernode rewards program.
+     * It converts main account into multisig account or modifies multisig structure
      *
      * @param config the params passed
      * @param passedPresetData  the created preset if you know it, otherwise will load the latest one resolved from the target folder.
      * @param passedAddresses  the created addresses if you know it, otherwise will load the latest one resolved from the target folder.
      */
-    public async enrollRewardProgram(
-        config: RewardProgramParams = RewardProgramService.defaultParams,
+
+    public async modifyMultisig(
+        config: ModifyMultisigParams = ModifyMultisigService.defaultParams,
         passedPresetData?: ConfigPreset | undefined,
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
-        await new RewardProgramService(config).enroll(passedPresetData, passedAddresses);
+        await new ModifyMultisigService(config).run(passedPresetData, passedAddresses);
     }
 
     /**

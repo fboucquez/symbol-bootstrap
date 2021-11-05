@@ -17,6 +17,8 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 * [Concepts](#concepts)
 * [Requirements](#requirements)
 * [Usage](#usage)
+* [General Usage](#general-usage)
+* [Wizard](#wizard)
 * [E2E Testing support](#e2e-testing-support)
 * [Development](#development)
 * [Commands](#commands)
@@ -135,13 +137,15 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/1.0.9 linux-x64 node-v12.22.6
+symbol-bootstrap/1.1.0 linux-x64 node-v12.22.6
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
 ...
 ```
 <!-- usagestop -->
+
+# General Usage
 
 The general usage would be:
 
@@ -161,6 +165,14 @@ If you need to start fresh, you many need to sudo remove the target folder (dock
 
 ```
 sudo rm -rf ./target
+```
+
+# Wizard
+
+If this is your first time creating a node, it's recommended to use the Wizard. Just follow the instructions:
+
+```
+symbol-bootstrap wizard
 ```
 
 # E2E Testing support
@@ -268,10 +280,11 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap decrypt`](docs/decrypt.md) - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
 * [`symbol-bootstrap encrypt`](docs/encrypt.md) - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
-* [`symbol-bootstrap enrollRewardProgram`](docs/enrollRewardProgram.md) - It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the agent keys (changing the agent-ca-csr) or server host.
 * [`symbol-bootstrap healthCheck`](docs/healthCheck.md) - It checks if the services created with docker compose are up and running.
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
 * [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
+* [`symbol-bootstrap modifyMultisig`](docs/modifyMultisig.md) - Create or modify a multisig account
+* [`symbol-bootstrap pack`](docs/pack.md) - It configures and packages your node into a zip file that can be uploaded to the final node machine.
 * [`symbol-bootstrap report`](docs/report.md) - it generates reStructuredText (.rst) reports describing the configuration of each node.
 * [`symbol-bootstrap resetData`](docs/resetData.md) - It removes the data keeping the generated configuration, certificates, keys and block 1.
 * [`symbol-bootstrap run`](docs/run.md) - It boots the network via docker using the generated `docker-compose.yml` file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the `docker-compose up` bash call.
@@ -279,6 +292,7 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap stop`](docs/stop.md) - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the `docker-compose down` bash call.
 * [`symbol-bootstrap updateVotingKeys`](docs/updateVotingKeys.md) - It updates the voting files containing the voting keys when required.
 * [`symbol-bootstrap verify`](docs/verify.md) - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.
+* [`symbol-bootstrap wizard`](docs/wizard.md) - An utility command that will help you configuring node!
 
 <!-- commandsstop -->
 

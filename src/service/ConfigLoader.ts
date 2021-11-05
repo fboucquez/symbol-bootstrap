@@ -60,11 +60,22 @@ export class ConfigLoader {
         if (!presetData.harvestNetworkFeeSinkAddress) {
             presetData.harvestNetworkFeeSinkAddress = addresses.sinkAddress;
         }
+        if (!presetData.harvestNetworkFeeSinkAddressV1) {
+            presetData.harvestNetworkFeeSinkAddressV1 = presetData.harvestNetworkFeeSinkAddress;
+        }
+
         if (!presetData.mosaicRentalFeeSinkAddress) {
             presetData.mosaicRentalFeeSinkAddress = addresses.sinkAddress;
         }
+        if (!presetData.mosaicRentalFeeSinkAddressV1) {
+            presetData.mosaicRentalFeeSinkAddressV1 = presetData.mosaicRentalFeeSinkAddress;
+        }
+
         if (!presetData.namespaceRentalFeeSinkAddress) {
             presetData.namespaceRentalFeeSinkAddress = addresses.sinkAddress;
+        }
+        if (!presetData.namespaceRentalFeeSinkAddressV1) {
+            presetData.namespaceRentalFeeSinkAddressV1 = presetData.namespaceRentalFeeSinkAddress;
         }
 
         presetData.networkIdentifier = BootstrapUtils.getNetworkIdentifier(presetData.networkType);
@@ -204,7 +215,7 @@ export class ConfigLoader {
         const newAccount = this.getAccount(networkType, publicKey?.toUpperCase(), privateKey?.toUpperCase());
 
         const getAccountLog = (account: Account | PublicAccount) =>
-            `${keyName} Account ${account.address.plain()} Public Ley ${account.publicKey} `;
+            `${keyName} Account ${account.address.plain()} Public Key ${account.publicKey} `;
 
         if (oldAccount && !newAccount) {
             logger.info(`Reusing ${getAccountLog(oldAccount)}...`);
@@ -309,15 +320,7 @@ export class ConfigLoader {
                 nodePreset.vrfPrivateKey,
                 nodePreset.vrfPublicKey,
             );
-        if (nodePreset.rewardProgram)
-            nodeAccount.agent = this.generateAccount(
-                networkType,
-                privateKeySecurityMode,
-                KeyName.Agent,
-                oldNodeAccount?.agent,
-                nodePreset.agentPrivateKey,
-                nodePreset.agentPublicKey,
-            );
+
         return nodeAccount;
     }
 
@@ -364,9 +367,14 @@ export class ConfigLoader {
 
     public mergePresets(object: ConfigPreset, ...otherArgs: (CustomPreset | undefined)[]): any {
         const presets: (CustomPreset | undefined)[] = [object, ...otherArgs];
-        const inflation: Record<string, number> = presets.reverse().find((p) => p?.inflation)?.inflation || {};
+        const reversed = _.reverse(presets);
+        const inflation = reversed.find((p) => p?.inflation)?.inflation || {};
+        const knownRestGateways = reversed.find((p) => p?.knownRestGateways)?.knownRestGateways || [];
+        const knownPeers = reversed.find((p) => p?.knownPeers)?.knownPeers || [];
         const presetData = _.merge(object, ...otherArgs);
         presetData.inflation = inflation;
+        presetData.knownRestGateways = knownRestGateways;
+        presetData.knownPeers = knownPeers;
         return presetData;
     }
 

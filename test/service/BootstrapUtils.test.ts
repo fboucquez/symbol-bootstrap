@@ -24,6 +24,7 @@ import { Account, NetworkType } from 'symbol-sdk';
 import { ConfigAccount } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
 import assert = require('assert');
+import nock = require('nock');
 
 describe('BootstrapUtils', () => {
     it('BootstrapUtils dockerUserId', async () => {
@@ -57,12 +58,15 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toAmount("12'3456'78")).to.be.eq("12'345'678");
     });
 
-    it.skip('BootstrapUtils.download', async () => {
-        BootstrapUtils.deleteFile('boat.png'); // unit test fixed in dev!
+    it('BootstrapUtils.download', async () => {
+        const url = 'https://myserver.get';
 
-        const expectedSize = 177762;
+        BootstrapUtils.deleteFile('boat.png');
+
+        const expectedSize = 43970;
         async function download(): Promise<boolean> {
-            const result = await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/boat.png', 'boat.png');
+            nock(url).get('/boat.png').replyWithFile(200, 'test/boat.png', { 'content-length': expectedSize.toString() });
+            const result = await BootstrapUtils.download(url + '/boat.png', 'boat.png');
             expect(statSync('boat.png').size).eq(expectedSize);
             return result.downloaded;
         }
@@ -79,13 +83,15 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.resolveRootFolder()).to.not.undefined;
     });
 
-    it.skip('BootstrapUtils.download when invalid', async () => {
-        BootstrapUtils.deleteFile('boat.png'); // unit test fixed in dev!
+    it('BootstrapUtils.download when invalid', async () => {
+        BootstrapUtils.deleteFile('boat.png');
         try {
-            await BootstrapUtils.download('https://homepages.cae.wisc.edu/~ece533/images/invalid-boat.png', 'boat.png');
+            const url = 'https://myserver.get';
+            nock(url).get('/boat.png').reply(404);
+            await BootstrapUtils.download(url + '/boat.png', 'boat.png');
             expect(false).eq(true);
         } catch (e) {
-            expect(e.message).eq('Server responded with 404: Not Found');
+            expect(e.message).eq('Server responded with 404');
         }
     });
 

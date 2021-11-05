@@ -73,6 +73,9 @@ messageSynchronizationMaxResponseSize; 20MB
 maxHashesPerPoint; 256
 prevoteBlocksMultiple; 4
 unfinalizedBlocksDuration; 0m
+treasuryReissuanceEpoch; 0
+
+treasury_reissuance_epoch_ineligible_voter_addresses
 
 
 config-harvesting.properties
@@ -580,7 +583,7 @@ listenInterface; 0.0.0.0
 
 config-network.properties
 network
-identifier; public-test; NetworkIdentifier; Network identifier.
+identifier; testnet; NetworkIdentifier; Network identifier.
 nemesisSignerPublicKey; 2267B24107405779DDF0D8FBEABD8142B97105F356F3737B1FC02220E8F90FF2; Key; Nemesis public key.
 nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
 generationHashSeed; 3B5E1FA6445653C971A50687E75E6D09FB30481055E3990C84B25E9222DC1155; ;
@@ -612,11 +615,11 @@ minVotingKeyLifetime; 28; uint32_t; Minimum number of finalization rounds for wh
 maxVotingKeyLifetime; 720; uint32_t; Maximum number of finalization rounds for which voting key can be registered.
 harvestBeneficiaryPercentage; 25; uint8_t; Percentage of the harvested fee that is collected by the beneficiary account.
 harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
+harvestNetworkFeeSinkAddressV1; TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA; ;
 harvestNetworkFeeSinkAddress; TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA; Address; Address of the harvest network fee sink account.
 maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
-
-fork_heights
-totalVotingBalanceCalculationFix; 398'520; uint32_t; Height of fork to fix TotalVotingBalance calculation.
+treasuryReissuanceBlockTransactionsHash; 0000000000000000000000000000000000000000000000000000000000000000; ;
+treasuryReissuanceFallbackBlockTransactionsHash; 0000000000000000000000000000000000000000000000000000000000000000; ;
 
 plugin:catapult.plugins.accountlink
 dummy; to trigger plugin load
@@ -644,6 +647,7 @@ plugin:catapult.plugins.mosaic
 maxMosaicsPerAccount; 1'000; uint16_t; Maximum number of mosaics that an account can own.
 maxMosaicDuration; 3650d; utils::BlockSpan; Maximum mosaic duration.
 maxMosaicDivisibility; 6; uint8_t; Maximum mosaic divisibility.
+mosaicRentalFeeSinkAddressV1; TAFNXW3VXVFTGTVGATKQAR75ALQX7DQXQJRWWTA; ;
 mosaicRentalFeeSinkAddress; TAFNXW3VXVFTGTVGATKQAR75ALQX7DQXQJRWWTA; Address; Address of the mosaic rental fee sink account.
 mosaicRentalFee; 500000; Amount; Mosaic rental fee.
 
@@ -660,6 +664,7 @@ minNamespaceDuration; 30d; utils::BlockSpan; Minimum namespace duration.
 maxNamespaceDuration; 1825d; utils::BlockSpan; Maximum namespace duration.
 namespaceGracePeriodDuration; 1d; utils::BlockSpan; Grace period during which time only the previous owner can renew an expired namespace.
 reservedRootNamespaceNames; symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info; unordered_set<string>; Reserved root namespaces that cannot be claimed.
+namespaceRentalFeeSinkAddressV1; TATBDUEWS2X2BKKBPVB7SY4Z626YCAERGA3IF5A; ;
 namespaceRentalFeeSinkAddress; TATBDUEWS2X2BKKBPVB7SY4Z626YCAERGA3IF5A; Address; Address of the namespace rental fee sink account.
 rootNamespaceRentalFeePerBlock; 2; Amount; Root namespace rental fee per block.
 childNamespaceRentalFee; 100000; Amount; Child namespace rental fee.
@@ -672,6 +677,14 @@ maxMosaicRestrictionValues; 20; uint8_t; Maximum number of mosaic restriction va
 
 plugin:catapult.plugins.transfer
 maxMessageSize; 1024; uint16_t; Maximum transaction message size.
+
+fork_heights
+totalVotingBalanceCalculationFix; 398'520; uint32_t; Height of fork to fix TotalVotingBalance calculation.
+treasuryReissuance; 0; ;
+
+treasury_reissuance_transaction_signatures
+
+treasury_reissuance_fallback_transaction_signatures
 
 
 config-node.properties
@@ -693,7 +706,7 @@ shortLivedCacheBlockDuration; 100m; utils::TimeSpan; Duration of a block in the 
 shortLivedCachePruneInterval; 90s; utils::TimeSpan; Time between short lived cache pruning.
 shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
 minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
-maxTimeBehindPullTransactionsStart; 5m; ;
+maxTimeBehindPullTransactionsStart; 24h; ;
 transactionSelectionStrategy; oldest; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
 unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
 unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
@@ -711,7 +724,7 @@ transactionDisruptorMaxMemorySize; 20MB; ;
 enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
 enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
 maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-minPartnerNodeVersion; 1.0.1.0; ;
+minPartnerNodeVersion; 1.0.2.0; ;
 maxPartnerNodeVersion; 1.0.255.255; ;
 trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
 localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
@@ -729,7 +742,7 @@ maxWriteBatchSize; 5MB
 localnode
 host; ; string; Node host (leave empty to auto-detect IP).
 friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-version; 1.0.2.0; uint32_t; Node version.
+version; ; uint32_t; Node version.
 roles; Peer,Voting; ionet::NodeRoles; Node roles.
 
 outgoing_connections

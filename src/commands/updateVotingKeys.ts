@@ -71,7 +71,8 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         const addresses = configLoader.loadExistingAddresses(target, password);
         const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
 
-        const finalizationEpoch = flags.finalizationEpoch || (await new RemoteNodeService().resolveCurrentFinalizationEpoch(presetData));
+        const finalizationEpoch =
+            flags.finalizationEpoch || (await new RemoteNodeService(presetData, false).resolveCurrentFinalizationEpoch());
 
         const votingKeyUpgrade = (
             await Promise.all(

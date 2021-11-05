@@ -140,9 +140,7 @@ describe('LinkService', () => {
             preset: Preset.testnet,
             offline: true,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -230,9 +228,7 @@ describe('LinkService', () => {
                 reset: true,
                 preset: Preset.testnet,
                 customPreset: './test/unit-test-profiles/voting_preset.yml',
-                customPresetObject: {
-                    nodeUseRemoteAccount: true,
-                },
+                customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
                 assembly: 'dual',
             };
             const { addresses, presetData } = await new BootstrapService().config(params);
@@ -268,6 +264,7 @@ describe('LinkService', () => {
                 target: target,
                 password,
                 upgrade: true,
+                offline: true,
                 preset: Preset.testnet,
                 customPreset: './test/unit-test-profiles/voting_preset.yml',
                 customPresetObject: {
@@ -309,10 +306,7 @@ describe('LinkService', () => {
                 reset: true,
                 preset: Preset.testnet,
                 customPreset: './test/unit-test-profiles/voting_preset.yml',
-                customPresetObject: {
-                    autoUpdateVotingKeys: true,
-                    nodeUseRemoteAccount: true,
-                },
+                customPresetObject: { lastKnownNetworkEpoch: 235, autoUpdateVotingKeys: true, nodeUseRemoteAccount: true },
                 assembly: 'dual',
             };
             const { addresses, presetData } = await new BootstrapService().config(params);
@@ -377,7 +371,6 @@ describe('LinkService', () => {
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
 
             expect(lastKnownNetworkEpoch).gt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
-            console.log(lastKnownNetworkEpoch);
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
@@ -404,6 +397,7 @@ describe('LinkService', () => {
                 preset: Preset.testnet,
                 customPreset: './test/unit-test-profiles/voting_preset.yml',
                 customPresetObject: {
+                    lastKnownNetworkEpoch: 235,
                     autoUpdateVotingKeys: true,
                     nodeUseRemoteAccount: true,
                 },
@@ -472,7 +466,6 @@ describe('LinkService', () => {
             assertTransaction(transactions[0], TransactionType.ACCOUNT_KEY_LINK, LinkAction.Link, nodeAccount.remote!.publicKey);
             assertTransaction(transactions[1], TransactionType.VRF_KEY_LINK, LinkAction.Link, nodeAccount.vrf!.publicKey);
             expect(lastKnownNetworkEpoch).lt(originalLasKnownNetworkEpoch + presetData.votingKeyDesiredLifetime);
-            console.log(lastKnownNetworkEpoch);
             assertVotingTransaction(
                 transactions[2],
                 LinkAction.Link,
@@ -501,9 +494,7 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -567,9 +558,7 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -644,9 +633,7 @@ describe('LinkService', () => {
             reset: false,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -726,6 +713,7 @@ describe('LinkService', () => {
     });
 
     it('LinkService create transactions when dual + voting and already linked not removed', async () => {
+        const lastKnownNetworkEpoch = 235;
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
@@ -733,17 +721,16 @@ describe('LinkService', () => {
             offline: true,
             target: 'target/tests/testnet-dual-voting',
             password,
-            reset: false,
+            reset: true,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: lastKnownNetworkEpoch, nodeUseRemoteAccount: true },
             assembly: 'dual',
             removeOldLinked: false,
         };
         const alreadyLinkedAccountInfo: AccountInfo = (AccountHttp as any)['toAccountInfo'](alreadyLinkedAccountInfoDto);
         const { addresses, presetData } = await new BootstrapService().config(params);
+        expect(presetData.lastKnownNetworkEpoch).eq(lastKnownNetworkEpoch);
         const maxFee = UInt64.fromUint(10);
         const nodeAccount = addresses.nodes![0];
         const transactionFactoryParams: LinkServiceTransactionFactoryParams = {
@@ -766,10 +753,9 @@ describe('LinkService', () => {
             target: 'target/tests/testnet-dual',
             password,
             reset: true,
+            offline: true,
             preset: Preset.testnet,
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -798,10 +784,9 @@ describe('LinkService', () => {
             target: 'target/tests/testnet-dual',
             password,
             reset: true,
+            offline: true,
             preset: Preset.testnet,
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -842,10 +827,9 @@ describe('LinkService', () => {
             target: 'target/tests/testnet-dual',
             password,
             reset: true,
+            offline: true,
             preset: Preset.testnet,
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'dual',
             removeOldLinked: false,
         };
@@ -874,9 +858,7 @@ describe('LinkService', () => {
             password,
             reset: false,
             preset: Preset.testnet,
-            customPresetObject: {
-                nodeUseRemoteAccount: false,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: false },
             assembly: 'dual',
         };
 
@@ -906,9 +888,7 @@ describe('LinkService', () => {
             password,
             reset: false,
             preset: Preset.testnet,
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'api',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -938,9 +918,7 @@ describe('LinkService', () => {
             reset: true,
             preset: Preset.testnet,
             customPreset: './test/unit-test-profiles/voting_preset.yml',
-            customPresetObject: {
-                nodeUseRemoteAccount: true,
-            },
+            customPresetObject: { lastKnownNetworkEpoch: 235, nodeUseRemoteAccount: true },
             assembly: 'api',
         };
         const { addresses, presetData } = await new BootstrapService().config(params);
@@ -952,6 +930,7 @@ describe('LinkService', () => {
             deadline: Deadline.create(1),
             nodeAccount: nodeAccount,
             maxFee: maxFee,
+            latestFinalizedBlockEpoch: 235,
             mainAccountInfo: notLinkedAccountInfo,
         };
 

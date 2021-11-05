@@ -4,9 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.0] - NEXT
+
+**Milestone**: Mainnet(1.0.2.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.0  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Added `wizard` command.
+- Added `pack` command.
+- Added `modifyMultisig` command.
+- Added `--serviceProviderPublicKey` to `link` command.
+- Rest `2.3.8` upgrade.
+- Explorer `1.1.0` upgrade.
+- Faucet `1.0.1` upgrade.
+- Removed node reward support.
+- Removed unused `sshpk` service and dependency.
+- Removed unused `forge` service and dependency.
+- Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
+- Added statistic service integration.
+- Removed node static list from `mainnet` and `testnet` preset. The node lists are resolved using the statistic service.
+- Updated explorer and faucet urls.
+- Removed private and mijin network types support.
+
 ## [1.0.9] - Sep-15-2021
 
 **Milestone**: Mainnet(1.0.2.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.9  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 - Hot fix `updateVotingKeys` command bug.
 
@@ -14,24 +42,24 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 **Milestone**: Mainnet(1.0.2.0)
 
-- Fixed `updateVotingKeys` command when upgrading from `1.0.6`.
-- Catapult `1.0.2.0` upgrade.
-- Updated `minPartnerNodeVersion` to `1.0.1.0`. Older Catapult clients will be rejected.
-
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.8  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Fixed `updateVotingKeys` command when upgrading from `1.0.6`.
+- Catapult `1.0.2.0` upgrade.
+- Updated `minPartnerNodeVersion` to `1.0.1.0`. Older Catapult clients will be rejected.
 
 ## [1.0.7] - June-22-2021
 
 **Milestone**: Mainnet(1.0.1.0)
 
--   Added multi voting key file support.
--   Added `updateVotingKeys` command.
-
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.7  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+-   Added multi voting key file support.
+-   Added `updateVotingKeys` command.
 
 ## [1.0.6] - June-8-2021
 

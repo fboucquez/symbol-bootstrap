@@ -15,8 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Preset, RewardProgram } from '../service';
-import { NodeType } from './NodeType';
+import { Preset } from '../service';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -248,7 +247,6 @@ export interface NodeConfigPreset {
     maxProofSize: number;
     maxTransactionsPerBlock: number;
     localNetworks: string;
-    rewardProgramAgentPort: number;
 }
 
 export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPreset> {
@@ -276,9 +274,6 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
 
-    agentPrivateKey?: string;
-    agentPublicKey?: string;
-
     //Broker specific
     brokerName?: string;
     brokerHost?: string;
@@ -287,17 +282,6 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     brokerExcludeDockerService?: boolean;
     brokerCompose?: any;
     brokerDockerComposeDebugMode?: boolean;
-
-    //Reward program
-    rewardProgram?: RewardProgram;
-    rewardProgramAgentIpv4_address?: string;
-    rewardProgramAgentOpenPort?: boolean | number | string;
-    rewardProgramAgentExcludeDockerService?: boolean;
-    rewardProgramAgentCompose?: any;
-    rewardProgramAgentHost?: string;
-    rewardProgramAgentDockerComposeDebugMode?: boolean;
-    agentUrl?: string; //calculated if not provided.
-    restGatewayUrl?: string; // calculated if not provided;
 }
 
 export interface GatewayConfigPreset {
@@ -318,6 +302,12 @@ export interface GatewayConfigPreset {
     restDeploymentTool: string;
     restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
     restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
+    restProtocol: 'HTTPS' | 'HTTP';
+    restSSLPath: string;
+    restSSLKeyFileName: string;
+    restSSLCertificateFileName: string;
+    restSSLKeyBase64?: string;
+    restSSLCertificateBase64?: string;
 }
 
 export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfigPreset> {
@@ -327,6 +317,14 @@ export interface GatewayPreset extends DockerServicePreset, Partial<GatewayConfi
     apiNodeHost: string;
     databaseHost: string;
     name: string;
+}
+
+export interface HttpsProxyPreset extends DockerServicePreset {
+    name?: string;
+    domains: string;
+    stage: string;
+    webSocket?: string;
+    serverNamesHashBucketSize?: number;
 }
 
 export interface ExplorerPreset extends DockerServicePreset {
@@ -391,9 +389,9 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     symbolWalletImage: string;
     symbolServerImage: string;
     symbolExplorerImage: string;
-    symbolAgentImage: string;
     symbolRestImage: string;
     symbolFaucetImage: string;
+    httpsPortalImage: string;
 
     dockerComposeVersion: number | string;
     dockerComposeServiceRestart: string;
@@ -406,25 +404,37 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     votingUnfinalizedBlocksDuration?: string;
     nemesisSignerPublicKey: string;
     nemesisGenerationHashSeed: string;
+    harvestNetworkFeeSinkAddressV1?: string;
     harvestNetworkFeeSinkAddress?: string;
+    mosaicRentalFeeSinkAddressV1?: string;
     mosaicRentalFeeSinkAddress?: string;
+    namespaceRentalFeeSinkAddressV1?: string;
     namespaceRentalFeeSinkAddress?: string;
     networkIdentifier: string;
     networkName: string;
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;
-    rewardProgramEnrollmentAddress?: string;
+    // This next 2 would be removed in a later merge.
+    currencyName?: string;
+    harvestingName?: string;
     networkType: NetworkType;
     votingKeyDesiredLifetime: number;
     votingKeyDesiredFutureLifetime: number; // How in the future voting key files need to be generated. By default, 1 months before expiring..
     useExperimentalNativeVotingKeyGeneration?: boolean;
     lastKnownNetworkEpoch: number;
     autoUpdateVotingKeys: boolean;
-    //Nested Objects
-    knownRestGateways?: string[];
+    statisticsServiceUrl?: string;
+    statisticsServicePeerLimit: number;
+    statisticsServicePeerFilter?: string;
+    statisticsServiceRestLimit: number;
+    statisticsServiceRestFilter?: string;
+
+    // Nested Objects
     inflation?: Record<string, number>;
-    knownPeers?: Record<NodeType, PeerInfo[]>;
+    // Allows hardcoded list. For new networks and for possible fallbacks.
+    knownRestGateways?: string[];
+    knownPeers?: PeerInfo[];
 }
 
 export interface ConfigPreset extends CommonConfigPreset {
@@ -436,6 +446,7 @@ export interface ConfigPreset extends CommonConfigPreset {
     explorers?: ExplorerPreset[];
     wallets?: WalletPreset[];
     faucets?: FaucetPreset[];
+    httpsProxies?: HttpsProxyPreset[];
 }
 
 export interface CustomPreset extends Partial<CommonConfigPreset> {
@@ -446,4 +457,5 @@ export interface CustomPreset extends Partial<CommonConfigPreset> {
     explorers?: Partial<ExplorerPreset>[];
     wallets?: Partial<WalletPreset>[];
     faucets?: Partial<FaucetPreset>[];
+    httpsProxies?: Partial<HttpsProxyPreset>[];
 }

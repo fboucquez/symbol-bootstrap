@@ -142,4 +142,12 @@ export class CommandUtils {
         if (log) logger.info(`Password has been provided`);
         return providedPassword;
     }
+
+    /**
+     * Returns account details formatted (ready to print)
+     */
+    public static formatAccount(account: PublicAccount, wrapped = true): string {
+        const log = `Address: ${account.address.plain()}`;
+        return wrapped ? `[${log}]` : log;
+    }
 }

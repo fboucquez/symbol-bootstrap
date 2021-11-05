@@ -110,7 +110,7 @@ export class VotingService {
             }
         }
         if (nemesisBlock) {
-            // For a new private network, voting keys are in the nemesisBlock.
+            // For a new local network, voting keys are in the nemesisBlock.
             logger.info('');
             logger.info(
                 `A new Voting File for the node ${nodeAccount.name} has been generated. The link transaction will be included in the nemesis block.`,
