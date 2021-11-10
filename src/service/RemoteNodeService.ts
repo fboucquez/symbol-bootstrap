@@ -16,7 +16,7 @@
 import fetch from 'cross-fetch';
 import { lookup } from 'dns';
 import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp, RoleType } from 'symbol-sdk';
-import { Configuration, NodeApi, NodeListFilter, RequestContext, RestClientUtils } from 'symbol-statistics-service-typescript-fetch-client';
+import { Configuration, NodeApi, NodeListFilter, RequestContext } from 'symbol-statistics-service-typescript-fetch-client';
 import { LogType } from '../logger';
 import Logger from '../logger/Logger';
 import LoggerFactory from '../logger/LoggerFactory';
@@ -198,8 +198,7 @@ export class RemoteNodeService {
                     })
                     .filter((peerInfo): peerInfo is PeerInfo => !!peerInfo);
                 knownPeers.push(...peerInfos);
-            } catch (e) {
-                const error = await RestClientUtils.getErrorFromFetchResponse(e);
+            } catch (error) {
                 logger.warn(
                     `There has been an error connecting to statistics ${statisticsServiceUrl}. Peers cannot be resolved! Error ${error.message}`,
                 );

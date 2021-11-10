@@ -553,4 +553,32 @@ describe('RemoteNodeService', () => {
             },
         ]);
     });
+
+    it('getPeerInfos unknown statisticsServiceUrl', async () => {
+        presetData.statisticsServiceUrl = 'https://testnet.symbol.invalid';
+        const service = new RemoteNodeService(presetData, false);
+        const peerInfos = await service.getPeerInfos();
+        // only static nodes are returned when the statistics service client fails
+        expect(peerInfos).deep.eq([
+            {
+                publicKey: 'AAAAE7EAEEAE61EF0C50B4D05931F4325F69081B1B074D31E094C4B21E8CFB3D',
+                endpoint: { host: 'someStaticPeer', port: 7900 },
+                metadata: { name: 'someStaticPeer', roles: 'Peer,Api' },
+            },
+        ]);
+    });
+
+    it('getPeerInfos invalid statisticsServiceUrl path', async () => {
+        presetData.statisticsServiceUrl = 'https://testnet.symbol.services/invalid';
+        const service = new RemoteNodeService(presetData, false);
+        const peerInfos = await service.getPeerInfos();
+        // only static nodes are returned when the statistics service client fails
+        expect(peerInfos).deep.eq([
+            {
+                publicKey: 'AAAAE7EAEEAE61EF0C50B4D05931F4325F69081B1B074D31E094C4B21E8CFB3D',
+                endpoint: { host: 'someStaticPeer', port: 7900 },
+                metadata: { name: 'someStaticPeer', roles: 'Peer,Api' },
+            },
+        ]);
+    });
 });

@@ -26,7 +26,7 @@
         "semver": "^7.3.5",
         "shx": "^0.3.2",
         "symbol-sdk": "^1.0.1",
-        "symbol-statistics-service-typescript-fetch-client": "^1.1.1-SNAPSHOT.202110302303",
+        "symbol-statistics-service-typescript-fetch-client": "^1.1.2-SNAPSHOT.202111101304",
         "tslib": "^1.13.0",
         "utf8": "^2.1.2",
         "winston": "^3.3.3"
