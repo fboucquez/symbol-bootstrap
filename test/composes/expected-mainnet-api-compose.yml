@@ -44,7 +44,7 @@ services:
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.8'
+        image: 'symbolplatform/symbol-rest:2.3.9'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
