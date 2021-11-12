@@ -375,8 +375,8 @@ export class ConfigService {
         logger.info(`Generating ${name} server configuration`);
         await BootstrapUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
 
-        const isApi = (nodePresetData: PeerInfo): boolean => nodePresetData.metadata.roles.includes('Api');
-        const peers = knownPeers.filter((peer) => isApi(peer) && peer.publicKey != account.main.publicKey);
+        const isPeer = (nodePresetData: PeerInfo): boolean => nodePresetData.metadata.roles.includes('Peer');
+        const peers = knownPeers.filter((peer) => isPeer(peer) && peer.publicKey != account.main.publicKey);
         const peersP2PFile = await this.generateP2PFile(
             peers,
             presetData.peersP2PListLimit,
@@ -385,7 +385,8 @@ export class ConfigService {
             'peers-p2p.json',
         );
 
-        const apiPeers = knownPeers.filter((peer) => !isApi(peer) && peer.publicKey != account.main.publicKey);
+        const isApi = (nodePresetData: PeerInfo): boolean => nodePresetData.metadata.roles.includes('Api');
+        const apiPeers = knownPeers.filter((peer) => isApi(peer) && peer.publicKey != account.main.publicKey);
         const peersApiFile = await this.generateP2PFile(
             apiPeers,
             presetData.peersApiListLimit,
