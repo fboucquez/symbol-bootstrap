@@ -19,6 +19,7 @@ import { IOptionFlag } from '@oclif/command/lib/flags';
 import { existsSync, readFileSync } from 'fs';
 import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
+import { Logger, LoggerFactory, LogType } from '../logger';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
 import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
 
@@ -63,7 +64,7 @@ export const networkToPreset: Record<Network, Preset> = {
     [Network.mainnet]: Preset.mainnet,
     [Network.testnet]: Preset.testnet,
 };
-export default class Wizard extends Command {
+export default class WizardCommand extends Command {
     static description = 'An utility command that will help you configuring node!';
 
     static examples = [`$ symbol-bootstrap wizard`];
@@ -73,19 +74,33 @@ export default class Wizard extends Command {
         target: CommandUtils.targetFlag,
         password: CommandUtils.passwordFlag,
         noPassword: CommandUtils.noPasswordFlag,
-        network: Wizard.getNetworkIdFlag(),
-        customPreset: Wizard.getCustomPresetFile(),
+        network: WizardCommand.getNetworkIdFlag(),
+        customPreset: WizardCommand.getCustomPresetFile(),
         ready: flags.boolean({
             description: 'If --ready is provided, the command will not ask offline confirmation.',
         }),
+        logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
-
-    public async run(): Promise<void> {
-        const flags = this.parse(Wizard).flags;
-        return Wizard.execute(flags);
+    public static getCustomPresetFile(): IOptionFlag<string> {
+        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
+    }
+    public static getNetworkIdFlag(): IOptionFlag<Network | undefined> {
+        return flags.string({
+            description: 'The node or network you want to create',
+            options: [Network.mainnet, Network.testnet, Network.localNetwork],
+        }) as IOptionFlag<Network | undefined>;
     }
 
-    public static async execute(flags: {
+    public async run(): Promise<void> {
+        const flags = this.parse(WizardCommand).flags;
+        const logger = LoggerFactory.getLogger(flags.logger);
+        return new Wizard(logger).execute(flags);
+    }
+}
+
+export class Wizard {
+    constructor(private readonly logger: Logger) {}
+    public async execute(flags: {
         noPassword: boolean;
         skipPull?: boolean;
         target: string;
@@ -95,11 +110,11 @@ export default class Wizard extends Command {
         ready?: boolean;
     }): Promise<void> {
         BootstrapUtils.showBanner();
-        console.log('Welcome to the Symbol Bootstrap wizard! This command will:');
-        console.log(' - Guide you through the configuration process.');
-        console.log(' - Import or generate private keys.');
-        console.log(` - Create a custom preset and show you the way to launch your node!`);
-        console.log();
+        this.logger.info('Welcome to the Symbol Bootstrap wizard! This command will:');
+        this.logger.info(' - Guide you through the configuration process.');
+        this.logger.info(' - Import or generate private keys.');
+        this.logger.info(` - Create a custom preset and show you the way to launch your node!`);
+        this.logger.info('');
         const target = flags.target;
 
         const customPresetFile = flags.customPreset;
@@ -112,21 +127,22 @@ export default class Wizard extends Command {
             );
         }
 
-        const network = await Wizard.resolveNetwork(flags.network);
+        const network = await this.resolveNetwork(flags.network);
         const preset = networkToPreset[network];
-        const assembly = await Wizard.resolveAssembly(preset);
+        const assembly = await this.resolveAssembly(preset);
         if (network == Network.localNetwork) {
-            console.log('For a local network, just run: ');
-            console.log('');
-            console.log(`$ symbol-bootstrap start -b ${preset}${assembly ? ` -a ${assembly}` : ''}`);
+            this.logger.info('For a local network, just run: ');
+            this.logger.info('');
+            this.logger.info(`$ symbol-bootstrap start -b ${preset}${assembly ? ` -a ${assembly}` : ''}`);
             return;
         }
 
         if (!flags.skipPull) {
-            const service = await new BootstrapService();
-            console.log('\nPulling catapult tools image before asking to go offline...\n');
+            const service = new BootstrapService(this.logger);
+            this.logger.info('\nPulling catapult tools image before asking to go offline...\n');
             ConfigLoader.presetInfoLogged = true;
             await BootstrapUtils.pullImage(
+                this.logger,
                 service.resolveConfigPreset({
                     ...ConfigService.defaultParams,
                     preset: preset,
@@ -135,8 +151,8 @@ export default class Wizard extends Command {
                 }).symbolServerImage,
             );
         }
-        console.log();
-        console.log();
+        this.logger.info('');
+        this.logger.info('');
         if (
             !flags.ready &&
             !(
@@ -150,17 +166,18 @@ export default class Wizard extends Command {
                 ])
             ).offlineNow
         ) {
-            console.log('Come back when you are offline...');
+            this.logger.info('Come back when you are offline...');
             return;
         }
 
-        console.log();
-        console.log(
+        this.logger.info('');
+        this.logger.info(
             'Symbol bootstrap needs to provide the node with a number of key pairs (Read more at https://docs.symbolplatform.com/concepts/cryptography.html#symbol-keys).',
         );
-        console.log(`If you don't know what a key is used for, let Symbol Bootstrap generate a new one for you.`);
+        this.logger.info(`If you don't know what a key is used for, let Symbol Bootstrap generate a new one for you.`);
 
         const password = await CommandUtils.resolvePassword(
+            this.logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
@@ -168,21 +185,21 @@ export default class Wizard extends Command {
         );
 
         const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
-        const accounts = await Wizard.resolveAllAccounts(networkType);
+        const accounts = await this.resolveAllAccounts(networkType);
 
-        console.log();
-        console.log(`These are your node's accounts:`);
-        Wizard.logAccount(accounts.main, KeyName.Main, false);
-        Wizard.logAccount(accounts.vrf, KeyName.VRF, false);
-        Wizard.logAccount(accounts.remote, KeyName.Remote, false);
-        Wizard.logAccount(accounts.transport, KeyName.Transport, false);
-        console.log();
-        console.log();
+        this.logger.info('');
+        this.logger.info(`These are your node's accounts:`);
+        this.logAccount(accounts.main, KeyName.Main, false);
+        this.logAccount(accounts.vrf, KeyName.VRF, false);
+        this.logAccount(accounts.remote, KeyName.Remote, false);
+        this.logAccount(accounts.transport, KeyName.Transport, false);
+        this.logger.info('');
+        this.logger.info('');
 
         const httpsOption: HttpsOption = await this.resolveHttpsOptions();
 
         const symbolHostNameRequired = httpsOption !== HttpsOption.None;
-        const host = await Wizard.resolveHost(
+        const host = await this.resolveHost(
             `Enter the public domain name(eg. node-01.mysymbolnodes.com) that's pointing to your outbound host IP ${
                 symbolHostNameRequired ? 'This value is required when you are running on HTTPS!' : ''
             }`,
@@ -191,8 +208,8 @@ export default class Wizard extends Command {
 
         const resolveHttpsCustomPreset = async (): Promise<CustomPreset> => {
             if (httpsOption === HttpsOption.Native) {
-                const restSSLKeyBase64 = await Wizard.resolveRestSSLKeyAsBase64();
-                const restSSLCertificateBase64 = await Wizard.resolveRestSSLCertAsBase64();
+                const restSSLKeyBase64 = await this.resolveRestSSLKeyAsBase64();
+                const restSSLCertificateBase64 = await this.resolveRestSSLCertAsBase64();
                 return {
                     gateways: [
                         {
@@ -213,15 +230,15 @@ export default class Wizard extends Command {
                 };
             } else {
                 // HttpsOption.None
-                console.log(`Warning! You've chosen to proceed with http, which is less secure in comparison to https.`);
+                this.logger.info(`Warning! You've chosen to proceed with http, which is less secure in comparison to https.`);
                 return {};
             }
         };
 
         const httpsCustomPreset = await resolveHttpsCustomPreset();
-        const friendlyName = await Wizard.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
-        const privateKeySecurityMode = await Wizard.resolvePrivateKeySecurityMode();
-        const voting = await Wizard.isVoting();
+        const friendlyName = await this.resolveFriendlyName(host || accounts.main.publicKey.substr(0, 7));
+        const privateKeySecurityMode = await this.resolvePrivateKeySecurityMode();
+        const voting = await this.isVoting();
         const presetContent: CustomPreset = {
             assembly: assembly,
             preset: preset,
@@ -242,63 +259,65 @@ export default class Wizard extends Command {
 
         const defaultParams = ConfigService.defaultParams;
         await BootstrapUtils.writeYaml(customPresetFile, presetContent, password);
-        console.log();
-        console.log();
-        console.log(`The Symbol Bootstrap preset file '${customPresetFile}' has been created!!!. Keep this safe!`);
-        console.log();
-        console.log(`To decrypt the node's private key, run: `);
-        console.log();
-        console.log(`$ symbol-bootstrap decrypt --source ${customPresetFile} --destination plain-custom-preset.yml`);
-        console.log();
-        console.log('Remember to delete the plain-custom-preset.yml file after used!!!');
+        this.logger.info('');
+        this.logger.info('');
+        this.logger.info(`The Symbol Bootstrap preset file '${customPresetFile}' has been created!!!. Keep this safe!`);
+        this.logger.info('');
+        this.logger.info(`To decrypt the node's private key, run: `);
+        this.logger.info('');
+        this.logger.info(`$ symbol-bootstrap decrypt --source ${customPresetFile} --destination plain-custom-preset.yml`);
+        this.logger.info('');
+        this.logger.info('Remember to delete the plain-custom-preset.yml file after used!!!');
 
-        console.log(
+        this.logger.info(
             `You can edit this file to further customize it. Read more https://github.com/nemtech/symbol-bootstrap/blob/main/docs/presetGuides.md`,
         );
-        console.log();
-        console.log(`Once you have finished the custom preset customization, You can use the 'start' to run the node in this machine:`);
-        console.log();
-        console.log(
+        this.logger.info('');
+        this.logger.info(
+            `Once you have finished the custom preset customization, You can use the 'start' to run the node in this machine:`,
+        );
+        this.logger.info('');
+        this.logger.info(
             `$ symbol-bootstrap start -p ${network} -a ${assembly} -c ${customPresetFile} ${
                 target !== defaultParams.target ? `-t ${target}` : ''
             }`,
         );
 
-        console.log();
-        console.log(`Alternatively, to create a zip file that can be deployed in your node machine you can use the 'pack' command:`);
-        console.log();
-        console.log(
+        this.logger.info('');
+        this.logger.info(`Alternatively, to create a zip file that can be deployed in your node machine you can use the 'pack' command:`);
+        this.logger.info('');
+        this.logger.info(
             `$ symbol-bootstrap pack -p ${network} -a ${assembly} -c ${customPresetFile} ${
                 target !== defaultParams.target ? `-t ${target}` : ''
             }`,
         );
-        console.log();
-        console.log(
+        this.logger.info('');
+        this.logger.info(
             `Once the target folder is created, Bootstrap will use the protected and encrypted addresses.yml, and preset.yml in inside the target folder.`,
         );
-        console.log(
+        this.logger.info(
             'To upgrade your node version or configuration, use the --upgrade parameter in config, compose, start and/or pack. Remember to backup the node`s target folder!',
         );
-        console.log(
+        this.logger.info(
             'Hint: You can change the configuration of an already created node by proving a new custom preset. This is an experimental feature, backup the target folder before!',
         );
-        console.log();
-        console.log('To complete the registration, you need to link your keys (online):');
-        console.log();
-        console.log(`$ symbol-bootstrap link --useKnownRestGateways -c ${customPresetFile}`);
-        console.log();
+        this.logger.info('');
+        this.logger.info('To complete the registration, you need to link your keys (online):');
+        this.logger.info('');
+        this.logger.info(`$ symbol-bootstrap link --useKnownRestGateways -c ${customPresetFile}`);
+        this.logger.info('');
     }
-    public static logAccount<T extends Account | PublicAccount | undefined>(account: T, keyName: KeyName, showPrivateKeys: boolean): T {
+    public logAccount<T extends Account | PublicAccount | undefined>(account: T, keyName: KeyName, showPrivateKeys: boolean): T {
         if (account === undefined) {
             return account;
         }
         const privateKeyText = showPrivateKeys && account instanceof Account ? `\n\tPrivate Key: ${account.privateKey}` : '';
-        console.log(` - ${keyName}:\n\tAddress:     ${account.address.plain()}\n\tPublic Key:  ${account.publicKey}${privateKeyText}`);
+        this.logger.info(` - ${keyName}:\n\tAddress:     ${account.address.plain()}\n\tPublic Key:  ${account.publicKey}${privateKeyText}`);
         return account as T;
     }
 
-    private static async resolveAllAccounts(networkType: NetworkType): Promise<ProvidedAccounts> {
-        console.log();
+    private async resolveAllAccounts(networkType: NetworkType): Promise<ProvidedAccounts> {
+        this.logger.info('');
         return {
             seeded: true,
             main: await this.resolveAccountFromSelection(
@@ -320,8 +339,8 @@ export default class Wizard extends Command {
         };
     }
 
-    public static async resolveAccountFromSelection(networkType: NetworkType, keyName: KeyName, keyDescription: string): Promise<Account> {
-        console.log(`${keyName} Key Pair: ${keyDescription}`);
+    public async resolveAccountFromSelection(networkType: NetworkType, keyName: KeyName, keyDescription: string): Promise<Account> {
+        this.logger.info(`${keyName} Key Pair: ${keyDescription}`);
         while (true) {
             const keyCreationChoices = [];
             keyCreationChoices.push({ name: 'Generating a new account', value: 'generate' });
@@ -336,16 +355,16 @@ export default class Wizard extends Command {
                 },
             ]);
             const log = (account: Account, message: string): Account => {
-                console.log();
-                console.log(`Using account ${account.address.plain()} for ${keyName} key. ${message}`);
-                console.log();
+                this.logger.info('');
+                this.logger.info(`Using account ${account.address.plain()} for ${keyName} key. ${message}`);
+                this.logger.info('');
                 return account;
             };
             if (keyCreationMode == 'generate') {
                 return log(this.generateAccount(networkType), 'It will be stored in your custom preset. Keep file safe!');
             }
             // manual
-            const account = await Wizard.resolveAccount(networkType, keyName);
+            const account = await this.resolveAccount(networkType, keyName);
             if (account) {
                 return log(
                     account,
@@ -355,11 +374,11 @@ export default class Wizard extends Command {
         }
     }
 
-    public static generateAccount(networkType: NetworkType): Account {
+    public generateAccount(networkType: NetworkType): Account {
         return Account.generateNewAccount(networkType);
     }
 
-    public static async resolveAccount(networkType: NetworkType, keyName: KeyName): Promise<Account | undefined> {
+    public async resolveAccount(networkType: NetworkType, keyName: KeyName): Promise<Account | undefined> {
         while (true) {
             const { privateKey } = await prompt([
                 {
@@ -394,9 +413,9 @@ export default class Wizard extends Command {
         }
     }
 
-    public static async resolveNetwork(providedNetwork: Network | undefined): Promise<Network> {
+    public async resolveNetwork(providedNetwork: Network | undefined): Promise<Network> {
         if (!providedNetwork) {
-            console.log('Select type node or network you want to run:\n');
+            this.logger.info('Select type node or network you want to run:\n');
             const responses = await prompt([
                 {
                     name: 'network',
@@ -415,7 +434,7 @@ export default class Wizard extends Command {
         return providedNetwork;
     }
 
-    public static async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {
+    public async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {
         const { mode } = await prompt([
             {
                 name: 'mode',
@@ -440,8 +459,8 @@ export default class Wizard extends Command {
         return mode;
     }
 
-    public static async resolveAssembly(preset: Preset): Promise<string> {
-        console.log('Select the assembly to be created:\n');
+    public async resolveAssembly(preset: Preset): Promise<string> {
+        this.logger.info('Select the assembly to be created:\n');
         const responses = await prompt([
             {
                 name: 'assembly',
@@ -457,11 +476,11 @@ export default class Wizard extends Command {
         return responses.assembly;
     }
 
-    private static async isVoting(): Promise<boolean> {
-        console.log(
+    private async isVoting(): Promise<boolean> {
+        this.logger.info(
             'Select whether your Symbol node should be a Voting node. Note: A Voting node requires the main account to hold at least 3 million XYMs. ',
         );
-        console.log('If your node does not have enough XYMs its Voting key may not be included. ');
+        this.logger.info('If your node does not have enough XYMs its Voting key may not be included. ');
         const { voting } = await prompt([
             {
                 name: 'voting',
@@ -473,18 +492,7 @@ export default class Wizard extends Command {
         return voting;
     }
 
-    public static getNetworkIdFlag(): IOptionFlag<Network | undefined> {
-        return flags.string({
-            description: 'The node or network you want to create',
-            options: [Network.mainnet, Network.testnet, Network.localNetwork],
-        }) as IOptionFlag<Network | undefined>;
-    }
-
-    public static getCustomPresetFile(): IOptionFlag<string> {
-        return flags.string({ char: 'c', description: 'The custom preset to be created.', default: 'custom-preset.yml' });
-    }
-
-    public static async resolveHost(message: string, required: boolean): Promise<string> {
+    public async resolveHost(message: string, required: boolean): Promise<string> {
         const { host } = await prompt([
             {
                 name: 'host',
@@ -494,18 +502,18 @@ export default class Wizard extends Command {
                     if (!required && !value) {
                         return true;
                     }
-                    return Wizard.isValidHost(value);
+                    return this.isValidHost(value);
                 },
             },
         ]);
         return host || undefined;
     }
 
-    public static async resolveRestSSLKeyAsBase64(): Promise<string> {
+    public async resolveRestSSLKeyAsBase64(): Promise<string> {
         return this.resolveFileContent('base64', 'Enter your SSL key file path:', 'Invalid path, cannot find SSL key file!');
     }
 
-    public static async resolveRestSSLCertAsBase64(): Promise<string> {
+    public async resolveRestSSLCertAsBase64(): Promise<string> {
         return this.resolveFileContent(
             'base64',
             'Enter your SSL Certificate file path:',
@@ -513,7 +521,7 @@ export default class Wizard extends Command {
         );
     }
 
-    public static async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
+    public async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
         const { value } = await prompt([
             {
                 name: 'value',
@@ -532,7 +540,7 @@ export default class Wizard extends Command {
     }
 
     // TODO Refactor this
-    public static isValidHost(input: string): boolean | string {
+    public isValidHost(input: string): boolean | string {
         if (input.trim() == '') {
             return 'Host is required.';
         }
@@ -545,7 +553,7 @@ export default class Wizard extends Command {
         return valid ? true : `It's not a valid IP or hostname`;
     }
 
-    public static isValidFriendlyName(input: string): boolean | string {
+    public isValidFriendlyName(input: string): boolean | string {
         if (input.trim() == '') {
             return 'Friendly name is required.';
         }
@@ -554,22 +562,22 @@ export default class Wizard extends Command {
         }
         return true;
     }
-    public static async resolveFriendlyName(defaultFriendlyName: string): Promise<string> {
+    public async resolveFriendlyName(defaultFriendlyName: string): Promise<string> {
         const { friendlyName } = await prompt([
             {
                 name: 'friendlyName',
                 message: `Enter the friendly name of your node.`,
                 type: 'input',
                 default: defaultFriendlyName,
-                validate: Wizard.isValidFriendlyName,
+                validate: this.isValidFriendlyName,
             },
         ]);
         return friendlyName;
     }
 
-    public static async resolveHttpsOptions(): Promise<HttpsOption> {
+    public async resolveHttpsOptions(): Promise<HttpsOption> {
         // TODO work on these messages, should be concise and clearer
-        console.log(
+        this.logger.info(
             'Your REST Gateway should be running on HTTPS (which is a secure protocol) so that it can be recognized by the Symbol Explorer.',
         );
         const { value } = await prompt([

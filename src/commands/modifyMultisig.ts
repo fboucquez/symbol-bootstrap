@@ -15,9 +15,8 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils } from '../service';
-import { AnnounceService } from '../service/AnnounceService';
-import { CommandUtils } from '../service/CommandUtils';
+import { LoggerFactory, LogType } from '../logger';
+import { AnnounceService, BootstrapService, BootstrapUtils, CommandUtils } from '../service';
 
 export default class ModifyMultisig extends Command {
     static description = `Create or modify a multisig account`;
@@ -51,17 +50,20 @@ export default class ModifyMultisig extends Command {
             char: 'D',
         }),
         ...AnnounceService.flags,
+        logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(ModifyMultisig);
+        const logger = LoggerFactory.getLogger(flags.logger);
         BootstrapUtils.showBanner();
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        return new BootstrapService().modifyMultisig(flags);
+        return new BootstrapService(logger).modifyMultisig(flags);
     }
 }

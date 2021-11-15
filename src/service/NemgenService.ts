@@ -16,19 +16,15 @@
 
 import { promises } from 'fs';
 import { join } from 'path';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
+import { Logger } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigParams } from './ConfigService';
 
 type NemgenParams = ConfigParams;
 
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
-
 export class NemgenService {
-    constructor(private readonly root: string, protected readonly params: NemgenParams) {}
+    constructor(private readonly logger: Logger, protected readonly params: NemgenParams) {}
 
     public async run(presetData: ConfigPreset): Promise<void> {
         const networkIdentifier = presetData.networkIdentifier;
@@ -57,8 +53,8 @@ export class NemgenService {
 
         const binds = [`${serverConfigWorkingDir}:/server-config`, `${nemesisWorkingDir}:/nemesis`];
 
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
             catapultAppFolder: presetData.catapultAppFolder,
             image: symbolServerImage,
             userId: userId,
@@ -68,10 +64,10 @@ export class NemgenService {
         });
 
         if (stdout.indexOf('<error>') > -1) {
-            logger.info(stdout);
-            logger.error(stderr);
+            this.logger.info(stdout);
+            this.logger.error(stderr);
             throw new Error('Nemgen failed. Check the logs!');
         }
-        logger.info('Nemgen executed!!!!');
+        this.logger.info('Nemgen executed!!!!');
     }
 }

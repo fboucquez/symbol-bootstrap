@@ -40,6 +40,8 @@ OPTIONS
 
   -u, --url=url                                        [default: http://localhost:3000] the network url
 
+  --logger=(Console|ConsoleLog|System|Silence)         [default: Console] The logger the command will use.
+
   --maxFee=maxFee                                      the max fee used when announcing (absolute). The node min
                                                        multiplier will be used if it is not provided.
 

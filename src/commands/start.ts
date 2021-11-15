@@ -15,6 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
+import { LoggerFactory } from '../logger';
 import { BootstrapService, BootstrapUtils } from '../service';
 import { CommandUtils } from '../service/CommandUtils';
 import Clean from './clean';
@@ -38,12 +39,14 @@ export default class Start extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Start);
         BootstrapUtils.showBanner();
+        const logger = LoggerFactory.getLogger(flags.logger);
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService().start(flags);
+        await new BootstrapService(logger).start(flags);
     }
 }

@@ -17,19 +17,15 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { Account } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger/Logger';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { VotingUtils } from './VotingUtils';
 
 type VotingParams = { target: string; user: string };
 
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
-
 export class VotingService {
-    constructor(protected readonly params: VotingParams) {}
+    constructor(private readonly logger: Logger, protected readonly params: VotingParams) {}
 
     public async run(
         presetData: ConfigPreset,
@@ -42,6 +38,7 @@ export class VotingService {
         const symbolServerImage = presetData.symbolServerImage;
         const networkEpoch = currentNetworkEpoch || presetData.lastKnownNetworkEpoch || 1;
         const update = updateVotingKey === undefined ? presetData.autoUpdateVotingKeys : updateVotingKey;
+        const logger = this.logger;
         if (!nodePreset?.voting) {
             logger.info(`Node ${nodeAccount.name} is not voting.`);
             return false;
@@ -94,8 +91,8 @@ export class VotingService {
                 `--endEpoch=${votingKeyEndEpoch}`,
                 `--output=/votingKeys/${privateKeyTreeFileName}`,
             ];
-            const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
-            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+            const userId = await BootstrapUtils.resolveDockerUserFromParam(logger, this.params.user);
+            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(logger, {
                 catapultAppFolder: presetData.catapultAppFolder,
                 image: symbolServerImage,
                 userId: userId,

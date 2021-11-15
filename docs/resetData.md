@@ -14,8 +14,12 @@ USAGE
   $ symbol-bootstrap resetData
 
 OPTIONS
-  -h, --help           It shows the help of this command.
-  -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
+  -h, --help                                    It shows the help of this command.
+
+  -t, --target=target                           [default: target] The target folder where the symbol-bootstrap network
+                                                is generated
+
+  --logger=(Console|ConsoleLog|System|Silence)  [default: System] The logger the command will use.
 
 EXAMPLE
   $ symbol-bootstrap resetData

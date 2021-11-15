@@ -17,9 +17,7 @@ import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import { Account, Address, Convert, Crypto, MosaicId, MosaicNonce, NetworkType, PublicAccount } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import {
     Addresses,
     ConfigAccount,
@@ -36,11 +34,10 @@ import { CommandUtils } from './CommandUtils';
 import { KeyName, Preset } from './ConfigService';
 import { CryptoUtils } from './CryptoUtils';
 
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
-
 export class ConfigLoader {
     public static presetInfoLogged = false;
 
+    constructor(private readonly logger: Logger) {}
     public async generateRandomConfiguration(oldAddresses: Addresses | undefined, presetData: ConfigPreset): Promise<Addresses> {
         const networkType = presetData.networkType;
         const addresses: Addresses = {
@@ -95,6 +92,7 @@ export class ConfigLoader {
             );
             presetData.nemesisSignerPublicKey = addresses.nemesisSigner.publicKey;
             presetData.nemesis.nemesisSignerPrivateKey = await CommandUtils.resolvePrivateKey(
+                this.logger,
                 presetData.networkType,
                 addresses.nemesisSigner,
                 KeyName.NemesisSigner,
@@ -218,19 +216,19 @@ export class ConfigLoader {
             `${keyName} Account ${account.address.plain()} Public Key ${account.publicKey} `;
 
         if (oldAccount && !newAccount) {
-            logger.info(`Reusing ${getAccountLog(oldAccount)}...`);
+            this.logger.info(`Reusing ${getAccountLog(oldAccount)}...`);
             return this.toConfig(oldAccount);
         }
         if (!oldAccount && newAccount) {
-            logger.info(`${getAccountLog(newAccount)} has been provided`);
+            this.logger.info(`${getAccountLog(newAccount)} has been provided`);
             return this.toConfig(newAccount);
         }
         if (oldAccount && newAccount) {
             if (oldAccount.address.equals(newAccount.address)) {
-                logger.info(`Reusing ${getAccountLog(newAccount)}`);
+                this.logger.info(`Reusing ${getAccountLog(newAccount)}`);
                 return { ...this.toConfig(oldAccount), ...this.toConfig(newAccount) };
             }
-            logger.info(`Old ${getAccountLog(oldAccount)} has been changed. New ${getAccountLog(newAccount)} replaces it.`);
+            this.logger.info(`Old ${getAccountLog(oldAccount)} has been changed. New ${getAccountLog(newAccount)} replaces it.`);
             return this.toConfig(newAccount);
         }
 
@@ -260,7 +258,7 @@ export class ConfigLoader {
                 );
             }
         }
-        logger.info(`Generating ${keyName} account...`);
+        this.logger.info(`Generating ${keyName} account...`);
         return ConfigLoader.toConfig(Account.generateNewAccount(networkType));
     }
 
@@ -412,12 +410,12 @@ export class ConfigLoader {
             throw new Error(`Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}`);
         }
         if (!ConfigLoader.presetInfoLogged) {
-            logger.info(`Generating config from preset '${preset}'`);
+            this.logger.info(`Generating config from preset '${preset}'`);
             if (assembly) {
-                logger.info(`Using assembly '${assembly}'`);
+                this.logger.info(`Using assembly '${assembly}'`);
             }
             if (customPreset) {
-                logger.info(`Using custom preset file '${customPreset}'`);
+                this.logger.info(`Using custom preset file '${customPreset}'`);
             }
         }
         ConfigLoader.presetInfoLogged = true;
@@ -592,7 +590,7 @@ export class ConfigLoader {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public migrateAddresses(addresses: any, networkType: NetworkType): Addresses {
         const migrations = this.getAddressesMigration(networkType);
-        return BootstrapUtils.migrate('addresses.yml', addresses, migrations);
+        return BootstrapUtils.migrate(this.logger, 'addresses.yml', addresses, migrations);
     }
 
     public getAddressesMigration(networkType: NetworkType): Migration[] {

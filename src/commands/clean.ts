@@ -15,6 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
+import { LoggerFactory, LogType } from '../logger';
 import { BootstrapUtils, CommandUtils } from '../service';
 
 export default class Clean extends Command {
@@ -25,11 +26,13 @@ export default class Clean extends Command {
     static flags = {
         help: CommandUtils.helpFlag,
         target: CommandUtils.targetFlag,
+        logger: CommandUtils.getLoggerFlag(LogType.System),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Clean);
         BootstrapUtils.showBanner();
-        BootstrapUtils.deleteFolder(flags.target);
+        const logger = LoggerFactory.getLogger(flags.logger);
+        BootstrapUtils.deleteFolder(logger, flags.target);
     }
 }

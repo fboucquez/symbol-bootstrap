@@ -15,8 +15,8 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { BootstrapService, BootstrapUtils, RunService } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { LoggerFactory, LogType } from '../logger';
+import { BootstrapService, BootstrapUtils, CommandUtils, RunService } from '../service';
 import HealthCheck from './healthCheck';
 
 export default class Run extends Command {
@@ -61,11 +61,13 @@ export default class Run extends Command {
             description: 'If running in detached mode, how long before timing out (in milliseconds)',
             default: RunService.defaultParams.timeout,
         }),
+        logger: CommandUtils.getLoggerFlag(LogType.System),
     };
 
     public run(): Promise<void> {
         const { flags } = this.parse(Run);
         BootstrapUtils.showBanner();
-        return new BootstrapService().run(flags);
+        const logger = LoggerFactory.getLogger(flags.logger);
+        return new BootstrapService(logger).run(flags);
     }
 }

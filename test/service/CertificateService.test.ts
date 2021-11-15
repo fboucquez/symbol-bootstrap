@@ -20,8 +20,9 @@ import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('CertificateService', () => {
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;
@@ -41,9 +42,9 @@ describe('CertificateService', () => {
 
     it('createCertificates', async () => {
         const target = 'target/tests/CertificateService.test';
-        await BootstrapUtils.deleteFolder(target);
-        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
-        const presetData = new ConfigLoader().createPresetData({
+        await BootstrapUtils.deleteFolder(logger, target);
+        const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
+        const presetData = new ConfigLoader(logger).createPresetData({
             preset: Preset.bootstrap,
             password: 'abc',
         });

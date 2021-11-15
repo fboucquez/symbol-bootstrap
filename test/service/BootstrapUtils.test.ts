@@ -21,16 +21,17 @@ import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
 import { Account, NetworkType } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import { ConfigAccount } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
 import assert = require('assert');
 import nock = require('nock');
-
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('BootstrapUtils', () => {
     it('BootstrapUtils dockerUserId', async () => {
-        const user1 = await BootstrapUtils.getDockerUserGroup();
-        const user2 = await BootstrapUtils.getDockerUserGroup();
-        const user3 = await BootstrapUtils.getDockerUserGroup();
+        const user1 = await BootstrapUtils.getDockerUserGroup(logger);
+        const user2 = await BootstrapUtils.getDockerUserGroup(logger);
+        const user3 = await BootstrapUtils.getDockerUserGroup(logger);
         assert.strictEqual(user1, user2);
         assert.strictEqual(user1, user3);
     });
@@ -66,7 +67,7 @@ describe('BootstrapUtils', () => {
         const expectedSize = 43970;
         async function download(): Promise<boolean> {
             nock(url).get('/boat.png').replyWithFile(200, 'test/boat.png', { 'content-length': expectedSize.toString() });
-            const result = await BootstrapUtils.download(url + '/boat.png', 'boat.png');
+            const result = await BootstrapUtils.download(logger, url + '/boat.png', 'boat.png');
             expect(statSync('boat.png').size).eq(expectedSize);
             return result.downloaded;
         }
@@ -88,7 +89,7 @@ describe('BootstrapUtils', () => {
         try {
             const url = 'https://myserver.get';
             nock(url).get('/boat.png').reply(404);
-            await BootstrapUtils.download(url + '/boat.png', 'boat.png');
+            await BootstrapUtils.download(logger, url + '/boat.png', 'boat.png');
             expect(false).eq(true);
         } catch (e) {
             expect(e.message).eq('Server responded with 404');

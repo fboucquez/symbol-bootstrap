@@ -17,13 +17,9 @@ import fetch from 'cross-fetch';
 import { lookup } from 'dns';
 import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp, RoleType } from 'symbol-sdk';
 import { Configuration, NodeApi, NodeListFilter, RequestContext } from 'symbol-statistics-service-typescript-fetch-client';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { ConfigPreset, PeerInfo } from '../model';
 import { KnownError } from './BootstrapUtils';
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export interface RepositoryInfo {
     repositoryFactory: RepositoryFactory;
@@ -31,7 +27,11 @@ export interface RepositoryInfo {
     chainInfo: ChainInfo;
 }
 export class RemoteNodeService {
-    constructor(private readonly presetData: ConfigPreset, private readonly offline: boolean | undefined) {}
+    constructor(
+        private readonly logger: Logger,
+        private readonly presetData: ConfigPreset,
+        private readonly offline: boolean | undefined,
+    ) {}
     private restUrls: string[] | undefined;
 
     public async resolveCurrentFinalizationEpoch(): Promise<number> {
@@ -53,7 +53,7 @@ export class RemoteNodeService {
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
         const finalizationEpoch = repositoryInfo?.chainInfo.latestFinalizedBlock.finalizationEpoch;
         if (finalizationEpoch) {
-            logger.info(`The current network finalization epoch is ${finalizationEpoch}`);
+            this.logger.info(`The current network finalization epoch is ${finalizationEpoch}`);
         }
         return finalizationEpoch;
     }
@@ -64,7 +64,7 @@ export class RemoteNodeService {
         if (!repositoryInfo) {
             throw new Error(`No up and running node could be found out of: \n - ${urls.join('\n - ')}`);
         }
-        logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
+        this.logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
         return repositoryInfo;
     }
 
@@ -98,7 +98,7 @@ export class RemoteNodeService {
         if (!urls.length) {
             throw new KnownError('There are not known nodes!');
         }
-        logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
+        this.logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
         return (
             await Promise.all(
                 urls.map(
@@ -113,7 +113,7 @@ export class RemoteNodeService {
                             };
                         } catch (e) {
                             const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}`;
-                            logger.warn(message);
+                            this.logger.warn(message);
                             return undefined;
                         }
                     },
@@ -139,7 +139,7 @@ export class RemoteNodeService {
                 const nodes = await client.getNodes(filter ? filter : undefined, limit);
                 urls.push(...nodes.map((n) => n.apiStatus?.restGatewayUrl).filter((url): url is string => !!url));
             } catch (e) {
-                logger.warn(
+                this.logger.warn(
                     `There has been an error connecting to statistics ${statisticsServiceUrl}. Rest urls cannot be resolved! Error ${e.message}`,
                 );
             }
@@ -199,7 +199,7 @@ export class RemoteNodeService {
                     .filter((peerInfo): peerInfo is PeerInfo => !!peerInfo);
                 knownPeers.push(...peerInfos);
             } catch (error) {
-                logger.warn(
+                this.logger.warn(
                     `There has been an error connecting to statistics ${statisticsServiceUrl}. Peers cannot be resolved! Error ${error.message}`,
                 );
             }
@@ -215,7 +215,7 @@ export class RemoteNodeService {
                 middleware: [
                     {
                         pre: (context: RequestContext): Promise<void> => {
-                            logger.info(`Getting nodes information from ${context.url}`);
+                            this.logger.info(`Getting nodes information from ${context.url}`);
                             return Promise.resolve();
                         },
                     },

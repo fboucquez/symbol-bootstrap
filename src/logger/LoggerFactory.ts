@@ -14,50 +14,80 @@
  * limitations under the License.
  */
 
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import * as winston from 'winston';
 import { FileTransportInstance } from 'winston/lib/winston/transports';
-import Logger from './Logger';
+import { BootstrapUtils } from '../service';
+import { Logger } from './Logger';
 import { LogType } from './LogType';
 
-export default class LoggerFactory {
+export class LoggerFactory {
     private static readonly consoleTransport = new winston.transports.Console({
         format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.cli(),
-            winston.format.printf(LoggerFactory.logFormatTemplate),
+            winston.format.printf((i) => `${i.timestamp} ${i.level} ${i.message}`),
         ),
     });
 
-    private static readonly fileTransport = (id: LogType): FileTransportInstance =>
+    private static readonly consoleOnlyTransport = new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.printf((i) => {
+                if (i.level.includes('info')) {
+                    return `${i.message}`;
+                } else {
+                    return `${i.message} (${i.level.toUpperCase()})`;
+                }
+            }),
+        ),
+    });
+
+    private static readonly fileTransport = (fileName: string): FileTransportInstance =>
         new winston.transports.File({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.printf(LoggerFactory.logFormatTemplate)),
+            format: winston.format.combine(
+                winston.format.timestamp(),
+                winston.format.printf((i) => `${i.timestamp} ${i.level} ${i.message}`),
+            ),
             options: { flags: 'w' },
-            filename: resolve(LoggerFactory.getLogFileName(id)),
+            filename: resolve(fileName),
             level: 'info',
         });
 
-    public static getLogger(id = LogType.System): Logger {
+    public static getLogger(id: LogType, workingDir = BootstrapUtils.defaultWorkingDir): Logger {
         if (!winston.loggers.has(id.toString())) {
-            winston.loggers.add(id.toString(), {
-                transports: [LoggerFactory.consoleTransport, LoggerFactory.fileTransport(id)],
-                format: winston.format.label({ label: id.toString() }),
-            });
+            switch (id) {
+                case LogType.System:
+                    winston.loggers.add(id.toString(), {
+                        transports: [LoggerFactory.consoleTransport, LoggerFactory.fileTransport(join(workingDir, 'logs.log'))],
+                        format: winston.format.label({ label: id.toString() }),
+                    });
+                    break;
+                case LogType.Console:
+                    winston.loggers.add(id.toString(), {
+                        transports: [LoggerFactory.consoleOnlyTransport],
+                        format: winston.format.label({ label: id.toString() }),
+                    });
+                    break;
+                case LogType.ConsoleLog:
+                    winston.loggers.add(id.toString(), {
+                        transports: [LoggerFactory.consoleTransport],
+                        format: winston.format.label({ label: id.toString() }),
+                    });
+                    break;
+                case LogType.Silence:
+                    winston.loggers.add(id.toString(), {
+                        transports: [
+                            new winston.transports.Console({
+                                silent: true,
+                            }),
+                        ],
+                        format: winston.format.label({ label: id.toString() }),
+                    });
+                    break;
+                default:
+                    throw new Error(`Unknown LogType ${id}`);
+            }
         }
         return winston.loggers.get(id.toString());
-    }
-
-    private static logFormatTemplate(i: { level: string; message: string; [key: string]: any }): string {
-        return `${i.timestamp} ${i.level} ${i.message}`;
-    }
-
-    private static getLogFileName(id: LogType): string {
-        switch (id) {
-            case LogType.Audit:
-                return 'auditLogs.log';
-            case LogType.System:
-            default:
-                return 'logs.log';
-        }
     }
 }

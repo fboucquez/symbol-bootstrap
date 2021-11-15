@@ -16,15 +16,20 @@ USAGE
   $ symbol-bootstrap encrypt
 
 OPTIONS
-  -h, --help                 It shows the help of this command.
-  --destination=destination  (required) The destination encrypted file to create. The destination file must not exist.
+  -h, --help                                    It shows the help of this command.
 
-  --password=password        The password to use to encrypt the source file into the destination file. Bootstrap prompts
-                             for a password by default, can be provided in the command line (--password=XXXX) or
-                             disabled in the command line (--noPassword).
+  --destination=destination                     (required) The destination encrypted file to create. The destination
+                                                file must not exist.
 
-  --source=source            (required) The source plain yml file to be encrypted. If this file is encrypted, the
-                             command will raise an error.
+  --logger=(Console|ConsoleLog|System|Silence)  [default: Console] The logger the command will use.
+
+  --password=password                           The password to use to encrypt the source file into the destination
+                                                file. Bootstrap prompts for a password by default, can be provided in
+                                                the command line (--password=XXXX) or disabled in the command line
+                                                (--noPassword).
+
+  --source=source                               (required) The source plain yml file to be encrypted. If this file is
+                                                encrypted, the command will raise an error.
 
 DESCRIPTION
   The main use case of this command is encrypting custom presets files. If your custom preset contains private keys, 

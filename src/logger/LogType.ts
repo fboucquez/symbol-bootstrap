@@ -15,6 +15,12 @@
  */
 
 export enum LogType {
-    Audit = 'AUDIT_LOG',
-    System = 'SYSTEM_LOG',
+    // Simple console log without line info
+    Console = 'Console',
+    // Console log with line info
+    ConsoleLog = 'ConsoleLog',
+    // Console and file log with line info
+    System = 'System',
+    // Silence, no log at all.
+    Silence = 'Silence',
 }

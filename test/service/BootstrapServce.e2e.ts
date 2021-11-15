@@ -17,8 +17,9 @@
 import { expect } from '@oclif/test';
 import 'mocha';
 import { Account, Deadline, PlainMessage, RepositoryFactoryHttp, TransactionService, TransferTransaction, UInt64 } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import { BootstrapService, BootstrapUtils, ConfigLoader, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silence);
 describe('BootstrapService', () => {
     const timeout = 60000;
 
@@ -82,7 +83,7 @@ describe('BootstrapService', () => {
     }
 
     it('bootstrap start', async () => {
-        const service = new BootstrapService();
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.bootstrap,
@@ -104,7 +105,7 @@ describe('BootstrapService', () => {
     });
 
     it('bootstrap light', async () => {
-        const service = new BootstrapService();
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.bootstrap,
@@ -127,7 +128,7 @@ describe('BootstrapService', () => {
     });
 
     it('testnet dual', async () => {
-        const service = new BootstrapService();
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.testnet,
@@ -150,7 +151,7 @@ describe('BootstrapService', () => {
     });
 
     it('mainnet dual', async () => {
-        const service = new BootstrapService();
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.mainnet,
@@ -174,7 +175,7 @@ describe('BootstrapService', () => {
 
     // For some reason transfer test works in this test.
     it.skip('Basic Test Running Network', async () => {
-        const loader = new ConfigLoader();
+        const loader = new ConfigLoader(logger);
         const target = 'target/tests/bootstrap-test';
         const presetData = loader.loadExistingPresetData(target, false);
         const addresses = loader.loadExistingAddresses(target, false);

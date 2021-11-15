@@ -14,7 +14,8 @@ USAGE
   $ symbol-bootstrap verify
 
 OPTIONS
-  -h, --help  It shows the help of this command.
+  -h, --help                                    It shows the help of this command.
+  --logger=(Console|ConsoleLog|System|Silence)  [default: System] The logger the command will use.
 
 EXAMPLE
   $ symbol-bootstrap verify

@@ -15,8 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapService, BootstrapUtils } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { BootstrapService, BootstrapUtils, CommandUtils, LoggerFactory, LogType } from '../';
 
 export default class ResetData extends Command {
     static description = 'It removes the data keeping the generated configuration, certificates, keys and block 1.';
@@ -26,11 +25,13 @@ export default class ResetData extends Command {
     static flags = {
         help: CommandUtils.helpFlag,
         target: CommandUtils.targetFlag,
+        logger: CommandUtils.getLoggerFlag(LogType.System),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(ResetData);
         BootstrapUtils.showBanner();
-        await new BootstrapService().resetData(flags);
+        const logger = LoggerFactory.getLogger(flags.logger);
+        await new BootstrapService(logger).resetData(flags);
     }
 }

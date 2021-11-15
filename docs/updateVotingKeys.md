@@ -20,16 +20,19 @@ USAGE
   $ symbol-bootstrap updateVotingKeys
 
 OPTIONS
-  -h, --help                             It shows the help of this command.
+  -h, --help                                    It shows the help of this command.
 
-  -t, --target=target                    [default: target] The target folder where the symbol-bootstrap network is
-                                         generated
+  -t, --target=target                           [default: target] The target folder where the symbol-bootstrap network
+                                                is generated
 
-  -u, --user=user                        [default: current] User used to run docker images when creating the the voting
-                                         key files. "current" means the current user.
+  -u, --user=user                               [default: current] User used to run docker images when creating the the
+                                                voting key files. "current" means the current user.
 
-  --finalizationEpoch=finalizationEpoch  The network's finalization epoch. It can be retrieved from the /chain/info rest
-                                         endpoint. If not provided, the bootstrap known epoch is used.
+  --finalizationEpoch=finalizationEpoch         The network's finalization epoch. It can be retrieved from the
+                                                /chain/info rest endpoint. If not provided, the bootstrap known epoch is
+                                                used.
+
+  --logger=(Console|ConsoleLog|System|Silence)  [default: System] The logger the command will use.
 
 DESCRIPTION
   If the node's current voting file has an end epoch close to the current network epoch, this command will create a new 
