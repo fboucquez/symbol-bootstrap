@@ -56,7 +56,7 @@ export class ReportService {
         target: BootstrapUtils.defaultTargetFolder,
     };
     private readonly configLoader: ConfigLoader;
-    constructor(private readonly root: string, protected readonly params: ReportParams) {
+    constructor(protected readonly params: ReportParams) {
         this.configLoader = new ConfigLoader();
     }
 
@@ -100,7 +100,7 @@ export class ReportService {
     private async createReportsPerNode(presetData: ConfigPreset): Promise<ReportNode[]> {
         const workingDir = process.cwd();
         const target = join(workingDir, this.params.target);
-        const descriptions = await BootstrapUtils.loadYaml(join(this.root, 'presets', 'descriptions.yml'), false);
+        const descriptions = await BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'descriptions.yml'), false);
         const promises: Promise<ReportNode>[] = (presetData.nodes || []).map(async (n) => {
             const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'server-config', 'resources');
             const files = await fsPromises.readdir(resourcesFolder);

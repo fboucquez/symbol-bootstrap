@@ -44,6 +44,6 @@ export default class Start extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(this.config.root).start(flags);
+        await new BootstrapService().start(flags);
     }
 }

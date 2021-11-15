@@ -43,6 +43,6 @@ export default class Link extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        return new BootstrapService(this.config.root).link(flags);
+        return new BootstrapService().link(flags);
     }
 }

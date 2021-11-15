@@ -39,6 +39,6 @@ The health check process handles 'repeat' and custom 'openPort' services.
     public async run(): Promise<void> {
         const { flags } = this.parse(HealthCheck);
         BootstrapUtils.showBanner();
-        await new BootstrapService(this.config.root).healthCheck(flags);
+        await new BootstrapService().healthCheck(flags);
     }
 }

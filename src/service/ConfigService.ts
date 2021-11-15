@@ -97,7 +97,7 @@ export class ConfigService {
     };
     private readonly configLoader: ConfigLoader;
 
-    constructor(private readonly root: string, private readonly params: ConfigParams) {
+    constructor(private readonly params: ConfigParams) {
         this.configLoader = new ConfigLoader();
     }
 
@@ -127,7 +127,7 @@ export class ConfigService {
                 const presetData = this.configLoader.loadExistingPresetData(target, password);
                 const addresses = this.configLoader.loadExistingAddresses(target, password);
                 if (this.params.report) {
-                    await new ReportService(this.root, this.params).run(presetData);
+                    await new ReportService(this.params).run(presetData);
                 }
                 return { presetData, addresses };
             }
@@ -170,7 +170,7 @@ export class ConfigService {
             await this.resolveNemesis(presetData, addresses, isUpgrade);
             await this.copyNemesis(addresses);
             if (this.params.report) {
-                await new ReportService(this.root, this.params).run(presetData);
+                await new ReportService(this.params).run(presetData);
             }
             await BootstrapUtils.writeYaml(
                 addressesLocation,
@@ -193,7 +193,7 @@ export class ConfigService {
     }
 
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
-        return this.configLoader.createPresetData({ ...this.params, root: this.root, password: password, oldPresetData });
+        return this.configLoader.createPresetData({ ...this.params, password: password, oldPresetData });
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -250,7 +250,7 @@ export class ConfigService {
             await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
             return;
         }
-        const finalNemesisSeed = join(this.root, 'presets', presetData.preset, 'seed');
+        const finalNemesisSeed = join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed');
         if (existsSync(finalNemesisSeed)) {
             await BootstrapUtils.generateConfiguration({}, finalNemesisSeed, nemesisSeedFolder);
             await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
@@ -289,15 +289,10 @@ export class ConfigService {
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
             (addresses.nodes || []).map((account) => {
-                return new CertificateService(this.root, this.params).run(
-                    presetData.networkType,
-                    presetData.symbolServerImage,
-                    account.name,
-                    {
-                        main: account.main,
-                        transport: account.transport,
-                    },
-                );
+                return new CertificateService(this.params).run(presetData.networkType, presetData.symbolServerImage, account.name, {
+                    main: account.main,
+                    transport: account.transport,
+                });
             }),
         );
     }
@@ -309,7 +304,7 @@ export class ConfigService {
         currentFinalizationEpoch: number | undefined,
         knownPeers: PeerInfo[],
     ) {
-        const copyFrom = join(this.root, 'config', 'node');
+        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'node');
         const name = account.name;
 
         const serverConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'server-config');
@@ -439,7 +434,7 @@ export class ConfigService {
         const nemesisWorkingDir = BootstrapUtils.getTargetNemesisFolder(target, false);
         const transactionsDirectory = join(nemesisWorkingDir, presetData.nemesis.transactionsDirectory || presetData.transactionsDirectory);
         await BootstrapUtils.mkdir(transactionsDirectory);
-        const copyFrom = join(this.root, `config`, `nemesis`);
+        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, `config`, `nemesis`);
         const moveTo = join(nemesisWorkingDir, `server-config`);
         const templateContext = { ...(presetData as any), addresses };
         await Promise.all(
@@ -519,7 +514,7 @@ export class ConfigService {
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
-        await new NemgenService(this.root, this.params).run(presetData);
+        await new NemgenService(BootstrapUtils.ROOT_FOLDER, this.params).run(presetData);
     }
 
     private async createVrfTransaction(transactionsDirectory: string, presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
@@ -615,7 +610,7 @@ export class ConfigService {
     private generateGateways(presetData: ConfigPreset) {
         return Promise.all(
             (presetData.gateways || []).map(async (gatewayPreset, index: number) => {
-                const copyFrom = join(this.root, 'config', 'rest-gateway');
+                const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'rest-gateway');
                 const generatedContext: Partial<GatewayConfigPreset> = {
                     restDeploymentToolVersion: BootstrapUtils.VERSION,
                     restDeploymentToolLastUpdatedDate: new Date().toISOString().slice(0, 10),
@@ -686,7 +681,7 @@ export class ConfigService {
     private generateExplorers(presetData: ConfigPreset, remoteNodeService: RemoteNodeService) {
         return Promise.all(
             (presetData.explorers || []).map(async (explorerPreset, index: number) => {
-                const copyFrom = join(this.root, 'config', 'explorer');
+                const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'explorer');
                 const fullName = `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`;
                 const namespaceId = new NamespaceId(fullName);
                 const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
@@ -708,7 +703,7 @@ export class ConfigService {
     private generateWallets(presetData: ConfigPreset, remoteNodeService: RemoteNodeService) {
         return Promise.all(
             (presetData.wallets || []).map(async (walletPreset, index: number) => {
-                const copyFrom = join(this.root, 'config', 'wallet');
+                const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'wallet');
                 const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
                 const templateContext = {
                     namespaceName: `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`,

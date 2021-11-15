@@ -57,15 +57,14 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         const target = flags.target;
         const configLoader = new ConfigLoader();
         const addressesLocation = configLoader.getGeneratedAddressLocation(target);
-        const root = this.config.root;
         const existingPreset = configLoader.loadExistingPresetData(target, password);
         const preset = existingPreset.preset;
         if (!preset) {
             throw new Error(`Network preset could not be resolved!`);
         }
         // Adds new shared/network properties to the existing preset. This is for upgrades..
-        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
-        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
+        const sharedPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'shared.yml'), false);
+        const networkPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, 'network.yml'), false);
         const presetData = configLoader.mergePresets(sharedPreset, networkPreset, existingPreset) as ConfigPreset;
 
         const addresses = configLoader.loadExistingAddresses(target, password);

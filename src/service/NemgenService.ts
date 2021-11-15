@@ -42,7 +42,7 @@ export class NemgenService {
         const nemesisWorkingDir = BootstrapUtils.getTargetNemesisFolder(target, true);
         const nemesisSeedFolder = join(nemesisWorkingDir, `seed`, `${networkIdentifier}`, `0000`);
         await BootstrapUtils.mkdir(nemesisSeedFolder);
-        await promises.copyFile(join(this.root, `config`, `hashes.dat`), join(nemesisSeedFolder, `hashes.dat`));
+        await promises.copyFile(join(BootstrapUtils.ROOT_FOLDER, `config`, `hashes.dat`), join(nemesisSeedFolder, `hashes.dat`));
         const name = presetData.nodes[0].name;
         const serverConfigWorkingDir = BootstrapUtils.getTargetNodesFolder(target, true, name, 'server-config');
 

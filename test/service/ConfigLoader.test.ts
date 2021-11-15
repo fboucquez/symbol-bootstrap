@@ -36,7 +36,6 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked();
         try {
             await configLoader.createPresetData({
-                root: '.',
                 preset: Preset.testnet,
                 assembly: undefined,
                 customPreset: undefined,
@@ -53,7 +52,6 @@ describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData testnet assembly', async () => {
         const configLoader = new ConfigLoaderMocked();
         const presetData = await configLoader.createPresetData({
-            root: '.',
             preset: Preset.testnet,
             assembly: 'dual',
             customPreset: undefined,
@@ -66,7 +64,6 @@ describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
         const configLoader = new ConfigLoaderMocked();
         const presetData = await configLoader.createPresetData({
-            root: '.',
             preset: Preset.bootstrap,
             assembly: undefined,
             customPreset: 'test/override-currency-preset.yml',
@@ -83,7 +80,6 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked();
         try {
             await configLoader.createPresetData({
-                root: '.',
                 preset: Preset.bootstrap,
                 assembly: undefined,
                 customPreset: 'test/override-currency-preset.yml',

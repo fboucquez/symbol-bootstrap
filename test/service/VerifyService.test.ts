@@ -16,7 +16,7 @@
 import { expect } from '@oclif/test';
 import * as os from 'os';
 import * as semver from 'semver';
-import { BootstrapUtils, VerifyService } from '../../src/service';
+import { VerifyService } from '../../src/service';
 
 describe('VerifyService', () => {
     const currentNodeJsVersion = process.versions.node;
@@ -70,7 +70,7 @@ describe('VerifyService', () => {
             docker: '21.4.0',
             dockerCompose: '1.29.5',
         };
-        const service = new VerifyService(BootstrapUtils.resolveRootFolder(), expectedVersions);
+        const service = new VerifyService(expectedVersions);
         const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
         const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
         expect(semver.valid(currentNodeJsVersion, service.semverOptions));

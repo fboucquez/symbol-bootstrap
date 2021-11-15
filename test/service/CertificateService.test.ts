@@ -42,9 +42,8 @@ describe('CertificateService', () => {
     it('createCertificates', async () => {
         const target = 'target/tests/CertificateService.test';
         await BootstrapUtils.deleteFolder(target);
-        const service = new CertificateService('.', { target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
         const presetData = new ConfigLoader().createPresetData({
-            root: '.',
             preset: Preset.bootstrap,
             password: 'abc',
         });

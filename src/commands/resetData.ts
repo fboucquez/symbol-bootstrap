@@ -31,6 +31,6 @@ export default class ResetData extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(ResetData);
         BootstrapUtils.showBanner();
-        await new BootstrapService(this.config.root).resetData(flags);
+        await new BootstrapService().resetData(flags);
     }
 }

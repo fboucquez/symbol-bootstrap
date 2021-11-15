@@ -23,9 +23,9 @@ import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } fr
 
 describe('ReportService', () => {
     const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
-        const configResult = await new ConfigService('.', { ...params, offline: true }).run();
+        const configResult = await new ConfigService({ ...params, offline: true }).run();
 
-        const paths = await new ReportService('.', params).run(configResult.presetData);
+        const paths = await new ReportService(params).run(configResult.presetData);
         const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
         await BootstrapUtils.mkdir(expectedReportFolder);
 

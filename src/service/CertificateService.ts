@@ -46,7 +46,7 @@ export interface NodeCertificates {
 export class CertificateService {
     private static readonly METADATA_VERSION = 1;
 
-    constructor(private readonly root: string, protected readonly params: CertificateParams) {}
+    constructor(protected readonly params: CertificateParams) {}
 
     public static getCertificates(stdout: string): CertificatePair[] {
         const locations = (string: string, substring: string): number[] => {
@@ -89,7 +89,7 @@ export class CertificateService {
         customCertFolder?: string,
         randomSerial?: string,
     ): Promise<void> {
-        const copyFrom = `${this.root}/config/cert`;
+        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, `config`, `cert`);
         const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
 
         const metadataFile = join(certFolder, 'metadata.yml');

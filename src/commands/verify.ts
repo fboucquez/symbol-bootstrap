@@ -32,7 +32,7 @@ export default class Verify extends Command {
 
     public async run(): Promise<void> {
         BootstrapUtils.showBanner();
-        const report = await new VerifyService(this.config.root).createReport();
+        const report = await new VerifyService().createReport();
         logger.info(`OS: ${report.platform}`);
         report.lines.forEach((line) => {
             if (line.recommendation) {

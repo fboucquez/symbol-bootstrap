@@ -47,6 +47,6 @@ export default class Compose extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(this.config.root).compose(flags);
+        await new BootstrapService().compose(flags);
     }
 }

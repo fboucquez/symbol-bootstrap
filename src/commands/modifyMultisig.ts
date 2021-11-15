@@ -62,6 +62,6 @@ export default class ModifyMultisig extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        return new BootstrapService(this.config.root).modifyMultisig(flags);
+        return new BootstrapService().modifyMultisig(flags);
     }
 }

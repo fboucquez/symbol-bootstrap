@@ -82,21 +82,18 @@ export default class Wizard extends Command {
 
     public async run(): Promise<void> {
         const flags = this.parse(Wizard).flags;
-        return Wizard.execute(this.config.root, flags);
+        return Wizard.execute(flags);
     }
 
-    public static async execute(
-        root: string,
-        flags: {
-            noPassword: boolean;
-            skipPull?: boolean;
-            target: string;
-            password: string | undefined;
-            network: Network | undefined;
-            customPreset: string;
-            ready?: boolean;
-        },
-    ): Promise<void> {
+    public static async execute(flags: {
+        noPassword: boolean;
+        skipPull?: boolean;
+        target: string;
+        password: string | undefined;
+        network: Network | undefined;
+        customPreset: string;
+        ready?: boolean;
+    }): Promise<void> {
         BootstrapUtils.showBanner();
         console.log('Welcome to the Symbol Bootstrap wizard! This command will:');
         console.log(' - Guide you through the configuration process.');
