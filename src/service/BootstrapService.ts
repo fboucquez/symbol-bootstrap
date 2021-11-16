@@ -36,7 +36,7 @@ export class BootstrapService {
      *
      * @param config the params of the config command.
      */
-    public async config(config: ConfigParams = ConfigService.defaultParams): Promise<ConfigResult> {
+    public async config(config: ConfigParams): Promise<ConfigResult> {
         return new ConfigService(this.root, config).run();
     }
 
@@ -45,7 +45,7 @@ export class BootstrapService {
      *
      * @param config the params of the config command.
      */
-    public resolveConfigPreset(config: ConfigParams = ConfigService.defaultParams): ConfigPreset {
+    public resolveConfigPreset(config: ConfigParams): ConfigPreset {
         return new ConfigService(this.root, config).resolveConfigPreset(false);
     }
 
@@ -58,11 +58,7 @@ export class BootstrapService {
      * @param passedPresetData the created preset if you know it, otherwise will load the latest one resolved from the target folder.
      * @param passedAddresses the created addresses if you know if, otherwise will load the latest one resolved form the target folder.
      */
-    public compose(
-        config: ComposeParams = ComposeService.defaultParams,
-        passedPresetData?: ConfigPreset,
-        passedAddresses?: Addresses,
-    ): Promise<DockerCompose> {
+    public compose(config: ComposeParams, passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
         return new ComposeService(this.root, config).run(passedPresetData, passedAddresses);
     }
 
@@ -77,7 +73,7 @@ export class BootstrapService {
      */
 
     public async link(
-        config: LinkParams = LinkService.defaultParams,
+        config: LinkParams,
         passedPresetData?: ConfigPreset | undefined,
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
@@ -93,7 +89,7 @@ export class BootstrapService {
      */
 
     public async modifyMultisig(
-        config: ModifyMultisigParams = ModifyMultisigService.defaultParams,
+        config: ModifyMultisigParams,
         passedPresetData?: ConfigPreset | undefined,
         passedAddresses?: Addresses | undefined,
     ): Promise<void> {
@@ -109,8 +105,8 @@ export class BootstrapService {
      * @param passedPresetData the created preset if you know if, otherwise will load the latest one resolved from the target folder.
      * @return the paths of the created reports.
      */
-    public async report(config: ReportParams = ReportService.defaultParams, passedPresetData?: ConfigPreset): Promise<string[]> {
-        return await new ReportService(this.root, config).run(passedPresetData);
+    public async report(config: ReportParams, passedPresetData?: ConfigPreset): Promise<string[]> {
+        return new ReportService(this.root, config).run(passedPresetData);
     }
 
     /**
@@ -122,7 +118,7 @@ export class BootstrapService {
      *
      * @param config the params of the run command.
      */
-    public async run(config: RunParams = RunService.defaultParams): Promise<void> {
+    public async run(config: RunParams): Promise<void> {
         await new RunService(config).run();
     }
 
@@ -131,7 +127,7 @@ export class BootstrapService {
      *
      * @param config the params of the clean command.
      */
-    public async resetData(config = { target: RunService.defaultParams.target }): Promise<void> {
+    public async resetData(config: { target: string }): Promise<void> {
         await new RunService(config).resetData();
     }
 
@@ -140,7 +136,7 @@ export class BootstrapService {
      *
      * @param config the params of the clean command.
      */
-    public async healthCheck(config = { target: RunService.defaultParams.target }): Promise<void> {
+    public async healthCheck(config: { target: string }): Promise<void> {
         await new RunService(config).healthCheck();
     }
 
@@ -163,7 +159,7 @@ export class BootstrapService {
      *
      * @param config the params necessary to detect and stop the network.
      */
-    public async stop(config: RunParams = RunService.defaultParams): Promise<void> {
+    public async stop(config: RunParams): Promise<void> {
         await new RunService(config).stop();
     }
 }
