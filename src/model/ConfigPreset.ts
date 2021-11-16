@@ -303,6 +303,8 @@ export interface GatewayConfigPreset {
     restDeploymentToolVersion?: string; // default is dynamic, current bootstrap version
     restDeploymentToolLastUpdatedDate?: string; // default is dynamic, current datetime
     restProtocol: 'HTTPS' | 'HTTP';
+    restExtensions: string;
+    restUncirculatingAccountPublicKeys: string;
     restSSLPath: string;
     restSSLKeyFileName: string;
     restSSLCertificateFileName: string;

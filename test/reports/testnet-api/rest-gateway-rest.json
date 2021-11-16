@@ -18,6 +18,9 @@
       "OPTIONS"
     ]
   },
+  "uncirculatingAccountPublicKeys": [
+    ""
+  ],
   "extensions": [
     "accountLink",
     "aggregate",
@@ -29,8 +32,7 @@
     "namespace",
     "receipts",
     "restrictions",
-    "transfer",
-    "cmc"
+    "transfer"
   ],
   "db": {
     "url": "mongodb://db:27017/",

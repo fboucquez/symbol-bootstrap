@@ -13,6 +13,7 @@
     "allowedHosts": ["*"],
     "allowedMethods": ["GET", "POST", "PUT", "OPTIONS"]
   },
+  "uncirculatingAccountPublicKeys": {{{toJson (splitCsv restUncirculatingAccountPublicKeys)}}},
   "extensions": {{{toJson (splitCsv restExtensions)}}},
   "db": {
     "url": "mongodb://{{{databaseHost}}}:27017/",

@@ -655,8 +655,6 @@ config-network.properties
     harvestNetworkFeeSinkAddressV1; TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA; ;
     harvestNetworkFeeSinkAddress; TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
-    treasuryReissuanceBlockTransactionsHash; 0000000000000000000000000000000000000000000000000000000000000000; ;
-    treasuryReissuanceFallbackBlockTransactionsHash; 0000000000000000000000000000000000000000000000000000000000000000; ;
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
     **plugin:catapult.plugins.aggregate**; ; ;
@@ -707,7 +705,6 @@ config-network.properties
     totalVotingBalanceCalculationFix; 398'520; uint32_t; Height of fork to fix TotalVotingBalance calculation.
     treasuryReissuance; 0; ;
     **treasury_reissuance_transaction_signatures**;
-    **treasury_reissuance_fallback_transaction_signatures**;
 
 config-node.properties
 ======================

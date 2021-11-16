@@ -38,8 +38,6 @@ maxTransactionsPerAggregate: 100
 maxCosignaturesPerAggregate: 25
 harvestBeneficiaryPercentage: 10
 harvestNetworkPercentage: 5
-treasuryReissuanceBlockTransactionsHash: '0000000000000000000000000000000000000000000000000000000000000000'
-treasuryReissuanceFallbackBlockTransactionsHash: '0000000000000000000000000000000000000000000000000000000000000000'
 rootNamespaceRentalFeePerBlock: 1
 childNamespaceRentalFee: 100
 enableStrictCosignatureCheck: false
@@ -66,8 +64,8 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.3.0
-symbolRestImage: symbolplatform/symbol-rest:2.3.9
+symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.3.1
+symbolRestImage: symbolplatform/symbol-rest:2.4.0
 symbolExplorerImage: symbolplatform/symbol-explorer:1.1.0-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
 symbolFaucetImage: symbolplatform/symbol-faucet:1.0.1-alpha
@@ -216,7 +214,8 @@ maxConnectionAttempts: 15
 baseRetryDelay: 750
 connectionPoolSize: 10
 maxSubscriptions: 300
-restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer'
+restUncirculatingAccountPublicKeys: ''
 restDeploymentTool: symbol-bootstrap
 restProtocol: HTTP
 restSSLPath: '/symbol-workdir'

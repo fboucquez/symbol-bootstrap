@@ -4,16 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.1.1] - NEXT
+## [1.1.1] - Nov-16-2021
 
-**Milestone**: Mainnet(1.0.3.0)
+**Milestone**: Mainnet(1.0.3.1)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.1.1  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 - Fixed `symbol-statistics-service-typescript-fetch-client` exception handling.
-- Rest `2.3.9` upgrade.
+- Rest `2.4.0` upgrade.
+- Fixed peer and api json file generation.
 
 ## [1.1.0] - Nov-05-2021
 

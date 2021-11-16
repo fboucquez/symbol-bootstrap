@@ -47,9 +47,6 @@ harvestNetworkFeeSinkAddress = {{{harvestNetworkFeeSinkAddress}}}
 
 maxTransactionsPerBlock = {{{toAmount maxTransactionsPerBlock}}}
 
-treasuryReissuanceBlockTransactionsHash = {{{treasuryReissuanceBlockTransactionsHash}}}
-treasuryReissuanceFallbackBlockTransactionsHash = {{{treasuryReissuanceFallbackBlockTransactionsHash}}}
-
 [plugin:catapult.plugins.accountlink]
 
 dummy = to trigger plugin load
@@ -133,11 +130,5 @@ treasuryReissuance = {{{toAmount treasuryReissuance}}}
 [treasury_reissuance_transaction_signatures]
 
 {{#each treasuryReissuanceTransactionSignatures}}
-{{this}} = true
-{{/each}}
-
-[treasury_reissuance_fallback_transaction_signatures]
-
-{{#each treasuryReissuanceFallbackTransactionSignatures}}
 {{this}} = true
 {{/each}}
