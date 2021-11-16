@@ -66,4 +66,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap modifyMultisig --useKnownRestGateways
 ```
 
-_See code: [src/commands/modifyMultisig.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.0/src/commands/modifyMultisig.ts)_
+_See code: [src/commands/modifyMultisig.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.1/src/commands/modifyMultisig.ts)_

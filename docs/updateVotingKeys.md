@@ -44,4 +44,4 @@ EXAMPLE
   $ symbol-bootstrap updateVotingKeys
 ```
 
-_See code: [src/commands/updateVotingKeys.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.0/src/commands/updateVotingKeys.ts)_
+_See code: [src/commands/updateVotingKeys.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.1/src/commands/updateVotingKeys.ts)_
