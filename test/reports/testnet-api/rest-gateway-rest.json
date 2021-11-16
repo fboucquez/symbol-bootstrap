@@ -18,9 +18,7 @@
       "OPTIONS"
     ]
   },
-  "uncirculatingAccountPublicKeys": [
-    ""
-  ],
+  "uncirculatingAccountPublicKeys": [],
   "extensions": [
     "accountLink",
     "aggregate",
