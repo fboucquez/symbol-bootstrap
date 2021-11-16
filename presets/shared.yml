@@ -25,7 +25,7 @@ maxMessageSize: 1024
 reservedRootNamespaceNames: 'symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info'
 defaultDynamicFeeMultiplier: 1000
 minFeeMultiplier: 100
-maxTimeBehindPullTransactionsStart: 24h
+maxTimeBehindPullTransactionsStart: 5m
 epochAdjustment: 1573430400s
 nodeEqualityStrategy: host
 maxVotingKeyLifetime: 26280

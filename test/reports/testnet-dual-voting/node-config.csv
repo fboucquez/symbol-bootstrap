@@ -702,7 +702,7 @@ shortLivedCacheBlockDuration; 100m; utils::TimeSpan; Duration of a block in the 
 shortLivedCachePruneInterval; 90s; utils::TimeSpan; Time between short lived cache pruning.
 shortLivedCacheMaxSize; 10'000'000; uint32_t; Maximum size of a short lived cache.
 minFeeMultiplier; 100; BlockFeeMultiplier; Minimum fee multiplier of transactions to propagate and include in blocks.
-maxTimeBehindPullTransactionsStart; 24h; ;
+maxTimeBehindPullTransactionsStart; 5m; ;
 transactionSelectionStrategy; oldest; model::TransactionSelectionStrategy; Transaction selection strategy used for syncing and harvesting unconfirmed transactions.
 unconfirmedTransactionsCacheMaxResponseSize; 5MB; utils::FileSize; Maximum size of an unconfirmed transactions response.
 unconfirmedTransactionsCacheMaxSize; 20MB; uint32_t; Maximum size of the unconfirmed transactions cache.
