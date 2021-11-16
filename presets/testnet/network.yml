@@ -54,15 +54,12 @@ treasuryReissuanceEpoch: 0
 treasuryReissuanceEpochIneligibleVoterAddresses: []
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
-restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
 faucetUrl: 'https://testnet.symbol.tools'
 explorerUrl: 'https://testnet.symbol.fyi'
 statisticsServiceUrl: 'https://testnet.symbol.services'
 knownRestGateways: []
 knownPeers: []
 treasuryReissuanceTransactionSignatures: []
-treasuryReissuanceFallbackTransactionSignatures: []
-
 inflation:
     starting-at-height-2: 0
     starting-at-height-5760: 191997042

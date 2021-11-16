@@ -699,7 +699,10 @@ export class BootstrapUtils {
     }
 
     public static splitCsv(object: string): string[] {
-        return (object || '').split(',').map((c) => c.trim());
+        return (object || '')
+            .split(',')
+            .map((string) => string.trim())
+            .filter((string) => string);
     }
 
     public static toSeconds(serverDuration: string): number {
