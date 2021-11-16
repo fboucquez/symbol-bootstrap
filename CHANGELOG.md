@@ -15,6 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Fixed `symbol-statistics-service-typescript-fetch-client` exception handling.
 - Rest `2.4.0` upgrade.
 - Fixed peer and api json file generation.
+- Changed `maxTimeBehindPullTransactionsStart` to 5m.
 
 ## [1.1.0] - Nov-05-2021
 
