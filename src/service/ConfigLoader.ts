@@ -352,11 +352,11 @@ export class ConfigLoader {
         return BootstrapUtils.loadYaml(customPreset, password);
     }
 
-    private loadAssembly(root: string, preset: Preset, assembly: string | undefined): CustomPreset {
+    private loadAssembly(preset: Preset, assembly: string | undefined): CustomPreset {
         if (!assembly) {
             return {};
         }
-        const fileLocation = `${root}/presets/${preset}/assembly-${assembly}.yml`;
+        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, `assembly-${assembly}.yml`);
         if (!existsSync(fileLocation)) {
             throw new KnownError(
                 `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`,
@@ -380,7 +380,6 @@ export class ConfigLoader {
 
     public createPresetData(params: {
         password: Password;
-        root: string;
         preset?: Preset;
         assembly?: string;
         customPreset?: string;
@@ -401,10 +400,9 @@ export class ConfigLoader {
         const assembly =
             params.assembly || params.customPresetObject?.assembly || customPresetFileObject?.assembly || params.oldPresetData?.assembly;
 
-        const root = params.root;
-        const sharedPreset = BootstrapUtils.loadYaml(join(root, 'presets', 'shared.yml'), false);
-        const networkPreset = BootstrapUtils.loadYaml(`${root}/presets/${preset}/network.yml`, false);
-        const assemblyPreset = this.loadAssembly(root, preset, assembly);
+        const sharedPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'shared.yml'), false);
+        const networkPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, 'network.yml'), false);
+        const assemblyPreset = this.loadAssembly(preset, assembly);
 
         const presetData = this.mergePresets(sharedPreset, networkPreset, assemblyPreset, customPresetFileObject, customPresetObject, {
             preset,

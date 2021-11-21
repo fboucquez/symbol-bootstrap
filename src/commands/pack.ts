@@ -80,7 +80,7 @@ export default class Pack extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        const service = await new BootstrapService(this.config.root);
+        const service = await new BootstrapService();
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
         const configResult = await service.config(flags);
         await service.compose(flags, configResult.presetData);

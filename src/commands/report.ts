@@ -31,6 +31,6 @@ export default class Clean extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Clean);
         BootstrapUtils.showBanner();
-        await new BootstrapService(this.config.root).report(flags);
+        await new BootstrapService().report(flags);
     }
 }

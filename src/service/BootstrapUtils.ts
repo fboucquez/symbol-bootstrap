@@ -76,7 +76,10 @@ export class BootstrapUtils {
     private static readonly pulledImages: string[] = [];
 
     public static readonly VERSION = version;
-    public static readonly DEFAULT_ROOT_FOLDER = BootstrapUtils.resolveRootFolder();
+    /**
+     * The folder where this npm module is installed. It defines where the default presets, configurations, etc are located.
+     */
+    public static readonly ROOT_FOLDER = BootstrapUtils.resolveRootFolder();
 
     public static stopProcess = false;
 

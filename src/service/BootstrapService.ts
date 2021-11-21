@@ -15,7 +15,6 @@
  */
 
 import { Addresses, ConfigPreset, DockerCompose } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ComposeParams, ComposeService } from './ComposeService';
 import { ConfigParams, ConfigResult, ConfigService } from './ConfigService';
 import { LinkParams, LinkService } from './LinkService';
@@ -29,15 +28,13 @@ export type StartParams = ConfigParams & ComposeParams & RunParams;
  * Main entry point for API integration.
  */
 export class BootstrapService {
-    public constructor(private readonly root: string = BootstrapUtils.DEFAULT_ROOT_FOLDER) {}
-
     /**
      * It generates the configuration and nemesis for the provided preset
      *
      * @param config the params of the config command.
      */
     public async config(config: ConfigParams): Promise<ConfigResult> {
-        return new ConfigService(this.root, config).run();
+        return new ConfigService(config).run();
     }
 
     /**
@@ -46,7 +43,7 @@ export class BootstrapService {
      * @param config the params of the config command.
      */
     public resolveConfigPreset(config: ConfigParams): ConfigPreset {
-        return new ConfigService(this.root, config).resolveConfigPreset(false);
+        return new ConfigService(config).resolveConfigPreset(false);
     }
 
     /**
@@ -59,7 +56,7 @@ export class BootstrapService {
      * @param passedAddresses the created addresses if you know if, otherwise will load the latest one resolved form the target folder.
      */
     public compose(config: ComposeParams, passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
-        return new ComposeService(this.root, config).run(passedPresetData, passedAddresses);
+        return new ComposeService(config).run(passedPresetData, passedAddresses);
     }
 
     /**
@@ -106,7 +103,7 @@ export class BootstrapService {
      * @return the paths of the created reports.
      */
     public async report(config: ReportParams, passedPresetData?: ConfigPreset): Promise<string[]> {
-        return new ReportService(this.root, config).run(passedPresetData);
+        return new ReportService(config).run(passedPresetData);
     }
 
     /**

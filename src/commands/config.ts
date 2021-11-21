@@ -85,6 +85,6 @@ export default class Config extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(this.config.root).config(flags);
+        await new BootstrapService().config(flags);
     }
 }

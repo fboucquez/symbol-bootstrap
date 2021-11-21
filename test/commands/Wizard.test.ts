@@ -61,7 +61,7 @@ describe('Wizard', () => {
 
         const password = '11111';
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
-        await Wizard.execute(BootstrapUtils.resolveRootFolder(), {
+        await Wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -119,7 +119,7 @@ describe('Wizard', () => {
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
-        await Wizard.execute(BootstrapUtils.resolveRootFolder(), {
+        await Wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -176,7 +176,7 @@ describe('Wizard', () => {
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
-        await Wizard.execute(BootstrapUtils.resolveRootFolder(), {
+        await Wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -241,7 +241,7 @@ describe('Wizard', () => {
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
-        await Wizard.execute(BootstrapUtils.resolveRootFolder(), {
+        await Wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,

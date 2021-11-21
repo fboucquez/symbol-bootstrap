@@ -66,6 +66,6 @@ export default class Run extends Command {
     public run(): Promise<void> {
         const { flags } = this.parse(Run);
         BootstrapUtils.showBanner();
-        return new BootstrapService(this.config.root).run(flags);
+        return new BootstrapService().run(flags);
     }
 }

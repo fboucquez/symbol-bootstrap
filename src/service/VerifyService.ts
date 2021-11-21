@@ -43,7 +43,7 @@ export class VerifyService {
     private readonly expectedVersions: ExpectedVersions;
     public readonly semverOptions = { loose: true };
 
-    constructor(private readonly root = BootstrapUtils.resolveRootFolder(), expectedVersions: Partial<ExpectedVersions> = {}) {
+    constructor(expectedVersions: Partial<ExpectedVersions> = {}) {
         this.expectedVersions = { ...defaultExpectedVersions, ...expectedVersions };
     }
 

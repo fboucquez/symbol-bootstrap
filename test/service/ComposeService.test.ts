@@ -25,9 +25,8 @@ describe('ComposeService', () => {
     const password = '1234';
 
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
-        const root = '.';
-        const presetData = new ConfigLoader().createPresetData({ root, password, ...params });
-        const dockerCompose = await new ComposeService(root, params).run(presetData);
+        const presetData = new ConfigLoader().createPresetData({ password, ...params });
+        const dockerCompose = await new ComposeService(params).run(presetData);
         Object.values(dockerCompose.services).forEach((service) => {
             if (service.mem_limit) {
                 service.mem_limit = 123;
@@ -285,7 +284,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
     });
 
     it('resolveDebugOptions', async () => {
-        const service = new ComposeService('.', ComposeService.defaultParams);
+        const service = new ComposeService(ComposeService.defaultParams);
         expect(service.resolveDebugOptions(true, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
         expect(service.resolveDebugOptions(true, undefined)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
         expect(service.resolveDebugOptions(true, false)).deep.equals({});

@@ -20,7 +20,7 @@ import { ConfigService, CryptoUtils, Preset } from '../../src/service';
 
 describe('ConfigService', () => {
     it('ConfigService default run with optin_preset.yml', async () => {
-        await new ConfigService('.', {
+        await new ConfigService({
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.optin',
@@ -29,7 +29,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService default run with override-currency-preset.yml', async () => {
-        await new ConfigService('.', {
+        await new ConfigService({
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.custom',
@@ -38,7 +38,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService testnet assembly', async () => {
-        await new ConfigService('.', {
+        await new ConfigService({
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.testnet',
@@ -48,7 +48,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService mainnet assembly', async () => {
-        await new ConfigService('.', {
+        await new ConfigService({
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.mainnet',
@@ -58,14 +58,14 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService bootstrap default', async () => {
-        const configResult = await new ConfigService('.', {
+        const configResult = await new ConfigService({
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/bootstrap',
             preset: Preset.bootstrap,
         }).run();
 
-        const configResultUpgrade = await new ConfigService('.', {
+        const configResultUpgrade = await new ConfigService({
             ...ConfigService.defaultParams,
             upgrade: true,
             target: 'target/tests/bootstrap',
@@ -78,7 +78,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService bootstrap repeat', async () => {
-        const configResult = await new ConfigService('.', {
+        const configResult = await new ConfigService({
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.bootstrap.repeat',

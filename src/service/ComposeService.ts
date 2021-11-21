@@ -54,7 +54,7 @@ export class ComposeService {
 
     private readonly configLoader: ConfigLoader;
 
-    constructor(private readonly root: string, protected readonly params: ComposeParams) {
+    constructor(protected readonly params: ComposeParams) {
         this.configLoader = new ConfigLoader();
     }
 
@@ -84,7 +84,7 @@ export class ComposeService {
         }
 
         await BootstrapUtils.mkdir(targetDocker);
-        await BootstrapUtils.generateConfiguration(presetData, join(this.root, 'config', 'docker'), targetDocker);
+        await BootstrapUtils.generateConfiguration(presetData, join(BootstrapUtils.ROOT_FOLDER, 'config', 'docker'), targetDocker);
 
         await BootstrapUtils.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
 
