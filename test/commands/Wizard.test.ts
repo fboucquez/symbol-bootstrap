@@ -19,7 +19,7 @@ import { Account, NetworkType } from 'symbol-sdk';
 import { BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
 import { Network, Wizard } from '../../src/commands/wizard';
 import { StdUtils } from '../utils/StdUtils';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Wizard', () => {
     const testFolder = 'target/wizardTest';
     beforeEach(async () => {

@@ -18,7 +18,7 @@ import { expect } from '@oclif/test';
 import 'mocha';
 import { LoggerFactory, LogType } from '../../src';
 import { ConfigService, CryptoUtils, Preset } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ConfigService', () => {
     it('ConfigService default run with optin_preset.yml', async () => {
         await new ConfigService(logger, {

@@ -15,7 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { LoggerFactory, LogType } from '../logger';
+import { LoggerFactory, System } from '../logger';
 import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
@@ -73,7 +73,7 @@ export default class Config extends Command {
             description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: BootstrapUtils.CURRENT_USER,
         }),
-        logger: CommandUtils.getLoggerFlag(LogType.System),
+        logger: CommandUtils.getLoggerFlag(...System),
     });
 
     static flags = Config.resolveFlags(false);

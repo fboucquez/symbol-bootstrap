@@ -15,7 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { LoggerFactory, LogType } from '../logger';
+import { LoggerFactory, System } from '../logger';
 import { BootstrapService, BootstrapUtils, CommandUtils, ComposeService } from '../service';
 
 export default class Compose extends Command {
@@ -37,7 +37,7 @@ export default class Compose extends Command {
             description: `User used to run the services in the docker-compose.yml file. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: 'current',
         }),
-        logger: CommandUtils.getLoggerFlag(LogType.System),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {

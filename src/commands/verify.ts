@@ -15,7 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapUtils, CommandUtils, LoggerFactory, LogType, VerifyService } from '../';
+import { BootstrapUtils, CommandUtils, LoggerFactory, System, VerifyService } from '../';
 
 export default class Verify extends Command {
     static description =
@@ -24,7 +24,7 @@ export default class Verify extends Command {
 
     static flags = {
         help: CommandUtils.helpFlag,
-        logger: CommandUtils.getLoggerFlag(LogType.System),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {

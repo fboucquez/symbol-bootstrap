@@ -16,7 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { join } from 'path';
-import { LoggerFactory, LogType } from '../logger';
+import { LoggerFactory, System } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
 
@@ -44,7 +44,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         finalizationEpoch: flags.integer({
             description: `The network's finalization epoch. It can be retrieved from the /chain/info rest endpoint. If not provided, the bootstrap known epoch is used.`,
         }),
-        logger: CommandUtils.getLoggerFlag(LogType.System),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {

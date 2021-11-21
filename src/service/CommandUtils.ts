@@ -17,7 +17,7 @@ import { flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
 import { prompt } from 'inquirer';
 import { Account, Convert, NetworkType, PublicAccount } from 'symbol-sdk';
-import { Logger, LogType } from '../logger';
+import { Logger, LoggerFactory, LogType } from '../logger';
 import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { KeyName } from './ConfigService';
@@ -152,13 +152,15 @@ export class CommandUtils {
 
     /**
      * It returns the flag that can be used to tune the class of logger.
-     * @param defaultLogType the default logger to be used if not provided.
+     * @param defaultLogTypes the default logger to be used if not provided.
      */
-    public static getLoggerFlag(defaultLogType: LogType): IOptionFlag<LogType> {
-        return flags.enum({
-            description: 'The logger the command will use.',
-            options: Object.keys(LogType).map((v) => v as LogType),
-            default: defaultLogType,
+    public static getLoggerFlag(...defaultLogTypes: LogType[]): IOptionFlag<string> {
+        const options = Object.keys(LogType).map((v) => v as LogType);
+        return flags.string({
+            description: `The loggers the command will use. Options are: ${options.join(LoggerFactory.separator)}. Use '${
+                LoggerFactory.separator
+            }' to select multiple loggers.`,
+            default: defaultLogTypes.join(LoggerFactory.separator),
         });
     }
 }

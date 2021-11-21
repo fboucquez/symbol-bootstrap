@@ -31,7 +31,7 @@ import {
 } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
 import { BootstrapService, ConfigService, LinkService, LinkServiceTransactionFactoryParams, Preset } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 const password = '1234';
 describe('LinkService', () => {
     const alreadyLinkedAccountInfoDto: AccountInfoDTO = {

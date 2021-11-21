@@ -5,7 +5,7 @@ import { LoggerFactory, LogType } from '../../src';
 import { ConfigPreset } from '../../src/model';
 import { ModifyMultisigParams, ModifyMultisigService, TransactionFactoryParams, TransactionUtils } from '../../src/service';
 import { StdUtils } from '../utils/StdUtils';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ModifyMultisigService', () => {
     let modifyMultisigService: ModifyMultisigService;
 

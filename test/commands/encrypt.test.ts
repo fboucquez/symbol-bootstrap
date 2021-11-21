@@ -17,7 +17,7 @@
 import { expect, test } from '@oclif/test';
 import { existsSync } from 'fs';
 import { BootstrapUtils, CryptoUtils, LoggerFactory, LogType } from '../../src';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('encrypt', () => {
     test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()

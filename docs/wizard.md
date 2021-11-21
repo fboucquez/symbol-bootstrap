@@ -14,25 +14,26 @@ USAGE
   $ symbol-bootstrap wizard
 
 OPTIONS
-  -c, --customPreset=customPreset               [default: custom-preset.yml] The custom preset to be created.
-  -h, --help                                    It shows the help of this command.
+  -c, --customPreset=customPreset         [default: custom-preset.yml] The custom preset to be created.
+  -h, --help                              It shows the help of this command.
 
-  -t, --target=target                           [default: target] The target folder where the symbol-bootstrap network
-                                                is generated
+  -t, --target=target                     [default: target] The target folder where the symbol-bootstrap network is
+                                          generated
 
-  --logger=(Console|ConsoleLog|System|Silence)  [default: Console] The logger the command will use.
+  --logger=logger                         [default: Console] The loggers the command will use. Options are:
+                                          Console,ConsoleLog,File,Silent. Use ',' to select multiple loggers.
 
-  --network=mainnet|testnet|localNetwork        The node or network you want to create
+  --network=mainnet|testnet|localNetwork  The node or network you want to create
 
-  --noPassword                                  When provided, Bootstrap will not use a password, so private keys will
-                                                be stored in plain text. Use with caution.
+  --noPassword                            When provided, Bootstrap will not use a password, so private keys will be
+                                          stored in plain text. Use with caution.
 
-  --password=password                           A password used to encrypt and decrypt private keys in preset files like
-                                                addresses.yml and preset.yml. Bootstrap prompts for a password by
-                                                default, can be provided in the command line (--password=XXXX) or
-                                                disabled in the command line (--noPassword).
+  --password=password                     A password used to encrypt and decrypt private keys in preset files like
+                                          addresses.yml and preset.yml. Bootstrap prompts for a password by default, can
+                                          be provided in the command line (--password=XXXX) or disabled in the command
+                                          line (--noPassword).
 
-  --ready                                       If --ready is provided, the command will not ask offline confirmation.
+  --ready                                 If --ready is provided, the command will not ask offline confirmation.
 
 EXAMPLE
   $ symbol-bootstrap wizard

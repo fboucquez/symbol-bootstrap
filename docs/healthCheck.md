@@ -21,12 +21,11 @@ USAGE
   $ symbol-bootstrap healthCheck
 
 OPTIONS
-  -h, --help                                    It shows the help of this command.
+  -h, --help           It shows the help of this command.
+  -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
-  -t, --target=target                           [default: target] The target folder where the symbol-bootstrap network
-                                                is generated
-
-  --logger=(Console|ConsoleLog|System|Silence)  [default: System] The logger the command will use.
+  --logger=logger      [default: ConsoleLog,File] The loggers the command will use. Options are:
+                       Console,ConsoleLog,File,Silent. Use ',' to select multiple loggers.
 
 DESCRIPTION
   This command checks:

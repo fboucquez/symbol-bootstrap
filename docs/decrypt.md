@@ -16,19 +16,17 @@ USAGE
   $ symbol-bootstrap decrypt
 
 OPTIONS
-  -h, --help                                    It shows the help of this command.
+  -h, --help                 It shows the help of this command.
+  --destination=destination  (required) The destination decrypted file to create. The destination file must not exist.
 
-  --destination=destination                     (required) The destination decrypted file to create. The destination
-                                                file must not exist.
+  --logger=logger            [default: Console] The loggers the command will use. Options are:
+                             Console,ConsoleLog,File,Silent. Use ',' to select multiple loggers.
 
-  --logger=(Console|ConsoleLog|System|Silence)  [default: Console] The logger the command will use.
+  --password=password        The password to use to decrypt the source file into the destination file. Bootstrap prompts
+                             for a password by default, can be provided in the command line (--password=XXXX) or
+                             disabled in the command line (--noPassword).
 
-  --password=password                           The password to use to decrypt the source file into the destination
-                                                file. Bootstrap prompts for a password by default, can be provided in
-                                                the command line (--password=XXXX) or disabled in the command line
-                                                (--noPassword).
-
-  --source=source                               (required) The source encrypted yml file to be decrypted.
+  --source=source            (required) The source encrypted yml file to be decrypted.
 
 DESCRIPTION
   The main use case of this command is to verify private keys in encrypted files after encrypting a custom preset or 

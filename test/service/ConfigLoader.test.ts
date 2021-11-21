@@ -20,7 +20,7 @@ import { Account, NetworkType } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
 import { ConfigAccount, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 class ConfigLoaderMocked extends ConfigLoader {
     public generateAccount = (
         networkType: NetworkType,

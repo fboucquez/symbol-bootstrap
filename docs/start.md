@@ -57,8 +57,9 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
-  --logger=(Console|ConsoleLog|System|Silence)
-      [default: System] The logger the command will use.
+  --logger=logger
+      [default: ConsoleLog,File] The loggers the command will use. Options are: Console,ConsoleLog,File,Silent. Use ',' to 
+      select multiple loggers.
 
   --noPassword
       When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.

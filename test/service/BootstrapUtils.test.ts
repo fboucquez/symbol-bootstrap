@@ -26,7 +26,7 @@ import { ConfigAccount } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
 import assert = require('assert');
 import nock = require('nock');
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapUtils', () => {
     it('BootstrapUtils dockerUserId', async () => {
         const user1 = await BootstrapUtils.getDockerUserGroup(logger);

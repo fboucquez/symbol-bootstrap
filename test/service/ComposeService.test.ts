@@ -21,7 +21,7 @@ import { join } from 'path';
 import { LoggerFactory, LogType } from '../../src';
 import { DockerCompose } from '../../src/model';
 import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ComposeService', () => {
     const password = '1234';
 

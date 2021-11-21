@@ -22,7 +22,7 @@ import { restore, stub } from 'sinon';
 import { NodeApi } from 'symbol-statistics-service-typescript-fetch-client';
 import { ConfigPreset, LoggerFactory, LogType } from '../../src';
 import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 const list = [
     {
         peerStatus: {

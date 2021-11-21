@@ -22,7 +22,7 @@ import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
 import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('CertificateService', () => {
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;

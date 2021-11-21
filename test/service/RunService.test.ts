@@ -20,7 +20,7 @@ import 'mocha';
 import { join } from 'path';
 import { LoggerFactory, LogType } from '../../src';
 import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('RunService', () => {
     const target = 'target/tests/BootstrapService.standard';
 

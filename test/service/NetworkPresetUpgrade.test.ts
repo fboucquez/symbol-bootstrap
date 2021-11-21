@@ -18,7 +18,7 @@ import { join } from 'path';
 import { LoggerFactory, LogType } from '../../src';
 import { ConfigPreset } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('NetworkPresetUpgrade', () => {
     const patchNetworkPreset = async (preset: Preset): Promise<void> => {
         const root = './';

@@ -27,7 +27,7 @@ import {
     RepositoryInfo,
     TransactionUtils,
 } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Announce Service', () => {
     let announceService: AnnounceService;
 

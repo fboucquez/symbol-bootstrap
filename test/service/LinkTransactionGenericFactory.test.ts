@@ -23,7 +23,7 @@ import { GenericNodeAccount, KeyAccount, LinkTransactionGenericFactory, VotingKe
 type GenericTransaction =
     | { name: string; action: LinkAction; publicKey: string }
     | { readonly endEpoch: number; name: string; action: LinkAction; readonly publicKey: string; readonly startEpoch: number };
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('LinkTransactionGenericFactory', () => {
     it('should test overlaps', () => {
         expect(

@@ -22,6 +22,7 @@ import { Logger } from './Logger';
 import { LogType } from './LogType';
 
 export class LoggerFactory {
+    public static readonly separator = ',';
     private static readonly consoleTransport = new winston.transports.Console({
         format: winston.format.combine(
             winston.format.timestamp(),
@@ -42,6 +43,10 @@ export class LoggerFactory {
         ),
     });
 
+    private static readonly silent = new winston.transports.Console({
+        silent: true,
+    });
+
     private static readonly fileTransport = (fileName: string): FileTransportInstance =>
         new winston.transports.File({
             format: winston.format.combine(
@@ -53,41 +58,38 @@ export class LoggerFactory {
             level: 'info',
         });
 
-    public static getLogger(id: LogType, workingDir = BootstrapUtils.defaultWorkingDir): Logger {
-        if (!winston.loggers.has(id.toString())) {
-            switch (id) {
-                case LogType.System:
-                    winston.loggers.add(id.toString(), {
-                        transports: [LoggerFactory.consoleTransport, LoggerFactory.fileTransport(join(workingDir, 'logs.log'))],
-                        format: winston.format.label({ label: id.toString() }),
-                    });
-                    break;
-                case LogType.Console:
-                    winston.loggers.add(id.toString(), {
-                        transports: [LoggerFactory.consoleOnlyTransport],
-                        format: winston.format.label({ label: id.toString() }),
-                    });
-                    break;
-                case LogType.ConsoleLog:
-                    winston.loggers.add(id.toString(), {
-                        transports: [LoggerFactory.consoleTransport],
-                        format: winston.format.label({ label: id.toString() }),
-                    });
-                    break;
-                case LogType.Silence:
-                    winston.loggers.add(id.toString(), {
-                        transports: [
-                            new winston.transports.Console({
-                                silent: true,
-                            }),
-                        ],
-                        format: winston.format.label({ label: id.toString() }),
-                    });
-                    break;
-                default:
-                    throw new Error(`Unknown LogType ${id}`);
-            }
+    public static getLogger(logTypes: string, workingDir = BootstrapUtils.defaultWorkingDir): Logger {
+        return this.getLoggerFromTypes(
+            logTypes
+                .split(LoggerFactory.separator)
+                .map((l) => l.trim() as LogType)
+                .filter((t) => t),
+            workingDir,
+        );
+    }
+
+    public static getLoggerFromTypes(logTypes: LogType[], workingDir = BootstrapUtils.defaultWorkingDir): Logger {
+        const id = logTypes.join(LoggerFactory.separator);
+        if (!winston.loggers.has(id)) {
+            const transports = logTypes.map((logType) => {
+                switch (logType.toLowerCase()) {
+                    case LogType.File.toLowerCase():
+                        return LoggerFactory.fileTransport(join(workingDir, 'logs.log'));
+                    case LogType.Console.toLowerCase():
+                        return LoggerFactory.consoleOnlyTransport;
+                    case LogType.ConsoleLog.toLowerCase():
+                        return LoggerFactory.consoleTransport;
+                    case LogType.Silent.toLowerCase():
+                        return LoggerFactory.silent;
+                    default:
+                        throw new Error(`Unknown LogType ${logType}`);
+                }
+            });
+            winston.loggers.add(id, {
+                transports: transports,
+                format: winston.format.label({ label: id }),
+            });
         }
-        return winston.loggers.get(id.toString());
+        return winston.loggers.get(id);
     }
 }

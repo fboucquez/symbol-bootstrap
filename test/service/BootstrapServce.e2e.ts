@@ -19,7 +19,7 @@ import 'mocha';
 import { Account, Deadline, PlainMessage, RepositoryFactoryHttp, TransactionService, TransferTransaction, UInt64 } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
 import { BootstrapService, BootstrapUtils, ConfigLoader, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
     const timeout = 60000;
 

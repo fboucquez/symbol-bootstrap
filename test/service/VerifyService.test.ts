@@ -18,7 +18,7 @@ import * as os from 'os';
 import * as semver from 'semver';
 import { LoggerFactory, LogType } from '../../src';
 import { VerifyService } from '../../src/service';
-const logger = LoggerFactory.getLogger(LogType.Silence);
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('VerifyService', () => {
     const currentNodeJsVersion = process.versions.node;
 

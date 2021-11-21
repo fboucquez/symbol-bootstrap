@@ -15,7 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
-import { LoggerFactory, LogType } from '../logger';
+import { LoggerFactory, System } from '../logger';
 import { BootstrapService, BootstrapUtils, CommandUtils } from '../service';
 
 export default class Report extends Command {
@@ -26,7 +26,7 @@ export default class Report extends Command {
     static flags = {
         help: CommandUtils.helpFlag,
         target: CommandUtils.targetFlag,
-        logger: CommandUtils.getLoggerFlag(LogType.System),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {

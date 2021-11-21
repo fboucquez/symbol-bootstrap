@@ -19,8 +19,11 @@ export enum LogType {
     Console = 'Console',
     // Console log with line info
     ConsoleLog = 'ConsoleLog',
-    // Console and file log with line info
-    System = 'System',
-    // Silence, no log at all.
-    Silence = 'Silence',
+    // File log with line info
+    File = 'File',
+    // Silent, no log at all.
+    Silent = 'Silent',
 }
+
+//Shortcut
+export const System = [LogType.ConsoleLog, LogType.File];
