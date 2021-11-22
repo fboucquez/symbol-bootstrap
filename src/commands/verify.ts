@@ -15,7 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapUtils, CommandUtils, LoggerFactory, System, VerifyService } from '../';
+import { CommandUtils, LoggerFactory, System, VerifyService } from '../';
 
 export default class Verify extends Command {
     static description =
@@ -28,7 +28,7 @@ export default class Verify extends Command {
     };
 
     public async run(): Promise<void> {
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         const { flags } = this.parse(Verify);
         const logger = LoggerFactory.getLogger(flags.logger);
         const report = await new VerifyService(logger).createReport();

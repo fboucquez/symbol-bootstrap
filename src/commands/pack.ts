@@ -46,7 +46,7 @@ export default class Pack extends Command {
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Pack);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         const logger = LoggerFactory.getLogger(flags.logger);
         const preset = flags.preset;
         const assembly = flags.assembly;

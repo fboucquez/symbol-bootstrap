@@ -15,6 +15,7 @@
  */
 import { flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
+import { textSync } from 'figlet';
 import { prompt } from 'inquirer';
 import { Account, Convert, NetworkType, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
@@ -40,6 +41,10 @@ export class CommandUtils {
         description: 'When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.',
         default: false,
     });
+
+    public static showBanner(): void {
+        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
+    }
 
     public static getPasswordFlag(description: string): IOptionFlag<string | undefined> {
         return flags.string({

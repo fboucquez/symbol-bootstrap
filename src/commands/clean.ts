@@ -31,7 +31,7 @@ export default class Clean extends Command {
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Clean);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         const logger = LoggerFactory.getLogger(flags.logger);
         BootstrapUtils.deleteFolder(logger, flags.target);
     }

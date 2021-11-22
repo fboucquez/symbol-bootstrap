@@ -49,7 +49,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
 
     public async run(): Promise<void> {
         const { flags } = this.parse(UpdateVotingKeys);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         const password = false;
         const target = flags.target;
         const logger = LoggerFactory.getLogger(flags.logger);

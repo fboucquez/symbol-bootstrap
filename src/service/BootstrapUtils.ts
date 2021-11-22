@@ -15,7 +15,6 @@
  */
 
 import { spawn } from 'child_process';
-import { textSync } from 'figlet';
 import {
     createWriteStream,
     existsSync,
@@ -224,10 +223,6 @@ export class BootstrapUtils {
         if (existsSync(file) && lstatSync(file).isFile()) {
             unlinkSync(file);
         }
-    }
-
-    public static showBanner(): void {
-        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

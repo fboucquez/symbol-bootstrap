@@ -81,7 +81,7 @@ export default class Config extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Config);
         const logger = LoggerFactory.getLogger(flags.logger);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         flags.password = await CommandUtils.resolvePassword(
             logger,
             flags.password,

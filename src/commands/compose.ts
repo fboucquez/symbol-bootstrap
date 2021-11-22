@@ -42,7 +42,7 @@ export default class Compose extends Command {
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Compose);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
 
         const logger = LoggerFactory.getLogger(flags.logger);
         flags.password = await CommandUtils.resolvePassword(

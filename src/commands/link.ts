@@ -15,7 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { AnnounceService, BootstrapService, BootstrapUtils, CommandUtils, LoggerFactory, LogType } from '../';
+import { AnnounceService, BootstrapService, CommandUtils, LoggerFactory, LogType } from '../';
 import { LinkService } from '../service';
 
 export default class Link extends Command {
@@ -37,7 +37,7 @@ export default class Link extends Command {
     public async run(): Promise<void> {
         const { flags } = this.parse(Link);
         const logger = LoggerFactory.getLogger(flags.logger);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         flags.password = await CommandUtils.resolvePassword(
             logger,
             flags.password,

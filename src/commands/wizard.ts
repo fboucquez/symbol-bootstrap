@@ -109,7 +109,7 @@ export class Wizard {
         customPreset: string;
         ready?: boolean;
     }): Promise<void> {
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         this.logger.info('Welcome to the Symbol Bootstrap wizard! This command will:');
         this.logger.info(' - Guide you through the configuration process.');
         this.logger.info(' - Import or generate private keys.');

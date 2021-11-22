@@ -16,7 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
-import { BootstrapService, BootstrapUtils, CommandUtils, RunService } from '../service';
+import { BootstrapService, CommandUtils, RunService } from '../service';
 import HealthCheck from './healthCheck';
 
 export default class Run extends Command {
@@ -66,7 +66,7 @@ export default class Run extends Command {
 
     public run(): Promise<void> {
         const { flags } = this.parse(Run);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         const logger = LoggerFactory.getLogger(flags.logger);
         return new BootstrapService(logger).run(flags);
     }
