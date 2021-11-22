@@ -36,4 +36,4 @@ EXAMPLE
   $ symbol-bootstrap wizard
 ```
 
-_See code: [src/commands/wizard.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.1/src/commands/wizard.ts)_
+_See code: [src/commands/wizard.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.2/src/commands/wizard.ts)_
