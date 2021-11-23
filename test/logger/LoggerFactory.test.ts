@@ -3,7 +3,7 @@ import { it } from 'mocha';
 import { LoggerFactory } from '../../src';
 
 describe('LoggerFactory', () => {
-    it('BootstrapUtils getLogger file', async () => {
+    it('getLogger file', () => {
         const logger = LoggerFactory.getLogger('FiLe');
         const transports = (logger as any)['transports'];
         expect(transports.length).equals(1);
@@ -11,27 +11,29 @@ describe('LoggerFactory', () => {
         expect(transports[0].name).equals('file');
     });
 
-    it('BootstrapUtils getLogger console', async () => {
+    it('getLogger console', () => {
         const logger = LoggerFactory.getLogger('console');
         const transports = (logger as any)['transports'];
         expect(transports.length).equals(1);
         expect(transports[0].name).equals('console');
     });
 
-    it('BootstrapUtils getLogger console log', async () => {
+    it('getLogger console log', () => {
         const logger = LoggerFactory.getLogger('consoleLOG');
         const transports = (logger as any)['transports'];
         expect(transports.length).equals(1);
         expect(transports[0].name).equals('console');
     });
-    it('BootstrapUtils getLogger silent', async () => {
+
+    it('getLogger silent', () => {
         const logger = LoggerFactory.getLogger('SILENT');
         const transports = (logger as any)['transports'];
         expect(transports.length).equals(1);
         expect(transports[0].silent).equals(true);
         expect(transports[0].name).equals('console');
     });
-    it('BootstrapUtils getLogger multiple', async () => {
+
+    it('getLogger multiple', () => {
         const logger = LoggerFactory.getLogger('consoleLOG , , File,SILENT');
         const transports = (logger as any)['transports'];
         expect(transports.length).equals(3);
@@ -41,7 +43,8 @@ describe('LoggerFactory', () => {
         expect(transports[2].name).equals('console');
         expect(transports[2].silent).equals(true);
     });
-    it('BootstrapUtils getLogger invalid', async () => {
+
+    it('getLogger invalid', () => {
         expect(() => LoggerFactory.getLogger('consoleLOG , INVALID , File,SILENT')).throw('Unknown LogType INVALID');
     });
 });

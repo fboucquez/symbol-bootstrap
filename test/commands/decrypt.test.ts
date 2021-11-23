@@ -15,6 +15,7 @@
  */
 
 import { expect, test } from '@oclif/test';
+import { existsSync } from 'fs';
 import { BootstrapUtils, CryptoUtils, LoggerFactory, LogType } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('decrypt', () => {
@@ -25,6 +26,7 @@ describe('decrypt', () => {
             expect(ctx.stdout).to.contain(
                 'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
+            expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
             expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
                 await BootstrapUtils.loadYaml('test/encrypt/plain.yml', false),
             );
@@ -51,6 +53,7 @@ describe('decrypt', () => {
             expect(ctx.stdout).to.contain(
                 'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
+            expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
             expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
                 await BootstrapUtils.loadYaml('test/encrypt/plain.yml', false),
             );

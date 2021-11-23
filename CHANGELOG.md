@@ -6,7 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [1.1.2] - NEXT
 
-**Milestone**: Mainnet(1.0.3.0)
+**Milestone**: Mainnet(1.0.3.1)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
