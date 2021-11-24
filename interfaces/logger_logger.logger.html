@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>VerifyReport | symbol-bootstrap</title>
+	<title>Logger | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">symbol-bootstrap</a>
 				</li>
 				<li>
-					<a href="../modules/service_verifyservice.html">service/VerifyService</a>
+					<a href="../modules/logger_logger.html">logger/Logger</a>
 				</li>
 				<li>
-					<a href="service_verifyservice.verifyreport.html">VerifyReport</a>
+					<a href="logger_logger.logger.html">Logger</a>
 				</li>
 			</ul>
-			<h1>Interface VerifyReport</h1>
+			<h1>Interface Logger</h1>
 		</div>
 	</div>
 </header>
@@ -72,7 +72,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">VerifyReport</span>
+						<span class="target">Logger</span>
 					</li>
 				</ul>
 			</section>
@@ -83,8 +83,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_verifyservice.verifyreport.html#lines" class="tsd-kind-icon">lines</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_verifyservice.verifyreport.html#platform" class="tsd-kind-icon">platform</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="logger_logger.logger.html#debug" class="tsd-kind-icon">debug</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="logger_logger.logger.html#error" class="tsd-kind-icon">error</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="logger_logger.logger.html#info" class="tsd-kind-icon">info</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="logger_logger.logger.html#warn" class="tsd-kind-icon">warn</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,22 +95,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="lines" class="tsd-anchor"></a>
-					<h3>lines</h3>
-					<div class="tsd-signature tsd-kind-icon">lines<span class="tsd-signature-symbol">:</span> <a href="service_verifyservice.reportline.html" class="tsd-signature-type" data-tsd-kind="Interface">ReportLine</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="debug" class="tsd-anchor"></a>
+					<h3>debug</h3>
+					<div class="tsd-signature tsd-kind-icon">debug<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LeveledLogMethod</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/8808536/src/service/VerifyService.ts#L22">src/service/VerifyService.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/8808536/src/logger/Logger.ts#L21">src/logger/Logger.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="platform" class="tsd-anchor"></a>
-					<h3>platform</h3>
-					<div class="tsd-signature tsd-kind-icon">platform<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="error" class="tsd-anchor"></a>
+					<h3>error</h3>
+					<div class="tsd-signature tsd-kind-icon">error<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LeveledLogMethod</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/8808536/src/service/VerifyService.ts#L21">src/service/VerifyService.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/8808536/src/logger/Logger.ts#L18">src/logger/Logger.ts:18</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="info" class="tsd-anchor"></a>
+					<h3>info</h3>
+					<div class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LeveledLogMethod</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/8808536/src/logger/Logger.ts#L20">src/logger/Logger.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="warn" class="tsd-anchor"></a>
+					<h3>warn</h3>
+					<div class="tsd-signature tsd-kind-icon">warn<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LeveledLogMethod</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/8808536/src/logger/Logger.ts#L19">src/logger/Logger.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -121,31 +143,28 @@
 						<a href="../modules.html">Exports</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/service_verifyservice.html">service/<wbr>Verify<wbr>Service</a>
+						<a href="../modules/logger_logger.html">logger/<wbr>Logger</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_verifyservice.verifyservice.html" class="tsd-kind-icon">Verify<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.expectedversions.html" class="tsd-kind-icon">Expected<wbr>Versions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.reportline.html" class="tsd-kind-icon">Report<wbr>Line</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.verifyreport.html" class="tsd-kind-icon">Verify<wbr>Report</a>
+						<a href="logger_logger.logger.html" class="tsd-kind-icon">Logger</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="service_verifyservice.verifyreport.html#lines" class="tsd-kind-icon">lines</a>
+								<a href="logger_logger.logger.html#debug" class="tsd-kind-icon">debug</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="service_verifyservice.verifyreport.html#platform" class="tsd-kind-icon">platform</a>
+								<a href="logger_logger.logger.html#error" class="tsd-kind-icon">error</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="logger_logger.logger.html#info" class="tsd-kind-icon">info</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="logger_logger.logger.html#warn" class="tsd-kind-icon">warn</a>
 							</li>
 						</ul>
 					</li>
