@@ -26,6 +26,10 @@ OPTIONS
 
   -u, --url=url                                        [default: http://localhost:3000] the network url
 
+  --logger=logger                                      [default: Console] The loggers the command will use. Options are:
+                                                       Console,ConsoleLog,File,Silent. Use ',' to select multiple
+                                                       loggers.
+
   --maxFee=maxFee                                      the max fee used when announcing (absolute). The node min
                                                        multiplier will be used if it is not provided.
 

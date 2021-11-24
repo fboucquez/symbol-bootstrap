@@ -16,6 +16,7 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import {
     AnnounceService,
     BootstrapService,
@@ -24,14 +25,14 @@ import {
     Preset,
     RemoteNodeService,
     RepositoryInfo,
+    TransactionUtils,
 } from '../../src/service';
-import { TransactionUtils } from '../../src/service/TransactionUtils';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Announce Service', () => {
     let announceService: AnnounceService;
 
     beforeEach(() => {
-        announceService = new AnnounceService();
+        announceService = new AnnounceService(logger);
     });
 
     afterEach(restore);
@@ -174,7 +175,7 @@ describe('Announce Service', () => {
     it('Main account regular - Announces simple transaction when single transaction given', async () => {
         const transactionFactory = singleTransactionFactory;
 
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
@@ -197,7 +198,7 @@ describe('Announce Service', () => {
     it('Main account regular- Announces aggregate complete when multiple transactions given', async () => {
         const transactionFactory = multipleTransactionFactory;
 
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
@@ -222,7 +223,7 @@ describe('Announce Service', () => {
         const cosigns = [cosigner1, cosigner2];
         const bestCosigner = cosigner1;
 
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
         stub(TransactionUtils, <any>'getMultisigAccount').returns(
@@ -254,7 +255,7 @@ describe('Announce Service', () => {
     it('Service provider account regular - Announces aggregate bonded', async () => {
         const transactionFactory = multipleTransactionFactory;
 
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
         stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(serviceProviderAccount.privateKey));
@@ -296,7 +297,7 @@ describe('Announce Service', () => {
         const cosigns = [cosigner1, cosigner2];
         const bestCosigner = cosigner1;
 
-        const { addresses, presetData } = await new BootstrapService().config(params);
+        const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
 
         stub(TransactionUtils, <any>'getMultisigAccount').returns(

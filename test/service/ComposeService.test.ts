@@ -18,15 +18,16 @@ import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
+import { LoggerFactory, LogType } from '../../src';
 import { DockerCompose } from '../../src/model';
 import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ComposeService', () => {
     const password = '1234';
 
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
-        const presetData = new ConfigLoader().createPresetData({ password, ...params });
-        const dockerCompose = await new ComposeService(params).run(presetData);
+        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params });
+        const dockerCompose = await new ComposeService(logger, params).run(presetData);
         Object.values(dockerCompose.services).forEach((service) => {
             if (service.mem_limit) {
                 service.mem_limit = 123;
@@ -45,7 +46,7 @@ describe('ComposeService', () => {
             if (!service.user) {
                 return service;
             }
-            const user = await BootstrapUtils.getDockerUserGroup();
+            const user = await BootstrapUtils.getDockerUserGroup(logger);
             if (user) {
                 service.user = user;
             } else {
@@ -62,7 +63,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
 
 `,
         ).to.be.deep.eq(expectedDockerCompose);
-        BootstrapUtils.deleteFolder(params.target);
+        BootstrapUtils.deleteFolder(logger, params.target);
     };
 
     it('Compose testnet dual', async () => {
@@ -284,7 +285,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
     });
 
     it('resolveDebugOptions', async () => {
-        const service = new ComposeService(ComposeService.defaultParams);
+        const service = new ComposeService(logger, ComposeService.defaultParams);
         expect(service.resolveDebugOptions(true, true)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
         expect(service.resolveDebugOptions(true, undefined)).deep.equals(ComposeService.DEBUG_SERVICE_PARAMS);
         expect(service.resolveDebugOptions(true, false)).deep.equals({});

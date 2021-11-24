@@ -15,9 +15,10 @@
  */
 import { it } from 'mocha';
 import { join } from 'path';
+import { LoggerFactory, LogType } from '../../src';
 import { ConfigPreset } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('NetworkPresetUpgrade', () => {
     const patchNetworkPreset = async (preset: Preset): Promise<void> => {
         const root = './';
@@ -25,8 +26,8 @@ describe('NetworkPresetUpgrade', () => {
         const sharedPresetLocation = join(root, 'presets', 'shared.yml');
         const sharedPreset = BootstrapUtils.loadYaml(sharedPresetLocation, false);
         const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
-        const configPreset: ConfigPreset = new ConfigLoader().mergePresets(sharedPreset, networkPreset);
-        const remoteNodeService = new RemoteNodeService(configPreset, false);
+        const configPreset: ConfigPreset = new ConfigLoader(logger).mergePresets(sharedPreset, networkPreset);
+        const remoteNodeService = new RemoteNodeService(logger, configPreset, false);
         const urls = await remoteNodeService.getRestUrls();
         const epoch = await remoteNodeService.getBestFinalizationEpoch(urls);
         if (!epoch) {

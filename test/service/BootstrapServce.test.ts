@@ -16,11 +16,12 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { LoggerFactory, LogType } from '../../src';
 import { BootstrapService, Preset, StartParams } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
     it(' bootstrap config compose bootstrap/default', async () => {
-        const service = new BootstrapService();
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
             preset: Preset.bootstrap,
@@ -40,7 +41,7 @@ describe('BootstrapService', () => {
     });
 
     it(' bootstrap config compose testnet/dual', async () => {
-        const service = new BootstrapService();
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
             preset: Preset.testnet,

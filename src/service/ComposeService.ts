@@ -17,16 +17,12 @@
 import { existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { Addresses, ConfigPreset, DockerCompose, DockerComposeService, DockerServicePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
 export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 const targetNodesFolder = BootstrapUtils.targetNodesFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
@@ -54,8 +50,8 @@ export class ComposeService {
 
     private readonly configLoader: ConfigLoader;
 
-    constructor(protected readonly params: ComposeParams) {
-        this.configLoader = new ConfigLoader();
+    constructor(private readonly logger: Logger, protected readonly params: ComposeParams) {
+        this.configLoader = new ConfigLoader(logger);
     }
 
     public resolveDebugOptions(dockerComposeDebugMode: boolean, dockerComposeServiceDebugMode: boolean | undefined): any {
@@ -75,11 +71,11 @@ export class ComposeService {
         const target = join(currentDir, this.params.target);
         const targetDocker = join(target, `docker`);
         if (this.params.upgrade) {
-            BootstrapUtils.deleteFolder(targetDocker);
+            BootstrapUtils.deleteFolder(this.logger, targetDocker);
         }
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (existsSync(dockerFile)) {
-            logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
+            this.logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
             return BootstrapUtils.loadYaml(dockerFile, false);
         }
 
@@ -88,13 +84,13 @@ export class ComposeService {
 
         await BootstrapUtils.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
 
-        const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+        const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
 
         const vol = (hostFolder: string, imageFolder: string, readOnly: boolean): string => {
             return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
         };
 
-        logger.info(`Creating docker-compose.yml from last used profile.`);
+        this.logger.info(`Creating docker-compose.yml from last used profile.`);
 
         const services: (DockerComposeService | undefined)[] = [];
 
@@ -399,7 +395,7 @@ export class ComposeService {
 
         dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
-        logger.info(`The docker-compose.yml file created ${dockerFile}`);
+        this.logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }
 

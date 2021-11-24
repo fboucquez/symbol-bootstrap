@@ -6,11 +6,13 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [1.1.2] - NEXT
 
-**Milestone**: Mainnet(1.0.3.0)
+**Milestone**: Mainnet(1.0.3.1)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.1.2  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Added `--logger` option to the commands.
 
 ## [1.1.1] - Nov-16-2021
 

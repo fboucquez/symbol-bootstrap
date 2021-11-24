@@ -16,15 +16,14 @@
 
 import { expect } from '@oclif/test';
 import { Account, NetworkType } from 'symbol-sdk';
-import Wizard, { Network } from '../../src/commands/wizard';
-import { CustomPreset, PrivateKeySecurityMode } from '../../src/model';
-import { BootstrapUtils, Preset } from '../../src/service';
+import { BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
+import { Network, Wizard } from '../../src/commands/wizard';
 import { StdUtils } from '../utils/StdUtils';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Wizard', () => {
     const testFolder = 'target/wizardTest';
     beforeEach(async () => {
-        BootstrapUtils.deleteFolder(testFolder);
+        BootstrapUtils.deleteFolder(logger, testFolder);
     });
     it('Provide private keys', async () => {
         // assembly
@@ -61,7 +60,7 @@ describe('Wizard', () => {
 
         const password = '11111';
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
-        await Wizard.execute({
+        await new Wizard(logger).execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -93,8 +92,9 @@ describe('Wizard', () => {
         const toKey = (prefix: string | number, keySize = 64): string => {
             return prefix.toString().padStart(keySize, '0');
         };
+        const wizard = new Wizard(logger);
         let index = 0;
-        Wizard.generateAccount = (networkType: NetworkType) => {
+        wizard.generateAccount = (networkType: NetworkType) => {
             return Account.createFromPrivateKey(toKey(++index), networkType);
         };
         // assembly
@@ -119,7 +119,7 @@ describe('Wizard', () => {
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
-        await Wizard.execute({
+        await wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -152,7 +152,8 @@ describe('Wizard', () => {
             return prefix.toString().padStart(keySize, '0');
         };
         let index = 0;
-        Wizard.generateAccount = (networkType: NetworkType) => {
+        const wizard = new Wizard(logger);
+        wizard.generateAccount = (networkType: NetworkType) => {
             return Account.createFromPrivateKey(toKey(++index), networkType);
         };
         // assembly
@@ -176,7 +177,7 @@ describe('Wizard', () => {
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
-        await Wizard.execute({
+        await wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -205,7 +206,6 @@ describe('Wizard', () => {
                 },
             ],
         };
-        console.log(BootstrapUtils.toYaml(expectedCustomPreset));
         const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
@@ -215,7 +215,8 @@ describe('Wizard', () => {
             return prefix.toString().padStart(keySize, '0');
         };
         let index = 0;
-        Wizard.generateAccount = (networkType: NetworkType) => {
+        const wizard = new Wizard(logger);
+        wizard.generateAccount = (networkType: NetworkType) => {
             return Account.createFromPrivateKey(toKey(++index), networkType);
         };
         // assembly
@@ -241,7 +242,7 @@ describe('Wizard', () => {
 
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
-        await Wizard.execute({
+        await wizard.execute({
             customPreset: customPresetFile,
             network: Network.mainnet,
             noPassword: false,
@@ -276,48 +277,48 @@ describe('Wizard', () => {
             ],
         };
 
-        console.log(BootstrapUtils.toYaml(expectedCustomPreset));
         const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
     describe('isValidHost', () => {
+        const wizard = new Wizard(logger);
         // valid cases
         it('should return true when given hostname is a valid IP address', () => {
-            expect(Wizard.isValidHost('10.10.10.10')).to.be.true;
+            expect(wizard.isValidHost('10.10.10.10')).to.be.true;
         });
 
         it('should return true when given hostname is a valid domain name', () => {
-            expect(Wizard.isValidHost('example.com')).to.be.true;
+            expect(wizard.isValidHost('example.com')).to.be.true;
         });
 
         it('should return true when given hostname is a valid numeric only domain name', () => {
-            expect(Wizard.isValidHost('1000.org')).to.be.true;
+            expect(wizard.isValidHost('1000.org')).to.be.true;
         });
 
         it('should return true when given hostname is a valid a subdomain', () => {
-            expect(Wizard.isValidHost('mynode.example.com')).to.be.true;
+            expect(wizard.isValidHost('mynode.example.com')).to.be.true;
         });
 
         it('should return true when given hostname is a valid a subdomain starting with number', () => {
-            expect(Wizard.isValidHost('2.example.com')).to.be.true;
+            expect(wizard.isValidHost('2.example.com')).to.be.true;
         });
 
         // invalid cases
         it('should return error when given hostname is an invalid IP address', () => {
-            expect(Wizard.isValidHost('256.10.10.10')).to.be.eq("It's not a valid IP or hostname");
+            expect(wizard.isValidHost('256.10.10.10')).to.be.eq("It's not a valid IP or hostname");
         });
 
         it('should return error when given hostname does not have an extension', () => {
-            expect(Wizard.isValidHost('example')).to.be.eq("It's not a valid IP or hostname");
+            expect(wizard.isValidHost('example')).to.be.eq("It's not a valid IP or hostname");
         });
 
         it('should return error when given hostname is an invalid domain name', () => {
-            expect(Wizard.isValidHost('symbol-harvesting-.org')).to.be.eq("It's not a valid IP or hostname");
+            expect(wizard.isValidHost('symbol-harvesting-.org')).to.be.eq("It's not a valid IP or hostname");
         });
 
         it('should return error when given hostname is an invalid a subdomain', () => {
-            expect(Wizard.isValidHost('2-.example.com')).to.be.eq("It's not a valid IP or hostname");
+            expect(wizard.isValidHost('2-.example.com')).to.be.eq("It's not a valid IP or hostname");
         });
     });
 });

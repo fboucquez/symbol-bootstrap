@@ -15,15 +15,13 @@
  */
 import { flags } from '@oclif/command';
 import { IOptionFlag } from '@oclif/command/lib/flags';
+import { textSync } from 'figlet';
 import { prompt } from 'inquirer';
 import { Account, Convert, NetworkType, PublicAccount } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger, LoggerFactory, LogType } from '../logger';
 import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { KeyName } from './ConfigService';
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class CommandUtils {
     public static passwordPromptDefaultMessage = `Enter the password used to encrypt and decrypt custom presets, addresses.yml, and preset.yml files. When providing a password, private keys will be encrypted. Keep this password in a secure place!`;
@@ -43,6 +41,10 @@ export class CommandUtils {
         description: 'When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.',
         default: false,
     });
+
+    public static showBanner(): void {
+        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
+    }
 
     public static getPasswordFlag(description: string): IOptionFlag<string | undefined> {
         return flags.string({
@@ -68,6 +70,7 @@ export class CommandUtils {
     }
 
     public static async resolvePrivateKey(
+        logger: Logger,
         networkType: NetworkType,
         account: CertificatePair | undefined,
         keyName: KeyName,
@@ -79,8 +82,8 @@ export class CommandUtils {
         }
         if (!account.privateKey) {
             while (true) {
-                console.log();
-                console.log(`${keyName} private key is required when ${operationDescription}.`);
+                logger.info('');
+                logger.info(`${keyName} private key is required when ${operationDescription}.`);
                 const address = PublicAccount.createFromPublicKey(account.publicKey, networkType).address.plain();
                 const nodeDescription = nodeName === '' ? `of` : `of the Node's '${nodeName}'`;
                 const responses = await prompt([
@@ -94,14 +97,14 @@ export class CommandUtils {
                 ]);
                 const privateKey = responses.value === '' ? undefined : responses.value.toUpperCase();
                 if (!privateKey) {
-                    console.log('Please provide the private key.');
+                    logger.info('Please provide the private key.');
                 } else {
                     const enteredAccount = Account.createFromPrivateKey(privateKey, networkType);
                     if (enteredAccount.publicKey.toUpperCase() !== account.publicKey.toUpperCase()) {
-                        console.log(
+                        logger.info(
                             `Invalid private key. Expected address is ${address} but you provided the private key for address ${enteredAccount.address.plain()}.\n`,
                         );
-                        console.log(`Please re-enter private key.`);
+                        logger.info(`Please re-enter private key.`);
                     } else {
                         account.privateKey = privateKey;
                         return privateKey;
@@ -113,6 +116,7 @@ export class CommandUtils {
     }
 
     public static async resolvePassword(
+        logger: Logger,
         providedPassword: string | undefined,
         noPassword: boolean,
         message: string,
@@ -149,5 +153,19 @@ export class CommandUtils {
     public static formatAccount(account: PublicAccount, wrapped = true): string {
         const log = `Address: ${account.address.plain()}`;
         return wrapped ? `[${log}]` : log;
+    }
+
+    /**
+     * It returns the flag that can be used to tune the class of logger.
+     * @param defaultLogTypes the default logger to be used if not provided.
+     */
+    public static getLoggerFlag(...defaultLogTypes: LogType[]): IOptionFlag<string> {
+        const options = Object.keys(LogType).map((v) => v as LogType);
+        return flags.string({
+            description: `The loggers the command will use. Options are: ${options.join(LoggerFactory.separator)}. Use '${
+                LoggerFactory.separator
+            }' to select multiple loggers.`,
+            default: defaultLogTypes.join(LoggerFactory.separator),
+        });
     }
 }

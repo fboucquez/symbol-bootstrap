@@ -1,12 +1,11 @@
 import { expect } from 'chai';
 import { restore, stub } from 'sinon';
 import { Account, Deadline, MultisigAccountModificationTransaction, NetworkType, TransactionType, UInt64 } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import { ConfigPreset } from '../../src/model';
-import { TransactionFactoryParams } from '../../src/service';
-import { ModifyMultisigParams, ModifyMultisigService } from '../../src/service/ModifyMultisigService';
-import { TransactionUtils } from '../../src/service/TransactionUtils';
+import { ModifyMultisigParams, ModifyMultisigService, TransactionFactoryParams, TransactionUtils } from '../../src/service';
 import { StdUtils } from '../utils/StdUtils';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ModifyMultisigService', () => {
     let modifyMultisigService: ModifyMultisigService;
 
@@ -40,7 +39,7 @@ describe('ModifyMultisigService', () => {
             minApprovalDelta,
             minRemovalDelta,
         };
-        modifyMultisigService = new ModifyMultisigService(params);
+        modifyMultisigService = new ModifyMultisigService(logger, params);
         stub(TransactionUtils, <any>'getRepositoryFactory');
         stub(TransactionUtils, <any>'getMultisigAccount').returns(Promise.resolve(multisigAccount));
         const transactionFactoryParams = {
