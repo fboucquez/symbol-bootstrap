@@ -23,6 +23,7 @@ export default class Config extends Command {
     static examples = [
         `$ symbol-bootstrap config -p bootstrap`,
         `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
+        `$ symbol-bootstrap config -p mainnet -a peer -c custom-preset.yml`,
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
     ];
 
@@ -38,7 +39,7 @@ export default class Config extends Command {
         }),
         assembly: flags.string({
             char: 'a',
-            description: `The assembly that define the node(s) layout. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.`,
+            description: `The assembly that defines the node(s) layout. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.`,
         }),
         customPreset: flags.string({
             char: 'c',

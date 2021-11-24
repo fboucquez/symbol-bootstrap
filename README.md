@@ -64,14 +64,17 @@ Presets are defined at 4 levels from general to specific:
 
 Properties in each file override the previous values (by object deep merge).
 
-### Out-of-the-box presets:
+### Out-of-the-box presets and assemblies:
 
--   `-p bootstrap`: A [preset](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a private network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
--   `-p bootstrap -a light`: A [light](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-light.yml) network. It's a version of bootstrap preset with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
--   `-p bootstrap -a full`: A [full](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-full.yml) network. The bootstrap preset plus 1 wallet, 1 explorer and 1 faucet. Great for demonstration purposes. Nemesis block is generated.
+-   `-p bootstrap`: A [multinode](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml) local network. A network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
+-   `-p bootstrap -a light`: A [light](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-light.yml) local network. It's a version of bootstrap preset with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
+-   `-p bootstrap -a full`: A [full](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-full.yml) local network. The bootstrap preset plus 1 wallet, 1 explorer and 1 faucet. Great for demonstration purposes. Nemesis block is generated.
 -   `-p testnet -a peer`: A [harvesting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
 -   `-p testnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+-   `-p mainnet -a peer`: A [harvesting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/mainnet/assembly-peer.yml) peer node that connects to the current public [mainnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/mainnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/mainnet/seed/00000) is copied over.
+-   `-p mainnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/mainnet/assembly-api.yml) peer node that connects to the current public [mainnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/mainnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/mainnet/seed/00000) is copied over.
+-   `-p mainnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/mainnet/assembly-dual.yml) haversting peer node that connects to the current public [mainnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/mainnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/mainnet/seed/00000) is copied over.
 
 ### Custom preset:
 

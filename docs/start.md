@@ -15,8 +15,8 @@ USAGE
 
 OPTIONS
   -a, --assembly=assembly
-      The assembly that define the node(s) layout. It can be provided via custom preset or cli parameter. If not provided, 
-      the value is resolved from the target/preset.yml file.
+      The assembly that defines the node(s) layout. It can be provided via custom preset or cli parameter. If not 
+      provided, the value is resolved from the target/preset.yml file.
 
   -b, --build
       If provided, docker-compose will run with -b (--build)
@@ -84,8 +84,8 @@ OPTIONS
 
 EXAMPLES
   $ symbol-bootstrap start -p bootstrap
-  $ symbol-bootstrap start -p bootstrap
   $ symbol-bootstrap start -p testnet -a dual
+  $ symbol-bootstrap start -p mainnet -a peer -c custom-preset.yml
   $ symbol-bootstrap start -p testnet -a dual --password 1234
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```

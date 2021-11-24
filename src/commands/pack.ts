@@ -110,7 +110,7 @@ export default class Pack extends Command {
         await ZipUtils.zip(targetZip, zipItems);
         await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
         console.log();
-        console.log(`You can unzip it in your node's machine and run:`);
+        console.log(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
         console.log(`$ symbol-bootstrap start`);
     }
 }

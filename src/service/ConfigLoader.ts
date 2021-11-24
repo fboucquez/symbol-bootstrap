@@ -132,7 +132,6 @@ export class ConfigLoader {
                 }
                 // Nemesis configuration cannot be changed on upgrade.
                 addresses.mosaics = oldAddresses.mosaics;
-                presetData.nemesis = oldPresetData.nemesis;
             } else {
                 if (presetData.nemesis.mosaics) {
                     const mosaics: MosaicAccounts[] = [];

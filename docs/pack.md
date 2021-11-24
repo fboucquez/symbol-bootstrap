@@ -14,7 +14,7 @@ USAGE
   $ symbol-bootstrap pack
 
 OPTIONS
-  -a, --assembly=assembly                   The assembly that define the node(s) layout. It can be provided via custom
+  -a, --assembly=assembly                   The assembly that defines the node(s) layout. It can be provided via custom
                                             preset or cli parameter. If not provided, the value is resolved from the
                                             target/preset.yml file.
 
