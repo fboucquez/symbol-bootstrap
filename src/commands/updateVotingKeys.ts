@@ -15,7 +15,6 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { join } from 'path';
 import { LoggerFactory, System } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
@@ -55,16 +54,20 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         const logger = LoggerFactory.getLogger(flags.logger);
         const configLoader = new ConfigLoader(logger);
         const addressesLocation = configLoader.getGeneratedAddressLocation(target);
-        const existingPreset = configLoader.loadExistingPresetData(target, password);
-        const preset = existingPreset.preset;
-        if (!preset) {
-            throw new Error(`Network preset could not be resolved!`);
+        let presetData: ConfigPreset;
+        try {
+            const oldPresetData = configLoader.loadExistingPresetData(target, password);
+            presetData = configLoader.createPresetData({
+                password: password,
+                oldPresetData,
+            });
+        } catch (e) {
+            throw new Error(
+                `Node's preset cannot be loaded. Have you provided the right --target? If you have, please rerun the 'config' command with --upgrade. Error: ${
+                    e.message || 'unknown'
+                }`,
+            );
         }
-        // Adds new shared/network properties to the existing preset. This is for upgrades..
-        const sharedPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'shared.yml'), false);
-        const networkPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, 'network.yml'), false);
-        const presetData = configLoader.mergePresets(sharedPreset, networkPreset, existingPreset) as ConfigPreset;
-
         const addresses = configLoader.loadExistingAddresses(target, password);
         const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
 

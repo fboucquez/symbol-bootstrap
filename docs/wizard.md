@@ -21,7 +21,7 @@ OPTIONS
                                           generated
 
   --logger=logger                         [default: Console] The loggers the command will use. Options are:
-                                          Console,ConsoleLog,File,Silent. Use ',' to select multiple loggers.
+                                          Console,File,Silent. Use ',' to select multiple loggers.
 
   --network=mainnet|testnet|localNetwork  The node or network you want to create
 

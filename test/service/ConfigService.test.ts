@@ -20,16 +20,17 @@ import { LoggerFactory, LogType } from '../../src';
 import { ConfigService, CryptoUtils, Preset } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ConfigService', () => {
-    it('ConfigService default run with optin_preset.yml', async () => {
+    it('ConfigService bootstrap run with optin_preset.yml', async () => {
         await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            preset: Preset.bootstrap,
             target: 'target/tests/ConfigService.test.optin',
             customPreset: './test/optin_preset.yml',
         }).run();
     });
 
-    it('ConfigService default run with override-currency-preset.yml', async () => {
+    it('ConfigService bootstrap in custom preset run with override-currency-preset.yml', async () => {
         await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
@@ -62,16 +63,23 @@ describe('ConfigService', () => {
         const configResult = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
+            password: '1111',
             target: 'target/tests/bootstrap',
             preset: Preset.bootstrap,
         }).run();
 
+        expect(configResult.addresses.mosaics?.length).eq(2);
+        expect(configResult.addresses.mosaics?.[0]?.accounts.length).eq(5);
+        expect(configResult.addresses.mosaics?.[1]?.accounts.length).eq(2);
+
         const configResultUpgrade = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             upgrade: true,
+            password: '1111',
             target: 'target/tests/bootstrap',
             preset: Preset.bootstrap,
         }).run();
+        expect(configResult.addresses).deep.eq(configResultUpgrade.addresses);
 
         expect(CryptoUtils.removePrivateKeys(configResultUpgrade.presetData)).deep.eq(
             CryptoUtils.removePrivateKeys(configResult.presetData),
