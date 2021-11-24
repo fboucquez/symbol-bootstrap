@@ -18,7 +18,7 @@ import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
 import { dirname, join } from 'path';
-import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, ZipItem, ZipUtils } from '../service';
+import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, LoggerFactory, LogType, ZipItem, ZipUtils } from '../';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -41,11 +41,13 @@ export default class Pack extends Command {
         ready: flags.boolean({
             description: 'If --ready is provided, the command will not ask offline confirmation.',
         }),
+        logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Pack);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(flags.logger);
         const targetZip = join(dirname(flags.target), `symbol-node.zip`);
 
         if (existsSync(targetZip)) {
@@ -53,8 +55,8 @@ export default class Pack extends Command {
                 `The target zip file ${targetZip} already exist. Do you want to delete it before repackaging your target folder?`,
             );
         }
-        console.log();
-        console.log();
+        logger.info('');
+        logger.info('');
         if (
             !flags.ready &&
             !(
@@ -68,17 +70,18 @@ export default class Pack extends Command {
                 ])
             ).offlineNow
         ) {
-            console.log('Come back when you are offline...');
+            logger.info('Come back when you are offline...');
             return;
         }
 
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        const service = await new BootstrapService();
+        const service = new BootstrapService(logger);
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
         const configResult = await service.config(flags);
         await service.compose(flags, configResult.presetData);
@@ -107,10 +110,10 @@ export default class Pack extends Command {
             },
         ];
 
-        await ZipUtils.zip(targetZip, zipItems);
+        await new ZipUtils(logger).zip(targetZip, zipItems);
         await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
-        console.log();
-        console.log(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
-        console.log(`$ symbol-bootstrap start`);
+        logger.info('');
+        logger.info(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
+        logger.info(`$ symbol-bootstrap start`);
     }
 }

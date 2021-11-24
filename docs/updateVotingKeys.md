@@ -31,6 +31,9 @@ OPTIONS
   --finalizationEpoch=finalizationEpoch  The network's finalization epoch. It can be retrieved from the /chain/info rest
                                          endpoint. If not provided, the bootstrap known epoch is used.
 
+  --logger=logger                        [default: Console,File] The loggers the command will use. Options are:
+                                         Console,File,Silent. Use ',' to select multiple loggers.
+
 DESCRIPTION
   If the node's current voting file has an end epoch close to the current network epoch, this command will create a new 
   'private_key_treeX.dat' that continues the current file.

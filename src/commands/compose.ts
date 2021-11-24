@@ -15,6 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
+import { LoggerFactory, System } from '../logger';
 import { BootstrapService, BootstrapUtils, CommandUtils, ComposeService } from '../service';
 
 export default class Compose extends Command {
@@ -36,17 +37,21 @@ export default class Compose extends Command {
             description: `User used to run the services in the docker-compose.yml file. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: 'current',
         }),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Compose);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
+
+        const logger = LoggerFactory.getLogger(flags.logger);
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService().compose(flags);
+        await new BootstrapService(logger).compose(flags);
     }
 }

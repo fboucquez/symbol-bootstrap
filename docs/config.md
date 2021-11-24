@@ -35,6 +35,9 @@ OPTIONS
                                             configuration files like certificates or nemesis block. "current" means the
                                             current user.
 
+  --logger=logger                           [default: Console,File] The loggers the command will use. Options are:
+                                            Console,File,Silent. Use ',' to select multiple loggers.
+
   --noPassword                              When provided, Bootstrap will not use a password, so private keys will be
                                             stored in plain text. Use with caution.
 

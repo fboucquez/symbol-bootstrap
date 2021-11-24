@@ -17,16 +17,12 @@
 import { promises as fsPromises, readFileSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { LogType } from '../logger/LogType';
+import { Logger } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 
 export type ReportParams = { target: string };
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 interface ReportLine {
     property: string;
@@ -56,8 +52,8 @@ export class ReportService {
         target: BootstrapUtils.defaultTargetFolder,
     };
     private readonly configLoader: ConfigLoader;
-    constructor(protected readonly params: ReportParams) {
-        this.configLoader = new ConfigLoader();
+    constructor(private readonly logger: Logger, protected readonly params: ReportParams) {
+        this.configLoader = new ConfigLoader(logger);
     }
 
     private createReportFromFile(resourceContent: string, descriptions: any): ReportSection[] {
@@ -133,7 +129,7 @@ export class ReportService {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, false);
 
         const reportFolder = join(this.params.target, 'reports');
-        BootstrapUtils.deleteFolder(reportFolder);
+        BootstrapUtils.deleteFolder(this.logger, reportFolder);
         const reportNodes: ReportNode[] = await this.createReportsPerNode(presetData);
 
         const missingProperties = _.flatMap(reportNodes, (n) =>
@@ -152,7 +148,7 @@ export class ReportService {
                     description: '',
                 }),
             );
-            logger.debug('Missing yaml properties: ' + BootstrapUtils.toYaml(missingDescriptionsObject));
+            this.logger.debug('Missing yaml properties: ' + BootstrapUtils.toYaml(missingDescriptionsObject));
         }
 
         // const missingDescriptions = reportNodes.map(node -> node.files)
@@ -202,7 +198,7 @@ ${csvBody.trim().replace(/^/gm, '    ')}`;
                 .join('\n');
 
         await BootstrapUtils.writeTextFile(reportFile, reportContent);
-        logger.info(`Report file ${reportFile} created`);
+        this.logger.info(`Report file ${reportFile} created`);
         return reportFile;
     }
 
@@ -236,7 +232,7 @@ ${csvBody.trim()}`;
                 .join('\n\n\n');
 
         await BootstrapUtils.writeTextFile(reportFile, reportContent);
-        logger.info(`Report file ${reportFile} created`);
+        this.logger.info(`Report file ${reportFile} created`);
         return reportFile;
     }
 }

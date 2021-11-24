@@ -16,9 +16,7 @@
 import * as archiver from 'archiver';
 import { createWriteStream } from 'fs';
 import * as StreamZip from 'node-stream-zip';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { BootstrapUtils } from './BootstrapUtils';
 
 export interface ZipItem {
@@ -27,10 +25,10 @@ export interface ZipItem {
     to: string;
     blacklist?: string[];
 }
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export class ZipUtils {
-    public static async zip(destination: string, items: ZipItem[]): Promise<void> {
+    constructor(private readonly logger: Logger) {}
+    public async zip(destination: string, items: ZipItem[]): Promise<void> {
         const output = createWriteStream(destination);
         const archive = archiver('zip', {
             zlib: { level: 9 }, // Sets the compression level.
@@ -38,32 +36,32 @@ export class ZipUtils {
         archive.pipe(output);
         return new Promise<void>(async (resolve, reject) => {
             output.on('close', () => {
-                console.log('');
-                console.info(`Zip file ${destination} size ${Math.floor(archive.pointer() / 1024)} MB has been created.`);
+                this.logger.info('');
+                this.logger.info(`Zip file ${destination} size ${Math.floor(archive.pointer() / 1024)} KB has been created.`);
                 resolve();
             });
 
             output.on('end', () => {
-                console.log('');
-                console.log('Data has been drained');
+                this.logger.info('');
+                this.logger.info('Data has been drained');
             });
 
             // good practice to catch warnings (ie stat failures and other non-blocking errors)
             archive.on('warning', (err: any) => {
-                console.log('');
+                this.logger.info('');
                 if (err.code === 'ENOENT') {
                     // log warning
-                    console.log(`There has been an warning creating ZIP file '${destination}' ${err.message || err}`);
+                    this.logger.info(`There has been an warning creating ZIP file '${destination}' ${err.message || err}`);
                 } else {
                     // throw error
-                    console.log(`There has been an error creating ZIP file '${destination}' ${err.message || err}`);
+                    this.logger.info(`There has been an error creating ZIP file '${destination}' ${err.message || err}`);
                     reject(err);
                 }
             });
 
             // good practice to catch this error explicitly
-            archive.on('error', function (err: any) {
-                console.log(`There has been an error creating ZIP file '${destination}' ${err.message || err}`);
+            archive.on('error', (err: any) => {
+                this.logger.info(`There has been an error creating ZIP file '${destination}' ${err.message || err}`);
                 reject(err);
             });
 
@@ -87,12 +85,12 @@ export class ZipUtils {
         });
     }
 
-    public static unzip(zipFile: string, innerFolder: string, targetFolder: string): Promise<void> {
+    public unzip(zipFile: string, innerFolder: string | null, targetFolder: string): Promise<void> {
         const zip = new StreamZip({
             file: zipFile,
             storeEntries: true,
         });
-        logger.info(`Unzipping Backup Sync's '${innerFolder}' into '${targetFolder}'. This could take a while!`);
+        this.logger.info(`Unzipping Backup Sync's '${innerFolder || 'ROOT'}' into '${targetFolder}'. This could take a while!`);
         let totalFiles = 0;
         let process = 0;
         return new Promise<void>((resolve, reject) => {
@@ -105,7 +103,6 @@ export class ZipUtils {
                 }
                 if (BootstrapUtils.stopProcess) {
                     zip.close();
-                    console.log();
                     reject(new Error('Process cancelled!'));
                 }
             });
@@ -114,11 +111,9 @@ export class ZipUtils {
                 zip.extract(innerFolder, targetFolder, (err) => {
                     zip.close();
                     if (err) {
-                        console.log();
                         reject(err);
                     } else {
-                        console.log();
-                        logger.info(`Unzipped '${targetFolder}' created`);
+                        this.logger.info(`Unzipped '${targetFolder}' created`);
                         resolve();
                     }
                 });

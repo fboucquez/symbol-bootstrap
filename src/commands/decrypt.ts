@@ -17,12 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { BootstrapUtils, KnownError } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+import { BootstrapUtils, CommandUtils, KnownError, LoggerFactory, LogType } from '../';
 
 export default class Decrypt extends Command {
     static description = `It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
@@ -69,6 +64,7 @@ $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap decrypt --source target/address
         password: CommandUtils.getPasswordFlag(
             `The password to use to decrypt the source file into the destination file. Bootstrap prompts for a password by default, can be provided in the command line (--password=XXXX) or disabled in the command line (--noPassword).`,
         ),
+        logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
 
     public async run(): Promise<void> {
@@ -80,7 +76,9 @@ $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap decrypt --source target/address
         if (existsSync(flags.destination)) {
             throw new KnownError(`Destination file ${flags.destination} already exists!`);
         }
+        const logger = LoggerFactory.getLogger(flags.logger);
         const password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             false,
             `Enter the password to use to decrypt the source file into the destination file. Keep this password in a secure place!`,

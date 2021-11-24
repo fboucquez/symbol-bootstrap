@@ -18,14 +18,15 @@ import { expect } from '@oclif/test';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
+import { LoggerFactory, LogType } from '../../src';
 import { CustomPreset } from '../../src/model';
 import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ReportService', () => {
     const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
-        const configResult = await new ConfigService({ ...params, offline: true }).run();
+        const configResult = await new ConfigService(logger, { ...params, offline: true }).run();
 
-        const paths = await new ReportService(params).run(configResult.presetData);
+        const paths = await new ReportService(logger, params).run(configResult.presetData);
         const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
         await BootstrapUtils.mkdir(expectedReportFolder);
 

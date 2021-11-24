@@ -15,13 +15,9 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { LoggerFactory, System } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class UpdateVotingKeys extends Command {
     static description = `It updates the voting files containing the voting keys when required.
@@ -47,14 +43,16 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         finalizationEpoch: flags.integer({
             description: `The network's finalization epoch. It can be retrieved from the /chain/info rest endpoint. If not provided, the bootstrap known epoch is used.`,
         }),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(UpdateVotingKeys);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
         const password = false;
         const target = flags.target;
-        const configLoader = new ConfigLoader();
+        const logger = LoggerFactory.getLogger(flags.logger);
+        const configLoader = new ConfigLoader(logger);
         const addressesLocation = configLoader.getGeneratedAddressLocation(target);
         let presetData: ConfigPreset;
         try {
@@ -74,7 +72,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
 
         const finalizationEpoch =
-            flags.finalizationEpoch || (await new RemoteNodeService(presetData, false).resolveCurrentFinalizationEpoch());
+            flags.finalizationEpoch || (await new RemoteNodeService(logger, presetData, false).resolveCurrentFinalizationEpoch());
 
         const votingKeyUpgrade = (
             await Promise.all(
@@ -83,7 +81,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
                     if (!nodeAccount) {
                         throw new Error(`There is not node in addresses at index ${index}`);
                     }
-                    return new VotingService({
+                    return new VotingService(logger, {
                         target,
                         user: flags.user,
                     }).run(presetData, nodeAccount, nodePreset, finalizationEpoch, true, false);

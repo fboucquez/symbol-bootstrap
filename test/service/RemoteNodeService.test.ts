@@ -20,9 +20,9 @@ import { it } from 'mocha';
 import { join } from 'path';
 import { restore, stub } from 'sinon';
 import { NodeApi } from 'symbol-statistics-service-typescript-fetch-client';
-import { ConfigPreset } from '../../src';
+import { ConfigPreset, LoggerFactory, LogType } from '../../src';
 import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 const list = [
     {
         peerStatus: {
@@ -427,7 +427,7 @@ const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
 const sharedPresetLocation = join(root, 'presets', 'shared.yml');
 const sharedPreset = BootstrapUtils.loadYaml(sharedPresetLocation, false);
 const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
-const presetData: ConfigPreset = new ConfigLoader().mergePresets(sharedPreset, networkPreset, customPresetObject);
+const presetData: ConfigPreset = new ConfigLoader(logger).mergePresets(sharedPreset, networkPreset, customPresetObject);
 
 describe('RemoteNodeService', () => {
     afterEach(restore);
@@ -442,7 +442,7 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(presetData, false);
+        const service = new RemoteNodeService(logger, presetData, false);
         const urls = await service.getRestUrls();
         expect(urls).deep.eq([
             'http://staticRest1:3000',
@@ -466,7 +466,7 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(presetData, true);
+        const service = new RemoteNodeService(logger, presetData, true);
         const urls = await service.getRestUrls();
         expect(urls).deep.eq(['http://staticRest1:3000', 'https://staticRest2:3001']);
     });
@@ -482,7 +482,7 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(presetData, false);
+        const service = new RemoteNodeService(logger, presetData, false);
         const peerInfos = await service.getPeerInfos();
         expect(peerInfos).deep.eq([
             {
@@ -543,7 +543,7 @@ describe('RemoteNodeService', () => {
             } as unknown) as NodeApi;
         });
 
-        const service = new RemoteNodeService(presetData, true);
+        const service = new RemoteNodeService(logger, presetData, true);
         const peerInfos = await service.getPeerInfos();
         expect(peerInfos).deep.eq([
             {
@@ -555,7 +555,7 @@ describe('RemoteNodeService', () => {
     });
     const assertPeersOnInvalidUrl = async (statisticsServiceUrl: string) => {
         presetData.statisticsServiceUrl = statisticsServiceUrl;
-        const service = new RemoteNodeService(presetData, false);
+        const service = new RemoteNodeService(logger, presetData, false);
         const peerInfos = await service.getPeerInfos();
         // only static nodes are returned when the statistics service client fails
         expect(peerInfos).deep.eq([

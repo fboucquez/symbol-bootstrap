@@ -16,11 +16,12 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
+import { LoggerFactory, LogType } from '../../src';
 import { ConfigService, CryptoUtils, Preset } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ConfigService', () => {
     it('ConfigService bootstrap run with optin_preset.yml', async () => {
-        await new ConfigService({
+        await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
             preset: Preset.bootstrap,
@@ -30,7 +31,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService bootstrap in custom preset run with override-currency-preset.yml', async () => {
-        await new ConfigService({
+        await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.custom',
@@ -39,7 +40,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService testnet assembly', async () => {
-        await new ConfigService({
+        await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.testnet',
@@ -49,7 +50,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService mainnet assembly', async () => {
-        await new ConfigService({
+        await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.test.mainnet',
@@ -59,7 +60,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService bootstrap default', async () => {
-        const configResult = await new ConfigService({
+        const configResult = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
             password: '1111',
@@ -71,7 +72,7 @@ describe('ConfigService', () => {
         expect(configResult.addresses.mosaics?.[0]?.accounts.length).eq(5);
         expect(configResult.addresses.mosaics?.[1]?.accounts.length).eq(2);
 
-        const configResultUpgrade = await new ConfigService({
+        const configResultUpgrade = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             upgrade: true,
             password: '1111',
@@ -86,7 +87,7 @@ describe('ConfigService', () => {
     });
 
     it('ConfigService bootstrap repeat', async () => {
-        const configResult = await new ConfigService({
+        const configResult = await new ConfigService(logger, {
             ...ConfigService.defaultParams,
             reset: true,
             target: 'target/tests/ConfigService.bootstrap.repeat',

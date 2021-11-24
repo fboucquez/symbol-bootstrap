@@ -31,9 +31,7 @@ import {
     VotingKeyLinkTransaction,
     VrfKeyLinkTransaction,
 } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, PeerInfo } from '../model';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
@@ -84,8 +82,6 @@ export interface ConfigResult {
     presetData: ConfigPreset;
 }
 
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
-
 export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
@@ -97,8 +93,8 @@ export class ConfigService {
     };
     private readonly configLoader: ConfigLoader;
 
-    constructor(private readonly params: ConfigParams) {
-        this.configLoader = new ConfigLoader();
+    constructor(private readonly logger: Logger, private readonly params: ConfigParams) {
+        this.configLoader = new ConfigLoader(logger);
     }
 
     public resolveConfigPreset(password: Password): ConfigPreset {
@@ -115,19 +111,19 @@ export class ConfigService {
         const target = this.params.target;
         try {
             if (this.params.reset) {
-                BootstrapUtils.deleteFolder(target);
+                BootstrapUtils.deleteFolder(this.logger, target);
             }
             const presetLocation = this.configLoader.getGeneratedPresetLocation(target);
             const addressesLocation = this.configLoader.getGeneratedAddressLocation(target);
             const password = this.params.password;
             if (fs.existsSync(presetLocation) && !this.params.upgrade) {
-                logger.info(
+                this.logger.info(
                     `The generated preset ${presetLocation} already exist, ignoring configuration. (run -r to reset or --upgrade to upgrade)`,
                 );
                 const presetData = this.configLoader.loadExistingPresetData(target, password);
                 const addresses = this.configLoader.loadExistingAddresses(target, password);
                 if (this.params.report) {
-                    await new ReportService(this.params).run(presetData);
+                    await new ReportService(this.logger, this.params).run(presetData);
                 }
                 return { presetData, addresses };
             }
@@ -149,7 +145,7 @@ export class ConfigService {
             }
 
             if (oldAddresses && oldPresetData) {
-                logger.info('Upgrading configuration...');
+                this.logger.info('Upgrading configuration...');
             }
 
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
@@ -158,7 +154,7 @@ export class ConfigService {
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await BootstrapUtils.mkdir(target);
 
-            const remoteNodeService = new RemoteNodeService(presetData, this.params.offline);
+            const remoteNodeService = new RemoteNodeService(this.logger, presetData, this.params.offline);
 
             this.cleanUpConfiguration(presetData);
             await this.generateNodeCertificates(presetData, addresses);
@@ -170,7 +166,7 @@ export class ConfigService {
             await this.resolveNemesis(presetData, addresses, isUpgrade);
             await this.copyNemesis(addresses);
             if (this.params.report) {
-                await new ReportService(this.params).run(presetData);
+                await new ReportService(this.logger, this.params).run(presetData);
             }
             await BootstrapUtils.writeYaml(
                 addressesLocation,
@@ -178,22 +174,26 @@ export class ConfigService {
                 password,
             );
             await BootstrapUtils.writeYaml(presetLocation, CryptoUtils.removePrivateKeys(presetData), password);
-            logger.info(`Configuration generated.`);
+            this.logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {
             if (e.known) {
-                logger.error(e.message);
+                this.logger.error(e.message);
             } else {
-                logger.error(`Unknown error generating the configuration. ${e.message}`);
-                logger.error(`The target folder '${target}' should be deleted!!!`);
-                console.log(e);
+                this.logger.error(`Unknown error generating the configuration. ${e.message}`);
+                this.logger.error(`The target folder '${target}' should be deleted!!!`);
+                this.logger.error(e);
             }
             throw e;
         }
     }
 
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
-        return this.configLoader.createPresetData({ ...this.params, password: password, oldPresetData });
+        return this.configLoader.createPresetData({
+            ...this.params,
+            password: password,
+            oldPresetData,
+        });
     }
 
     private async copyNemesis(addresses: Addresses) {
@@ -229,7 +229,7 @@ export class ConfigService {
         await BootstrapUtils.mkdir(nemesisSeedFolder);
         if (presetData.nemesis) {
             if (isUpgrade) {
-                logger.info('Nemesis data cannot be generated when upgrading...');
+                this.logger.info('Nemesis data cannot be generated when upgrading...');
             } else {
                 await this.generateNemesisConfig(presetData, addresses);
                 await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
@@ -237,16 +237,16 @@ export class ConfigService {
             return;
         }
         if (isUpgrade) {
-            logger.info('Upgrading genesis on upgrade!');
+            this.logger.info('Upgrading genesis on upgrade!');
         }
-        await BootstrapUtils.deleteFolder(nemesisSeedFolder);
+        await BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
         await BootstrapUtils.mkdir(nemesisSeedFolder);
         if (presetData.nemesisSeedFolder) {
             await this.validateSeedFolder(
                 presetData.nemesisSeedFolder,
                 `Is the provided preset nemesisSeedFolder: ${presetData.nemesisSeedFolder} a valid seed folder?`,
             );
-            logger.info(`Using custom nemesis seed folder in ${presetData.nemesisSeedFolder}`);
+            this.logger.info(`Using custom nemesis seed folder in ${presetData.nemesisSeedFolder}`);
             await BootstrapUtils.generateConfiguration({}, presetData.nemesisSeedFolder, nemesisSeedFolder);
             return;
         }
@@ -256,7 +256,7 @@ export class ConfigService {
             await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
             return;
         }
-        logger.warn(`Seed for preset ${presetData.preset} could not be found in ${finalNemesisSeed}`);
+        this.logger.warn(`Seed for preset ${presetData.preset} could not be found in ${finalNemesisSeed}`);
 
         throw new Error('Seed could not be found!!!!');
     }
@@ -289,10 +289,15 @@ export class ConfigService {
     private async generateNodeCertificates(presetData: ConfigPreset, addresses: Addresses): Promise<void> {
         await Promise.all(
             (addresses.nodes || []).map((account) => {
-                return new CertificateService(this.params).run(presetData.networkType, presetData.symbolServerImage, account.name, {
-                    main: account.main,
-                    transport: account.transport,
-                });
+                return new CertificateService(this.logger, this.params).run(
+                    presetData.networkType,
+                    presetData.symbolServerImage,
+                    account.name,
+                    {
+                        main: account.main,
+                        transport: account.transport,
+                    },
+                );
             }),
         );
     }
@@ -313,6 +318,7 @@ export class ConfigService {
 
         const harvesterSigningPrivateKey = nodePreset.harvesting
             ? await CommandUtils.resolvePrivateKey(
+                  this.logger,
                   presetData.networkType,
                   account.remote || account.main,
                   account.remote ? KeyName.Remote : KeyName.Main,
@@ -321,6 +327,7 @@ export class ConfigService {
               )
             : '';
         const harvesterVrfPrivateKey = await CommandUtils.resolvePrivateKey(
+            this.logger,
             presetData.networkType,
             account.vrf,
             KeyName.VRF,
@@ -367,7 +374,7 @@ export class ConfigService {
             hashcacheRecovery: true,
         };
 
-        logger.info(`Generating ${name} server configuration`);
+        this.logger.info(`Generating ${name} server configuration`);
         await BootstrapUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
 
         const isPeer = (nodePresetData: PeerInfo): boolean => nodePresetData.metadata.roles.includes('Peer');
@@ -391,10 +398,10 @@ export class ConfigService {
         );
 
         if (!peers.length && !apiPeers.length) {
-            logger.warn('The peer lists could not be resolved. peers-p2p.json and peers-api.json are empty!');
+            this.logger.warn('The peer lists could not be resolved. peers-p2p.json and peers-api.json are empty!');
         }
         if (nodePreset.brokerName) {
-            logger.info(`Generating ${nodePreset.brokerName} broker configuration`);
+            this.logger.info(`Generating ${nodePreset.brokerName} broker configuration`);
             await BootstrapUtils.generateConfiguration(
                 { ...brokerRecoveryConfig, ...templateContext },
                 copyFrom,
@@ -405,7 +412,7 @@ export class ConfigService {
             copyFileSync(peersApiFile, join(join(brokerConfig, 'resources', 'peers-api.json')));
         }
 
-        await new VotingService(this.params).run(
+        await new VotingService(this.logger, this.params).run(
             presetData,
             account,
             nodePreset,
@@ -450,7 +457,7 @@ export class ConfigService {
         await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransactions(transactionsDirectory, presetData, n)));
 
         if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
-            logger.info('Opt In mode is ON!!! balances or transactions have been provided');
+            this.logger.info('Opt In mode is ON!!! balances or transactions have been provided');
             if (presetData.nemesis.transactions) {
                 const transactionHashes: string[] = [];
                 const transactions = (
@@ -462,7 +469,7 @@ export class ConfigService {
                                     Array.from(Convert.hexToUint8(presetData.nemesisGenerationHashSeed)),
                                 );
                                 if (transactionHashes.indexOf(transactionHash) > -1) {
-                                    logger.warn(`Transaction ${key} wth hash ${transactionHash} already exist. Excluded from folder.`);
+                                    this.logger.warn(`Transaction ${key} wth hash ${transactionHash} already exist. Excluded from folder.`);
                                     return undefined;
                                 }
                                 transactionHashes.push(transactionHash);
@@ -471,7 +478,7 @@ export class ConfigService {
                             .filter((p) => p),
                     )
                 ).filter((p) => p);
-                logger.info(`Found ${transactions.length} opted in transactions.`);
+                this.logger.info(`Found ${transactions.length} opted in transactions.`);
             }
             const currencyMosaic = presetData.nemesis.mosaics[0];
             const nglAccount = currencyMosaic.currencyDistributions[0];
@@ -485,7 +492,7 @@ export class ConfigService {
                     totalOptedInBalance += amount;
                     currencyMosaic.currencyDistributions.push({ address, amount });
                 });
-                logger.info(
+                this.logger.info(
                     `Removing ${
                         Object.keys(presetData.nemesis.balances).length
                     } accounts (total of ${totalOptedInBalance}) from "ngl" account ${nglAccount.address}`,
@@ -514,7 +521,7 @@ export class ConfigService {
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
-        await new NemgenService(BootstrapUtils.ROOT_FOLDER, this.params).run(presetData);
+        await new NemgenService(this.logger, this.params).run(presetData);
     }
 
     private async createVrfTransaction(transactionsDirectory: string, presetData: ConfigPreset, node: NodeAccount): Promise<Transaction> {
@@ -527,6 +534,7 @@ export class ConfigService {
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
         const mainPrivateKey = await CommandUtils.resolvePrivateKey(
+            this.logger,
             presetData.networkType,
             node.main,
             KeyName.Main,
@@ -558,6 +566,7 @@ export class ConfigService {
             UInt64.fromUint(0),
         );
         const mainPrivateKey = await CommandUtils.resolvePrivateKey(
+            this.logger,
             presetData.networkType,
             node.main,
             KeyName.Main,
@@ -576,6 +585,7 @@ export class ConfigService {
     ): Promise<Transaction[]> {
         const votingFiles = node.voting || [];
         const mainPrivateKey = await CommandUtils.resolvePrivateKey(
+            this.logger,
             presetData.networkType,
             node.main,
             KeyName.Main,
@@ -659,7 +669,7 @@ export class ConfigService {
                                 `Native SSL is enabled but restSSLKeyBase64 or restSSLCertificateBase64 properties are not found in the custom-preset file! Either use 'symbol-bootstrap wizard' command to fill those properties in the custom-preset or make sure you copy your SSL key and cert files to ${moveTo} folder.`,
                             );
                         } else {
-                            logger.info(
+                            this.logger.info(
                                 `Native SSL certificates for gateway ${gatewayPreset.name} have been previously provided. Reusing...`,
                             );
                         }
@@ -769,21 +779,21 @@ export class ConfigService {
         const target = this.params.target;
         (presetData.nodes || []).forEach(({ name }) => {
             const serverConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'server-config');
-            BootstrapUtils.deleteFolder(serverConfigFolder);
+            BootstrapUtils.deleteFolder(this.logger, serverConfigFolder);
 
             const brokerConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'broker-config');
-            BootstrapUtils.deleteFolder(brokerConfigFolder);
+            BootstrapUtils.deleteFolder(this.logger, brokerConfigFolder);
 
             // Remove old user configs when upgrading.
             const userConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
-            BootstrapUtils.deleteFolder(userConfigFolder);
+            BootstrapUtils.deleteFolder(this.logger, userConfigFolder);
 
             const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
-            BootstrapUtils.deleteFolder(seedFolder);
+            BootstrapUtils.deleteFolder(this.logger, seedFolder);
         });
         (presetData.gateways || []).forEach(({ name }) => {
             const configFolder = BootstrapUtils.getTargetGatewayFolder(target, false, name);
-            BootstrapUtils.deleteFolder(configFolder, [
+            BootstrapUtils.deleteFolder(this.logger, configFolder, [
                 join(configFolder, presetData.restSSLKeyFileName),
                 join(configFolder, presetData.restSSLCertificateFileName),
             ]);

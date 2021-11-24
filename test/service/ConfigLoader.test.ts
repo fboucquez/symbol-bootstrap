@@ -17,9 +17,10 @@
 import { expect } from '@oclif/test';
 import 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import { ConfigAccount, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 class ConfigLoaderMocked extends ConfigLoader {
     public generateAccount = (
         networkType: NetworkType,
@@ -33,7 +34,7 @@ class ConfigLoaderMocked extends ConfigLoader {
 
 describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
                 preset: Preset.testnet,
@@ -52,7 +53,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData testnet assembly', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
             preset: Preset.testnet,
             assembly: 'dual',
@@ -64,7 +65,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader custom maxUnlockedAccounts', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const originalPresetData = await configLoader.createPresetData({
             preset: Preset.testnet,
             assembly: 'dual',
@@ -134,7 +135,7 @@ describe('ConfigLoader', () => {
     });
 
     it('mergePreset', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         expect(
             configLoader.mergePresets(
                 { maxUnlockedAccounts: 1, inflation: { a: 1, c: 1, d: 1 } },
@@ -146,7 +147,7 @@ describe('ConfigLoader', () => {
     });
 
     it('mergePreset with node', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const merged = configLoader.mergePresets(
             {
                 maxUnlockedAccounts: 1,
@@ -159,7 +160,6 @@ describe('ConfigLoader', () => {
                 nodes: [{ maxUnlockedAccounts: 3 }, { maxUnlockedAccounts: 4, name: 'nameB' }],
             },
         );
-        console.log(JSON.stringify(merged));
         expect(merged).deep.eq({
             maxUnlockedAccounts: 4,
             inflation: { c: 2, d: 2, e: 2 },
@@ -172,7 +172,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
             preset: Preset.bootstrap,
             assembly: undefined,
@@ -187,7 +187,7 @@ describe('ConfigLoader', () => {
     });
 
     it('ConfigLoader loadPresetData bootstrap custom too short!', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
                 preset: Preset.bootstrap,
@@ -202,7 +202,7 @@ describe('ConfigLoader', () => {
     });
 
     it('applyIndex', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const context = { $index: 10 };
         expect(configLoader.applyValueTemplate(context, 'hello')).to.be.eq('hello');
         expect(configLoader.applyValueTemplate(context, 'index')).to.be.eq('index');
@@ -215,7 +215,7 @@ describe('ConfigLoader', () => {
     });
 
     it('expandServicesRepeat when repeat 3', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const services = [
             {
                 repeat: 3,
@@ -268,7 +268,7 @@ describe('ConfigLoader', () => {
     });
 
     it('expandServicesRepeat when repeat 0', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const services = [
             {
                 repeat: 0,
@@ -289,7 +289,7 @@ describe('ConfigLoader', () => {
     });
 
     it('expandServicesRepeat when no repeat', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const services = [
             {
                 apiNodeName: 'api-node-{{$index}}',
@@ -321,7 +321,7 @@ describe('ConfigLoader', () => {
     });
 
     it('applyValueTemplate when object', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const value = {
             _info: 'this file contains a list of api-node peers',
             knownPeers: [
@@ -344,7 +344,7 @@ describe('ConfigLoader', () => {
     });
 
     it('applyValueTemplate when array', async () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const value = [
             {
                 _info: 'this file contains a list of api-node peers',
@@ -369,7 +369,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should migrated old addresses', () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const oldAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-old.yml', false);
         const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false);
         const addresses = configLoader.migrateAddresses(oldAddresses, NetworkType.TEST_NET);
@@ -377,14 +377,14 @@ describe('ConfigLoader', () => {
     });
 
     it('should migrated not migrate new addresses', () => {
-        const configLoader = new ConfigLoaderMocked();
+        const configLoader = new ConfigLoaderMocked(logger);
         const newAddresses = BootstrapUtils.loadYaml('./test/addresses/addresses-new.yml', false);
         const addresses = configLoader.migrateAddresses(newAddresses, NetworkType.TEST_NET);
         expect(addresses).to.be.deep.eq(newAddresses);
     });
 
     it('should generateAccount when old and new are different', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -409,7 +409,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are different', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -434,7 +434,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are same', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -459,7 +459,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are same, new no private eky', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -484,7 +484,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are same, old no private eky', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -508,7 +508,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are same, old private key', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -531,7 +531,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are different, no private key new', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -555,7 +555,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are different. No new account', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -579,7 +579,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount when old and new are different. No new account. Old without private', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const oldAccount = Account.generateNewAccount(networkType);
@@ -601,7 +601,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount brand new', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.ENCRYPT;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Main, undefined, undefined, undefined);
@@ -611,7 +611,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount brand new on remote', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined);
@@ -621,7 +621,7 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount brand new on voting', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN;
         const account = configLoader.generateAccount(networkType, securityMode, KeyName.Voting, undefined, undefined, undefined);
@@ -631,21 +631,21 @@ describe('ConfigLoader', () => {
     });
 
     it('should generateAccount raise error new', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN;
         expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Main, undefined, undefined, undefined)).throw;
     });
 
     it('should generateAccount raise error new', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT;
         expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Transport, undefined, undefined, undefined)).throw;
     });
 
     it('should generateAccount raise error new', () => {
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const networkType = NetworkType.TEST_NET;
         const securityMode = PrivateKeySecurityMode.PROMPT_ALL;
         expect(() => configLoader.generateAccount(networkType, securityMode, KeyName.Remote, undefined, undefined, undefined)).throw;

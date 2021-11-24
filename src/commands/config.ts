@@ -15,6 +15,7 @@
  */
 
 import { Command, flags } from '@oclif/command';
+import { LoggerFactory, System } from '../logger';
 import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
@@ -66,17 +67,20 @@ export default class Config extends Command {
             description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: BootstrapUtils.CURRENT_USER,
         }),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Config);
-        BootstrapUtils.showBanner();
+        const logger = LoggerFactory.getLogger(flags.logger);
+        CommandUtils.showBanner();
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService().config(flags);
+        await new BootstrapService(logger).config(flags);
     }
 }

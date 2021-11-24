@@ -15,11 +15,7 @@
  */
 
 import { Command } from '@oclif/command';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { BootstrapUtils, CommandUtils, VerifyService } from '../service';
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+import { CommandUtils, LoggerFactory, System, VerifyService } from '../';
 
 export default class Verify extends Command {
     static description =
@@ -28,11 +24,14 @@ export default class Verify extends Command {
 
     static flags = {
         help: CommandUtils.helpFlag,
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {
-        BootstrapUtils.showBanner();
-        const report = await new VerifyService().createReport();
+        CommandUtils.showBanner();
+        const { flags } = this.parse(Verify);
+        const logger = LoggerFactory.getLogger(flags.logger);
+        const report = await new VerifyService(logger).createReport();
         logger.info(`OS: ${report.platform}`);
         report.lines.forEach((line) => {
             if (line.recommendation) {

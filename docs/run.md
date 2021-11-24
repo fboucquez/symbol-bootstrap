@@ -40,6 +40,10 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+  --logger=logger
+      [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use ',' to select 
+      multiple loggers.
+
   --pullImages
       It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.
 

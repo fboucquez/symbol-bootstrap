@@ -23,9 +23,7 @@ import {
     Transaction,
     UnresolvedAddress,
 } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { Addresses, ConfigPreset } from '../model';
 import { AnnounceService, TransactionFactory, TransactionFactoryParams } from './AnnounceService';
 import { BootstrapUtils } from './BootstrapUtils';
@@ -50,8 +48,6 @@ export type ModifyMultisigParams = {
     serviceProviderPublicKey?: string;
 };
 
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
-
 export class ModifyMultisigService implements TransactionFactory {
     public static readonly defaultParams: ModifyMultisigParams = {
         target: BootstrapUtils.defaultTargetFolder,
@@ -63,8 +59,8 @@ export class ModifyMultisigService implements TransactionFactory {
 
     private readonly configLoader: ConfigLoader;
 
-    constructor(protected readonly params: ModifyMultisigParams) {
-        this.configLoader = new ConfigLoader();
+    constructor(private readonly logger: Logger, protected readonly params: ModifyMultisigParams) {
+        this.configLoader = new ConfigLoader(logger);
     }
 
     public async run(passedPresetData?: ConfigPreset | undefined, passedAddresses?: Addresses | undefined): Promise<void> {
@@ -72,7 +68,7 @@ export class ModifyMultisigService implements TransactionFactory {
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
 
-        await new AnnounceService().announce(
+        await new AnnounceService(this.logger).announce(
             this.params.url,
             this.params.maxFee,
             this.params.useKnownRestGateways,
@@ -95,13 +91,14 @@ export class ModifyMultisigService implements TransactionFactory {
 
         const url = this.params.url.replace(/\/$/, '');
         const repositoryFactory = await TransactionUtils.getRepositoryFactory(
+            this.logger,
             presetData,
             this.params.useKnownRestGateways ? undefined : url,
         );
         const multisigInfo = await TransactionUtils.getMultisigAccount(repositoryFactory, mainAccount.address);
         this.validateParams(addressAdditions, addressDeletions, minRemovalDelta, minApprovalDelta, multisigInfo);
 
-        logger.info(
+        this.logger.info(
             `Creating multisig account modification transaction [addressAdditions: "${addressAdditions
                 ?.map((a) => a.plain())
                 .join(' , ')}", addressDeletions: "${addressDeletions

@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-import * as winston from 'winston';
-type Logger = winston.Logger;
-export default Logger;
+export interface Logger {
+    error: LeveledLogMethod;
+    warn: LeveledLogMethod;
+    info: LeveledLogMethod;
+    debug: LeveledLogMethod;
+}
+
+interface LeveledLogMethod {
+    (message: string, ...meta: any[]): Logger;
+    (message: any): Logger;
+}
