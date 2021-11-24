@@ -18,13 +18,6 @@ describe('LoggerFactory', () => {
         expect(transports[0].name).equals('console');
     });
 
-    it('getLogger console log', () => {
-        const logger = LoggerFactory.getLogger('consoleLOG');
-        const transports = (logger as any)['transports'];
-        expect(transports.length).equals(1);
-        expect(transports[0].name).equals('console');
-    });
-
     it('getLogger silent', () => {
         const logger = LoggerFactory.getLogger('SILENT');
         const transports = (logger as any)['transports'];
@@ -34,7 +27,7 @@ describe('LoggerFactory', () => {
     });
 
     it('getLogger multiple', () => {
-        const logger = LoggerFactory.getLogger('consoleLOG , , File,SILENT');
+        const logger = LoggerFactory.getLogger('console , , File,SILENT');
         const transports = (logger as any)['transports'];
         expect(transports.length).equals(3);
         expect(transports[0].name).equals('console');
@@ -45,6 +38,6 @@ describe('LoggerFactory', () => {
     });
 
     it('getLogger invalid', () => {
-        expect(() => LoggerFactory.getLogger('consoleLOG , INVALID , File,SILENT')).throw('Unknown LogType INVALID');
+        expect(() => LoggerFactory.getLogger('console , INVALID , File,SILENT')).throw('Unknown LogType INVALID');
     });
 });

@@ -41,7 +41,7 @@ export default class Pack extends Command {
         ready: flags.boolean({
             description: 'If --ready is provided, the command will not ask offline confirmation.',
         }),
-        logger: CommandUtils.getLoggerFlag(LogType.ConsoleLog),
+        logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
 
     public async run(): Promise<void> {

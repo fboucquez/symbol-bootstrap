@@ -31,18 +31,6 @@ export class LoggerFactory {
         ),
     });
 
-    private static readonly consoleOnlyTransport = new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.printf((i) => {
-                if (i.level.includes('info')) {
-                    return `${i.message}`;
-                } else {
-                    return `${i.message} (${i.level.toUpperCase()})`;
-                }
-            }),
-        ),
-    });
-
     private static readonly silent = new winston.transports.Console({
         silent: true,
     });
@@ -76,8 +64,6 @@ export class LoggerFactory {
                     case LogType.File.toLowerCase():
                         return LoggerFactory.fileTransport(join(workingDir, 'logs.log'));
                     case LogType.Console.toLowerCase():
-                        return LoggerFactory.consoleOnlyTransport;
-                    case LogType.ConsoleLog.toLowerCase():
                         return LoggerFactory.consoleTransport;
                     case LogType.Silent.toLowerCase():
                         return LoggerFactory.silent;
