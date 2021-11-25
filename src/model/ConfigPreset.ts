@@ -15,6 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
+import { Assembly, Preset } from '../service';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -372,9 +373,9 @@ export type DeepPartial<T> = {
 
 export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPreset {
     version: number; // file version
-    bootstrapVersion: string;
-    preset: string;
-    assembly: string;
+    bootstrapVersion: number;
+    preset: Preset;
+    assembly: Assembly;
     privateKeySecurityMode?: string;
     votingKeysDirectory: string;
     sinkAddress?: string;

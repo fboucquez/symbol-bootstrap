@@ -30,7 +30,7 @@ import {
 } from '../model';
 import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
-import { Assembly, defaultAssembly, KeyName } from './ConfigService';
+import { Assembly, defaultAssembly, KeyName, Preset } from './ConfigService';
 import { CryptoUtils } from './CryptoUtils';
 
 export class ConfigLoader {
@@ -357,17 +357,8 @@ export class ConfigLoader {
         return BootstrapUtils.loadYaml(customPreset, password);
     }
 
-    public static loadAssembly(preset: string, assembly: string, workingDir: string): CustomPreset {
-        if (BootstrapUtils.isYmlFile(assembly)) {
-            const assemblyFile = BootstrapUtils.resolveWorkingDirPath(workingDir, assembly);
-            if (!existsSync(assemblyFile)) {
-                throw new KnownError(
-                    `Assembly '${assembly}' does not exist. Have you provided the right --preset <preset> --assembly <assembly> ?`,
-                );
-            }
-            return BootstrapUtils.loadYaml(assemblyFile, false);
-        }
-        const fileLocation = `${BootstrapUtils.ROOT_FOLDER}/presets/assemblies/assembly-${assembly}.yml`;
+    public static loadAssembly(preset: string, assembly: string): CustomPreset {
+        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', 'assemblies', `assembly-${assembly}.yml`);
         if (existsSync(fileLocation)) {
             return BootstrapUtils.loadYaml(fileLocation, false);
         }
@@ -376,14 +367,7 @@ export class ConfigLoader {
         );
     }
 
-    public static loadNetworkPreset(preset: string, workingDir: string): CustomPreset {
-        if (BootstrapUtils.isYmlFile(preset)) {
-            const presetFile = BootstrapUtils.resolveWorkingDirPath(workingDir, preset);
-            if (!existsSync(presetFile)) {
-                throw new KnownError(`Preset '${presetFile}' does not exist. Have you provided the right --preset <preset> ?`);
-            }
-            return BootstrapUtils.loadYaml(presetFile, false);
-        }
+    public static loadNetworkPreset(preset: string): CustomPreset {
         const bundledPreset = `${BootstrapUtils.ROOT_FOLDER}/presets/${preset}/network.yml`;
         if (!existsSync(bundledPreset)) {
             throw new KnownError(`Preset '${preset}' does not exist. Have you provided the right --preset <preset> ?`);
@@ -407,10 +391,9 @@ export class ConfigLoader {
         return presetData;
     }
     public createPresetData(params: {
-        workingDir: string;
         password: Password;
-        preset?: string;
-        assembly?: string;
+        preset?: Preset;
+        assembly?: Assembly;
         customPreset?: string;
         customPresetObject?: CustomPreset;
         oldPresetData?: ConfigPreset;
@@ -427,9 +410,9 @@ export class ConfigLoader {
         }
 
         const sharedPreset = ConfigLoader.loadSharedPreset();
-        const networkPreset = ConfigLoader.loadNetworkPreset(preset, params.workingDir);
+        const networkPreset = ConfigLoader.loadNetworkPreset(preset);
 
-        const assembly =
+        const assembly: Assembly =
             params.assembly ||
             params.customPresetObject?.assembly ||
             customPresetFileObject?.assembly ||
@@ -442,7 +425,7 @@ export class ConfigLoader {
             );
         }
 
-        const assemblyPreset = ConfigLoader.loadAssembly(preset, assembly, params.workingDir);
+        const assemblyPreset = ConfigLoader.loadAssembly(preset, assembly);
         const providedCustomPreset = this.mergePresets(customPresetFileObject, customPresetObject);
         const resolvedCustomPreset = _.isEmpty(providedCustomPreset) ? oldPresetData?.customPresetCache || {} : providedCustomPreset;
         const presetData = this.mergePresets(sharedPreset, networkPreset, assemblyPreset, resolvedCustomPreset) as ConfigPreset;
@@ -464,7 +447,7 @@ export class ConfigLoader {
             ...presetData,
             version: 1,
             preset: preset,
-            assembly: assembly || '',
+            assembly: assembly,
             nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
             customPresetCache: resolvedCustomPreset,
         };
@@ -579,14 +562,10 @@ export class ConfigLoader {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public expandServicesRepeat(context: any, services: any[]): any[] {
         return _.flatMap(services || [], (service) => {
-            if (!_.isObject(service)) {
-                return service;
-            }
-            const repeat = (service as any).repeat;
-            if (repeat === 0) {
+            if (service.repeat === 0) {
                 return [];
             }
-            return _.range(repeat || 1).map((index) => {
+            return _.range(service.repeat || 1).map((index) => {
                 return _.omit(
                     _.mapValues(service, (v: any) =>
                         this.applyValueTemplate(

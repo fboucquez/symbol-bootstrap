@@ -26,7 +26,7 @@ describe('ComposeService', () => {
     const password = '1234';
 
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
-        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params, workingDir: BootstrapUtils.defaultWorkingDir });
+        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params });
         const dockerCompose = await new ComposeService(logger, params).run(presetData);
         Object.values(dockerCompose.services).forEach((service) => {
             if (service.mem_limit) {

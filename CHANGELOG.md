@@ -15,7 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The `bootstrap` preset is not the default anymore. The name must be provided via --preset or as a custom preset field.
 - A 'safe' custom preset is cached in the target folder. It's not required when upgrading the node without a configuration change.
 - Added `--logger` option to the commands.
-- Assemblies are shared between all the presets. You can mix and match them!
+- Assemblies are shared between all the presets.
 
 ## [1.1.1] - Nov-16-2021
 

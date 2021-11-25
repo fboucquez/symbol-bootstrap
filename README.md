@@ -60,17 +60,17 @@ Properties in each file override the previous values (by object deep merge).
 
 ### Network Presets:
 
--   [`mainnet`](presets/mainnet/network.yml): Used to created nodes' connected to Symbol's Mainnet network. The [nemesis block](presets/mainnet/seed/00000) is copied over.
--   [`testnet`](presets/testnet/network.yml): Used to created nodes' connected to Symbol's Testnet network. The [nemesis block](presets/testnet/seed/00000) is copied over.
+-   [`mainnet`](presets/mainnet/network.yml): Used to created nodes connected to Symbol's Mainnet network. The [nemesis block](presets/mainnet/seed/00000) is copied over.
+-   [`testnet`](presets/testnet/network.yml): Used to created nodes connected to Symbol's Testnet network. The [nemesis block](presets/testnet/seed/00000) is copied over.
 -   [`bootstrap`](presets/bootstrap/network.yml): Used to create new private networks with dual currency configuration, network and harvest currencies. Nemesis block is generated.
 
 ### Assemblies:
 
--   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 mongo database. 1 api node, 1 rest gateway, and 1 broker.
--   [`peer`](presets/assemblies/assembly-peer.yml): A standard peer only node that contains 1 peer node.
--   [`api`](presets/assemblies/assembly-api.yml): A standard api node that contains 1 mongo database. 1 api node, 1 rest gateway, and 1 broker.
--   [`demo`](presets/assemblies/assembly-demo.yml): A dual node that contains an explorer, web wallet and faucet for test and demonstration purposes.
--   [`multinode`](presets/assemblies/assembly-multinode.yml): An special assembly that contains 1 api node and 2 peer only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
+-   [`peer`](presets/assemblies/assembly-peer.yml): A standard peer-only node that contains 1 peer node.
+-   [`api`](presets/assemblies/assembly-api.yml): A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.
+-   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.
+-   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer, web wallet and faucet for test and demonstration purposes.
+-   [`multinode`](presets/assemblies/assembly-multinode.yml): An special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
 
 ### Custom preset:
 
@@ -84,16 +84,16 @@ The folder where the generated config, docker files and data are stored.
 
 The folder structure is:
 
--   `./preset.yml`: the final generated preset.yml that it's used to configure bootstrap, the nodes, docker, etc.
--   `./addresses.yml`: randomly generated data that wasn't provided in the preset. e.g.: SSL keys, nodes' keys, nemesis accounts, generation hash seed, etc.
--   `./nodes`: it holds the configuration, data and logs for all the defined node instances.
--   `./gateways`: it holds the configuration and logs for all the defined node rest gateways.
+-   `./preset.yml`: The final generated preset.yml that it's used to configure bootstrap, the nodes, docker, etc.
+-   `./addresses.yml`: Randomly generated data that wasn't provided in the preset. e.g.: SSL keys, nodes' keys, nemesis accounts, generation hash seed, etc.
+-   `./nodes`: It holds the configuration, data and logs for all the defined node instances.
+-   `./gateways`: It holds the configuration and logs for all the defined node rest gateways.
 -   `./nemesis`: The folder used to hold the nemesis block. Block 1 data is generated via `nemgen` tool for new networks. For existing network, it is copied over.
--   `./databases`: the location where the mongo data is stored for the different database instances.
--   `./docker`: the generated docker-compose.yml, mongo init scripts and server basic bash scripts.
--   `./explorers`: the generated explorer configuration.
--   `./wallets`: the generated wallet configuration.
--   `./reports`: the location of the generated reports.
+-   `./databases`: The location where the mongo data is stored for the different database instances.
+-   `./docker`: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.
+-   `./explorers`: The generated explorer configuration.
+-   `./wallets`: The generated wallet configuration.
+-   `./reports`: The location of the generated reports.
 
 Note: **The target folder should not be manually modified**. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset [guides](docs/presetGuides.md)!
 
@@ -181,12 +181,10 @@ Network presets and assemblies can be combined to generate different types of no
 -   `$ symbol-bootstrap start -p bootstrap -a demo -c customPreset.yml`
 -   `$ symbol-bootstrap start -p bootstrap -a dual -c customPreset.yml`
 
-Although some combinations can be done, they may not be really useful. Examples are running `mainnet` and `testnet` combined the `demo` or `multinode` assemblies.
+Although some combinations can be done, they may not be really useful. Examples that are NOT useful:
 
-A custom network preset file can also be provided. This is useful when you have your own custom Symbol network, and you want other nodes to join.
-For this case, you provide your own `networkPreset.yml` and nemesis feed folder. The node admin can then run:
-
--   `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
+-   `$ symbol-bootstrap start -p mainnet -a demo`
+-   `$ symbol-bootstrap start -p testnet -a multinode`
 
 # Wizard
 

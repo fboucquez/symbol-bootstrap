@@ -30,7 +30,6 @@ gateways:
       apiNodeHost: 'api-node-{{$index}}'
       apiNodeBrokerHost: 'api-node-broker-{{$index}}'
       name: 'rest-gateway-{{$index}}'
-      description: '{{$networkDescription}}'
       databaseHost: 'db-{{$index}}'
       openPort: '{{add $index 3000}}'
       ipv4_address: '172.20.0.{{add $index 25}}'

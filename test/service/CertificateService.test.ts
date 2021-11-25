@@ -45,7 +45,6 @@ describe('CertificateService', () => {
         await BootstrapUtils.deleteFolder(logger, target);
         const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
         const presetData = new ConfigLoader(logger).createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.bootstrap,
             password: 'abc',
         });

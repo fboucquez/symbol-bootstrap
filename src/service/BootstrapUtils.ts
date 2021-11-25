@@ -31,7 +31,7 @@ import * as Handlebars from 'handlebars';
 import { get } from 'https';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, dirname, isAbsolute, join, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
 import * as util from 'util';
 import { Logger } from '../logger';
@@ -761,20 +761,8 @@ export class BootstrapUtils {
         throw new Error(`Invalid Network Type ${networkType}`);
     }
 
-    public static resolveWorkingDirPath(workingDir: string, path: string): string {
-        if (isAbsolute(path)) {
-            return path;
-        } else {
-            return join(workingDir, path);
-        }
-    }
-
     static createDerFile(privateKey: string, file: string): void {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
-    }
-
-    public static isYmlFile(string: string): boolean {
-        return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');
     }
 
     public static validatePassword(password: string): string {

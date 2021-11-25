@@ -18,7 +18,6 @@ gateways:
       apiNodeName: 'node'
       apiNodeHost: 'node'
       apiNodeBrokerHost: 'broker'
-      description: '{{$networkDescription}}'
       databaseHost: 'db'
       openPort: true
       ipv4_address: 172.20.0.25

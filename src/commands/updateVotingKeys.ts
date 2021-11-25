@@ -58,7 +58,6 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         try {
             const oldPresetData = configLoader.loadExistingPresetData(target, password);
             presetData = configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
                 password: password,
                 oldPresetData,
             });

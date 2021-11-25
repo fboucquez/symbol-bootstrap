@@ -60,7 +60,7 @@ export enum Assembly {
     peer = 'peer',
 }
 
-export const defaultAssembly: Record<string, string> = {
+export const defaultAssembly: Record<string, Assembly> = {
     [Preset.bootstrap]: Assembly.multinode,
 };
 
@@ -79,13 +79,12 @@ export interface ConfigParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
-    workingDir?: string;
     offline?: boolean;
-    preset?: string;
+    preset?: Preset;
     target: string;
     password?: string;
     user: string;
-    assembly?: string;
+    assembly?: Assembly;
     customPreset?: string;
     customPresetObject?: CustomPreset;
 }
@@ -98,7 +97,6 @@ export interface ConfigResult {
 export class ConfigService {
     public static defaultParams: ConfigParams = {
         target: BootstrapUtils.defaultTargetFolder,
-        workingDir: BootstrapUtils.defaultWorkingDir,
         report: false,
         offline: false,
         reset: false,
@@ -205,7 +203,6 @@ export class ConfigService {
     private resolveCurrentPresetData(oldPresetData: ConfigPreset | undefined, password: Password) {
         return this.configLoader.createPresetData({
             ...this.params,
-            workingDir: this.params.workingDir || BootstrapUtils.defaultWorkingDir,
             password: password,
             oldPresetData,
         });

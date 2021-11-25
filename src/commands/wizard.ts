@@ -21,7 +21,7 @@ import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
-import { BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
+import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
 
 export const assemblies: Record<Preset, { value: string; description: string }[]> = {
     [Preset.bootstrap]: [
@@ -452,7 +452,7 @@ export class Wizard {
         return mode;
     }
 
-    public async resolveAssembly(preset: Preset): Promise<string> {
+    public async resolveAssembly(preset: Preset): Promise<Assembly> {
         this.logger.info('Select the assembly to be created:\n');
         const responses = await prompt([
             {
