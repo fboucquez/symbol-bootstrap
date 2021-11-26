@@ -359,20 +359,21 @@ export class ConfigLoader {
 
     public static loadAssembly(preset: string, assembly: string): CustomPreset {
         const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', 'assemblies', `assembly-${assembly}.yml`);
-        if (existsSync(fileLocation)) {
-            return BootstrapUtils.loadYaml(fileLocation, false);
-        }
-        throw new KnownError(
-            `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`,
-        );
+        const errorMessage = `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`;
+        return this.loadBundledPreset(fileLocation, errorMessage);
     }
 
     public static loadNetworkPreset(preset: string): CustomPreset {
-        const bundledPreset = `${BootstrapUtils.ROOT_FOLDER}/presets/${preset}/network.yml`;
-        if (!existsSync(bundledPreset)) {
-            throw new KnownError(`Preset '${preset}' does not exist. Have you provided the right --preset <preset> ?`);
+        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, `network.yml`);
+        const errorMessage = `Preset '${preset}' does not exist. Have you provided the right --preset <preset> ?`;
+        return this.loadBundledPreset(fileLocation, errorMessage);
+    }
+
+    private static loadBundledPreset(bundledLocation: string, errorMessage: string): CustomPreset {
+        if (existsSync(bundledLocation)) {
+            return BootstrapUtils.loadYaml(bundledLocation, false);
         }
-        return BootstrapUtils.loadYaml(bundledPreset, false);
+        throw new KnownError(errorMessage);
     }
 
     public static loadSharedPreset(): CustomPreset {

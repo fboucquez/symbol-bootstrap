@@ -44,7 +44,7 @@ describe('ConfigLoader', () => {
                 customPresetObject: undefined,
                 password: 'abc',
             });
-            expect(false).to.be.eq(true);
+            expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
             expect(e.message).eq(
                 'Preset value could not be resolved from target folder contents. Please provide the --preset parameter when running the config/start command.',
@@ -62,7 +62,7 @@ describe('ConfigLoader', () => {
                 customPresetObject: undefined,
                 password: 'abc',
             });
-            expect(false).to.be.eq(true);
+            expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
             expect(e.message).eq(
                 'Preset testnet requires assembly (-a, --assembly option). Possible values are: api, demo, dual, multinode, peer',
@@ -109,7 +109,6 @@ describe('ConfigLoader', () => {
             password: 'abcd',
         });
         expect(originalPresetData).to.not.be.undefined;
-        expect(originalPresetData.nodes![0].maxUnlockedAccounts).eq(undefined);
         expect(originalPresetData.maxUnlockedAccounts).eq(30);
         expect(originalPresetData.customPresetCache).deep.eq({
             maxUnlockedAccounts: 30,
@@ -133,7 +132,6 @@ describe('ConfigLoader', () => {
             password: 'abcd',
         });
         expect(upgradedPresetData).to.not.be.undefined;
-        expect(upgradedPresetData.nodes![0].maxUnlockedAccounts).eq(undefined);
         expect(upgradedPresetData.maxUnlockedAccounts).eq(30);
         expect(upgradedPresetData.customPresetCache).deep.eq({
             maxUnlockedAccounts: 30,
@@ -160,7 +158,6 @@ describe('ConfigLoader', () => {
             password: 'abcd',
         });
         expect(upgradedPresetResetToDefaults).to.not.be.undefined;
-        expect(upgradedPresetResetToDefaults.nodes![0].maxUnlockedAccounts).eq(undefined);
         expect(upgradedPresetResetToDefaults.maxUnlockedAccounts).eq(15);
         expect(upgradedPresetResetToDefaults.customPresetCache).deep.eq({
             maxUnlockedAccounts: 15,

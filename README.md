@@ -60,8 +60,8 @@ Properties in each file override the previous values (by object deep merge).
 
 ### Network Presets:
 
--   [`mainnet`](presets/mainnet/network.yml): Used to created nodes connected to Symbol's Mainnet network. The [nemesis block](presets/mainnet/seed/00000) is copied over.
--   [`testnet`](presets/testnet/network.yml): Used to created nodes connected to Symbol's Testnet network. The [nemesis block](presets/testnet/seed/00000) is copied over.
+-   [`mainnet`](presets/mainnet/network.yml): Used to create nodes connected to Symbol's Mainnet network. The [nemesis block](presets/mainnet/seed/00000) is copied over.
+-   [`testnet`](presets/testnet/network.yml): Used to create nodes connected to Symbol's Testnet network. The [nemesis block](presets/testnet/seed/00000) is copied over.
 -   [`bootstrap`](presets/bootstrap/network.yml): Used to create new private networks with dual currency configuration, network and harvest currencies. Nemesis block is generated.
 
 ### Assemblies:
@@ -70,7 +70,7 @@ Properties in each file override the previous values (by object deep merge).
 -   [`api`](presets/assemblies/assembly-api.yml): A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.
 -   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.
 -   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer, web wallet and faucet for test and demonstration purposes.
--   [`multinode`](presets/assemblies/assembly-multinode.yml): An special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
+-   [`multinode`](presets/assemblies/assembly-multinode.yml): A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
 
 ### Custom preset:
 
@@ -183,7 +183,7 @@ Network presets and assemblies can be combined to generate different types of no
 
 Although some combinations can be done, they may not be really useful. Examples that are NOT useful:
 
--   `$ symbol-bootstrap start -p mainnet -a demo`
+-   `$ symbol-bootstrap start -p mainnet -a multinode`
 -   `$ symbol-bootstrap start -p testnet -a multinode`
 
 # Wizard
