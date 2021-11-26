@@ -31,7 +31,7 @@ OPTIONS
   -h, --help
       It shows the help of this command.
 
-  -p, --preset=(bootstrap|testnet|mainnet)
+  -p, --preset=preset
       The network preset. It can be provided via custom preset or cli parameter. If not provided, the value is resolved 
       from the target/preset.yml file.
 
@@ -87,9 +87,9 @@ OPTIONS
       keep your node up to date without dropping the local data. Backup the target folder before upgrading.
 
 EXAMPLES
-  $ symbol-bootstrap start -p bootstrap
+  $ symbol-bootstrap start -p singleCurrency -a multinode
+  $ symbol-bootstrap start -p dualCurrency -a multinode
   $ symbol-bootstrap start -p testnet -a dual
-  $ symbol-bootstrap start -p mainnet -a peer -c custom-preset.yml
   $ symbol-bootstrap start -p testnet -a dual --password 1234
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```

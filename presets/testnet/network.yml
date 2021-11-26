@@ -1,10 +1,8 @@
-assemblies: 'api, dual, peer'
+networkDescription: Symbol Testnet
 baseNamespace: symbol
 batchVerificationRandomSource: /dev/urandom
 currencyMosaicId: 091F837E059AE13C
-currencyName: xym
 harvestBeneficiaryPercentage: 25
-harvestingName: xym
 harvestingMosaicId: 091F837E059AE13C
 epochAdjustment: 1616694977s
 enableRevoteOnBoot: false
@@ -27,7 +25,7 @@ importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
 votingKeyDesiredFutureLifetime: 120
-lastKnownNetworkEpoch: 723
+lastKnownNetworkEpoch: 811
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m
@@ -60,6 +58,17 @@ statisticsServiceUrl: 'https://testnet.symbol.services'
 knownRestGateways: []
 knownPeers: []
 treasuryReissuanceTransactionSignatures: []
+nemesis:
+    referenceOnly: true
+    mosaics:
+        -
+            name: xym
+            divisibility: 6
+            duration: 0
+            supply: 7842928625000000
+            isTransferable: true
+            isSupplyMutable: false
+            isRestrictable: false
 inflation:
     starting-at-height-2: 0
     starting-at-height-5760: 191997042

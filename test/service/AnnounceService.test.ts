@@ -16,11 +16,10 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { BootstrapAccountResolver, LoggerFactory, LogType } from '../../src';
 import {
     AnnounceService,
     BootstrapService,
-    CommandUtils,
     ConfigService,
     Preset,
     RemoteNodeService,
@@ -30,9 +29,11 @@ import {
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Announce Service', () => {
     let announceService: AnnounceService;
+    let accountResolver: BootstrapAccountResolver;
 
     beforeEach(() => {
-        announceService = new AnnounceService(logger);
+        accountResolver = new BootstrapAccountResolver(logger);
+        announceService = new AnnounceService(logger, accountResolver);
     });
 
     afterEach(restore);
@@ -41,7 +42,7 @@ describe('Announce Service', () => {
     const params = {
         ...ConfigService.defaultParams,
         ready: true,
-        target: 'target/tests/testnet-dual',
+        target: 'target/tests/announce-service-test',
         password,
         reset: false,
         offline: true,
@@ -117,7 +118,7 @@ describe('Announce Service', () => {
 
     const stubCommon = (networkType: NetworkType, epochAdjustment: number, currencyMosaicId: MosaicId, networkGenerationHash: string) => {
         stub(RemoteNodeService.prototype, 'getBestRepositoryInfo').callsFake(() =>
-            Promise.resolve(({
+            Promise.resolve({
                 repositoryFactory: {
                     getNetworkType() {
                         return of(networkType);
@@ -162,7 +163,7 @@ describe('Announce Service', () => {
                         return of(networkGenerationHash);
                     },
                 },
-            } as unknown) as RepositoryInfo),
+            } as unknown as RepositoryInfo),
         );
 
         stub(announceService, <any>'getAccountInfo').returns(
@@ -176,8 +177,9 @@ describe('Announce Service', () => {
         const transactionFactory = singleTransactionFactory;
 
         const { addresses, presetData } = await new BootstrapService(logger).config(params);
-        stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
+        expect(addresses!.nodes![0]!.main.publicKey).eq(mainPublicKey);
 
+        stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const announceSimple = spy(announceService, <any>'announceSimple');
         await announceService.announce(
@@ -215,6 +217,7 @@ describe('Announce Service', () => {
         );
 
         expect(announceAggregateComplete.called).to.be.true;
+
         expect(tsAnnounce.calledOnceWith(match({ signerPublicKey: mainPublicKey }), match.any)).to.be.true;
     });
 
@@ -257,8 +260,8 @@ describe('Announce Service', () => {
 
         const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
+        stub(accountResolver, 'resolveAccount').returns(Promise.resolve(serviceProviderAccount));
 
-        stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(serviceProviderAccount.privateKey));
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const tsAnnounceBonded = stub(TransactionService.prototype, 'announceAggregateBonded').returns(of({} as AggregateTransaction));
         const announceAggregateBonded = spy(announceService, <any>'announceAggregateBonded');
@@ -309,8 +312,7 @@ describe('Announce Service', () => {
             cosigners.push(...cosigns);
             return bestCosigner;
         });
-
-        stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(bestCosigner.privateKey));
+        stub(accountResolver, 'resolveAccount').returns(Promise.resolve(bestCosigner));
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const tsAnnounceBonded = stub(TransactionService.prototype, 'announceAggregateBonded').returns(of({} as AggregateTransaction));
         const announceAggregateBonded = spy(announceService, <any>'announceAggregateBonded');

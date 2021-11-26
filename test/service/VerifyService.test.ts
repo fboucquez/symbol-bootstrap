@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import * as os from 'os';
 import * as semver from 'semver';
 import { LoggerFactory, LogType } from '../../src';

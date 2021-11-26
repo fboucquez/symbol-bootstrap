@@ -1,4 +1,4 @@
-preset: bootstrap
+preset: dualCurrency
 nemesis:
     mosaics:
         - accounts: 20

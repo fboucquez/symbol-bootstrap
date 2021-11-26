@@ -1,6 +1,8 @@
 // created from 'create-ts-index'
 
+export * from './AccountResolver';
 export * from './AnnounceService';
+export * from './BootstrapAccountResolver';
 export * from './BootstrapService';
 export * from './BootstrapUtils';
 export * from './CertificateService';
@@ -18,6 +20,7 @@ export * from './ReportService';
 export * from './RunService';
 export * from './TransactionUtils';
 export * from './VerifyService';
+export * from './VotingKeyFileProvider';
 export * from './VotingService';
 export * from './VotingUtils';
 export * from './ZipUtils';

@@ -16,15 +16,14 @@
 
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
-import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
+import { BootstrapAccountResolver, BootstrapService, BootstrapUtils, CommandUtils, ConfigService } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
 
     static examples = [
-        `$ symbol-bootstrap config -p bootstrap`,
+        `$ symbol-bootstrap config -p dualCurrency -a demo`,
         `$ symbol-bootstrap config -p testnet -a dual --password 1234`,
-        `$ symbol-bootstrap config -p mainnet -a peer -c custom-preset.yml`,
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap config -p testnet -a dual`,
     ];
 
@@ -33,10 +32,9 @@ export default class Config extends Command {
         target: CommandUtils.targetFlag,
         password: CommandUtils.passwordFlag,
         noPassword: CommandUtils.noPasswordFlag,
-        preset: flags.enum({
+        preset: flags.string({
             char: 'p',
-            description: `The network preset. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.`,
-            options: Object.keys(Preset).map((v) => v as Preset),
+            description: `The network preset. It can be provided via custom preset or cli parameter. ${'If not provided, the value is resolved from the target/preset.yml file.'}`,
         }),
         assembly: flags.string({
             char: 'a',
@@ -81,6 +79,7 @@ export default class Config extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).config(flags);
+        const workingDir = BootstrapUtils.defaultWorkingDir;
+        await new BootstrapService(logger).config({ ...flags, workingDir, accountResolver: new BootstrapAccountResolver(logger) });
     }
 }

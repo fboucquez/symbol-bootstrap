@@ -17,7 +17,8 @@
 import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
-import { BootstrapUtils, CommandUtils, CryptoUtils, KnownError, LoggerFactory, LogType } from '../';
+import { LoggerFactory, LogType } from '../logger';
+import { BootstrapUtils, CommandUtils, CryptoUtils, KnownError } from '../service';
 
 export default class Encrypt extends Command {
     static description = `It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
