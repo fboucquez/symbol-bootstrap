@@ -2,7 +2,9 @@
 set -e
 . ./travis/node-functions.sh
 VERSION="$(node_load_version)"
-echo $VERSION
-npm pack && /bin/bash travis/node-functions.sh node_publish_alpha
+TAG=${1:-alpha}
+echo "publishing $VERSION with tag $TAG"
+npm pack
+/bin/bash travis/node-functions.sh node_publish_alpha $TAG
 npm version "$VERSION" --commit-hooks false --git-tag-version false
 npm run style:fix
