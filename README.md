@@ -272,7 +272,13 @@ Pull Requests are appreciated! Please follow the contributing [guidelines](CONTR
 Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
 General users should install this tool like any other node module.
 
-# Commands
+## Code style
+
+To format the source code, verify/fix lint issues, and generate the commands docs, run:
+
+```
+npm run style:fix
+```
 
 <!-- commands -->
 # Command Topics
