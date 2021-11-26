@@ -17,9 +17,10 @@
 import { expect } from '@oclif/test';
 import 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType } from '../../src';
 import { ConfigAccount, PrivateKeySecurityMode } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
+
 const logger = LoggerFactory.getLogger(LogType.Silent);
 class ConfigLoaderMocked extends ConfigLoader {
     public generateAccount = (
@@ -33,6 +34,24 @@ class ConfigLoaderMocked extends ConfigLoader {
 }
 
 describe('ConfigLoader', () => {
+    it('ConfigLoader loadPresetData no preset', async () => {
+        const configLoader = new ConfigLoaderMocked(logger);
+        try {
+            await configLoader.createPresetData({
+                preset: undefined,
+                assembly: undefined,
+                customPreset: undefined,
+                customPresetObject: undefined,
+                password: 'abc',
+            });
+            expect(false).to.be.eq(true); // should have raised an error!
+        } catch (e) {
+            expect(e.message).eq(
+                'Preset value could not be resolved from target folder contents. Please provide the --preset parameter when running the config/start command.',
+            );
+        }
+    });
+
     it('ConfigLoader loadPresetData testnet no assembly', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         try {
@@ -43,32 +62,150 @@ describe('ConfigLoader', () => {
                 customPresetObject: undefined,
                 password: 'abc',
             });
+            expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).to.equal(
-                'Preset testnet requires assembly (-a, --assembly option). Possible values are: api, dual, peer. Please provide the --assembly parameter when running the config/start command.',
+            expect(e.message).eq(
+                'Preset testnet requires assembly (-a, --assembly option). Possible values are: api, demo, dual, multinode, peer',
             );
-            return;
         }
-        expect(true).to.be.false;
+    });
+
+    it('ConfigLoader loadPresetData bootstrap no assembly', async () => {
+        const configLoader = new ConfigLoaderMocked(logger);
+        const presetData = await configLoader.createPresetData({
+            preset: Preset.bootstrap,
+            customPreset: undefined,
+            customPresetObject: undefined,
+            password: 'abc',
+        });
+        expect(presetData).to.not.be.undefined;
+        expect(presetData.preset).to.eq(Preset.bootstrap);
+        expect(presetData.assembly).to.eq(Assembly.multinode);
     });
 
     it('ConfigLoader loadPresetData testnet assembly', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.api,
             customPreset: undefined,
             customPresetObject: undefined,
             password: 'abc',
         });
         expect(presetData).to.not.be.undefined;
+        expect(presetData.preset).to.eq(Preset.testnet);
+        expect(presetData.assembly).to.eq(Assembly.api);
     });
 
     it('ConfigLoader custom maxUnlockedAccounts', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const originalPresetData = await configLoader.createPresetData({
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
+            customPreset: 'test/unit-test-profiles/custom_preset.yml',
+            customPresetObject: {
+                maxUnlockedAccounts: 30,
+            },
+            password: 'abcd',
+        });
+        expect(originalPresetData).to.not.be.undefined;
+        expect(originalPresetData.maxUnlockedAccounts).eq(30);
+        expect(originalPresetData.customPresetCache).deep.eq({
+            maxUnlockedAccounts: 30,
+            nodes: [
+                {
+                    host: 'my-host.io',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    remotePrivateKey: 'EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                    transportPrivateKey: '6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B',
+                    voting: true,
+                    vrfPrivateKey: 'F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8',
+                },
+            ],
+            privateKeySecurityMode: 'PROMPT_MAIN',
+        });
+
+        const upgradedPresetData = await configLoader.createPresetData({
+            oldPresetData: originalPresetData,
+            preset: Preset.testnet,
+            assembly: Assembly.dual,
+            password: 'abcd',
+        });
+        expect(upgradedPresetData).to.not.be.undefined;
+        expect(upgradedPresetData.maxUnlockedAccounts).eq(30);
+        expect(upgradedPresetData.customPresetCache).deep.eq({
+            maxUnlockedAccounts: 30,
+            nodes: [
+                {
+                    host: 'my-host.io',
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    remotePrivateKey: 'EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1',
+                    transportPrivateKey: '6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B',
+                    voting: true,
+                    vrfPrivateKey: 'F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8',
+                },
+            ],
+            privateKeySecurityMode: 'PROMPT_MAIN',
+        });
+
+        const upgradedPresetResetToDefaults = await configLoader.createPresetData({
+            oldPresetData: originalPresetData,
+            preset: Preset.testnet,
+            customPresetObject: {
+                maxUnlockedAccounts: 15,
+            },
+            assembly: Assembly.dual,
+            password: 'abcd',
+        });
+        expect(upgradedPresetResetToDefaults).to.not.be.undefined;
+        expect(upgradedPresetResetToDefaults.maxUnlockedAccounts).eq(15);
+        expect(upgradedPresetResetToDefaults.customPresetCache).deep.eq({
+            maxUnlockedAccounts: 15,
+        });
+    });
+
+    it('mergePreset', async () => {
+        const configLoader = new ConfigLoaderMocked(logger);
+        expect(
+            configLoader.mergePresets(
+                { maxUnlockedAccounts: 1, inflation: { a: 1, c: 1, d: 1 } },
+                { maxUnlockedAccounts: 2 },
+                { maxUnlockedAccounts: 3, inflation: { c: 2, d: 2, e: 2 } },
+                { maxUnlockedAccounts: 4 },
+            ),
+        ).deep.eq({ maxUnlockedAccounts: 4, inflation: { c: 2, d: 2, e: 2 } });
+    });
+
+    it('mergePreset with node', async () => {
+        const configLoader = new ConfigLoaderMocked(logger);
+        const merged = configLoader.mergePresets(
+            {
+                maxUnlockedAccounts: 1,
+                inflation: { a: 1, c: 1, d: 1 },
+            },
+            { nodes: [{ maxUnlockedAccounts: 5, name: 'name1' }], knownRestGateways: ['r1', 'r2'] },
+            { maxUnlockedAccounts: 3, inflation: { c: 2, d: 2, e: 2 }, knownRestGateways: ['r2', 'r3'] },
+            {
+                maxUnlockedAccounts: 4,
+                nodes: [{ maxUnlockedAccounts: 3 }, { maxUnlockedAccounts: 4, name: 'nameB' }],
+            },
+        );
+        expect(merged).deep.eq({
+            maxUnlockedAccounts: 4,
+            inflation: { c: 2, d: 2, e: 2 },
+            nodes: [
+                { maxUnlockedAccounts: 3, name: 'name1' },
+                { maxUnlockedAccounts: 4, name: 'nameB' },
+            ],
+            knownRestGateways: ['r2', 'r3'],
+        });
+    });
+
+    it('ConfigLoader custom maxUnlockedAccounts', async () => {
+        const configLoader = new ConfigLoaderMocked(logger);
+        const originalPresetData = await configLoader.createPresetData({
+            preset: Preset.testnet,
+            assembly: Assembly.dual,
             customPreset: 'test/unit-test-profiles/custom_preset.yml',
             customPresetObject: {
                 maxUnlockedAccounts: 30,
@@ -96,7 +233,7 @@ describe('ConfigLoader', () => {
         const upgradedPresetData = await configLoader.createPresetData({
             oldPresetData: originalPresetData,
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             password: 'abcd',
         });
         expect(upgradedPresetData).to.not.be.undefined;
@@ -123,7 +260,7 @@ describe('ConfigLoader', () => {
             customPresetObject: {
                 maxUnlockedAccounts: 15,
             },
-            assembly: 'dual',
+            assembly: Assembly.dual,
             password: 'abcd',
         });
         expect(upgradedPresetResetToDefaults).to.not.be.undefined;

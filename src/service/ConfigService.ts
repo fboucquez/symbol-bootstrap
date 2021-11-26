@@ -52,6 +52,18 @@ export enum Preset {
     mainnet = 'mainnet',
 }
 
+export enum Assembly {
+    api = 'api',
+    demo = 'demo',
+    dual = 'dual',
+    multinode = 'multinode',
+    peer = 'peer',
+}
+
+export const defaultAssembly: Record<string, Assembly> = {
+    [Preset.bootstrap]: Assembly.multinode,
+};
+
 export enum KeyName {
     Main = 'Main',
     Remote = 'Remote',
@@ -72,7 +84,7 @@ export interface ConfigParams {
     target: string;
     password?: string;
     user: string;
-    assembly?: string;
+    assembly?: Assembly;
     customPreset?: string;
     customPresetObject?: CustomPreset;
 }

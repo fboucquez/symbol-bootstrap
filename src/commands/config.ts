@@ -16,7 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
-import { BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
+import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
@@ -38,9 +38,10 @@ export default class Config extends Command {
             description: `The network preset. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.`,
             options: Object.keys(Preset).map((v) => v as Preset),
         }),
-        assembly: flags.string({
+        assembly: flags.enum({
             char: 'a',
             description: `The assembly that defines the node(s) layout. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file.`,
+            options: Object.keys(Assembly).map((v) => v as Assembly),
         }),
         customPreset: flags.string({
             char: 'c',

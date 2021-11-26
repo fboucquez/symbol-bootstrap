@@ -16,7 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import { LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType } from '../../src';
 import { ConfigService, CryptoUtils, Preset } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ConfigService', () => {
@@ -45,7 +45,7 @@ describe('ConfigService', () => {
             reset: true,
             target: 'target/tests/ConfigService.test.testnet',
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         }).run();
     });
 
@@ -55,7 +55,7 @@ describe('ConfigService', () => {
             reset: true,
             target: 'target/tests/ConfigService.test.mainnet',
             preset: Preset.mainnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
         }).run();
     });
 

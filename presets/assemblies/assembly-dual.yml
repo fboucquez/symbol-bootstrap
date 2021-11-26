@@ -16,7 +16,6 @@ gateways:
       apiNodeName: 'node'
       apiNodeHost: 'node'
       apiNodeBrokerHost: 'broker'
-      description: 'catapult public test network'
       databaseHost: 'db'
       openPort: true
       ipv4_address: 172.20.0.25

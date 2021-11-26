@@ -16,8 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { LoggerFactory } from '../logger';
-import { BootstrapService } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { BootstrapService, CommandUtils } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';

@@ -15,7 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
-import { Preset } from '../service';
+import { Assembly, Preset } from '../service';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -375,8 +375,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     version: number; // file version
     bootstrapVersion: number;
     preset: Preset;
-    assembly: string;
-    assemblies?: string;
+    assembly: Assembly;
     privateKeySecurityMode?: string;
     votingKeysDirectory: string;
     sinkAddress?: string;
@@ -414,6 +413,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     namespaceRentalFeeSinkAddress?: string;
     networkIdentifier: string;
     networkName: string;
+    networkDescription: string;
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;

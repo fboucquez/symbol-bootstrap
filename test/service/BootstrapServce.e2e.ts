@@ -17,7 +17,7 @@
 import { expect } from '@oclif/test';
 import 'mocha';
 import { Account, Deadline, PlainMessage, RepositoryFactoryHttp, TransactionService, TransferTransaction, UInt64 } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType } from '../../src';
 import { BootstrapService, BootstrapUtils, ConfigLoader, ConfigResult, ConfigService, Preset, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
@@ -132,7 +132,7 @@ describe('BootstrapService', () => {
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.testnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             reset: true,
             timeout,
             healthCheck: true,
@@ -155,7 +155,7 @@ describe('BootstrapService', () => {
         const config: StartParams = {
             ...ConfigService.defaultParams,
             preset: Preset.mainnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             reset: true,
             timeout,
             healthCheck: true,

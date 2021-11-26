@@ -1,4 +1,4 @@
-assemblies: 'api, dual, peer'
+networkDescription: Symbol Testnet
 baseNamespace: symbol
 batchVerificationRandomSource: /dev/urandom
 currencyMosaicId: 091F837E059AE13C

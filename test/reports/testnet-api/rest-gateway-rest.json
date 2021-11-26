@@ -1,7 +1,7 @@
 {
   "network": {
     "name": "testnet",
-    "description": "catapult public test network"
+    "description": "Symbol Testnet"
   },
   "port": 3000,
   "protocol": "HTTP",

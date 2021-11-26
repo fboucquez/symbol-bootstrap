@@ -1,10 +1,10 @@
-explorerUrl: http://localhost:90/
-faucetUrl: http://localhost:100/
+faucetUrl: http://localhost:100
 databases:
     - name: 'db'
       openPort: false
 nodes:
     - harvesting: true
+      voting: true
       api: true
       name: 'node'
       databaseHost: 'db'
@@ -18,27 +18,16 @@ gateways:
       apiNodeName: 'node'
       apiNodeHost: 'node'
       apiNodeBrokerHost: 'broker'
-      description: 'catapult public test network'
       databaseHost: 'db'
       openPort: true
       ipv4_address: 172.20.0.25
 wallets:
     - name: 'wallet'
       title: 'Symbol Bootstrap Wallet'
-      defaultNodeUrl: 'http://localhost:3000'
-      namespaceName: '{{baseNamespace}}.{{currencyName}}'
       openPort: '80'
-      restNodes:
-          - friendlyName: 'Bootstrap Rest'
-            url: 'http://localhost:3000'
-            roles: 2
 explorers:
     - name: 'explorer'
-      defaultNode: 'http://localhost:3000'
-      namespaceName: '{{baseNamespace}}.{{currencyName}}'
       openPort: '90'
-      restNodes:
-          - 'http://localhost:3000'
       footer:
           link:
               - href: https://nemflash.io/
@@ -59,3 +48,18 @@ explorers:
               - href: http://localhost:100/
                 text: Faucet
                 icon: IconHomeCurrencyUsd
+faucets:
+    - name: 'faucet'
+      gateway: 'rest-gateway'
+      environment:
+          DEFAULT_NODE: 'http://rest-gateway:3000'
+          DEFAULT_NODE_CLIENT: 'http://localhost:3000'
+          NATIVE_CURRENCY_NAME: '{{baseNamespace}}.{{currencyName}}'
+          NATIVE_CURRENCY_OUT_MAX: 500000000
+          NATIVE_CURRENCY_OUT_MIN: 100000000
+          MAX_FEE: 5000000
+          ENOUGH_BALANCE: 100000000000
+          MAX_UNCONFIRMED: 99
+          BLACKLIST_MOSAIC_IDS: '[]'
+          EXPLORER_URL: 'http://localhost:90/'
+      openPort: '{{add $index 100}}'

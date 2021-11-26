@@ -16,7 +16,7 @@
 
 import { expect } from '@oclif/test';
 import { Account, NetworkType } from 'symbol-sdk';
-import { BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
+import { Assembly, BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
 import { Network, Wizard } from '../../src/commands/wizard';
 import { StdUtils } from '../utils/StdUtils';
 const logger = LoggerFactory.getLogger(LogType.Silent);
@@ -69,7 +69,7 @@ describe('Wizard', () => {
             password: password,
         });
         const expectedCustomPreset: CustomPreset = {
-            assembly: 'dual',
+            assembly: Assembly.dual,
             nodes: [
                 {
                     friendlyName: 'myfriendlyname',
@@ -128,7 +128,7 @@ describe('Wizard', () => {
             password: password,
         });
         const expectedCustomPreset: CustomPreset = {
-            assembly: 'dual',
+            assembly: Assembly.dual,
             nodes: [
                 {
                     friendlyName: 'myfriendlyname',
@@ -187,7 +187,7 @@ describe('Wizard', () => {
         });
         const expectedCustomPreset: CustomPreset = {
             preset: Preset.mainnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
             nodes: [
                 {
@@ -252,7 +252,7 @@ describe('Wizard', () => {
         });
         const expectedCustomPreset: CustomPreset = {
             preset: Preset.mainnet,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
             nodes: [
                 {

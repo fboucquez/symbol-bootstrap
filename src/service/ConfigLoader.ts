@@ -30,7 +30,7 @@ import {
 } from '../model';
 import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
-import { KeyName, Preset } from './ConfigService';
+import { Assembly, defaultAssembly, KeyName, Preset } from './ConfigService';
 import { CryptoUtils } from './CryptoUtils';
 
 export class ConfigLoader {
@@ -335,7 +335,7 @@ export class ConfigLoader {
         networkType: NetworkType,
     ): Promise<NodeAccount[]> {
         return Promise.all(
-            presetData.nodes!.map((node, index) =>
+            (presetData.nodes || []).map((node, index) =>
                 this.generateNodeAccount(oldAddresses?.nodes?.[index], presetData, index, node, networkType),
             ),
         );
@@ -357,19 +357,28 @@ export class ConfigLoader {
         return BootstrapUtils.loadYaml(customPreset, password);
     }
 
-    private loadAssembly(preset: Preset, assembly: string | undefined): CustomPreset {
-        if (!assembly) {
-            return {};
-        }
-        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, `assembly-${assembly}.yml`);
-        if (!existsSync(fileLocation)) {
-            throw new KnownError(
-                `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`,
-            );
-        }
-        return BootstrapUtils.loadYaml(fileLocation, false);
+    public static loadAssembly(preset: string, assembly: string): CustomPreset {
+        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', 'assemblies', `assembly-${assembly}.yml`);
+        const errorMessage = `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`;
+        return this.loadBundledPreset(fileLocation, errorMessage);
     }
 
+    public static loadNetworkPreset(preset: string): CustomPreset {
+        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, `network.yml`);
+        const errorMessage = `Preset '${preset}' does not exist. Have you provided the right --preset <preset> ?`;
+        return this.loadBundledPreset(fileLocation, errorMessage);
+    }
+
+    private static loadBundledPreset(bundledLocation: string, errorMessage: string): CustomPreset {
+        if (existsSync(bundledLocation)) {
+            return BootstrapUtils.loadYaml(bundledLocation, false);
+        }
+        throw new KnownError(errorMessage);
+    }
+
+    public static loadSharedPreset(): CustomPreset {
+        return BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'shared.yml'), false) as ConfigPreset;
+    }
     public mergePresets<T extends CustomPreset>(object: T | undefined, ...otherArgs: (CustomPreset | undefined)[]): T {
         const presets = [object, ...otherArgs];
         const reversed = [...presets].reverse();
@@ -385,7 +394,7 @@ export class ConfigLoader {
     public createPresetData(params: {
         password: Password;
         preset?: Preset;
-        assembly?: string;
+        assembly?: Assembly;
         customPreset?: string;
         customPresetObject?: CustomPreset;
         oldPresetData?: ConfigPreset;
@@ -400,23 +409,28 @@ export class ConfigLoader {
                 'Preset value could not be resolved from target folder contents. Please provide the --preset parameter when running the config/start command.',
             );
         }
-        const assembly =
-            params.assembly || params.customPresetObject?.assembly || customPresetFileObject?.assembly || params.oldPresetData?.assembly;
 
-        const sharedPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'shared.yml'), false);
-        const networkPreset = BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, 'network.yml'), false);
-        const assemblyPreset = this.loadAssembly(preset, assembly);
+        const sharedPreset = ConfigLoader.loadSharedPreset();
+        const networkPreset = ConfigLoader.loadNetworkPreset(preset);
 
-        const providedCustomPreset = this.mergePresets(customPresetFileObject, customPresetObject);
-        const resolvedCustomPreset = _.isEmpty(providedCustomPreset) ? oldPresetData?.customPresetCache || {} : providedCustomPreset;
+        const assembly: Assembly =
+            params.assembly ||
+            params.customPresetObject?.assembly ||
+            customPresetFileObject?.assembly ||
+            params.oldPresetData?.assembly ||
+            defaultAssembly[preset];
 
-        const presetData = this.mergePresets(sharedPreset, networkPreset, assemblyPreset, resolvedCustomPreset);
-
-        if (presetData.assemblies && !assembly) {
+        if (!assembly) {
             throw new KnownError(
-                `Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${presetData.assemblies}. Please provide the --assembly parameter when running the config/start command.`,
+                `Preset ${preset} requires assembly (-a, --assembly option). Possible values are: ${Object.keys(Assembly).join(', ')}`,
             );
         }
+
+        const assemblyPreset = ConfigLoader.loadAssembly(preset, assembly);
+        const providedCustomPreset = this.mergePresets(customPresetFileObject, customPresetObject);
+        const resolvedCustomPreset = _.isEmpty(providedCustomPreset) ? oldPresetData?.customPresetCache || {} : providedCustomPreset;
+        const presetData = this.mergePresets(sharedPreset, networkPreset, assemblyPreset, resolvedCustomPreset) as ConfigPreset;
+
         if (!ConfigLoader.presetInfoLogged) {
             this.logger.info(`Generating config from preset '${preset}'`);
             if (assembly) {
@@ -426,12 +440,15 @@ export class ConfigLoader {
                 this.logger.info(`Using custom preset file '${customPreset}'`);
             }
         }
+        if (!presetData.networkType) {
+            throw new Error('Network Type could not be resolved. Have your provided the right --preset?');
+        }
         ConfigLoader.presetInfoLogged = true;
         const presetDataWithDynamicDefaults: ConfigPreset = {
             ...presetData,
             version: 1,
             preset: preset,
-            assembly: assembly || '',
+            assembly: assembly,
             nodes: this.dynamicDefaultNodeConfiguration(presetData.nodes),
             customPresetCache: resolvedCustomPreset,
         };

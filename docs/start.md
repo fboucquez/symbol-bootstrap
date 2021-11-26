@@ -14,7 +14,7 @@ USAGE
   $ symbol-bootstrap start
 
 OPTIONS
-  -a, --assembly=assembly
+  -a, --assembly=(api|demo|dual|multinode|peer)
       The assembly that defines the node(s) layout. It can be provided via custom preset or cli parameter. If not 
       provided, the value is resolved from the target/preset.yml file.
 

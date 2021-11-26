@@ -16,7 +16,7 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType } from '../../src';
 import {
     AnnounceService,
     BootstrapService,
@@ -56,7 +56,7 @@ describe('Announce Service', () => {
                 },
             ],
         },
-        assembly: 'dual',
+        assembly: Assembly.dual,
     };
 
     const url = 'http://localhost:3000';
