@@ -346,6 +346,9 @@ export class ConfigService {
 
         const serverConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'server-config');
         const brokerConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'broker-config');
+        const dataFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'data');
+        await BootstrapUtils.mkdir(dataFolder);
+
         const nodePreset = (presetData.nodes || [])[index];
 
         const harvesterSigningPrivateKey = nodePreset.harvesting
@@ -476,80 +479,35 @@ export class ConfigService {
         const copyFrom = join(BootstrapUtils.ROOT_FOLDER, `config`, `nemesis`);
         const moveTo = join(nemesisWorkingDir, `server-config`);
         const templateContext = { ...(presetData as any), addresses };
+        const nodes = (addresses.nodes || []).filter((n, index) => !presetData.nodes?.[index]?.excludeFromNemesis);
+
+        await Promise.all(nodes.filter((n) => n.vrf).map((n) => this.createVrfTransaction(transactionsDirectory, presetData, n)));
         await Promise.all(
-            (addresses.nodes || []).filter((n) => n.vrf).map((n) => this.createVrfTransaction(transactionsDirectory, presetData, n)),
+            nodes.filter((n) => n.remote).map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
         );
+        await Promise.all(nodes.map((n) => this.createVotingKeyTransactions(transactionsDirectory, presetData, n)));
 
-        await Promise.all(
-            (addresses.nodes || [])
-                .filter((n) => n.remote)
-                .map((n) => this.createAccountKeyLinkTransaction(transactionsDirectory, presetData, n)),
-        );
-
-        await Promise.all((addresses.nodes || []).map((n) => this.createVotingKeyTransactions(transactionsDirectory, presetData, n)));
-
-        if (presetData.nemesis.mosaics && (presetData.nemesis.transactions || presetData.nemesis.balances)) {
-            this.logger.info('Opt In mode is ON!!! balances or transactions have been provided');
-            if (presetData.nemesis.transactions) {
-                const transactionHashes: string[] = [];
-                const transactions = (
-                    await Promise.all(
-                        Object.entries(presetData.nemesis.transactions || {})
-                            .map(([key, payload]) => {
-                                const transactionHash = Transaction.createTransactionHash(
-                                    payload,
-                                    Array.from(Convert.hexToUint8(presetData.nemesisGenerationHashSeed)),
-                                );
-                                if (transactionHashes.indexOf(transactionHash) > -1) {
-                                    this.logger.warn(`Transaction ${key} wth hash ${transactionHash} already exist. Excluded from folder.`);
-                                    return undefined;
-                                }
-                                transactionHashes.push(transactionHash);
-                                return this.storeTransaction(transactionsDirectory, key, payload);
-                            })
-                            .filter((p) => p),
-                    )
-                ).filter((p) => p);
-                this.logger.info(`Found ${transactions.length} opted in transactions.`);
-            }
-            const currencyMosaic = presetData.nemesis.mosaics[0];
-            const nglAccount = currencyMosaic.currencyDistributions[0];
-            const originalNglAccountBalance = nglAccount.amount;
-            if (!nglAccount) {
-                throw Error('"NGL" account could not be found for opt in!');
-            }
-            let totalOptedInBalance = 0;
-            if (presetData.nemesis.balances) {
-                Object.entries(presetData.nemesis.balances || {}).forEach(([address, amount]) => {
-                    totalOptedInBalance += amount;
-                    currencyMosaic.currencyDistributions.push({ address, amount });
-                });
-                this.logger.info(
-                    `Removing ${
-                        Object.keys(presetData.nemesis.balances).length
-                    } accounts (total of ${totalOptedInBalance}) from "ngl" account ${nglAccount.address}`,
-                );
-            }
-
-            nglAccount.amount = nglAccount.amount - totalOptedInBalance;
-
-            const providedBalances = Object.values(currencyMosaic.currencyDistributions)
-                .map((d) => d.amount)
-                .reduce((a, b) => a + b, 0);
-
-            const currentBalance = providedBalances;
-
-            if (nglAccount.amount < 1) {
-                throw new Error(
-                    `NGL account didn't have enough balance (${originalNglAccountBalance}) to paid all the supplied optedin namespaces and accounts of ${currentBalance}`,
-                );
-            }
-
-            if (currentBalance !== currencyMosaic.supply) {
-                throw new Error(
-                    `Current supplied balance of ${currentBalance} is different from expected supply of ${currencyMosaic.supply}`,
-                );
-            }
+        if (presetData.nemesis.transactions) {
+            const transactionHashes: string[] = [];
+            const transactions = (
+                await Promise.all(
+                    Object.entries(presetData.nemesis.transactions || {})
+                        .map(([key, payload]) => {
+                            const transactionHash = Transaction.createTransactionHash(
+                                payload,
+                                Array.from(Convert.hexToUint8(presetData.nemesisGenerationHashSeed)),
+                            );
+                            if (transactionHashes.indexOf(transactionHash) > -1) {
+                                this.logger.warn(`Transaction ${key} wth hash ${transactionHash} already exist. Excluded from folder.`);
+                                return undefined;
+                            }
+                            transactionHashes.push(transactionHash);
+                            return this.storeTransaction(transactionsDirectory, key, payload);
+                        })
+                        .filter((p) => p),
+                )
+            ).filter((p) => p);
+            this.logger.info(`Found ${transactions.length} provided in transactions.`);
         }
 
         await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
@@ -575,7 +533,7 @@ export class ConfigService {
         );
         const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
-        return await this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
+        return this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
     }
 
     private async createAccountKeyLinkTransaction(
@@ -607,7 +565,7 @@ export class ConfigService {
         );
         const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(akl, presetData.nemesisGenerationHashSeed);
-        return await this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
+        return this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
 
     private async createVotingKeyTransactions(
@@ -713,7 +671,7 @@ export class ConfigService {
 
     private resolveCurrencyName(presetData: ConfigPreset): string {
         const mosaicPreset = presetData.nemesis?.mosaics?.[0];
-        const currencyName = mosaicPreset?.name || presetData.currencyName;
+        const currencyName = mosaicPreset?.name;
         if (!currencyName) {
             throw new Error('Currency name could not be resolved!!');
         }

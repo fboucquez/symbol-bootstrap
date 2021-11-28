@@ -130,43 +130,107 @@ export class ConfigLoader {
                 addresses.mosaics = oldAddresses.mosaics;
                 presetData.nemesis = oldPresetData.nemesis;
             } else {
-                if (presetData.nemesis.mosaics) {
-                    const mosaics: MosaicAccounts[] = [];
-                    presetData.nemesis.mosaics.forEach((m, index) => {
-                        const accounts = this.generateAddresses(networkType, privateKeySecurityMode, m.accounts);
-                        mosaics.push({
-                            id: index ? presetData.currencyMosaicId : presetData.harvestingMosaicId,
-                            name: m.name,
-                            type: index ? 'harvest' : 'currency',
-                            accounts,
-                        });
-                    });
-
-                    presetData.nemesis.mosaics.forEach((m, index) => {
-                        const accounts = mosaics[index].accounts;
-                        if (!m.currencyDistributions) {
-                            const nodeMainAccounts = (addresses.nodes || []).filter((node) => node.main);
-                            const totalAccounts = (m.accounts || 0) + nodeMainAccounts.length;
-                            const amountPerAccount = Math.floor(m.supply / totalAccounts);
-                            m.currencyDistributions = [
-                                ...accounts.map((a) => ({ address: a.address, amount: amountPerAccount })),
-                                ...nodeMainAccounts.map((n) => ({ address: n.main!.address, amount: amountPerAccount })),
-                            ];
-                            if (m.currencyDistributions.length)
-                                m.currencyDistributions[0].amount += m.supply - totalAccounts * amountPerAccount;
-                        }
-                        const supplied = m.currencyDistributions.map((d) => d.amount).reduce((a, b) => a + b, 0);
-                        if (m.supply != supplied) {
-                            throw new Error(`Invalid nemgen total supplied value, expected ${m.supply} but total is ${supplied}`);
-                        }
-                    });
-                    addresses.mosaics = mosaics;
-                }
+                addresses.mosaics = this.processNemesisBalances(presetData, addresses, nemesisSignerAddress);
             }
         }
 
         return addresses;
     }
+
+    private sum(distribution: { amount: number; address: string }[], mosaicName: string) {
+        return distribution
+            .map((d, index) => {
+                if (d.amount < 0) {
+                    throw new Error(
+                        `Nemesis distribution balance cannot be less than 0. Mosaic ${mosaicName}, distribution address: ${
+                            d.address
+                        }, amount: ${d.amount}, index ${index}. \nDistributions are:\n${BootstrapUtils.toYaml(distribution)}`,
+                    );
+                }
+                return d.amount;
+            })
+            .reduce((a, b) => a + b, 0);
+    }
+    private processNemesisBalances(presetData: ConfigPreset, addresses: Addresses, nemesisSignerAddress: Address): MosaicAccounts[] {
+        const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
+        const networkType = presetData.networkType;
+        const mosaics: MosaicAccounts[] = [];
+        presetData.nemesis.mosaics.forEach((m, mosaicIndex) => {
+            const accounts = this.generateAddresses(networkType, privateKeySecurityMode, m.accounts || 1);
+            const id = MosaicId.createFromNonce(MosaicNonce.createFromNumber(mosaicIndex), nemesisSignerAddress).toHex();
+            mosaics.push({
+                id: id,
+                name: m.name,
+                accounts,
+            });
+            const getBalance = (nodeIndex: number): number | undefined => {
+                const node = presetData?.nodes?.[nodeIndex];
+                if (!node) {
+                    return undefined;
+                }
+                const balance = node?.balances?.[mosaicIndex];
+                if (balance !== undefined) {
+                    return balance;
+                }
+                if (node.excludeFromNemesis) {
+                    return 0;
+                }
+                return undefined;
+            };
+            const providedDistributions = [...(m.currencyDistributions || [])];
+            addresses.nodes?.forEach((node, index) => {
+                const balance = getBalance(index);
+                if (balance !== undefined)
+                    providedDistributions.push({
+                        address: node.main.address,
+                        amount: balance,
+                    });
+            });
+            const nodeMainAccounts = (addresses.nodes || []).filter((node, index) => node.main && getBalance(index) === undefined);
+            const providedSupply = this.sum(providedDistributions, m.name);
+            const remainingSupply = m.supply - providedSupply;
+            if (remainingSupply < 0) {
+                throw new Error(
+                    `Mosaic ${m.name}'s fixed distributed supply ${providedSupply} is grater than mosaic total supply ${m.supply}`,
+                );
+            }
+            const dynamicAccounts = accounts.length + nodeMainAccounts.length;
+            const amountPerAccount = Math.floor(remainingSupply / dynamicAccounts);
+            const maxHarvesterBalance = this.getMaxHarvesterBalance(presetData, mosaicIndex);
+            const generatedAccounts = [
+                ...accounts.map((a) => ({
+                    address: a.address,
+                    amount: amountPerAccount,
+                })),
+                ...nodeMainAccounts.map((n) => ({
+                    address: n.main.address,
+                    amount: Math.min(maxHarvesterBalance, amountPerAccount),
+                })),
+            ];
+            m.currencyDistributions = [...generatedAccounts, ...providedDistributions].filter((d) => d.amount > 0);
+
+            const generatedSupply = this.sum(generatedAccounts.slice(1), m.name);
+
+            m.currencyDistributions[0].amount = m.supply - providedSupply - generatedSupply;
+
+            const supplied = this.sum(m.currencyDistributions, m.name);
+            if (m.supply != supplied) {
+                throw new Error(
+                    `Invalid nemgen total supplied value, expected ${
+                        m.supply
+                    } but total is ${supplied}. \nDistributions are:\n${BootstrapUtils.toYaml(m.currencyDistributions)}`,
+                );
+            }
+        });
+        return mosaics;
+    }
+
+    private getMaxHarvesterBalance(presetData: ConfigPreset, mosaicIndex: number) {
+        return (presetData.nemesis.mosaics.length == 1 && mosaicIndex == 0) || (presetData.nemesis.mosaics.length > 1 && mosaicIndex == 1)
+            ? presetData.maxHarvesterBalance
+            : Number.MAX_SAFE_INTEGER;
+    }
+
     public static shouldCreateNemesis(presetData: ConfigPreset): boolean {
         return (
             presetData.nemesis &&
@@ -176,10 +240,16 @@ export class ConfigLoader {
         );
     }
 
-    public generateAddresses(networkType: NetworkType, privateKeySecurityMode: PrivateKeySecurityMode, size: number): ConfigAccount[] {
-        return ConfigLoader.getArray(size).map(() =>
-            this.generateAccount(networkType, privateKeySecurityMode, KeyName.NemesisAccount, undefined, undefined, undefined),
-        );
+    public generateAddresses(
+        networkType: NetworkType,
+        privateKeySecurityMode: PrivateKeySecurityMode,
+        accounts: number | string[],
+    ): ConfigAccount[] {
+        if (typeof accounts == 'number') {
+            return ConfigLoader.getArray(accounts).map(() => this.toConfig(Account.generateNewAccount(networkType)));
+        } else {
+            return accounts.map((key) => this.toConfig(PublicAccount.createFromPublicKey(key, networkType)));
+        }
     }
 
     public getAccount(
@@ -188,7 +258,11 @@ export class ConfigLoader {
         privateKey: string | undefined,
     ): PublicAccount | Account | undefined {
         if (privateKey) {
-            return Account.createFromPrivateKey(privateKey, networkType);
+            const account = Account.createFromPrivateKey(privateKey, networkType);
+            if (publicKey && account.publicKey.toUpperCase() != publicKey.toUpperCase()) {
+                throw new Error('Invalid provided public key/private key!');
+            }
+            return account;
         }
         if (publicKey) {
             return PublicAccount.createFromPublicKey(publicKey, networkType);
@@ -197,9 +271,11 @@ export class ConfigLoader {
     }
 
     public toConfig(account: PublicAccount | Account): ConfigAccount {
-        if (account instanceof Account) {
+        // isntanceof doesn't work when loaded in multiple libraries.
+        //https://stackoverflow.com/questions/59265098/instanceof-not-work-correctly-in-typescript-library-project
+        if (account.constructor.name === Account.name) {
             return {
-                privateKey: account.privateKey,
+                privateKey: (account as Account).privateKey,
                 publicKey: account.publicKey,
                 address: account.address.plain(),
             };

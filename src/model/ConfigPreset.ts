@@ -33,6 +33,11 @@ export interface DockerServicePreset {
     dockerComposeDebugMode?: boolean;
 }
 
+export interface CurrencyDistribution {
+    address: string;
+    amount: number;
+}
+
 export interface MosaicPreset {
     name: string;
     repeat?: number;
@@ -44,8 +49,9 @@ export interface MosaicPreset {
     isTransferable: boolean;
     isSupplyMutable: boolean;
     isRestrictable: boolean;
-    accounts: number;
-    currencyDistributions: { address: string; amount: number }[];
+    // options are generate x random accounts or provide their accounts public keys.
+    accounts: number | string[];
+    currencyDistributions: CurrencyDistribution[];
 }
 
 export interface DatabasePreset extends DockerServicePreset {
@@ -57,7 +63,6 @@ export interface DatabasePreset extends DockerServicePreset {
 export interface NemesisPreset {
     binDirectory: string;
     mosaics: MosaicPreset[];
-    balances?: Record<string, number>;
     transactions?: Record<string, string>;
     nemesisSignerPrivateKey: string;
     transactionsDirectory: string;
@@ -259,6 +264,7 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
     host?: string;
     roles?: string;
     friendlyName?: string;
+    excludeFromNemesis: boolean;
 
     // Optional private keys. If not provided, bootstrap will generate random ones.
     mainPrivateKey?: string;
@@ -272,6 +278,8 @@ export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPrese
 
     vrfPrivateKey?: string;
     vrfPublicKey?: string;
+
+    balances?: number[];
 
     //Broker specific
     brokerName?: string;
@@ -416,9 +424,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     currencyMosaicId: string;
     harvestingMosaicId: string;
     baseNamespace: string;
-    // This next 2 would be removed in a later merge.
-    currencyName?: string;
-    harvestingName?: string;
     networkType: NetworkType;
     votingKeyDesiredLifetime: number;
     votingKeyDesiredFutureLifetime: number; // How in the future voting key files need to be generated. By default, 1 months before expiring..
