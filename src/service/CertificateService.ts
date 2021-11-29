@@ -219,6 +219,11 @@ rm createNodeCertificates.sh
 rm ca.key.pem
 rm ca.der
 rm node.der
+rm node.csr.pem
+rm *.cnf
+rm index.txt*
+rm serial.dat*
+rm -rf new_certs
 
 echo "Certificate Created"
 `;

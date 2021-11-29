@@ -70,26 +70,9 @@ describe('CertificateService', () => {
         expect(expectedMetadata).deep.eq(BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
 
         const files = await fsPromises.readdir(target);
-        expect(files).deep.eq([
-            'ca.cert.pem',
-            'ca.cnf',
-            'ca.pubkey.pem',
-            'index.txt',
-            'index.txt.attr',
-            'index.txt.attr.old',
-            'index.txt.old',
-            'metadata.yml',
-            'new_certs',
-            'node.cnf',
-            'node.crt.pem',
-            'node.csr.pem',
-            'node.full.crt.pem',
-            'node.key.pem',
-            'serial.dat',
-            'serial.dat.old',
-        ]);
+        expect(files).deep.eq(['ca.cert.pem', 'ca.pubkey.pem', 'metadata.yml', 'node.crt.pem', 'node.full.crt.pem', 'node.key.pem']);
 
-        const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem'];
+        const diffFiles = ['ca.cert.pem', 'node.crt.pem', 'node.full.crt.pem'];
 
         // Filtering out files that aren't the same
         files
