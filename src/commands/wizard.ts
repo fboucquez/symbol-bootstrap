@@ -37,18 +37,17 @@ export enum HttpsOption {
     Automatic = 'Automatic',
     None = 'None',
 }
-export enum Network {
-    mainnet = 'mainnet',
-    testnet = 'testnet',
-    localNetwork = 'localNetwork',
-    customNetwork = 'customNetwork',
+
+export enum CustomNetwork {
+    custom = 'custom',
 }
+export type Network = Preset | CustomNetwork;
 
 export const assemblies: Record<Network, Assembly[]> = {
-    [Network.mainnet]: [Assembly.dual, Assembly.peer, Assembly.api],
-    [Network.testnet]: [Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
-    [Network.localNetwork]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
-    [Network.customNetwork]: [Assembly.dual, Assembly.peer, Assembly.api],
+    [Preset.mainnet]: [Assembly.dual, Assembly.peer, Assembly.api],
+    [Preset.testnet]: [Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [Preset.bootstrap]: [Assembly.multinode, Assembly.dual, Assembly.peer, Assembly.api, Assembly.demo],
+    [CustomNetwork.custom]: [Assembly.dual, Assembly.peer, Assembly.api],
 };
 
 export interface ProvidedAccounts {
@@ -59,12 +58,6 @@ export interface ProvidedAccounts {
     transport: Account;
 }
 
-export const networkToPreset: Record<Network, string> = {
-    [Network.localNetwork]: Preset.bootstrap,
-    [Network.mainnet]: Preset.mainnet,
-    [Network.testnet]: Preset.testnet,
-    [Network.customNetwork]: 'custom-network-preset.yml',
-};
 export default class WizardCommand extends Command {
     static description = 'An utility command that will help you configuring node!';
 
@@ -85,8 +78,8 @@ export default class WizardCommand extends Command {
 
     public static getNetworkIdFlag(): IOptionFlag<Network | undefined> {
         return flags.string({
-            description: 'The node or network you want to create',
-            options: Object.values(Network),
+            description: 'The node or network you want to create.',
+            options: [...Object.values(Preset), ...Object.values(CustomNetwork)],
         }) as IOptionFlag<Network | undefined>;
     }
 
@@ -134,7 +127,7 @@ export class Wizard {
         const network = await this.resolveNetwork(flags.network);
         const preset = await this.resolvePreset(network, flags.workingDir);
         const assembly = await this.resolveAssembly(network);
-        if (network == Network.localNetwork) {
+        if (network == Preset.bootstrap) {
             this.logger.info('For a private network, just run: ');
             this.logger.info('');
             this.logger.info(`$ symbol-bootstrap start -p ${preset} -a ${assembly}`);
@@ -188,7 +181,7 @@ export class Wizard {
             false,
         );
 
-        const networkType = network === Network.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
+        const networkType = network === Preset.mainnet ? NetworkType.MAIN_NET : NetworkType.TEST_NET;
         const accounts = await this.resolveAllAccounts(networkType);
 
         this.logger.info('');
@@ -418,14 +411,14 @@ export class Wizard {
                     name: 'network',
                     message: 'Select a network:',
                     type: 'list',
-                    default: Network.mainnet,
+                    default: Preset.mainnet,
                     choices: [
-                        { name: 'Mainnet Node', value: Network.mainnet },
-                        { name: 'Testnet Node', value: Network.testnet },
-                        { name: 'Local Network', value: Network.localNetwork },
+                        { name: 'Mainnet Node', value: Preset.mainnet },
+                        { name: 'Testnet Node', value: Preset.testnet },
+                        { name: 'Bootstrap Local Network', value: Preset.bootstrap },
                         {
                             name: `Custom Network Node ('custom-network-preset.yml' file and 'nemesis-seed' folder are required)`,
-                            value: Network.customNetwork,
+                            value: CustomNetwork.custom,
                         },
                     ],
                 },
@@ -436,9 +429,9 @@ export class Wizard {
     }
 
     public async resolvePreset(network: Network, workingDir: string): Promise<string> {
-        if (network === Network.customNetwork) {
+        if (network === CustomNetwork.custom) {
             this.logger.info(
-                `Enter the network preset you want to join. If you don't know have the network preset, ask the network admin for the file and nemesis seed. :\n`,
+                `Enter the network preset you want to join. If you don't know have the network preset, ask the network admin for the file and nemesis seed.\n`,
             );
             const responses = await prompt([
                 {
@@ -455,12 +448,12 @@ export class Wizard {
                         }
                         return true;
                     },
-                    default: networkToPreset[network],
+                    default: 'custom-network-preset.yml',
                 },
             ]);
             return responses.networkPresetFile;
         }
-        return networkToPreset[network];
+        return network;
     }
 
     public async resolvePrivateKeySecurityMode(): Promise<PrivateKeySecurityMode> {

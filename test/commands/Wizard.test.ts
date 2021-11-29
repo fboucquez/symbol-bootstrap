@@ -17,7 +17,7 @@
 import { expect } from '@oclif/test';
 import { Account, NetworkType } from 'symbol-sdk';
 import { Assembly, BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
-import { Network, Wizard } from '../../src/commands/wizard';
+import { Wizard } from '../../src/commands/wizard';
 // Including a test util class that it's not compiled.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -67,7 +67,7 @@ describe('Wizard', () => {
         await new Wizard(logger).execute({
             workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
-            network: Network.mainnet,
+            network: Preset.mainnet,
             noPassword: false,
             skipPull: true,
             target: `${testFolder}/target`,
@@ -127,7 +127,7 @@ describe('Wizard', () => {
         await wizard.execute({
             workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
-            network: Network.mainnet,
+            network: Preset.mainnet,
             noPassword: false,
             skipPull: true,
             target: `${testFolder}/target`,
@@ -186,7 +186,7 @@ describe('Wizard', () => {
         await wizard.execute({
             workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
-            network: Network.mainnet,
+            network: Preset.mainnet,
             noPassword: false,
             skipPull: true,
             target: `${testFolder}/target`,
@@ -252,7 +252,7 @@ describe('Wizard', () => {
         await wizard.execute({
             workingDir: BootstrapUtils.defaultWorkingDir,
             customPreset: customPresetFile,
-            network: Network.mainnet,
+            network: Preset.mainnet,
             noPassword: false,
             skipPull: true,
             target: `${testFolder}/target`,
