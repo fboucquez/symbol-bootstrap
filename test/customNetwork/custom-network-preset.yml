@@ -1,23 +1,21 @@
-networkDescription: Symbol Testnet
-baseNamespace: symbol
+networkDescription: Custom Network
+baseNamespace: custom
 batchVerificationRandomSource: /dev/urandom
-currencyMosaicId: 091F837E059AE13C
 harvestBeneficiaryPercentage: 25
-harvestingMosaicId: 091F837E059AE13C
-epochAdjustment: 1616694977s
+epochAdjustment: 1637950383s
 enableRevoteOnBoot: false
 maxHarvesterBalance: 50000000000000
 maxMosaicAtomicUnits: 8999999999000000
 minHarvesterBalance: 10000000000
 minVoterBalance: 3000000000000
-nemesisGenerationHashSeed: 3B5E1FA6445653C971A50687E75E6D09FB30481055E3990C84B25E9222DC1155
+nemesisGenerationHashSeed: 717B5491B042155BE86BF477C9A668A88D3DFD3935F488F437A9EE746C448847
 harvestNetworkFeeSinkAddressV1: TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA
-harvestNetworkFeeSinkAddress: TCZ3UZPWWC5NR6TGGYEJ2MT4Z5ZLR3XTIVI4RHA
+harvestNetworkFeeSinkAddress: TCAPMX2ERMCUSLOLS6QXEDXIQE6NSAFIAZ7MCVI
 namespaceRentalFeeSinkAddressV1: TATBDUEWS2X2BKKBPVB7SY4Z626YCAERGA3IF5A
-namespaceRentalFeeSinkAddress: TATBDUEWS2X2BKKBPVB7SY4Z626YCAERGA3IF5A
+namespaceRentalFeeSinkAddress: TCZOJONB3ALLUAS5L6QQV4XO3BHFQR4FYGI2H6A
 mosaicRentalFeeSinkAddressV1: TAFNXW3VXVFTGTVGATKQAR75ALQX7DQXQJRWWTA
-mosaicRentalFeeSinkAddress: TAFNXW3VXVFTGTVGATKQAR75ALQX7DQXQJRWWTA
-nemesisSignerPublicKey: 2267B24107405779DDF0D8FBEABD8142B97105F356F3737B1FC02220E8F90FF2
+mosaicRentalFeeSinkAddress: TCMNWSXCIEXRFM2XIHW52FS4LADOHYPEYCKA7PA
+nemesisSignerPublicKey: 047AF590340DF561AE48F0BB764C5958485AFE0282258B7BD943F7B30903D4D6
 networkType: 152
 totalChainImportance: 7842928625000000
 initialCurrencyAtomicUnits: 7842928625000000
@@ -25,7 +23,7 @@ importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
 votingKeyDesiredFutureLifetime: 120
-lastKnownNetworkEpoch: 723
+lastKnownNetworkEpoch: 1
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m
@@ -39,7 +37,7 @@ blockGenerationTargetTime: 30s
 defaultDynamicFeeMultiplier: 100
 rootNamespaceRentalFeePerBlock: 2
 childNamespaceRentalFee: 100000
-totalVotingBalanceCalculationFix: 398520
+totalVotingBalanceCalculationFix: 0
 mosaicRentalFee: 500000
 throttlingBurst: 80
 throttlingRate: 60
@@ -52,22 +50,19 @@ treasuryReissuanceEpoch: 0
 treasuryReissuanceEpochIneligibleVoterAddresses: []
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
-faucetUrl: 'https://testnet.symbol.tools'
-explorerUrl: 'https://testnet.symbol.fyi'
-statisticsServiceUrl: 'https://testnet.symbol.services'
-knownRestGateways: []
-knownPeers: []
+faucetUrl: 'https://custom.custom.test'
+explorerUrl: 'https://explorer.custom.test'
 treasuryReissuanceTransactionSignatures: []
 nemesis:
+    referenceOnly: true
     mosaics:
-        -
-            name: xym
-            divisibility: 6
-            duration: 0
-            supply: 7842928625000000
-            isTransferable: true
-            isSupplyMutable: false
-            isRestrictable: false
+        - name: coin
+          divisibility: 6
+          duration: 0
+          supply: 7842928625000000
+          isTransferable: true
+          isSupplyMutable: false
+          isRestrictable: false
 inflation:
     starting-at-height-2: 0
     starting-at-height-5760: 191997042
@@ -492,3 +487,45 @@ inflation:
     starting-at-height-109897799: 2
     starting-at-height-110160299: 1
     starting-at-height-110422799: 0
+treasuryReissuance: 0
+nemesisSeedFolder: nemesis-seed
+knownRestGateways:
+    - 'https://dual-001.test.network:3001'
+    - 'https://dual-002.test.network:3001'
+    - 'https://dual-003.test.network:3001'
+knownPeers:
+    - publicKey: 36F3B733FEBA7A10BFEF327C270CF65FE115A00BF45354DF8D539092E53BF97B
+      endpoint:
+          host: beacon-001.test.network
+          port: 7900
+      metadata:
+          name: beacon-001
+          roles: 'Peer,Voting'
+    - publicKey: 910A55B5F0021F68D53E6D33EBDDFDB658E03AF3BE67768740C6C4CB9AEF1BDD
+      endpoint:
+          host: beacon-002.test.network
+          port: 7900
+      metadata:
+          name: beacon-002
+          roles: 'Peer,Voting'
+    - publicKey: 1C5194DAB89F2A66C1E1FC3019A18BBE00E351E34ABEC62F863A2CDEB86F1D5E
+      endpoint:
+          host: dual-001.test.network
+          port: 7900
+      metadata:
+          name: dual-001
+          roles: 'Api,Peer,Voting'
+    - publicKey: 4E36FC7A33092E49D6D5D6C3458AAF6E4DF3C0730AD60C7D1A74D21D6C1C5D90
+      endpoint:
+          host: dual-002.test.network
+          port: 7900
+      metadata:
+          name: dual-002
+          roles: 'Api,Peer'
+    - publicKey: 39F8E48E3EC003AF003F44F268FC6C7DBB71BD5354A6FCD6549DA5EEA9A81BC6
+      endpoint:
+          host: dual-003.test.network
+          port: 7900
+      metadata:
+          name: dual-003
+          roles: 'Api,Peer'

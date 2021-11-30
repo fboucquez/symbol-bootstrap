@@ -16,7 +16,7 @@
 
 import { expect } from '@oclif/test';
 import 'mocha';
-import { Assembly, LoggerFactory, LogType } from '../../src';
+import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
 import { BootstrapService, Preset, StartParams } from '../../src/service';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
@@ -25,6 +25,7 @@ describe('BootstrapService', () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
+            workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.bootstrap,
             reset: true,
             upgrade: false,
@@ -45,6 +46,7 @@ describe('BootstrapService', () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
+            workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.testnet,
             assembly: Assembly.dual,
             reset: true,

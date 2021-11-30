@@ -16,6 +16,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - A 'safe' custom preset is cached in the target folder. It's not required when upgrading the node without a configuration change.
 - Added `--logger` option to the commands.
 - Assemblies are shared between all the presets.
+- Allowing user provided --preset and --assembly yml files. 
 
 ## [1.1.1] - Nov-16-2021
 

@@ -350,6 +350,8 @@ export class ComposeService {
             (presetData.faucets || [])
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
+                    const mosaicPreset = presetData.nemesis.mosaics[0];
+                    const fullName = `${presetData.baseNamespace}.${mosaicPreset.name}`;
                     // const nemesisPrivateKey = addresses?.mosaics?[0]?/;
                     services.push(
                         await resolveService(n, {
@@ -357,6 +359,7 @@ export class ComposeService {
                             image: presetData.symbolFaucetImage,
                             stop_signal: 'SIGINT',
                             environment: {
+                                NATIVE_CURRENCY_NAME: n.environment?.NATIVE_CURRENCY_NAME || fullName,
                                 FAUCET_PRIVATE_KEY:
                                     n.environment?.FAUCET_PRIVATE_KEY || this.getMainAccountPrivateKey(passedAddresses) || '',
                                 NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(
