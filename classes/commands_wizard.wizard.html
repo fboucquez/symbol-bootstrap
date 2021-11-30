@@ -104,6 +104,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolvehost" class="tsd-kind-icon">resolve<wbr>Host</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolvehttpsoptions" class="tsd-kind-icon">resolve<wbr>Https<wbr>Options</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolvenetwork" class="tsd-kind-icon">resolve<wbr>Network</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolvepreset" class="tsd-kind-icon">resolve<wbr>Preset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolveprivatekeysecuritymode" class="tsd-kind-icon">resolve<wbr>Private<wbr>Key<wbr>Security<wbr>Mode</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolverestsslcertasbase64" class="tsd-kind-icon">resolve<wbr>RestSSLCert<wbr>AsBase64</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_wizard.wizard.html#resolverestsslkeyasbase64" class="tsd-kind-icon">resolve<wbr>RestSSLKey<wbr>AsBase64</a></li>
@@ -124,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L101">src/commands/wizard.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L97">src/commands/wizard.ts:97</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -144,25 +145,25 @@
 					<a name="execute" class="tsd-anchor"></a>
 					<h3>execute</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">execute<span class="tsd-signature-symbol">(</span>flags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#localnetwork" class="tsd-signature-type" data-tsd-kind="Enumeration member">localNetwork</a><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>skipPull<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">execute<span class="tsd-signature-symbol">(</span>flags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.customnetwork.html#custom" class="tsd-signature-type" data-tsd-kind="Enumeration member">custom</a><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>skipPull<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L103">src/commands/wizard.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L99">src/commands/wizard.ts:99</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>flags: <span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#localnetwork" class="tsd-signature-type" data-tsd-kind="Enumeration member">localNetwork</a><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>skipPull<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
+									<h5>flags: <span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.customnetwork.html#custom" class="tsd-signature-type" data-tsd-kind="Enumeration member">custom</a><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>skipPull<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>custom<wbr>Preset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
 										</li>
 										<li class="tsd-parameter">
-											<h5>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#localnetwork" class="tsd-signature-type" data-tsd-kind="Enumeration member">localNetwork</a></h5>
+											<h5>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.customnetwork.html#custom" class="tsd-signature-type" data-tsd-kind="Enumeration member">custom</a></h5>
 										</li>
 										<li class="tsd-parameter">
 											<h5>no<wbr>Password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
@@ -178,6 +179,9 @@
 										</li>
 										<li class="tsd-parameter">
 											<h5>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>working<wbr>Dir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
 										</li>
 									</ul>
 								</li>
@@ -196,7 +200,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L370">src/commands/wizard.ts:370</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L367">src/commands/wizard.ts:367</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -219,7 +223,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L549">src/commands/wizard.ts:549</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L578">src/commands/wizard.ts:578</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -242,7 +246,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L536">src/commands/wizard.ts:536</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L565">src/commands/wizard.ts:565</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -265,7 +269,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L472">src/commands/wizard.ts:472</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L501">src/commands/wizard.ts:501</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -282,7 +286,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L303">src/commands/wizard.ts:303</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L300">src/commands/wizard.ts:300</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -317,7 +321,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L374">src/commands/wizard.ts:374</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L371">src/commands/wizard.ts:371</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -343,7 +347,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L335">src/commands/wizard.ts:335</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L332">src/commands/wizard.ts:332</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -372,7 +376,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L312">src/commands/wizard.ts:312</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L309">src/commands/wizard.ts:309</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -389,22 +393,22 @@
 					<a name="resolveassembly" class="tsd-anchor"></a>
 					<h3>resolve<wbr>Assembly</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Assembly<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><a href="../enums/service_configservice.preset.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Preset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/service_configservice.assembly.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Assembly</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Assembly<span class="tsd-signature-symbol">(</span>network<span class="tsd-signature-symbol">: </span><a href="../modules/commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L455">src/commands/wizard.ts:455</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L484">src/commands/wizard.ts:484</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>preset: <a href="../enums/service_configservice.preset.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Preset</a></h5>
+									<h5>network: <a href="../modules/commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/service_configservice.assembly.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Assembly</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -418,7 +422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L517">src/commands/wizard.ts:517</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L546">src/commands/wizard.ts:546</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -447,7 +451,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L558">src/commands/wizard.ts:558</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L587">src/commands/wizard.ts:587</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -470,7 +474,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L488">src/commands/wizard.ts:488</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L517">src/commands/wizard.ts:517</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -496,7 +500,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L571">src/commands/wizard.ts:571</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L600">src/commands/wizard.ts:600</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/commands_wizard.httpsoption.html" class="tsd-signature-type" data-tsd-kind="Enumeration">HttpsOption</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -507,22 +511,48 @@
 					<a name="resolvenetwork" class="tsd-anchor"></a>
 					<h3>resolve<wbr>Network</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Network<span class="tsd-signature-symbol">(</span>providedNetwork<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#localnetwork" class="tsd-signature-type" data-tsd-kind="Enumeration member">localNetwork</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/commands_wizard.network.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Network</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Network<span class="tsd-signature-symbol">(</span>providedNetwork<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.customnetwork.html#custom" class="tsd-signature-type" data-tsd-kind="Enumeration member">custom</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L409">src/commands/wizard.ts:409</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L406">src/commands/wizard.ts:406</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>providedNetwork: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.network.html#localnetwork" class="tsd-signature-type" data-tsd-kind="Enumeration member">localNetwork</a></h5>
+									<h5>providedNetwork: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.customnetwork.html#custom" class="tsd-signature-type" data-tsd-kind="Enumeration member">custom</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/commands_wizard.network.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Network</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="resolvepreset" class="tsd-anchor"></a>
+					<h3>resolve<wbr>Preset</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Preset<span class="tsd-signature-symbol">(</span>network<span class="tsd-signature-symbol">: </span><a href="../modules/commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a>, workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L431">src/commands/wizard.ts:431</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>network: <a href="../modules/commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a></h5>
+								</li>
+								<li>
+									<h5>workingDir: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -536,7 +566,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L430">src/commands/wizard.ts:430</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L459">src/commands/wizard.ts:459</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/model_configpreset.privatekeysecuritymode.html" class="tsd-signature-type" data-tsd-kind="Enumeration">PrivateKeySecurityMode</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -553,7 +583,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L509">src/commands/wizard.ts:509</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L538">src/commands/wizard.ts:538</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -570,7 +600,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L505">src/commands/wizard.ts:505</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L534">src/commands/wizard.ts:534</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -593,10 +623,10 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/commands_wizard.httpsoption.html" class="tsd-kind-icon">Https<wbr>Option</a>
+						<a href="../enums/commands_wizard.customnetwork.html" class="tsd-kind-icon">Custom<wbr>Network</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/commands_wizard.network.html" class="tsd-kind-icon">Network</a>
+						<a href="../enums/commands_wizard.httpsoption.html" class="tsd-kind-icon">Https<wbr>Option</a>
 					</li>
 				</ul>
 				<ul class="current">
@@ -652,6 +682,9 @@
 								<a href="commands_wizard.wizard.html#resolvenetwork" class="tsd-kind-icon">resolve<wbr>Network</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="commands_wizard.wizard.html#resolvepreset" class="tsd-kind-icon">resolve<wbr>Preset</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="commands_wizard.wizard.html#resolveprivatekeysecuritymode" class="tsd-kind-icon">resolve<wbr>Private<wbr>Key<wbr>Security<wbr>Mode</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -670,11 +703,14 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/commands_wizard.providedaccounts.html" class="tsd-kind-icon">Provided<wbr>Accounts</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/commands_wizard.html#network" class="tsd-kind-icon">Network</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module">
 						<a href="../modules/commands_wizard.html#assemblies" class="tsd-kind-icon">assemblies</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module">
-						<a href="../modules/commands_wizard.html#networktopreset" class="tsd-kind-icon">network<wbr>ToPreset</a>
+						<a href="../modules/commands_wizard.html#assembliesdescriptions" class="tsd-kind-icon">assemblies<wbr>Descriptions</a>
 					</li>
 				</ul>
 			</nav>

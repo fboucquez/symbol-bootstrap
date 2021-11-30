@@ -124,6 +124,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_configloader.configloader.html#loadnetworkpreset" class="tsd-kind-icon">load<wbr>Network<wbr>Preset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_configloader.configloader.html#loadsharedpreset" class="tsd-kind-icon">load<wbr>Shared<wbr>Preset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_configloader.configloader.html#resolveroles" class="tsd-kind-icon">resolve<wbr>Roles</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_configloader.configloader.html#shouldcreatenemesis" class="tsd-kind-icon">should<wbr>Create<wbr>Nemesis</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_configloader.configloader.html#toconfig-1" class="tsd-kind-icon">to<wbr>Config</a></li>
 							</ul>
 						</section>
@@ -142,7 +143,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L37">src/service/ConfigLoader.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L37">src/service/ConfigLoader.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -164,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">preset<wbr>Info<wbr>Logged<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L37">src/service/ConfigLoader.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L37">src/service/ConfigLoader.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L545">src/service/ConfigLoader.ts:545</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L559">src/service/ConfigLoader.ts:559</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -201,22 +202,22 @@
 					<a name="createpresetdata" class="tsd-anchor"></a>
 					<h3>create<wbr>Preset<wbr>Data</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Preset<wbr>Data<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>assembly<span class="tsd-signature-symbol">?: </span><a href="../enums/service_configservice.assembly.html#api" class="tsd-signature-type" data-tsd-kind="Enumeration member">api</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#demo" class="tsd-signature-type" data-tsd-kind="Enumeration member">demo</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#dual" class="tsd-signature-type" data-tsd-kind="Enumeration member">dual</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#multinode" class="tsd-signature-type" data-tsd-kind="Enumeration member">multinode</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#peer" class="tsd-signature-type" data-tsd-kind="Enumeration member">peer</a><span class="tsd-signature-symbol">; </span>customPreset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>customPresetObject<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a><span class="tsd-signature-symbol">; </span>oldPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><a href="../modules/service_bootstraputils.html#password" class="tsd-signature-type" data-tsd-kind="Type alias">Password</a><span class="tsd-signature-symbol">; </span>preset<span class="tsd-signature-symbol">?: </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Preset<wbr>Data<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>assembly<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>customPreset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>customPresetObject<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a><span class="tsd-signature-symbol">; </span>oldPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><a href="../modules/service_bootstraputils.html#password" class="tsd-signature-type" data-tsd-kind="Type alias">Password</a><span class="tsd-signature-symbol">; </span>preset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L394">src/service/ConfigLoader.ts:394</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L407">src/service/ConfigLoader.ts:407</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>params: <span class="tsd-signature-symbol">{ </span>assembly<span class="tsd-signature-symbol">?: </span><a href="../enums/service_configservice.assembly.html#api" class="tsd-signature-type" data-tsd-kind="Enumeration member">api</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#demo" class="tsd-signature-type" data-tsd-kind="Enumeration member">demo</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#dual" class="tsd-signature-type" data-tsd-kind="Enumeration member">dual</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#multinode" class="tsd-signature-type" data-tsd-kind="Enumeration member">multinode</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#peer" class="tsd-signature-type" data-tsd-kind="Enumeration member">peer</a><span class="tsd-signature-symbol">; </span>customPreset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>customPresetObject<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a><span class="tsd-signature-symbol">; </span>oldPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><a href="../modules/service_bootstraputils.html#password" class="tsd-signature-type" data-tsd-kind="Type alias">Password</a><span class="tsd-signature-symbol">; </span>preset<span class="tsd-signature-symbol">?: </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a><span class="tsd-signature-symbol"> }</span></h5>
+									<h5>params: <span class="tsd-signature-symbol">{ </span>assembly<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>customPreset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>customPresetObject<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a><span class="tsd-signature-symbol">; </span>oldPresetData<span class="tsd-signature-symbol">?: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><a href="../modules/service_bootstraputils.html#password" class="tsd-signature-type" data-tsd-kind="Type alias">Password</a><span class="tsd-signature-symbol">; </span>preset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> assembly<span class="tsd-signature-symbol">?: </span><a href="../enums/service_configservice.assembly.html#api" class="tsd-signature-type" data-tsd-kind="Enumeration member">api</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#demo" class="tsd-signature-type" data-tsd-kind="Enumeration member">demo</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#dual" class="tsd-signature-type" data-tsd-kind="Enumeration member">dual</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#multinode" class="tsd-signature-type" data-tsd-kind="Enumeration member">multinode</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.assembly.html#peer" class="tsd-signature-type" data-tsd-kind="Enumeration member">peer</a></h5>
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> assembly<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
 										</li>
 										<li class="tsd-parameter">
 											<h5><span class="tsd-flag ts-flagOptional">Optional</span> custom<wbr>Preset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
@@ -231,7 +232,10 @@
 											<h5>password<span class="tsd-signature-symbol">: </span><a href="../modules/service_bootstraputils.html#password" class="tsd-signature-type" data-tsd-kind="Type alias">Password</a></h5>
 										</li>
 										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> preset<span class="tsd-signature-symbol">?: </span><a href="../enums/service_configservice.preset.html#bootstrap" class="tsd-signature-type" data-tsd-kind="Enumeration member">bootstrap</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#testnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">testnet</a><span class="tsd-signature-symbol"> | </span><a href="../enums/service_configservice.preset.html#mainnet" class="tsd-signature-type" data-tsd-kind="Enumeration member">mainnet</a></h5>
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> preset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>working<wbr>Dir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
 										</li>
 									</ul>
 								</li>
@@ -250,7 +254,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L458">src/service/ConfigLoader.ts:458</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L472">src/service/ConfigLoader.ts:472</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -273,7 +277,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L531">src/service/ConfigLoader.ts:531</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L545">src/service/ConfigLoader.ts:545</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -296,7 +300,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L564">src/service/ConfigLoader.ts:564</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L578">src/service/ConfigLoader.ts:578</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -322,7 +326,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L207">src/service/ConfigLoader.ts:207</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L213">src/service/ConfigLoader.ts:213</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -360,7 +364,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L173">src/service/ConfigLoader.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L179">src/service/ConfigLoader.ts:179</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -389,7 +393,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L272">src/service/ConfigLoader.ts:272</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L278">src/service/ConfigLoader.ts:278</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -424,7 +428,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L332">src/service/ConfigLoader.ts:332</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L338">src/service/ConfigLoader.ts:338</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -453,7 +457,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L40">src/service/ConfigLoader.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L40">src/service/ConfigLoader.ts:40</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -482,7 +486,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L179">src/service/ConfigLoader.ts:179</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L185">src/service/ConfigLoader.ts:185</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -511,7 +515,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L622">src/service/ConfigLoader.ts:622</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L640">src/service/ConfigLoader.ts:640</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -534,7 +538,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L464">src/service/ConfigLoader.ts:464</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L478">src/service/ConfigLoader.ts:478</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -557,7 +561,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L674">src/service/ConfigLoader.ts:674</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L692">src/service/ConfigLoader.ts:692</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -580,7 +584,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L670">src/service/ConfigLoader.ts:670</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L688">src/service/ConfigLoader.ts:688</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -603,7 +607,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L348">src/service/ConfigLoader.ts:348</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L354">src/service/ConfigLoader.ts:354</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -629,7 +633,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L658">src/service/ConfigLoader.ts:658</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L676">src/service/ConfigLoader.ts:676</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -655,7 +659,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L607">src/service/ConfigLoader.ts:607</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L625">src/service/ConfigLoader.ts:625</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -681,7 +685,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L595">src/service/ConfigLoader.ts:595</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L613">src/service/ConfigLoader.ts:613</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -707,7 +711,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L587">src/service/ConfigLoader.ts:587</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L605">src/service/ConfigLoader.ts:605</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -733,7 +737,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L382">src/service/ConfigLoader.ts:382</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L395">src/service/ConfigLoader.ts:395</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -765,7 +769,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L617">src/service/ConfigLoader.ts:617</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L635">src/service/ConfigLoader.ts:635</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -791,7 +795,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L193">src/service/ConfigLoader.ts:193</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L199">src/service/ConfigLoader.ts:199</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -814,7 +818,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L344">src/service/ConfigLoader.ts:344</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L350">src/service/ConfigLoader.ts:350</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -831,13 +835,13 @@
 					<a name="loadassembly" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> load<wbr>Assembly</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Assembly<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, assembly<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></li>
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Assembly<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, assembly<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L360">src/service/ConfigLoader.ts:360</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L366">src/service/ConfigLoader.ts:366</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -848,6 +852,9 @@
 								<li>
 									<h5>assembly: <span class="tsd-signature-type">string</span></h5>
 								</li>
+								<li>
+									<h5>workingDir: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></h4>
 						</li>
@@ -857,19 +864,25 @@
 					<a name="loadbundledpreset" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> load<wbr>Bundled<wbr>Preset</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Bundled<wbr>Preset<span class="tsd-signature-symbol">(</span>bundledLocation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, errorMessage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></li>
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Bundled<wbr>Preset<span class="tsd-signature-symbol">(</span>presetFile<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bundledLocation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, errorMessage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L372">src/service/ConfigLoader.ts:372</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L378">src/service/ConfigLoader.ts:378</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
+									<h5>presetFile: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
 									<h5>bundledLocation: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>workingDir: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
 									<h5>errorMessage: <span class="tsd-signature-type">string</span></h5>
@@ -883,19 +896,22 @@
 					<a name="loadnetworkpreset" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> load<wbr>Network<wbr>Preset</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Network<wbr>Preset<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></li>
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Network<wbr>Preset<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L366">src/service/ConfigLoader.ts:366</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L372">src/service/ConfigLoader.ts:372</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>preset: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>workingDir: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></h4>
@@ -912,7 +928,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L379">src/service/ConfigLoader.ts:379</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L392">src/service/ConfigLoader.ts:392</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/model_configpreset.custompreset.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomPreset</a></h4>
@@ -929,7 +945,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L499">src/service/ConfigLoader.ts:499</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L513">src/service/ConfigLoader.ts:513</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -943,6 +959,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="shouldcreatenemesis" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> should<wbr>Create<wbr>Nemesis</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">should<wbr>Create<wbr>Nemesis<span class="tsd-signature-symbol">(</span>presetData<span class="tsd-signature-symbol">: </span><a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L170">src/service/ConfigLoader.ts:170</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>presetData: <a href="../interfaces/model_configpreset.configpreset.html" class="tsd-signature-type" data-tsd-kind="Interface">ConfigPreset</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="toconfig-1" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> to<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
@@ -952,7 +991,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/service/ConfigLoader.ts#L516">src/service/ConfigLoader.ts:516</a></li>
+									<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/service/ConfigLoader.ts#L530">src/service/ConfigLoader.ts:530</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1077,6 +1116,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="service_configloader.configloader.html#resolveroles" class="tsd-kind-icon">resolve<wbr>Roles</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="service_configloader.configloader.html#shouldcreatenemesis" class="tsd-kind-icon">should<wbr>Create<wbr>Nemesis</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="service_configloader.configloader.html#toconfig-1" class="tsd-kind-icon">to<wbr>Config</a>

@@ -72,8 +72,8 @@
 						<section class="tsd-index-section ">
 							<h3>Enumerations</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/commands_wizard.customnetwork.html" class="tsd-kind-icon">Custom<wbr>Network</a></li>
 								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/commands_wizard.httpsoption.html" class="tsd-kind-icon">Https<wbr>Option</a></li>
-								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/commands_wizard.network.html" class="tsd-kind-icon">Network</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -90,13 +90,32 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="commands_wizard.html#network" class="tsd-kind-icon">Network</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="commands_wizard.html#assemblies" class="tsd-kind-icon">assemblies</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="commands_wizard.html#networktopreset" class="tsd-kind-icon">network<wbr>ToPreset</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="commands_wizard.html#assembliesdescriptions" class="tsd-kind-icon">assemblies<wbr>Descriptions</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="network" class="tsd-anchor"></a>
+					<h3>Network</h3>
+					<div class="tsd-signature tsd-kind-icon">Network<span class="tsd-signature-symbol">:</span> <a href="../enums/service_configservice.preset.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Preset</a><span class="tsd-signature-symbol"> | </span><a href="../enums/commands_wizard.customnetwork.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CustomNetwork</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L44">src/commands/wizard.ts:44</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -104,20 +123,20 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
 					<a name="assemblies" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> assemblies</h3>
-					<div class="tsd-signature tsd-kind-icon">assemblies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/service_configservice.preset.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Preset</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{ </span>description<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<div class="tsd-signature tsd-kind-icon">assemblies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="commands_wizard.html#network" class="tsd-signature-type" data-tsd-kind="Type alias">Network</a><span class="tsd-signature-symbol">, </span><a href="../enums/service_configservice.assembly.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Assembly</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L26">src/commands/wizard.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L46">src/commands/wizard.ts:46</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
-					<a name="networktopreset" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> network<wbr>ToPreset</h3>
-					<div class="tsd-signature tsd-kind-icon">network<wbr>ToPreset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/commands_wizard.network.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Network</a><span class="tsd-signature-symbol">, </span><a href="../enums/service_configservice.preset.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Preset</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<a name="assembliesdescriptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> assemblies<wbr>Descriptions</h3>
+					<div class="tsd-signature tsd-kind-icon">assemblies<wbr>Descriptions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/service_configservice.assembly.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Assembly</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/2b6d707/src/commands/wizard.ts#L62">src/commands/wizard.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/symbol/symbol-bootstrap/blob/0ef8c29/src/commands/wizard.ts#L27">src/commands/wizard.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -137,10 +156,10 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/commands_wizard.httpsoption.html" class="tsd-kind-icon">Https<wbr>Option</a>
+						<a href="../enums/commands_wizard.customnetwork.html" class="tsd-kind-icon">Custom<wbr>Network</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/commands_wizard.network.html" class="tsd-kind-icon">Network</a>
+						<a href="../enums/commands_wizard.httpsoption.html" class="tsd-kind-icon">Https<wbr>Option</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/commands_wizard.wizard.html" class="tsd-kind-icon">Wizard</a>
@@ -151,11 +170,14 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/commands_wizard.providedaccounts.html" class="tsd-kind-icon">Provided<wbr>Accounts</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="commands_wizard.html#network" class="tsd-kind-icon">Network</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module">
 						<a href="commands_wizard.html#assemblies" class="tsd-kind-icon">assemblies</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module">
-						<a href="commands_wizard.html#networktopreset" class="tsd-kind-icon">network<wbr>ToPreset</a>
+						<a href="commands_wizard.html#assembliesdescriptions" class="tsd-kind-icon">assemblies<wbr>Descriptions</a>
 					</li>
 				</ul>
 			</nav>
