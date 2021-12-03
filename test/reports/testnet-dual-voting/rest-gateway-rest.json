@@ -1,7 +1,7 @@
 {
   "network": {
     "name": "testnet",
-    "description": "Symbol Testnet"
+    "description": "Symbol Joeynet Network"
   },
   "port": 3000,
   "protocol": "HTTP",

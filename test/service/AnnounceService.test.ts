@@ -16,7 +16,7 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { Assembly, LoggerFactory, LogType } from '../../src';
+import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
 import {
     AnnounceService,
     BootstrapService,
@@ -63,8 +63,14 @@ describe('Announce Service', () => {
     const maxFee = 2_000_000;
     const useKnownRestGateways = false;
     const networkType = NetworkType.TEST_NET;
-    const epochAdjustment = 1_616_694_977;
-    const networkGenerationHash = '3B5E1FA6445653C971A50687E75E6D09FB30481055E3990C84B25E9222DC1155';
+
+    const root = BootstrapUtils.ROOT_FOLDER;
+    const preset = params.preset;
+    const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
+    const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
+    const epochAdjustment = parseInt(networkPreset.epochAdjustment.replace('s', ''));
+    const networkGenerationHash = networkPreset.nemesisGenerationHashSeed;
+
     const mainPublicKey = Account.createFromPrivateKey(params.customPresetObject.nodes[0].mainPrivateKey, networkType).publicKey;
 
     const serviceProviderAccount = Account.createFromPrivateKey(
