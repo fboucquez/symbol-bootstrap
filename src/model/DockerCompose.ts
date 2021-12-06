@@ -30,12 +30,13 @@ export interface DockerComposeService {
     command?: string;
     entrypoint?: string;
     hostname?: string;
-    environment?: any;
+    environment?: Record<string, string>;
     stop_signal?: string;
     volumes?: string[];
     ports?: string[];
     depends_on?: string[];
     mem_limit?: string | number;
+    logging?: DockerComposeServiceLogging;
     // https://docs.docker.com/compose/compose-file/#service-configuration-reference deploy section
     networks?: {
         default: {
@@ -47,6 +48,11 @@ export interface DockerComposeService {
     privileged?: boolean;
     cap_add?: string[];
     security_opt?: string[];
+}
+
+export interface DockerComposeServiceLogging {
+    driver: string;
+    options: Record<string, string>;
 }
 
 export interface DockerCompose {

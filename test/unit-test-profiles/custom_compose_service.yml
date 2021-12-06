@@ -6,17 +6,46 @@ nodes:
       transportPrivateKey: 6154154096354BC3DB522174ACD8BFE553893A0991BD5D105599846F17A3383B
       remotePrivateKey: EFE3F0EF0AB368B8D7AC194D52A8CCFA2D5050B80B9C76E4D2F4D4BF2CD461C1
       vrfPrivateKey: F3C24C153783B683E40FB2671493B54480370BF4E3AB8027D4BF1293E14EB9B8
+      compose:
+          logging:
+              driver: awslogs
+              options:
+                  awslogs-region: $AWS_REGION
+                  awslogs-group: $HOSTNAME
+                  awslogs-create-group: true
+                  awslogs-datetime-format: '%Y-%m-%d %H:%M:%S.%f'
+                  tag: 'escaping templating \{{ with split .ImageName ":" }}\{{join . "_"}}\{{end}}-\{{.ID}}'
+      brokerCompose:
+          logging:
+              driver: awslogs
+              options:
+                  awslogs-region: $AWS_REGION
+                  awslogs-group: $HOSTNAME
+                  awslogs-create-group: true
+                  awslogs-datetime-format: '%Y-%m-%d %H:%M:%S.%f'
+                  tag: 'or I can just use templating {{name}} mixed with escaped \{{ with split .ImageName ":" }}\{{join . "_"}}\{{end}}-\{{.ID}}'
+databases:
+    - compose:
+          logging:
+              driver: awslogs
+              options:
+                  awslogs-region: $AWS_REGION
+                  awslogs-group: $HOSTNAME
+                  awslogs-create-group: true
+                  awslogs-datetime-format: '%Y-%m-%d %H:%M:%S.%f'
+                  tag: 'escaping templating \{{ with split .ImageName ":" }}\{{join . "_"}}\{{end}}-\{{.ID}}'
+gateways:
+    - compose:
+          logging:
+              driver: awslogs
+              options:
+                  awslogs-region: $AWS_REGION
+                  awslogs-group: $HOSTNAME
+                  awslogs-create-group: true
+                  awslogs-datetime-format: '%Y-%m-%d %H:%M:%S.%f'
+                  tag: 'just templating {{name}}'
 compose:
     services:
-        my-logging-service:
-            logging:
-                driver: awslogs
-                options:
-                    awslogs-region: $AWS_REGION
-                    awslogs-group: $HOSTNAME
-                    awslogs-create-group: true
-                    awslogs-datetime-format: '%Y-%m-%d %H:%M:%S.%f'
-                    tag: '{{ with split .ImageName ":" }}{{join . "_"}}{{end}}-{{.ID}}'
         some-other-service:
             container_name: someOtherService
             image: 'symbolplatform/someImage:1.0.0'
@@ -27,6 +56,6 @@ compose:
             ports:
                 - '3333:3333'
             volumes:
-                - '../some/node:/volument:rw'
+                - '../some/node:/volumen:rw'
             depends_on:
                 - db

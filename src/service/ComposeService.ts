@@ -121,13 +121,10 @@ export class ComposeService {
                 service.hostname = servicePreset.host;
                 service.networks!.default.aliases = [servicePreset.host];
             }
-            if (servicePreset.environment) {
-                service.environment = { ...servicePreset.environment, ...rawService.environment };
-            }
             if (servicePreset.ipv4_address) {
                 service.networks!.default.ipv4_address = servicePreset.ipv4_address;
             }
-            return service;
+            return _.merge({}, service, servicePreset.compose);
         };
 
         await Promise.all(
@@ -151,7 +148,6 @@ export class ComposeService {
                                 vol(`../${targetDatabasesFolder}/${n.name}`, '/dbdata', false),
                             ],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                            ...n.compose,
                         }),
                     );
                 }),
@@ -201,7 +197,6 @@ export class ComposeService {
                         volumes: volumes,
                         depends_on: serverDependsOn,
                         ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                        ...n.compose,
                     });
 
                     services.push(nodeService);
@@ -213,6 +208,7 @@ export class ComposeService {
                                     openPort: n.brokerOpenPort,
                                     excludeDockerService: n.brokerExcludeDockerService,
                                     host: n.brokerHost,
+                                    compose: n.brokerCompose,
                                 },
                                 {
                                     user: brokerDebugMode === debugFlag ? undefined : user, // if debug on, run as root
@@ -226,7 +222,6 @@ export class ComposeService {
                                     volumes: nodeService.volumes,
                                     depends_on: brokerDependsOn,
                                     ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.brokerDockerComposeDebugMode),
-                                    ...n.brokerCompose,
                                 },
                             ),
                         );
@@ -252,7 +247,6 @@ export class ComposeService {
                             volumes: volumes,
                             depends_on: [n.databaseHost],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                            ...n.compose,
                         }),
                     );
                 }),
@@ -293,7 +287,6 @@ export class ComposeService {
                             restart: restart,
                             depends_on: [presetData.gateways![0].name],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                            ...n.compose,
                         }),
                     );
                 }),
@@ -319,7 +312,6 @@ export class ComposeService {
                             restart: restart,
                             volumes: volumes,
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                            ...n.compose,
                         }),
                     );
                 }),
@@ -338,18 +330,14 @@ export class ComposeService {
                             image: presetData.symbolFaucetImage,
                             stop_signal: 'SIGINT',
                             environment: {
-                                NATIVE_CURRENCY_NAME: n.environment?.NATIVE_CURRENCY_NAME || fullName,
-                                FAUCET_PRIVATE_KEY:
-                                    n.environment?.FAUCET_PRIVATE_KEY || this.getMainAccountPrivateKey(passedAddresses) || '',
-                                NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(
-                                    n.environment?.NATIVE_CURRENCY_ID || presetData.currencyMosaicId || '',
-                                ),
+                                NATIVE_CURRENCY_NAME: fullName,
+                                FAUCET_PRIVATE_KEY: this.getMainAccountPrivateKey(passedAddresses) || '',
+                                NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(presetData.currencyMosaicId || ''),
                             },
                             restart: restart,
                             ports: resolvePorts([{ internalPort: 4000, openPort: n.openPort }]),
                             depends_on: [n.gateway],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                            ...n.compose,
                         }),
                     );
                 }),
@@ -382,7 +370,7 @@ export class ComposeService {
     }
 
     private getMainAccountPrivateKey(passedAddresses: Addresses | undefined) {
-        const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
+        const addresses = passedAddresses ?? this.configLoader.loadExistingAddressesIfPreset(this.params.target, this.params.password);
         return addresses?.mosaics?.[0]?.accounts[0].privateKey;
     }
 }

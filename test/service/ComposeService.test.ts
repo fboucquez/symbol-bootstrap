@@ -245,13 +245,13 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
     });
 
-    it('Compose mainnet custom services', async () => {
+    it('Compose mainnet custom services and logging', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,
             target: 'target/tests/ComposeService-mainnet-custom-services',
             customPreset: './test/unit-test-profiles/custom_compose_service.yml',
-            reset: false,
+            reset: true,
             preset: Preset.testnet,
             assembly: Assembly.dual,
         };
@@ -266,7 +266,9 @@ ${BootstrapUtils.toYaml(dockerCompose)}
                 dockerComposeDebugMode: true,
                 faucets: [
                     {
-                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                        compose: {
+                            environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                        },
                     },
                 ],
             },
@@ -299,7 +301,9 @@ ${BootstrapUtils.toYaml(dockerCompose)}
             customPresetObject: {
                 faucets: [
                     {
-                        environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                        compose: {
+                            environment: { FAUCET_PRIVATE_KEY: 'MockMe', NATIVE_CURRENCY_ID: 'Mockme2' },
+                        },
                     },
                 ],
             },
