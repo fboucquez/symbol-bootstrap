@@ -156,7 +156,7 @@ export class ConfigLoader {
         const networkType = presetData.networkType;
         const mosaics: MosaicAccounts[] = [];
         presetData.nemesis.mosaics.forEach((m, mosaicIndex) => {
-            const accounts = this.generateAddresses(networkType, privateKeySecurityMode, m.accounts || 1);
+            const accounts = this.generateAddresses(networkType, privateKeySecurityMode, m.accounts);
             const id = MosaicId.createFromNonce(MosaicNonce.createFromNumber(mosaicIndex), nemesisSignerAddress).toHex();
             mosaics.push({
                 id: id,
