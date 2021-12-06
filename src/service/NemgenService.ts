@@ -50,26 +50,37 @@ export class NemgenService {
             '--resources=/server-config',
             '--nemesisProperties=./server-config/block-properties-file.properties',
         ];
+        if (presetData.nemgenUseTemporaryCacheDatabase) {
+            cmd.push(`--useTemporaryCacheDatabase`);
+        }
 
         const binds = [`${serverConfigWorkingDir}:/server-config`, `${nemesisWorkingDir}:/nemesis`];
 
         const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
-            catapultAppFolder: presetData.catapultAppFolder,
-            image: symbolServerImage,
-            userId: userId,
-            workdir: '/nemesis',
-            cmds: cmd,
-            binds: binds,
-        });
-
-        if (stdout.indexOf('<error>') > -1) {
-            this.logger.info(stdout);
-            this.logger.error(stderr);
+        let stdout: string;
+        let stderr: string;
+        let message: string | undefined;
+        let failed: boolean;
+        try {
+            ({ stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
+                catapultAppFolder: presetData.catapultAppFolder,
+                image: symbolServerImage,
+                userId: userId,
+                workdir: '/nemesis',
+                cmds: cmd,
+                binds: binds,
+            }));
+            failed = stdout.indexOf('<error>') > -1;
+        } catch (e) {
+            failed = true;
+            ({ stdout, stderr, message } = e);
+        }
+        if (failed) {
+            if (message) this.logger.error(message);
+            if (stdout) this.logger.info(stdout);
+            if (stderr) this.logger.error(stderr);
             throw new Error('Nemgen failed. Check the logs!');
         }
-        // deleting unused statedb and hashes folder.
-        BootstrapUtils.deleteFolder(this.logger, join(nemesisWorkingDir, 'data'));
         BootstrapUtils.deleteFolder(this.logger, join(nemesisWorkingDir, `seed`, networkIdentifier));
         this.logger.info('Nemgen executed!!!!');
     }

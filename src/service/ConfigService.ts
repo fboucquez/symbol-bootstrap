@@ -194,9 +194,8 @@ export class ConfigService {
             if (e.known) {
                 this.logger.error(e.message);
             } else {
-                this.logger.error(`Unknown error generating the configuration. ${e.message}`);
+                this.logger.error(`Unknown error generating the configuration. ${e.message}`, e);
                 this.logger.error(`The target folder '${target}' should be deleted!!!`);
-                this.logger.error(e);
             }
             throw e;
         }

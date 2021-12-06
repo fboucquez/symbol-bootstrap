@@ -393,6 +393,7 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     transactionsDirectory: string;
     faucetUrl?: string;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
+    nemgenUseTemporaryCacheDatabase: boolean;
 
     symbolWalletImage: string;
     symbolServerImage: string;
