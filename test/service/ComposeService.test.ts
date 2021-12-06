@@ -245,6 +245,19 @@ ${BootstrapUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
     });
 
+    it('Compose mainnet custom services', async () => {
+        const params = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            target: 'target/tests/ComposeService-mainnet-custom-services',
+            customPreset: './test/unit-test-profiles/custom_compose_service.yml',
+            reset: false,
+            preset: Preset.testnet,
+            assembly: Assembly.dual,
+        };
+        await assertDockerCompose(params, 'expected-mainnet-custom-services.yml');
+    });
+
     it('Compose bootstrap demo with debug on', async () => {
         const params = {
             ...ConfigService.defaultParams,

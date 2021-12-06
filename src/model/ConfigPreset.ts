@@ -15,6 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
+import { DockerCompose } from './DockerCompose';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -429,6 +430,8 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     // Allows hardcoded list. For new networks and for possible fallbacks.
     knownRestGateways?: string[];
     knownPeers?: PeerInfo[];
+    // Allows users to provide their own modification to the generate compose.yml, for example, a new docker service.
+    compose: DeepPartial<DockerCompose>;
 }
 
 export interface ConfigPreset extends CommonConfigPreset {

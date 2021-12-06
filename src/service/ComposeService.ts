@@ -375,7 +375,7 @@ export class ComposeService {
                 },
             };
 
-        dockerCompose = BootstrapUtils.pruneEmpty(dockerCompose);
+        dockerCompose = BootstrapUtils.pruneEmpty(_.merge({}, dockerCompose, presetData.compose));
         await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
         this.logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;

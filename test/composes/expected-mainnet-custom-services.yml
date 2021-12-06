@@ -1,0 +1,92 @@
+version: '2.4'
+services:
+    db:
+        user: '1000:1000'
+        environment:
+            MONGO_INITDB_DATABASE: catapult
+        container_name: db
+        image: 'mongo:4.4.3-bionic'
+        command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2
+        stop_signal: SIGINT
+        working_dir: /docker-entrypoint-initdb.d
+        volumes:
+            - './mongo:/docker-entrypoint-initdb.d:ro'
+            - '../databases/db:/dbdata:rw'
+    node:
+        user: '1000:1000'
+        container_name: node
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.1'
+        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node NORMAL true
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        restart: 'on-failure:2'
+        ports:
+            - '7900:7900'
+        volumes:
+            - '../nodes/node:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
+        depends_on:
+            - db
+            - broker
+        networks:
+            default:
+                aliases:
+                    - my-host.io
+        hostname: my-host.io
+    broker:
+        user: '1000:1000'
+        container_name: broker
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.1'
+        working_dir: /symbol-workdir
+        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker NORMAL
+        stop_signal: SIGINT
+        restart: 'on-failure:2'
+        volumes:
+            - '../nodes/node:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
+        depends_on:
+            - db
+    rest-gateway:
+        container_name: rest-gateway
+        user: '1000:1000'
+        image: 'symbolplatform/symbol-rest:2.4.0'
+        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '3000:3000'
+        restart: 'on-failure:2'
+        volumes:
+            - '../gateways/rest-gateway:/symbol-workdir:rw'
+        depends_on:
+            - db
+        networks:
+            default:
+                ipv4_address: 172.20.0.25
+    my-logging-service:
+        logging:
+            driver: awslogs
+            options:
+                awslogs-region: $AWS_REGION
+                awslogs-group: $HOSTNAME
+                awslogs-create-group: true
+                awslogs-datetime-format: '%Y-%m-%d %H:%M:%S.%f'
+                tag: '{{ with split .ImageName ":" }}{{join . "_"}}{{end}}-{{.ID}}'
+    some-other-service:
+        container_name: someOtherService
+        image: 'symbolplatform/someImage:1.0.0'
+        command: runMe.sh
+        stop_signal: SIGINT
+        working_dir: /some-workdir
+        restart: 'on-failure:2'
+        ports:
+            - '3333:3333'
+        volumes:
+            - '../some/node:/volument:rw'
+        depends_on:
+            - db
+networks:
+    default:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/24
