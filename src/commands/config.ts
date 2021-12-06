@@ -38,13 +38,13 @@ export default class Config extends Command {
         preset: flags.string({
             char: 'p',
             description: `The network preset. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file. Options are: ${Object.keys(
-                Assembly,
+                Preset,
             ).join(', ')}, my-custom-network.yml (advanced, only for custom networks).`,
         }),
         assembly: flags.string({
             char: 'a',
             description: `The assembly that defines the node(s) layout. It can be provided via custom preset or cli parameter. If not provided, the value is resolved from the target/preset.yml file. Options are: ${Object.keys(
-                Preset,
+                Assembly,
             ).join(', ')}, my-custom-assembly.yml (advanced).`,
         }),
         customPreset: flags.string({

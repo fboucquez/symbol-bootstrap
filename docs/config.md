@@ -16,15 +16,16 @@ USAGE
 OPTIONS
   -a, --assembly=assembly          The assembly that defines the node(s) layout. It can be provided via custom preset or
                                    cli parameter. If not provided, the value is resolved from the target/preset.yml
-                                   file. Options are: bootstrap, testnet, mainnet, my-custom-assembly.yml (advanced).
+                                   file. Options are: api, demo, dual, multinode, peer, my-custom-assembly.yml
+                                   (advanced).
 
   -c, --customPreset=customPreset  External preset file. Values in this file will override the provided presets.
 
   -h, --help                       It shows the help of this command.
 
   -p, --preset=preset              The network preset. It can be provided via custom preset or cli parameter. If not
-                                   provided, the value is resolved from the target/preset.yml file. Options are: api,
-                                   demo, dual, multinode, peer, my-custom-network.yml (advanced, only for custom
+                                   provided, the value is resolved from the target/preset.yml file. Options are:
+                                   bootstrap, testnet, mainnet, my-custom-network.yml (advanced, only for custom
                                    networks).
 
   -r, --reset                      It resets the configuration generating a new one.
