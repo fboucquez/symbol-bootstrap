@@ -84,7 +84,7 @@ export class VotingService {
             (presetData.useExperimentalNativeVotingKeyGeneration
                 ? new NativeVotingKeyFileProvider(logger)
                 : new CatapultVotingKeyFileProvider(logger, this.params.user));
-        const votingKeyFile = await provider.createVotingFile({
+        const { publicKey } = await provider.createVotingFile({
             presetData: presetData,
             nodeAccount: nodeAccount,
             nodePreset: nodePreset,
@@ -107,7 +107,7 @@ export class VotingService {
             logger.warn(`A new Voting File for the node ${nodeAccount.name} has been generated! `);
 
             logger.warn(
-                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${votingKeyFile.publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
+                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
             );
             logger.warn(`For linking, you can use 'symbol-bootstrap link' command, the symbol cli, or the symbol desktop wallet.`);
             logger.warn('');

@@ -19,7 +19,7 @@ import { Account } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
-import { VotingKeyFile, VotingUtils } from './VotingUtils';
+import { VotingUtils } from './VotingUtils';
 
 export interface VotingKeyParams {
     presetData: ConfigPreset;
@@ -31,8 +31,12 @@ export interface VotingKeyParams {
     votingKeyEndEpoch: number;
 }
 
+export interface VotingKeyCreationResult {
+    publicKey: string;
+}
+
 export interface VotingKeyFileProvider {
-    createVotingFile(params: VotingKeyParams): Promise<VotingKeyFile>;
+    createVotingFile(params: VotingKeyParams): Promise<VotingKeyCreationResult>;
 }
 
 export class NativeVotingKeyFileProvider implements VotingKeyFileProvider {
@@ -43,7 +47,7 @@ export class NativeVotingKeyFileProvider implements VotingKeyFileProvider {
         privateKeyTreeFileName,
         votingKeyStartEpoch,
         votingKeyEndEpoch,
-    }: VotingKeyParams): Promise<VotingKeyFile> {
+    }: VotingKeyParams): Promise<VotingKeyCreationResult> {
         const votingAccount = Account.generateNewAccount(presetData.networkType);
         const votingPrivateKey = votingAccount.privateKey;
         const votingUtils = new VotingUtils();
@@ -52,9 +56,6 @@ export class NativeVotingKeyFileProvider implements VotingKeyFileProvider {
         writeFileSync(join(votingKeysFolder, privateKeyTreeFileName), votingFile);
         return {
             publicKey: votingAccount.publicKey,
-            startEpoch: votingKeyStartEpoch,
-            endEpoch: votingKeyEndEpoch,
-            filename: privateKeyTreeFileName,
         };
     }
 }
@@ -67,7 +68,7 @@ export class CatapultVotingKeyFileProvider implements VotingKeyFileProvider {
         privateKeyTreeFileName,
         votingKeyStartEpoch,
         votingKeyEndEpoch,
-    }: VotingKeyParams): Promise<VotingKeyFile> {
+    }: VotingKeyParams): Promise<VotingKeyCreationResult> {
         this.logger.info(`Voting file is created using docker and catapult.tools.votingkey`);
         const votingAccount = Account.generateNewAccount(presetData.networkType);
         const votingPrivateKey = votingAccount.privateKey;
@@ -96,9 +97,6 @@ export class CatapultVotingKeyFileProvider implements VotingKeyFileProvider {
         }
         return {
             publicKey: votingAccount.publicKey,
-            startEpoch: votingKeyStartEpoch,
-            endEpoch: votingKeyEndEpoch,
-            filename: privateKeyTreeFileName,
         };
     }
 }
