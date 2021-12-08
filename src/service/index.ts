@@ -18,6 +18,7 @@ export * from './ReportService';
 export * from './RunService';
 export * from './TransactionUtils';
 export * from './VerifyService';
+export * from './VotingKeyFileProvider';
 export * from './VotingService';
 export * from './VotingUtils';
 export * from './ZipUtils';

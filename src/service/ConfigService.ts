@@ -40,8 +40,8 @@ import { ConfigLoader } from './ConfigLoader';
 import { CryptoUtils } from './CryptoUtils';
 import { NemgenService } from './NemgenService';
 import { RemoteNodeService } from './RemoteNodeService';
-import { ReportService } from './ReportService';
-import { VotingService } from './VotingService';
+import { ReportParams, ReportService } from './ReportService';
+import { VotingParams, VotingService } from './VotingService';
 
 /**
  * Defined presets.
@@ -75,7 +75,7 @@ export enum KeyName {
     ServiceProvider = 'Service Provider',
 }
 
-export interface ConfigParams {
+export interface ConfigParams extends VotingParams, ReportParams {
     report: boolean;
     reset: boolean;
     upgrade: boolean;
