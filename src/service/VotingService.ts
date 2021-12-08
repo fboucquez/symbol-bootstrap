@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { Account } from 'symbol-sdk';
 import { Logger } from '../logger/Logger';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
+import { CatapultVotingKeyFileProvider, NativeVotingKeyFileProvider, VotingKeyFileProvider } from './VotingKeyFileProvider';
 import { VotingUtils } from './VotingUtils';
 
-type VotingParams = { target: string; user: string };
+export interface VotingParams {
+    target: string;
+    user: string;
+    votingKeyFileProvider?: VotingKeyFileProvider;
+}
 
 export class VotingService {
     constructor(private readonly logger: Logger, protected readonly params: VotingParams) {}
@@ -35,7 +38,6 @@ export class VotingService {
         updateVotingKey: boolean | undefined,
         nemesisBlock: boolean,
     ): Promise<boolean> {
-        const symbolServerImage = presetData.symbolServerImage;
         const networkEpoch = currentNetworkEpoch || presetData.lastKnownNetworkEpoch || 1;
         const update = updateVotingKey === undefined ? presetData.autoUpdateVotingKeys : updateVotingKey;
         const logger = this.logger;
@@ -54,7 +56,7 @@ export class VotingService {
         }
         await BootstrapUtils.mkdir(votingKeysFolder);
         const votingUtils = new VotingUtils();
-        await BootstrapUtils.deleteFile(join(votingKeysFolder, 'metadata.yml'));
+        BootstrapUtils.deleteFile(join(votingKeysFolder, 'metadata.yml'));
         const currentVotingFiles = votingUtils.loadVotingFiles(votingKeysFolder);
         const maxVotingKeyEndEpoch = Math.max(currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || 0, networkEpoch - 1);
 
@@ -74,42 +76,26 @@ export class VotingService {
         }
         const votingKeyStartEpoch = maxVotingKeyEndEpoch + 1;
         const votingKeyEndEpoch = maxVotingKeyEndEpoch + votingKeyDesiredLifetime;
-        const votingAccount = Account.generateNewAccount(presetData.networkType);
-        const votingPrivateKey = votingAccount.privateKey;
         const epochs = votingKeyEndEpoch - votingKeyStartEpoch + 1;
         logger.info(`Creating Voting key file of ${epochs} epochs for node ${nodeAccount.name}. This could take a while!`);
         const privateKeyTreeFileName = `private_key_tree${currentVotingFiles.length + 1}.dat`;
-        if (presetData.useExperimentalNativeVotingKeyGeneration) {
-            logger.info('Voting file is created using the native typescript voting key file generator!');
-            const votingFile = await votingUtils.createVotingFile(votingPrivateKey, votingKeyStartEpoch, votingKeyEndEpoch);
-            writeFileSync(join(votingKeysFolder, privateKeyTreeFileName), votingFile);
-        } else {
-            logger.info(`Voting file is created using docker and the default's catapult.tools.votingkey`);
-            const binds = [`${votingKeysFolder}:/votingKeys:rw`];
-            const cmd = [
-                `${presetData.catapultAppFolder}/bin/catapult.tools.votingkey`,
-                `--secret=${votingPrivateKey}`,
-                `--startEpoch=${votingKeyStartEpoch}`,
-                `--endEpoch=${votingKeyEndEpoch}`,
-                `--output=/votingKeys/${privateKeyTreeFileName}`,
-            ];
-            const userId = await BootstrapUtils.resolveDockerUserFromParam(logger, this.params.user);
-            const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(logger, {
-                catapultAppFolder: presetData.catapultAppFolder,
-                image: symbolServerImage,
-                userId: userId,
-                cmds: cmd,
-                binds: binds,
-            });
+        const provider =
+            this.params.votingKeyFileProvider ||
+            (presetData.useExperimentalNativeVotingKeyGeneration
+                ? new NativeVotingKeyFileProvider(logger)
+                : new CatapultVotingKeyFileProvider(logger, this.params.user));
+        const { publicKey } = await provider.createVotingFile({
+            presetData: presetData,
+            nodeAccount: nodeAccount,
+            nodePreset: nodePreset,
+            votingKeysFolder: votingKeysFolder,
+            privateKeyTreeFileName: privateKeyTreeFileName,
+            votingKeyStartEpoch: votingKeyStartEpoch,
+            votingKeyEndEpoch: votingKeyEndEpoch,
+        });
 
-            if (stdout.indexOf('<error> ') > -1) {
-                logger.info(stdout);
-                logger.error(stderr);
-                throw new Error('Voting key failed. Check the logs!');
-            }
-        }
         if (nemesisBlock) {
-            // For a new local network, voting keys are in the nemesisBlock.
+            // For a new network, voting keys are in the nemesisBlock.
             logger.info('');
             logger.info(
                 `A new Voting File for the node ${nodeAccount.name} has been generated. The link transaction will be included in the nemesis block.`,
@@ -121,7 +107,7 @@ export class VotingService {
             logger.warn(`A new Voting File for the node ${nodeAccount.name} has been generated! `);
 
             logger.warn(
-                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${votingAccount.publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
+                `Remember to send a Voting Key Link transaction from main ${nodeAccount.main.address} using the Voting Public Key: ${publicKey} with startEpoch: ${votingKeyStartEpoch} and endEpoch: ${votingKeyEndEpoch}`,
             );
             logger.warn(`For linking, you can use 'symbol-bootstrap link' command, the symbol cli, or the symbol desktop wallet.`);
             logger.warn('');
