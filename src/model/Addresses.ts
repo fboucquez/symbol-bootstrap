@@ -46,7 +46,6 @@ export interface NodeAccount {
 export interface MosaicAccounts {
     name: string;
     id: string;
-    type: 'currency' | 'harvest';
     accounts: ConfigAccount[];
 }
 
