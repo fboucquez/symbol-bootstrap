@@ -18,6 +18,7 @@ import { createWriteStream } from 'fs';
 import * as StreamZip from 'node-stream-zip';
 import { Logger } from '../logger';
 import { BootstrapUtils } from './BootstrapUtils';
+import { Utils } from './Utils';
 
 export interface ZipItem {
     from: string;
@@ -79,7 +80,7 @@ export class ZipUtils {
             }
             archive.on('progress', (progress) => {
                 const message = `${progress.entries.processed} entries zipped!`;
-                BootstrapUtils.logSameLineMessage(message);
+                Utils.logSameLineMessage(message);
             });
             await archive.finalize();
         });
@@ -99,7 +100,7 @@ export class ZipUtils {
                     process++;
                     const percentage = ((process * 100) / totalFiles).toFixed(2);
                     const message = `${percentage}% | ${process} files unzipped out of ${totalFiles}`;
-                    BootstrapUtils.logSameLineMessage(message);
+                    Utils.logSameLineMessage(message);
                 }
                 if (BootstrapUtils.stopProcess) {
                     zip.close();

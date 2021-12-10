@@ -16,8 +16,7 @@
 import * as os from 'os';
 import * as semver from 'semver';
 import { Logger } from '../logger';
-import { BootstrapUtils } from './BootstrapUtils';
-
+import { RuntimeService } from './RuntimeService';
 export interface VerifyReport {
     platform: string;
     lines: ReportLine[];
@@ -142,7 +141,7 @@ export class DockerRunVerifyAction implements VerifyAction {
         const recommendationUrl = `https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket`;
 
         try {
-            const output = (await BootstrapUtils.exec(this.logger, command)).stdout.trim();
+            const output = (await this.runtimeService.exec(command)).stdout.trim();
             const expectedText = 'Hello from Docker!';
             if (output.indexOf(expectedText) == -1) {
                 return {
@@ -168,7 +167,7 @@ export class DockerRunVerifyAction implements VerifyAction {
 export class SudoRunVerifyAction implements VerifyAction {
     async verify(): Promise<ReportLine> {
         const header = 'Sudo User Test';
-        if (BootstrapUtils.isRoot()) {
+        if (RuntimeService.isRoot()) {
             return {
                 header,
                 message: `Your are running with the sudo user!`,

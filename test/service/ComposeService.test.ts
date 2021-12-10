@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { Assembly, LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType, RuntimeService } from '../../src';
 import { DockerCompose } from '../../src/model';
 import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
@@ -46,7 +46,7 @@ describe('ComposeService', () => {
             if (!service.user) {
                 return service;
             }
-            const user = await BootstrapUtils.getDockerUserGroup(logger);
+            const user = await new RuntimeService(logger).getDockerUserGroup();
             if (user) {
                 service.user = user;
             } else {

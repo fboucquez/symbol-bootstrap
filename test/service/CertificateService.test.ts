@@ -20,7 +20,7 @@ import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { LoggerFactory, LogType, RuntimeService } from '../../src';
 import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('CertificateService', () => {
@@ -43,7 +43,7 @@ describe('CertificateService', () => {
     it('createCertificates', async () => {
         const target = 'target/tests/CertificateService.test';
         await BootstrapUtils.deleteFolder(logger, target);
-        const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
+        const service = new CertificateService(logger, { target: target, user: await new RuntimeService(logger).getDockerUserGroup() });
         const presetData = new ConfigLoader(logger).createPresetData({
             workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.bootstrap,
