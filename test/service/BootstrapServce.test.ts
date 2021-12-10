@@ -17,6 +17,8 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Assembly, BootstrapService, Constants, LoggerFactory, LogType, Preset, StartParams } from '../../src';
+import { Assembly, BootstrapUtils, DefaultAccountResolver, LoggerFactory, LogType } from '../../src';
+import { BootstrapService, Preset, StartParams } from '../../src/service';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
@@ -29,6 +31,7 @@ describe('BootstrapService', () => {
             reset: true,
             upgrade: false,
             timeout: 60000 * 5,
+            accountResolver: new DefaultAccountResolver(),
             target: 'target/tests/BootstrapService.standard',
             detached: true,
             user: 'current',
@@ -51,6 +54,7 @@ describe('BootstrapService', () => {
             reset: true,
             upgrade: false,
             timeout: 60000 * 5,
+            accountResolver: new DefaultAccountResolver(),
             target: 'target/tests/BootstrapService.testnet',
             detached: true,
             user: 'current',

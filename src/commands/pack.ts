@@ -30,6 +30,8 @@ import {
     ZipItem,
     ZipUtils,
 } from '../';
+import { LoggerFactory, LogType } from '../logger';
+import { BootstrapAccountResolver, BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, ZipItem, ZipUtils } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -92,9 +94,11 @@ export default class Pack extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
+        const workingDir = Constants.defaultWorkingDir;
         const service = new BootstrapService(logger);
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
-        const configResult = await service.config({ ...flags, workingDir: Constants.defaultWorkingDir });
+        const accountResolver = new BootstrapAccountResolver(logger);
+        const configResult = await service.config({ ...flags, workingDir});
         await service.compose(flags, configResult.presetData);
 
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';

@@ -32,6 +32,8 @@ import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { VotingKeyAccount } from './VotingUtils';
 
+import { AccountResolver, AnnounceService, BootstrapAccountResolver, ConfigLoader, TransactionFactory, VotingKeyAccount } from '../service';
+import { BootstrapUtils } from './BootstrapUtils';
 /**
  * params necessary to announce link transactions network.
  */
@@ -46,6 +48,7 @@ export type LinkParams = {
     customPreset?: string;
     serviceProviderPublicKey?: string;
     removeOldLinked?: boolean; //TEST ONLY!
+    accountResolver?: AccountResolver;
 };
 
 export type KeyAccount = { publicKey: string };
@@ -86,8 +89,8 @@ export class LinkService implements TransactionFactory {
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         this.logger.info(`${this.params.unlink ? 'Unlinking' : 'Linking'} nodes`);
-
-        await new AnnounceService(this.logger).announce(
+        const accountResolver = this.params.accountResolver || new BootstrapAccountResolver(this.logger);
+        await new AnnounceService(this.logger, accountResolver).announce(
             this.params.url,
             this.params.maxFee,
             this.params.useKnownRestGateways,

@@ -20,9 +20,14 @@ import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
 import { Account, NetworkType } from 'symbol-sdk';
+import { ConfigurationUtils, LoggerFactory, LogType } from '../../src';
 import { ConfigAccount } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
 
+import { BootstrapUtils, CryptoUtils } from '../../src/service';
+import assert = require('assert');
+import nock = require('nock');
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapUtils', () => {
     it('BootstrapUtils generate random', async () => {
         const networkType = NetworkType.TEST_NET;
@@ -31,7 +36,7 @@ describe('BootstrapUtils', () => {
 
         for (let i = 0; i < 10; i++) {
             console.log();
-            const account = ConfigLoader.toConfig(Account.generateNewAccount(networkType));
+            const account = ConfigurationUtils.toConfigAccount(Account.generateNewAccount(networkType));
             balances.push({ ...account, balance: 1000000 });
         }
         console.log(BootstrapUtils.toYaml({ nemesisBalances: balances }));

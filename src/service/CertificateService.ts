@@ -26,6 +26,7 @@ import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
+import { AccountResolver, BootstrapUtils, KeyName } from './';
 
 export interface CertificateParams {
     readonly target: string;
@@ -118,21 +119,21 @@ export class CertificateService {
         const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'cert');
         const networkType = presetData.networkType;
 
-        const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const mainAccount = await this.accountResolver.resolveAccount(
             networkType,
             providedCertificates.main,
             KeyName.Main,
             name,
             'generating the server CA certificates',
+            'Should not generate!',
         );
-        const transportPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const transportAccount = await this.accountResolver.resolveAccount(
             networkType,
             providedCertificates.transport,
             KeyName.Transport,
             name,
             'generating the server Node certificates',
+            'Should not generate!',
         );
 
         if (!renew) {

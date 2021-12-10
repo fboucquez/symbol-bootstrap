@@ -17,6 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
 import { Assembly, BootstrapService, CommandUtils, ConfigService, Constants, Preset } from '../service';
+import { Assembly, BootstrapAccountResolver, BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
@@ -86,6 +87,8 @@ export default class Config extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).config({ ...flags, workingDir: Constants.defaultWorkingDir });
+        const workingDir = Constants.defaultWorkingDir;
+        const accountResolver = new BootstrapAccountResolver(logger);
+        await new BootstrapService(logger).config({ ...flags, workingDir, accountResolver, workingDir });
     }
 }

@@ -15,7 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { CommandUtils, LoggerFactory, System, VerifyService } from '../';
+import { LoggerFactory, System } from '../logger';
+import { CommandUtils, VerifyService } from '../service';
 
 export default class Verify extends Command {
     static description =
