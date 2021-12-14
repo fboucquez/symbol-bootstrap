@@ -8,10 +8,10 @@
     },
     "bugs": "https://github.com/nemtech/symbol-bootstrap/issues",
     "dependencies": {
-        "@oclif/command": "^1.7.0",
-        "@oclif/config": "^1.16.0",
+        "@oclif/command": "^1.8.12",
+        "@oclif/config": "^1.18.2",
         "@oclif/plugin-autocomplete": "^0.3.0",
-        "@oclif/plugin-help": "^3.1.0",
+        "@oclif/plugin-help": "^3.2.17",
         "archiver": "^5.2.0",
         "cross-fetch": "^3.1.4",
         "figlet": "^1.2.4",
@@ -32,7 +32,7 @@
         "winston": "^3.3.3"
     },
     "devDependencies": {
-        "@oclif/dev-cli": "^1.22.2",
+        "@oclif/dev-cli": "^1.26.9",
         "@oclif/test": "^1.2.8",
         "@types/archiver": "^5.1.0",
         "@types/chai": "^4.2.12",
@@ -109,6 +109,7 @@
         "postpack": "npx shx rm -f oclif.manifest.json",
         "posttest": "eslint src/ test/ --ext .ts",
         "oclif-doc": "oclif-dev manifest && oclif-dev readme --multi",
+        "oclif-debug": "env DEBUG=* oclif-dev manifest",
         "watch": "tsc -b -w",
         "compile": "tsc -b",
         "build": "npm run clean && npm run compile",
