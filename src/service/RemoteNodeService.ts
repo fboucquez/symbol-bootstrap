@@ -101,23 +101,21 @@ export class RemoteNodeService {
         this.logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
         return (
             await Promise.all(
-                urls.map(
-                    async (restGatewayUrl): Promise<RepositoryInfo | undefined> => {
-                        const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
-                        try {
-                            const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
-                            return {
-                                restGatewayUrl,
-                                repositoryFactory,
-                                chainInfo,
-                            };
-                        } catch (e) {
-                            const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}`;
-                            this.logger.warn(message);
-                            return undefined;
-                        }
-                    },
-                ),
+                urls.map(async (restGatewayUrl): Promise<RepositoryInfo | undefined> => {
+                    const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
+                    try {
+                        const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
+                        return {
+                            restGatewayUrl,
+                            repositoryFactory,
+                            chainInfo,
+                        };
+                    } catch (e) {
+                        const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}`;
+                        this.logger.warn(message);
+                        return undefined;
+                    }
+                }),
             )
         )
             .filter((i) => i)
