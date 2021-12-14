@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
+import { expect } from 'chai';
 import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import 'mocha';
 import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
 import { BootstrapService, Preset, StartParams } from '../../src/service';

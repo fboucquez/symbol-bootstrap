@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { it } from 'mocha';
 import { LinkAction } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
