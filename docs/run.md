@@ -18,7 +18,7 @@ OPTIONS
       If provided, docker-compose will run with -b (--build)
 
   -d, --detached
-      If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before 
+      If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before
       returning
 
   -h, --help
@@ -41,7 +41,7 @@ OPTIONS
       The health check process handles 'repeat' and custom 'openPort' services.
 
   --logger=logger
-      [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use ',' to select 
+      [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use ',' to select
       multiple loggers.
 
   --pullImages
