@@ -29,7 +29,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { readFileSync } from 'fs';
 import 'mocha';
 import { Convert, KeyPair } from 'symbol-sdk';

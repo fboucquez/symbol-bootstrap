@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { Account, NetworkType } from 'symbol-sdk';
 import { Assembly, BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
 import { Wizard } from '../../src/commands/wizard';

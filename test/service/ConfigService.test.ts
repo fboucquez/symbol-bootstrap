@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import * as _ from 'lodash';
 import 'mocha';
 import { join } from 'path';

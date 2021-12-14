@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import 'mocha';
 import { PrivateKeySecurityMode } from '../../src/model';
 import { CryptoUtils } from '../../src/service/CryptoUtils';

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import 'mocha';
 import { it } from 'mocha';
 import { AccountInfoDTO } from 'symbol-openapi-typescript-fetch-client';
