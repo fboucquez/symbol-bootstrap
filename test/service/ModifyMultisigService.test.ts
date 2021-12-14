@@ -17,7 +17,7 @@ describe('ModifyMultisigService', () => {
     const networkType = NetworkType.TEST_NET;
     const maxFee = UInt64.fromUint(2_000_000);
     const mainAccount = Account.createFromPrivateKey('CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD', networkType);
-    const presetData = ({ networkType, useKnownRestGateways } as unknown) as ConfigPreset;
+    const presetData = { networkType, useKnownRestGateways } as unknown as ConfigPreset;
     const deadline = Deadline.create(1_616_694_977);
 
     const cosigner1 = Account.createFromPrivateKey('41C0163B6A057A4E7B6264AC5BB36C44E0245F8552242BF6A163617C4D616ED3', networkType);

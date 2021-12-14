@@ -123,7 +123,7 @@ describe('Announce Service', () => {
 
     const stubCommon = (networkType: NetworkType, epochAdjustment: number, currencyMosaicId: MosaicId, networkGenerationHash: string) => {
         stub(RemoteNodeService.prototype, 'getBestRepositoryInfo').callsFake(() =>
-            Promise.resolve(({
+            Promise.resolve({
                 repositoryFactory: {
                     getNetworkType() {
                         return of(networkType);
@@ -168,7 +168,7 @@ describe('Announce Service', () => {
                         return of(networkGenerationHash);
                     },
                 },
-            } as unknown) as RepositoryInfo),
+            } as unknown as RepositoryInfo),
         );
 
         stub(announceService, <any>'getAccountInfo').returns(

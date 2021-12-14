@@ -663,9 +663,9 @@ export class AnnounceService {
             return true;
         } catch (e) {
             const message =
-                `Simple Transaction ${signedTransaction.type} ${
-                    signedTransaction.hash
-                } - signer ${signedTransaction.getSignerAddress().plain()} failed!! ` + e.message;
+                `Simple Transaction ${signedTransaction.type} ${signedTransaction.hash} - signer ${signedTransaction
+                    .getSignerAddress()
+                    .plain()} failed!! ` + e.message;
             this.logger.error(message);
             return false;
         }
