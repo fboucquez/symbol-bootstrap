@@ -1,4 +1,4 @@
-import { RuntimeService } from './RuntimeService';
+import { OSUtils } from './OSUtils';
 
 /**
  * Random utility methods that don't fit other place.
@@ -21,7 +21,7 @@ export class Utils {
         }
     }
     public static logSameLineMessage(message: string): void {
-        process.stdout.write(RuntimeService.isWindows() ? '\x1b[0G' : '\r');
+        process.stdout.write(OSUtils.isWindows() ? '\x1b[0G' : '\r');
         process.stdout.write(message);
     }
 }

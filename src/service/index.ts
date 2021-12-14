@@ -12,6 +12,7 @@ export * from './CryptoUtils';
 export * from './LinkService';
 export * from './ModifyMultisigService';
 export * from './NemgenService';
+export * from './OSUtils';
 export * from './PortService';
 export * from './RemoteNodeService';
 export * from './ReportService';

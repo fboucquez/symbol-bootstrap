@@ -16,6 +16,7 @@
 import * as os from 'os';
 import * as semver from 'semver';
 import { Logger } from '../logger';
+import { OSUtils } from './OSUtils';
 import { RuntimeService } from './RuntimeService';
 export interface VerifyReport {
     platform: string;
@@ -47,7 +48,7 @@ export interface VerifyAction {
 
 export class AppVersionService {
     public static readonly semverOptions = { loose: true };
-    constructor(private readonly logger: Logger) {}
+    constructor(private readonly logger: Logger, private readonly runtimeService: RuntimeService) {}
     public loadVersion(text: string): string | undefined {
         return text
             .replace(',', '')
@@ -61,7 +62,7 @@ export class AppVersionService {
     }
 
     public async loadVersionFromCommand(command: string): Promise<string | undefined> {
-        return this.loadVersion((await BootstrapUtils.exec(this.logger, command)).stdout.trim());
+        return this.loadVersion((await this.runtimeService.exec(command)).stdout.trim());
     }
 
     public async verifyInstalledApp(
@@ -134,7 +135,7 @@ export class AppVersionVerifyAction implements VerifyAction {
 }
 
 export class DockerRunVerifyAction implements VerifyAction {
-    constructor(private readonly logger: Logger) {}
+    constructor(private readonly logger: Logger, private readonly runtimeService: RuntimeService) {}
     async verify(): Promise<ReportLine> {
         const header = 'Docker Run Test';
         const command = 'docker run hello-world';
@@ -167,7 +168,7 @@ export class DockerRunVerifyAction implements VerifyAction {
 export class SudoRunVerifyAction implements VerifyAction {
     async verify(): Promise<ReportLine> {
         const header = 'Sudo User Test';
-        if (RuntimeService.isRoot()) {
+        if (OSUtils.isRoot()) {
             return {
                 header,
                 message: `Your are running with the sudo user!`,
@@ -177,20 +178,21 @@ export class SudoRunVerifyAction implements VerifyAction {
         return { header, message: `Your are not the sudo user!` };
     }
     shouldRun(): boolean {
-        return !BootstrapUtils.isWindows();
+        return !OSUtils.isWindows();
     }
 }
 
 export class VerifyService {
     private readonly expectedVersions: ExpectedVersions;
     public static readonly currentNodeJsVersion = process.versions.node;
-
-    public actions: VerifyAction[] = [];
+    public readonly actions: VerifyAction[] = [];
+    private readonly runtimeService: RuntimeService;
 
     constructor(private readonly logger: Logger, expectedVersions: Partial<ExpectedVersions> = {}) {
+        this.runtimeService = new RuntimeService(logger);
         this.expectedVersions = { ...defaultExpectedVersions, ...expectedVersions };
 
-        const appVersionService = new AppVersionService(this.logger);
+        const appVersionService = new AppVersionService(this.logger, this.runtimeService);
         this.actions.push(
             new AppVersionVerifyAction(appVersionService, {
                 header: 'NodeVersion',
@@ -216,7 +218,7 @@ export class VerifyService {
                 expectedVersion: this.expectedVersions.dockerCompose,
             }),
         );
-        this.actions.push(new DockerRunVerifyAction(this.logger));
+        this.actions.push(new DockerRunVerifyAction(this.logger, this.runtimeService));
         this.actions.push(new SudoRunVerifyAction());
     }
 

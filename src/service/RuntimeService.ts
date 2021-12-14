@@ -17,6 +17,7 @@
 import { exec as callbackExec, spawn } from 'child_process';
 import * as util from 'util';
 import { Logger } from '../logger';
+import { OSUtils } from './OSUtils';
 import { Utils } from './Utils';
 const exec = util.promisify(callbackExec);
 /**
@@ -125,7 +126,7 @@ export class RuntimeService {
         }
     }
     public async getDockerUserGroup(): Promise<string> {
-        const isWin = RuntimeService.isWindows();
+        const isWin = OSUtils.isWindows();
         if (isWin) {
             return '';
         }
@@ -156,13 +157,5 @@ export class RuntimeService {
             return this.getDockerUserGroup();
         }
         return paramUser;
-    }
-
-    public static isRoot(): boolean {
-        return !RuntimeService.isWindows() && process?.getuid() === 0;
-    }
-
-    public static isWindows(): boolean {
-        return process.platform === 'win32';
     }
 }

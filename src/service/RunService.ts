@@ -23,6 +23,7 @@ import { Logger } from '../logger';
 import { DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { OSUtils } from './OSUtils';
 import { PortService } from './PortService';
 import { RuntimeService } from './RuntimeService';
 /**
@@ -203,7 +204,7 @@ export class RunService {
             volumenList.map(async (v) => {
                 const volumenPath = join(this.params.target, `docker`, v);
                 if (!existsSync(volumenPath)) await BootstrapUtils.mkdir(volumenPath);
-                if (v.startsWith('../databases') && RuntimeService.isRoot()) {
+                if (v.startsWith('../databases') && OSUtils.isRoot()) {
                     this.logger.info(`Chmod 777 folder ${volumenPath}`);
                     chmodSync(volumenPath, '777');
                 }
