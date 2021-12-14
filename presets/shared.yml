@@ -22,7 +22,6 @@ namespaceGracePeriodDuration: 30d
 maxAccountRestrictionValues: 512
 maxMosaicRestrictionValues: 20
 maxMessageSize: 1024
-nemgenUseTemporaryCacheDatabase: true
 reservedRootNamespaceNames: 'symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info'
 defaultDynamicFeeMultiplier: 1000
 minFeeMultiplier: 100

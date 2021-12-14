@@ -49,10 +49,8 @@ export class NemgenService {
             `${presetData.catapultAppFolder}/bin/catapult.tools.nemgen`,
             '--resources=/server-config',
             '--nemesisProperties=./server-config/block-properties-file.properties',
+            '--useTemporaryCacheDatabase',
         ];
-        if (presetData.nemgenUseTemporaryCacheDatabase) {
-            cmd.push(`--useTemporaryCacheDatabase`);
-        }
 
         const binds = [`${serverConfigWorkingDir}:/server-config`, `${nemesisWorkingDir}:/nemesis`];
 
