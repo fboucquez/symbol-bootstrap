@@ -24,6 +24,8 @@ import { DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
+import { FileSystemService } from './FileSystemService';
 import { OSUtils } from './OSUtils';
 import { PortService } from './PortService';
 import { RuntimeService } from './RuntimeService';
@@ -43,17 +45,19 @@ export type RunParams = {
 
 export class RunService {
     public static readonly defaultParams: RunParams = {
-        target: BootstrapUtils.defaultTargetFolder,
+        target: Constants.defaultTargetFolder,
         timeout: 60000,
         pullImages: false,
         resetData: false,
     };
 
     private readonly configLoader: ConfigLoader;
+    private readonly fileSystemService: FileSystemService;
     private readonly runtimeService: RuntimeService;
 
     constructor(private readonly logger: Logger, protected readonly params: RunParams) {
         this.configLoader = new ConfigLoader(this.logger);
+        this.fileSystemService = new FileSystemService(this.logger);
         this.runtimeService = new RuntimeService(this.logger);
     }
 
@@ -106,10 +110,10 @@ export class RunService {
 
     private async checkCertificates(): Promise<boolean> {
         const presetData = this.configLoader.loadExistingPresetData(this.params.target, false);
-        const service = new CertificateService(this.logger, { target: this.params.target, user: BootstrapUtils.CURRENT_USER });
+        const service = new CertificateService(this.logger, { target: this.params.target, user: Constants.CURRENT_USER });
         const allServicesChecks: Promise<boolean>[] = (presetData.nodes || []).map(async (nodePreset) => {
             const name = nodePreset.name;
-            const certFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
+            const certFolder = this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'cert');
             const willExpireReport = await service.willCertificateExpire(
                 presetData.symbolServerImage,
                 certFolder,
@@ -190,19 +194,19 @@ export class RunService {
         const preset = this.configLoader.loadExistingPresetData(target, false);
         await Promise.all(
             (preset.nodes || []).map(async (node) => {
-                const componentConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, node.name);
+                const componentConfigFolder = this.fileSystemService.getTargetNodesFolder(target, false, node.name);
                 const dataFolder = join(componentConfigFolder, 'data');
                 const logsFolder = join(componentConfigFolder, 'logs');
-                BootstrapUtils.deleteFolder(this.logger, dataFolder);
-                BootstrapUtils.deleteFolder(this.logger, logsFolder);
-                await BootstrapUtils.mkdir(dataFolder);
-                await BootstrapUtils.mkdir(logsFolder);
+                this.fileSystemService.deleteFolder(dataFolder);
+                this.fileSystemService.deleteFolder(logsFolder);
+                await this.fileSystemService.mkdir(dataFolder);
+                await this.fileSystemService.mkdir(logsFolder);
             }),
         );
         (preset.gateways || []).forEach((node) => {
-            BootstrapUtils.deleteFolder(this.logger, BootstrapUtils.getTargetGatewayFolder(target, false, node.name, 'logs'));
+            this.fileSystemService.deleteFolder(this.fileSystemService.getTargetGatewayFolder(target, false, node.name, 'logs'));
         });
-        BootstrapUtils.deleteFolder(this.logger, BootstrapUtils.getTargetDatabasesFolder(target, false));
+        this.fileSystemService.deleteFolder(this.fileSystemService.getTargetDatabasesFolder(target, false));
     }
 
     public async stop(): Promise<void> {
@@ -232,7 +236,7 @@ export class RunService {
         await Promise.all(
             volumenList.map(async (v) => {
                 const volumenPath = join(this.params.target, `docker`, v);
-                if (!existsSync(volumenPath)) await BootstrapUtils.mkdir(volumenPath);
+                if (!existsSync(volumenPath)) await this.fileSystemService.mkdir(volumenPath);
                 if (v.startsWith('../databases') && OSUtils.isRoot()) {
                     this.logger.info(`Chmod 777 folder ${volumenPath}`);
                     chmodSync(volumenPath, '777');

@@ -18,16 +18,19 @@ import { promises } from 'fs';
 import { join } from 'path';
 import { Logger } from '../logger';
 import { ConfigPreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigParams } from './ConfigService';
+import { Constants } from './Constants';
+import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 
 type NemgenParams = ConfigParams;
 
 export class NemgenService {
     private readonly runtimeService: RuntimeService;
+    private readonly fileSystemService: FileSystemService;
     constructor(private readonly logger: Logger, protected readonly params: NemgenParams) {
         this.runtimeService = new RuntimeService(logger);
+        this.fileSystemService = new FileSystemService(logger);
     }
 
     public async run(presetData: ConfigPreset): Promise<void> {
@@ -39,15 +42,15 @@ export class NemgenService {
             throw new Error('Nodes must be defined in preset when running nemgen');
         }
 
-        const nemesisWorkingDir = BootstrapUtils.getTargetNemesisFolder(target, true);
+        const nemesisWorkingDir = this.fileSystemService.getTargetNemesisFolder(target, true);
         const nemesisSeedFolder = join(nemesisWorkingDir, `seed`, networkIdentifier, `0000`);
-        await BootstrapUtils.mkdir(nemesisSeedFolder);
-        await promises.copyFile(join(BootstrapUtils.ROOT_FOLDER, `config`, `hashes.dat`), join(nemesisSeedFolder, `hashes.dat`));
+        await this.fileSystemService.mkdir(nemesisSeedFolder);
+        await promises.copyFile(join(Constants.ROOT_FOLDER, `config`, `hashes.dat`), join(nemesisSeedFolder, `hashes.dat`));
         const name = presetData.nodes[0].name;
-        const serverConfigWorkingDir = BootstrapUtils.getTargetNodesFolder(target, true, name, 'server-config');
+        const serverConfigWorkingDir = this.fileSystemService.getTargetNodesFolder(target, true, name, 'server-config');
 
-        BootstrapUtils.validateFolder(nemesisWorkingDir);
-        BootstrapUtils.validateFolder(serverConfigWorkingDir);
+        this.fileSystemService.validateFolder(nemesisWorkingDir);
+        this.fileSystemService.validateFolder(serverConfigWorkingDir);
 
         const cmd = [
             `${presetData.catapultAppFolder}/bin/catapult.tools.nemgen`,
@@ -83,7 +86,7 @@ export class NemgenService {
             if (stderr) this.logger.error(stderr);
             throw new Error('Nemgen failed. Check the logs!');
         }
-        BootstrapUtils.deleteFolder(this.logger, join(nemesisWorkingDir, `seed`, networkIdentifier));
+        this.fileSystemService.deleteFolder(join(nemesisWorkingDir, `seed`, networkIdentifier));
         this.logger.info('Nemgen executed!!!!');
     }
 }

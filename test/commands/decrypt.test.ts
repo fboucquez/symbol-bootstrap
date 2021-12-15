@@ -16,10 +16,11 @@
 
 import { expect, test } from '@oclif/test';
 import { existsSync } from 'fs';
-import { BootstrapUtils, CryptoUtils, LoggerFactory, LogType } from '../../src';
+import { BootstrapUtils, CryptoUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const fileSystemService = new FileSystemService(logger);
 describe('decrypt', () => {
-    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
+    test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
         .stdout()
         .command('decrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/plain.yml --password 1111'.split(' '))
         .it('runs decrypt and creates file', async (ctx) => {
@@ -33,7 +34,7 @@ describe('decrypt', () => {
             expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
         });
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
+    test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
         .stdout()
         .command('decrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/plain.yml --password 1111'.split(' '))
         .it('runs decrypt on plain and creates file', async (ctx) => {
@@ -46,7 +47,7 @@ describe('decrypt', () => {
             expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
         });
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
+    test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
         .stdout()
         .command('decrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/plain.yml --password 1111'.split(' '))
         .it('runs decrypt on an plain file and creates file', async (ctx) => {
@@ -60,7 +61,7 @@ describe('decrypt', () => {
             expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
         });
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
+    test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
         .stdout()
         .command('decrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/plain.yml --password 1'.split(' '))
         .catch((ctx) => {
@@ -68,7 +69,7 @@ describe('decrypt', () => {
         })
         .it('password too short');
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
+    test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
         .stdout()
         .command('decrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/plain.yml --password 222222'.split(' '))
         .catch((ctx) => {
@@ -76,7 +77,7 @@ describe('decrypt', () => {
         })
         .it('invalid password');
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
+    test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
         .stdout()
         .command('decrypt --source test/encrypt/plain.yml --destination test/encrypt/plain.yml --password 1111'.split(' '))
         .catch((ctx) => {

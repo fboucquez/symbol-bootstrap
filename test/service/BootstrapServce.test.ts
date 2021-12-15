@@ -16,8 +16,7 @@
 
 import { expect } from 'chai';
 import 'mocha';
-import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
-import { BootstrapService, Preset, StartParams } from '../../src/service';
+import { Assembly, BootstrapService, Constants, LoggerFactory, LogType, Preset, StartParams } from '../../src';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
@@ -25,7 +24,7 @@ describe('BootstrapService', () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.bootstrap,
             reset: true,
             upgrade: false,
@@ -46,7 +45,7 @@ describe('BootstrapService', () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.testnet,
             assembly: Assembly.dual,
             reset: true,

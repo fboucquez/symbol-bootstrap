@@ -22,6 +22,8 @@ import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
+import { Constants } from './Constants';
+import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
 
@@ -53,11 +55,12 @@ export class CertificateService {
     public static NODE_CERTIFICATE_FILE_NAME = 'node.crt.pem';
     public static CA_CERTIFICATE_FILE_NAME = 'ca.cert.pem';
     private static readonly METADATA_VERSION = 1;
-
+    private readonly fileSystemService: FileSystemService;
     private readonly runtimeService: RuntimeService;
 
     constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {
         this.runtimeService = new RuntimeService(this.logger);
+        this.fileSystemService = new FileSystemService(logger);
     }
 
     public async run(
@@ -68,7 +71,7 @@ export class CertificateService {
         customCertFolder?: string,
         randomSerial?: string,
     ): Promise<boolean> {
-        const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
+        const certFolder = customCertFolder || this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'cert');
         const metadataFile = join(certFolder, 'metadata.yml');
         if (!(await this.shouldGenerateCertificate(metadataFile, providedCertificates))) {
             const willExpireReport = await this.willCertificateExpire(
@@ -112,7 +115,7 @@ export class CertificateService {
         metadataFile: string,
         randomSerial?: string,
     ) {
-        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'cert');
+        const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'cert');
         const networkType = presetData.networkType;
 
         const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
@@ -133,10 +136,10 @@ export class CertificateService {
         );
 
         if (!renew) {
-            BootstrapUtils.deleteFolder(this.logger, certFolder);
+            this.fileSystemService.deleteFolder(certFolder);
         }
 
-        await BootstrapUtils.mkdir(certFolder);
+        await this.fileSystemService.mkdir(certFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 

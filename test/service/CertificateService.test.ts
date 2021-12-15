@@ -26,6 +26,8 @@ import {
     CertificateMetadata,
     CertificateService,
     ConfigLoader,
+    Constants,
+    FileSystemService,
     NodeCertificates,
     Preset,
     RuntimeService,
@@ -33,10 +35,11 @@ import {
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const runtimeService = new RuntimeService(logger);
+const fileSystemService = new FileSystemService(logger);
 describe('CertificateService', () => {
     const target = 'target/tests/CertificateService.test';
     const presetData = new ConfigLoader(logger).createPresetData({
-        workingDir: BootstrapUtils.defaultWorkingDir,
+        workingDir: Constants.defaultWorkingDir,
         preset: Preset.testnet,
         assembly: 'dual',
         password: 'abc',
@@ -84,7 +87,7 @@ describe('CertificateService', () => {
     }
 
     it('createCertificates', async () => {
-        BootstrapUtils.deleteFolder(logger, target);
+        fileSystemService.deleteFolder(target);
 
         const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
         await service.run(presetData, name, keys, false, target, randomSerial);
@@ -99,7 +102,7 @@ describe('CertificateService', () => {
     });
 
     it('createCertificates expiration warnings', async () => {
-        BootstrapUtils.deleteFolder(logger, target);
+        fileSystemService.deleteFolder(target);
         const nodeCertificateExpirationInDays = presetData.nodeCertificateExpirationInDays;
         const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
 
@@ -125,7 +128,7 @@ describe('CertificateService', () => {
 
     it('create and renew certificates', async () => {
         const target = 'target/tests/CertificateService.test';
-        BootstrapUtils.deleteFolder(logger, target);
+        fileSystemService.deleteFolder(target);
         const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
 
         async function getCertFile(certificateFileName: string): Promise<string> {

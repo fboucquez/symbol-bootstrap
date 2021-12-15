@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-import {
-    createWriteStream,
-    existsSync,
-    lstatSync,
-    promises as fsPromises,
-    readdirSync,
-    readFileSync,
-    rmdirSync,
-    statSync,
-    unlinkSync,
-    writeFileSync,
-} from 'fs';
+import { promises as fsPromises, readFileSync, writeFileSync } from 'fs';
 import * as Handlebars from 'handlebars';
-import { get } from 'https';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, dirname, isAbsolute, join, resolve } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { CryptoUtils } from './CryptoUtils';
 import { Utils } from './Utils';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const version = require('../../package.json').version;
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
 
@@ -56,22 +43,6 @@ export interface Migration {
 }
 
 export class BootstrapUtils {
-    public static readonly defaultTargetFolder = 'target';
-    public static readonly targetNodesFolder = 'nodes';
-    public static readonly targetGatewaysFolder = 'gateways';
-    public static readonly targetExplorersFolder = 'explorers';
-    public static readonly targetDatabasesFolder = 'databases';
-    public static readonly targetNemesisFolder = 'nemesis';
-    public static readonly defaultWorkingDir = '.';
-
-    public static readonly CURRENT_USER = 'current';
-
-    public static readonly VERSION = version;
-    /**
-     * The folder where this npm module is installed. It defines where the default presets, configurations, etc are located.
-     */
-    public static readonly ROOT_FOLDER = BootstrapUtils.resolveRootFolder();
-
     public static stopProcess = false;
 
     private static onProcessListener = (() => {
@@ -79,148 +50,6 @@ export class BootstrapUtils {
             BootstrapUtils.stopProcess = true;
         });
     })();
-
-    public static getFilesRecursively(path: string): string[] {
-        const isDirectory = (path: string) => statSync(path).isDirectory();
-        const getDirectories = (path: string) =>
-            readdirSync(path)
-                .map((name) => join(path, name))
-                .filter(isDirectory);
-
-        const isFile = (path: string) => statSync(path).isFile();
-        const getFiles = (path: string): string[] =>
-            readdirSync(path)
-                .map((name) => join(path, name))
-                .filter(isFile);
-
-        const dirs = getDirectories(path);
-        const files = dirs
-            .map((dir) => BootstrapUtils.getFilesRecursively(dir)) // go through each directory
-            .reduce((a, b) => a.concat(b), []); // map returns a 2d array (array of file arrays) so flatten
-        return files.concat(getFiles(path));
-    }
-
-    public static async download(
-        logger: Logger,
-        url: string,
-        dest: string,
-    ): Promise<{
-        downloaded: boolean;
-        fileLocation: string;
-    }> {
-        const destinationSize = existsSync(dest) ? statSync(dest).size : -1;
-        const isHttpRequest = url.toLowerCase().startsWith('https:') || url.toLowerCase().startsWith('http:');
-        if (!isHttpRequest) {
-            const stats = statSync(url);
-            if (existsSync(url) && !stats.isDirectory()) {
-                return {
-                    downloaded: false,
-                    fileLocation: url,
-                };
-            } else {
-                throw new Error(`Local file ${url} does not exist`);
-            }
-        } else {
-            logger.info(`Checking remote file ${url}`);
-            return new Promise((resolve, reject) => {
-                function showDownloadingProgress(received: number, total: number) {
-                    const percentage = ((received * 100) / total).toFixed(2);
-                    const message = percentage + '% | ' + received + ' bytes downloaded out of ' + total + ' bytes.';
-                    Utils.logSameLineMessage(message);
-                }
-                const request = get(url, (response) => {
-                    const total = parseInt(response.headers['content-length'] || '0', 10);
-                    let received = 0;
-                    if (total === destinationSize) {
-                        logger.info(`File ${dest} is up to date with url ${url}. No need to download!`);
-                        request.abort();
-                        resolve({
-                            downloaded: false,
-                            fileLocation: dest,
-                        });
-                    } else if (response.statusCode === 200) {
-                        existsSync(dest) && unlinkSync(dest);
-                        const file = createWriteStream(dest, { flags: 'wx' });
-                        logger.info(`Downloading file ${url}. This could take a while!`);
-                        response.pipe(file);
-                        response.on('data', function (chunk) {
-                            received += chunk.length;
-                            showDownloadingProgress(received, total);
-                        });
-
-                        file.on('finish', () => {
-                            resolve({
-                                downloaded: true,
-                                fileLocation: dest,
-                            });
-                        });
-
-                        file.on('error', (err: any) => {
-                            file.close();
-                            if (err.code === 'EEXIST') {
-                                reject(new Error('File already exists'));
-                            } else {
-                                unlinkSync(dest); // Delete temp file
-                                reject(err);
-                            }
-                        });
-                    } else {
-                        reject(new Error(`Server responded with ${response.statusCode} ${response.statusMessage || ''}`.trim()));
-                    }
-                });
-
-                request.on('error', (err) => {
-                    existsSync(dest) && unlinkSync(dest); // Delete temp file
-                    reject(err.message);
-                });
-            });
-        }
-    }
-
-    public static deleteFolder(logger: Logger, folder: string, excludeFiles: string[] = []): void {
-        if (existsSync(folder)) {
-            logger.info(`Deleting folder ${folder}`);
-        }
-        return BootstrapUtils.deleteFolderRecursive(logger, folder, excludeFiles);
-    }
-
-    private static deleteFolderRecursive(logger: Logger, folder: string, excludeFiles: string[] = []): void {
-        if (existsSync(folder)) {
-            readdirSync(folder).forEach((file: string) => {
-                const currentPath = join(folder, file);
-                if (excludeFiles.find((f) => f === currentPath)) {
-                    logger.info(`File ${currentPath} excluded from deletion.`);
-                    return;
-                }
-                if (lstatSync(currentPath).isDirectory()) {
-                    // recurse
-                    this.deleteFolderRecursive(
-                        logger,
-                        currentPath,
-                        excludeFiles.map((file) => join(currentPath, file)),
-                    );
-                } else {
-                    // delete file
-                    unlinkSync(currentPath);
-                }
-            });
-            if (!readdirSync(folder).length) rmdirSync(folder);
-        }
-    }
-
-    public static deleteFile(file: string): void {
-        if (existsSync(file) && lstatSync(file).isFile()) {
-            unlinkSync(file);
-        }
-    }
-
-    public static resolveRootFolder(): string {
-        const rootFolder = resolve(__dirname, '../..');
-        if (!existsSync(join(rootFolder, 'presets', 'shared.yml'))) {
-            throw new Error(`Root Folder ${rootFolder} does not look right!`);
-        }
-        return rootFolder;
-    }
 
     public static toAns1(privateKey: string): string {
         const prefix = '302e020100300506032b657004220420';
@@ -313,21 +142,6 @@ export class BootstrapUtils {
         );
     }
 
-    public static async chmodRecursive(path: string, mode: string | number): Promise<void> {
-        // Loop through all the files in the config folder
-        const stat = await fsPromises.stat(path);
-        if (stat.isFile()) {
-            await fsPromises.chmod(path, mode);
-        } else if (stat.isDirectory()) {
-            const files = await fsPromises.readdir(path);
-            await Promise.all(
-                files.map(async (file: string) => {
-                    await this.chmodRecursive(join(path, file), mode);
-                }),
-            );
-        }
-    }
-
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static runTemplate(template: string, templateContext: any): string {
         try {
@@ -340,17 +154,6 @@ export class BootstrapUtils {
 
             const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
             throw new Error(`${message}\nContext: \n${securedContext}`);
-        }
-    }
-
-    public static async mkdir(path: string): Promise<void> {
-        await fsPromises.mkdir(path, { recursive: true });
-    }
-
-    public static async mkdirParentFolder(fileName: string): Promise<void> {
-        const parentFolder = dirname(fileName);
-        if (parentFolder) {
-            await BootstrapUtils.mkdir(parentFolder);
         }
     }
 
@@ -409,45 +212,18 @@ export class BootstrapUtils {
     }
 
     public static async writeTextFile(path: string, text: string): Promise<void> {
-        await BootstrapUtils.mkdirParentFolder(path);
+        const mkdirParentFolder = async (fileName: string): Promise<void> => {
+            const parentFolder = dirname(fileName);
+            if (parentFolder) {
+                return fsPromises.mkdir(parentFolder, { recursive: true });
+            }
+        };
+        await mkdirParentFolder(path);
         await fsPromises.writeFile(path, text, 'utf8');
     }
 
     public static async readTextFile(path: string): Promise<string> {
-        return await fsPromises.readFile(path, 'utf8');
-    }
-
-    public static validateFolder(workingDirFullPath: string): void {
-        if (!existsSync(workingDirFullPath)) {
-            throw new Error(`${workingDirFullPath} folder does not exist`);
-        }
-        if (!lstatSync(workingDirFullPath).isDirectory()) {
-            throw new Error(`${workingDirFullPath} is not a folder!`);
-        }
-    }
-
-    public static getTargetFolder(target: string, absolute: boolean, ...paths: string[]): string {
-        if (absolute) {
-            return join(process.cwd(), target, ...paths);
-        } else {
-            return join(target, ...paths);
-        }
-    }
-
-    public static getTargetNodesFolder(target: string, absolute: boolean, ...paths: string[]): string {
-        return this.getTargetFolder(target, absolute, this.targetNodesFolder, ...paths);
-    }
-
-    public static getTargetGatewayFolder(target: string, absolute: boolean, ...paths: string[]): string {
-        return this.getTargetFolder(target, absolute, this.targetGatewaysFolder, ...paths);
-    }
-
-    public static getTargetNemesisFolder(target: string, absolute: boolean, ...paths: string[]): string {
-        return this.getTargetFolder(target, absolute, this.targetNemesisFolder, ...paths);
-    }
-
-    public static getTargetDatabasesFolder(target: string, absolute: boolean, ...paths: string[]): string {
-        return this.getTargetFolder(target, absolute, this.targetDatabasesFolder, ...paths);
+        return fsPromises.readFile(path, 'utf8');
     }
 
     //HANDLEBARS READY FUNCTIONS:

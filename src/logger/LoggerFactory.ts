@@ -17,7 +17,7 @@
 import { join, resolve } from 'path';
 import * as winston from 'winston';
 import { FileTransportInstance } from 'winston/lib/winston/transports';
-import { BootstrapUtils } from '../service';
+import { Constants } from '../service';
 import { Logger } from './Logger';
 import { LogType } from './LogType';
 
@@ -46,7 +46,7 @@ export class LoggerFactory {
             level: 'info',
         });
 
-    public static getLogger(logTypes: string, workingDir = BootstrapUtils.defaultWorkingDir): Logger {
+    public static getLogger(logTypes: string, workingDir = Constants.defaultWorkingDir): Logger {
         return this.getLoggerFromTypes(
             logTypes
                 .split(LoggerFactory.separator)
@@ -56,7 +56,7 @@ export class LoggerFactory {
         );
     }
 
-    public static getLoggerFromTypes(logTypes: LogType[], workingDir = BootstrapUtils.defaultWorkingDir): Logger {
+    public static getLoggerFromTypes(logTypes: LogType[], workingDir = Constants.defaultWorkingDir): Logger {
         const id = logTypes.join(LoggerFactory.separator);
         if (!winston.loggers.has(id)) {
             const transports = logTypes.map((logType) => {

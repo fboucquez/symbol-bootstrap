@@ -16,7 +16,17 @@
 
 import { expect } from 'chai';
 import { Account, NetworkType } from 'symbol-sdk';
-import { Assembly, BootstrapUtils, CustomPreset, LoggerFactory, LogType, Preset, PrivateKeySecurityMode } from '../../src';
+import {
+    Assembly,
+    BootstrapUtils,
+    Constants,
+    CustomPreset,
+    FileSystemService,
+    LoggerFactory,
+    LogType,
+    Preset,
+    PrivateKeySecurityMode,
+} from '../../src';
 import { Wizard } from '../../src/commands/wizard';
 // Including a test util class that it's not compiled.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -24,10 +34,11 @@ import { Wizard } from '../../src/commands/wizard';
 import { StdUtils } from '../utils/StdUtils';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const fileSystemService = new FileSystemService(logger);
 describe('Wizard', () => {
     const testFolder = 'target/wizardTest';
     beforeEach(async () => {
-        BootstrapUtils.deleteFolder(logger, testFolder);
+        fileSystemService.deleteFolder(testFolder);
     });
     it('Provide private keys', async () => {
         // assembly
@@ -65,7 +76,7 @@ describe('Wizard', () => {
         const password = '11111';
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         await new Wizard(logger).execute({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Preset.mainnet,
             noPassword: false,
@@ -125,7 +136,7 @@ describe('Wizard', () => {
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await wizard.execute({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Preset.mainnet,
             noPassword: false,
@@ -184,7 +195,7 @@ describe('Wizard', () => {
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await wizard.execute({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Preset.mainnet,
             noPassword: false,
@@ -250,7 +261,7 @@ describe('Wizard', () => {
         const customPresetFile = `${testFolder}/wizard-custom.yml`;
         const password = '11111';
         await wizard.execute({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             customPreset: customPresetFile,
             network: Preset.mainnet,
             noPassword: false,

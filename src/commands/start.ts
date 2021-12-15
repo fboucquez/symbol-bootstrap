@@ -16,7 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { LoggerFactory } from '../logger';
-import { BootstrapService, BootstrapUtils, CommandUtils } from '../service';
+import { BootstrapService, CommandUtils, Constants } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -48,6 +48,6 @@ export default class Start extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).start({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+        await new BootstrapService(logger).start({ ...flags, workingDir: Constants.defaultWorkingDir });
     }
 }

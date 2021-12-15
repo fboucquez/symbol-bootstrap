@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { compareSync, Result } from 'dir-compare';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { BootstrapUtils } from '../../src';
+import { BootstrapUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
 
 interface AssertFoldersParams {
     expectFolder: string;
@@ -28,8 +28,9 @@ interface AssertFoldersParams {
 
 export class FileSystemTestUtils {
     public static assertSameFolder({ expectFolder, actualFolder, excludeFilter }: AssertFoldersParams): void {
-        BootstrapUtils.validateFolder(expectFolder);
-        BootstrapUtils.validateFolder(actualFolder);
+        const fileSystemService = new FileSystemService(LoggerFactory.getLogger(LogType.Silent));
+        fileSystemService.validateFolder(expectFolder);
+        fileSystemService.validateFolder(actualFolder);
         const compareResult: Result = compareSync(expectFolder, actualFolder, {
             compareSize: true,
             compareContent: true,

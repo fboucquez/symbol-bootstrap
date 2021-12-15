@@ -17,7 +17,7 @@ import { Command, flags } from '@oclif/command';
 import { Account } from 'symbol-sdk';
 import { LoggerFactory, System } from '../logger';
 import { CertificatePair, ConfigAccount, ConfigPreset } from '../model';
-import { BootstrapUtils, CertificateService, CommandUtils, ConfigLoader } from '../service';
+import { CertificateService, CommandUtils, ConfigLoader, Constants } from '../service';
 
 export default class RenewCertificates extends Command {
     static description = `It renews the SSL certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
@@ -41,8 +41,8 @@ It's recommended to backup the target folder before running this operation!
         }),
         user: flags.string({
             char: 'u',
-            description: `User used to run docker images when generating the certificates. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
-            default: BootstrapUtils.CURRENT_USER,
+            description: `User used to run docker images when generating the certificates. "${Constants.CURRENT_USER}" means the current user.`,
+            default: Constants.CURRENT_USER,
         }),
         logger: CommandUtils.getLoggerFlag(...System),
     };
