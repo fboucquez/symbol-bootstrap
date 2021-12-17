@@ -31,14 +31,9 @@ export default class Verify extends Command {
         CommandUtils.showBanner();
         const { flags } = this.parse(Verify);
         const logger = LoggerFactory.getLogger(flags.logger);
-        const report = await new VerifyService(logger).createReport();
-        logger.info(`OS: ${report.platform}`);
-        report.lines.forEach((line) => {
-            if (line.recommendation) {
-                logger.warn(`${line.header}  - Warning! - ${line.message} - ${line.recommendation}`);
-            } else {
-                logger.info(`${line.header} - OK! - ${line.message}`);
-            }
-        });
+        const service = new VerifyService(logger);
+        const report = await service.createReport();
+        service.logReport(report);
+        service.validateReport(report);
     }
 }

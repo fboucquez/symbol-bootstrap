@@ -32,6 +32,7 @@ export interface ExpectedVersions {
     node: string;
     docker: string;
     dockerCompose: string;
+    symbolBootstrap?: string;
 }
 
 const defaultExpectedVersions: ExpectedVersions = {
@@ -51,15 +52,38 @@ export class VerifyService {
     public async createReport(): Promise<VerifyReport> {
         const lines: ReportLine[] = [];
         const platform = `${os.type()} - ${os.release()} - ${os.platform()}`;
-        lines.push(await this.testNodeJs());
-        const docker = await this.testDocker();
+        lines.push(await this.testNodeJs(this.expectedVersions.node));
+        const docker = await this.testDocker(this.expectedVersions.docker);
         lines.push(docker);
-        lines.push(await this.testDockerCompose());
+        lines.push(await this.testDockerCompose(this.expectedVersions.dockerCompose));
+        if (this.expectedVersions.symbolBootstrap) lines.push(await this.testSymbolBootstrap(this.expectedVersions.symbolBootstrap));
         if (!docker.recommendation) lines.push(await this.testDockerRun());
         if (!BootstrapUtils.isWindows()) {
             lines.push(await this.testSudo());
         }
+
         return { lines, platform };
+    }
+
+    public logReport(report: VerifyReport): void {
+        this.logger.info(`OS: ${report.platform}`);
+        report.lines.forEach((line) => {
+            if (line.recommendation) {
+                this.logger.error(`${line.header}  - Error! - ${line.message} - ${line.recommendation}`);
+            } else {
+                this.logger.info(`${line.header} - OK! - ${line.message}`);
+            }
+        });
+    }
+
+    public validateReport(report: VerifyReport): void {
+        const errors = report.lines.filter((r) => r.recommendation);
+        if (errors.length) {
+            throw new Error(
+                'There has been an error. Check the report: \n' +
+                    errors.map((line) => ` - ${line.header}  - Error! - ${line.message} - ${line.recommendation}`).join('\n'),
+            );
+        }
     }
 
     public loadVersion(text: string): string | undefined {
@@ -74,34 +98,31 @@ export class VerifyService {
             ?.trim();
     }
 
-    public async testNodeJs(): Promise<ReportLine> {
+    public async testNodeJs(expectedVersion: string): Promise<ReportLine> {
         const header = 'NodeVersion';
         const recommendationUrl = `https://nodejs.org/en/download/package-manager/`;
         const output = process.versions.node;
-        return this.verifyInstalledApp(async () => output, header, this.expectedVersions.node, recommendationUrl);
+        return this.verifyInstalledApp(async () => output, header, expectedVersion, recommendationUrl);
     }
 
-    public async testDocker(): Promise<ReportLine> {
+    public async testDocker(expectedVersion: string): Promise<ReportLine> {
         const header = 'Docker Version';
         const command = 'docker --version';
         const recommendationUrl = `https://docs.docker.com/get-docker/`;
-        return this.verifyInstalledApp(
-            async () => await this.loadVersionFromCommand(command),
-            header,
-            this.expectedVersions.docker,
-            recommendationUrl,
-        );
+        return this.verifyInstalledApp(() => this.loadVersionFromCommand(command), header, expectedVersion, recommendationUrl);
     }
-    public async testDockerCompose(): Promise<ReportLine> {
+    public async testDockerCompose(expectedVersion: string): Promise<ReportLine> {
         const header = 'Docker Compose Version';
         const command = 'docker-compose --version';
         const recommendationUrl = `https://docs.docker.com/compose/install/`;
-        return this.verifyInstalledApp(
-            async () => await this.loadVersionFromCommand(command),
-            header,
-            this.expectedVersions.dockerCompose,
-            recommendationUrl,
-        );
+        return this.verifyInstalledApp(() => this.loadVersionFromCommand(command), header, expectedVersion, recommendationUrl);
+    }
+
+    public async testSymbolBootstrap(expectedVersion: string): Promise<ReportLine> {
+        const header = 'Symbol Bootstrap Version';
+        const command = 'symbol-bootstrap --version';
+        const recommendationUrl = `https://github.com/symbol/symbol-bootstrap/tree/main/packages/bootstrap-core`;
+        return this.verifyInstalledApp(() => this.loadVersionFromCommand(command), header, expectedVersion, recommendationUrl);
     }
 
     public async testDockerRun(): Promise<ReportLine> {

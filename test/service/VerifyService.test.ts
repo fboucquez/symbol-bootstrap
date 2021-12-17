@@ -63,6 +63,8 @@ describe('VerifyService', () => {
             platform: `${os.type()} - ${os.release()} - ${os.platform()}`,
         };
         expect(report).to.be.deep.eq(expected);
+        service.logReport(report);
+        expect(() => service.validateReport(report)).not.to.throw();
     });
 
     it('VerifyService verify current installation when too old', async () => {
@@ -104,5 +106,12 @@ describe('VerifyService', () => {
             platform: `${os.type()} - ${os.release()} - ${os.platform()}`,
         };
         expect(report).to.be.deep.eq(expected);
+        service.logReport(report);
+        expect(() => service.validateReport(report)).to.throw(
+            `There has been an error. Check the report:
+ - NodeVersion  - Error! - ${currentNodeJsVersion} - At least version ${expectedVersions.node} is required. Currently installed version is ${currentNodeJsVersion}. Check https://nodejs.org/en/download/package-manager/
+ - Docker Version  - Error! - ${currentDockerVersion} - At least version ${expectedVersions.docker} is required. Currently installed version is ${currentDockerVersion}. Check https://docs.docker.com/get-docker/
+ - Docker Compose Version  - Error! - ${currentDockerComposeVersion} - At least version ${expectedVersions.dockerCompose} is required. Currently installed version is ${currentDockerComposeVersion}. Check https://docs.docker.com/compose/install/`,
+        );
     });
 });
