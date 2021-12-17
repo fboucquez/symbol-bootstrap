@@ -39,38 +39,39 @@ export class BootstrapAccountResolver implements AccountResolver {
             return Account.generateNewAccount(networkType);
         }
 
-        if (!account.privateKey) {
-            while (true) {
-                this.logger.info('');
-                this.logger.info(`${keyName} private key is required when ${operationDescription}.`);
-                const address = PublicAccount.createFromPublicKey(account.publicKey, networkType).address.plain();
-                const nodeDescription = nodeName === '' ? `of` : `of the Node's '${nodeName}'`;
-                const responses = await prompt([
-                    {
-                        name: 'value',
-                        message: `Enter the 64 HEX private key ${nodeDescription} ${keyName} account with Address: ${address} and Public Key: ${account.publicKey}:`,
-                        type: 'password',
-                        mask: '*',
-                        validate: CommandUtils.isValidPrivateKey,
-                    },
-                ]);
-                const privateKey = responses.value === '' ? undefined : responses.value.toUpperCase();
-                if (!privateKey) {
-                    this.logger.info('Please provide the private key.');
+        if (account.privateKey) {
+            return Account.createFromPrivateKey(account.privateKey, networkType);
+        }
+
+        while (true) {
+            this.logger.info('');
+            this.logger.info(`${keyName} private key is required when ${operationDescription}.`);
+            const address = PublicAccount.createFromPublicKey(account.publicKey, networkType).address.plain();
+            const nodeDescription = nodeName === '' ? `of` : `of the Node's '${nodeName}'`;
+            const responses = await prompt([
+                {
+                    name: 'value',
+                    message: `Enter the 64 HEX private key ${nodeDescription} ${keyName} account with Address: ${address} and Public Key: ${account.publicKey}:`,
+                    type: 'password',
+                    mask: '*',
+                    validate: CommandUtils.isValidPrivateKey,
+                },
+            ]);
+            const privateKey = responses.value === '' ? undefined : responses.value.toUpperCase();
+            if (!privateKey) {
+                this.logger.info('Please provide the private key.');
+            } else {
+                const enteredAccount = Account.createFromPrivateKey(privateKey, networkType);
+                if (enteredAccount.publicKey.toUpperCase() !== account.publicKey.toUpperCase()) {
+                    this.logger.info(
+                        `Invalid private key. Expected address is ${address} but you provided the private key for address ${enteredAccount.address.plain()}.\n`,
+                    );
+                    this.logger.info(`Please re-enter private key.`);
                 } else {
-                    const enteredAccount = Account.createFromPrivateKey(privateKey, networkType);
-                    if (enteredAccount.publicKey.toUpperCase() !== account.publicKey.toUpperCase()) {
-                        this.logger.info(
-                            `Invalid private key. Expected address is ${address} but you provided the private key for address ${enteredAccount.address.plain()}.\n`,
-                        );
-                        this.logger.info(`Please re-enter private key.`);
-                    } else {
-                        account.privateKey = privateKey;
-                        return Account.createFromPrivateKey(privateKey, networkType);
-                    }
+                    account.privateKey = privateKey;
+                    return enteredAccount;
                 }
             }
         }
-        return Account.createFromPrivateKey(account.privateKey, networkType);
     }
 }
