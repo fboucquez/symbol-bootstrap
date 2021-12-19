@@ -16,26 +16,34 @@
 import { expect } from 'chai';
 import * as os from 'os';
 import * as semver from 'semver';
-import { LoggerFactory, LogType } from '../../src';
+import { AppVersionService, LoggerFactory, LogType } from '../../src';
 import { VerifyService } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
-describe('VerifyService', () => {
-    const currentNodeJsVersion = process.versions.node;
 
+describe('AppVersionService', () => {
     it('loadVersion', async () => {
-        const service = new VerifyService(logger);
+        const service = new AppVersionService(logger);
         expect(service.loadVersion('Docker version 19.03.8, build afacb8b7f0')).eq('19.03.8');
         expect(service.loadVersion('Docker version 19.0.8, build afacb8b7f0')).eq('19.0.8');
         expect(service.loadVersion('Docker version 19 build a')).eq('19.0.0');
     });
+});
+
+describe('VerifyService', () => {
+    const currentNodeJsVersion = process.versions.node;
+    async function getCurrentVersions() {
+        const appVersionService = new AppVersionService(logger);
+        const currentDockerVersion = await appVersionService.loadVersionFromCommand('docker --version');
+        const currentDockerComposeVersion = await appVersionService.loadVersionFromCommand('docker-compose --version');
+        expect(semver.valid(currentNodeJsVersion, AppVersionService.semverOptions));
+        expect(semver.valid(currentDockerVersion, AppVersionService.semverOptions));
+        expect(semver.valid(currentDockerComposeVersion, AppVersionService.semverOptions));
+        return { currentDockerVersion, currentDockerComposeVersion };
+    }
 
     it('VerifyService verify current installation', async () => {
         const service = new VerifyService(logger);
-        const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
-        const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
-        expect(semver.valid(currentNodeJsVersion, service.semverOptions));
-        expect(semver.valid(currentDockerVersion, service.semverOptions));
-        expect(semver.valid(currentDockerComposeVersion, service.semverOptions));
+        const { currentDockerVersion, currentDockerComposeVersion } = await getCurrentVersions();
         const report = await service.createReport();
         const expected = {
             lines: [
@@ -74,11 +82,7 @@ describe('VerifyService', () => {
             dockerCompose: '1.29.5',
         };
         const service = new VerifyService(logger, expectedVersions);
-        const currentDockerVersion = await service.loadVersionFromCommand('docker --version');
-        const currentDockerComposeVersion = await service.loadVersionFromCommand('docker-compose --version');
-        expect(semver.valid(currentNodeJsVersion, service.semverOptions));
-        expect(semver.valid(currentDockerVersion, service.semverOptions));
-        expect(semver.valid(currentDockerComposeVersion, service.semverOptions));
+        const { currentDockerVersion, currentDockerComposeVersion } = await getCurrentVersions();
 
         const report = await service.createReport();
         const expected = {
