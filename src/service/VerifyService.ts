@@ -32,7 +32,6 @@ export interface ExpectedVersions {
     node: string;
     docker: string;
     dockerCompose: string;
-    symbolBootstrap?: string;
 }
 
 const defaultExpectedVersions: ExpectedVersions = {
