@@ -1,0 +1,59 @@
+name: Release
+on:
+    workflow_dispatch:
+jobs:
+    publish:
+        name: NPM Publish
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - id: version
+              run: echo "version=$(npm run version --silent)" >> $GITHUB_ENV
+            - run: echo "Deploying version ${{ env.version }}"
+            - run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    tag:
+        name: Tag and Release
+        needs: publish
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Get current date
+              id: date
+              run: echo "::set-output name=date::$(date +'%^b-%d-%Y')"
+            - id: version
+              run: echo "version=$(npm run version --silent)" >> $GITHUB_ENV
+            - uses: 'marvinpinto/action-automatic-releases@latest'
+              name: Create tag and release
+              with:
+                  repo_token: '${{ secrets.GITHUB_TOKEN }}'
+                  automatic_release_tag: 'v${{ env.version }}'
+                  prerelease: true
+                  title: '[${{ env.version }}] - ${{ steps.date.outputs.date }}'
+    postRelease:
+        name: Version Upgrade
+        needs: tag
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm version patch -m "Increasing version to %s" --git-tag-version false
+            - id: newVersion
+              run: echo "newVersion=$(npm run version --silent)" >> $GITHUB_ENV
+            - run: echo "Upgraded to version ${{ env.newVersion }}"
+            - run: npm run oclif-doc
+            - uses: EndBug/add-and-commit@v7
+              with:
+                  message: Creating new version ${{ env.newVersion }}
