@@ -9,9 +9,4 @@ export class OSUtils {
     public static isWindows(): boolean {
         return process.platform === 'win32';
     }
-
-    public static logSameLineMessage(message: string): void {
-        process.stdout.write(OSUtils.isWindows() ? '\x1b[0G' : '\r');
-        process.stdout.write(message);
-    }
 }
