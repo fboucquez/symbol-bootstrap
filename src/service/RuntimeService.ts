@@ -60,8 +60,8 @@ export class RuntimeService {
         return this.exec(runCommand);
     }
 
-    public async spawn(command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {
-        const cmd = spawn(command, args);
+    public async spawn(command: string, args: string[], useLogger: boolean, logPrefix = '', shell?: boolean): Promise<string> {
+        const cmd = spawn(command, args, { shell: shell });
         return new Promise<string>((resolve, reject) => {
             this.logger.info(`Spawn command: ${command} ${args.join(' ')}`);
             let logText = useLogger ? '' : 'Check console for output....';
@@ -90,7 +90,7 @@ export class RuntimeService {
             cmd.on('exit', (code, signal) => {
                 if (code) {
                     log(`Process exited with code ${code} and signal ${signal}`, true);
-                    reject(new Error(logText));
+                    reject(new Error(`Process exited with code ${code}\n${logText}`));
                 } else {
                     resolve(logText);
                 }
@@ -125,10 +125,10 @@ export class RuntimeService {
             this.logger.warn(`Image ${image} could not be pulled!`);
         }
     }
-    public async getDockerUserGroup(): Promise<string> {
+    public async getDockerUserGroup(): Promise<string | undefined> {
         const isWin = OSUtils.isWindows();
         if (isWin) {
-            return '';
+            return undefined;
         }
         if (RuntimeService.dockerUserId !== undefined) {
             return RuntimeService.dockerUserId;
@@ -145,7 +145,7 @@ export class RuntimeService {
             return user;
         } catch (e) {
             this.logger.info(`User for docker could not be resolved: ${e}`);
-            return '';
+            return undefined;
         }
     }
 

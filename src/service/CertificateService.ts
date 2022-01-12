@@ -27,7 +27,7 @@ import { Utils } from './Utils';
 
 export interface CertificateParams {
     readonly target: string;
-    readonly user: string;
+    readonly user?: string;
 }
 
 export interface CertificateMetadata {

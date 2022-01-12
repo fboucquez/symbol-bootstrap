@@ -130,7 +130,7 @@ describe('ConfigService', () => {
             }).run();
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq('test/customNetwork/nemesis-seed-invalid folder does not exist');
+            expect(e.message).eq(`${join('test', `customNetwork`, 'nemesis-seed-invalid')} folder does not exist`);
         }
     });
 
