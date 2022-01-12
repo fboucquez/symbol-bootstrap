@@ -18,7 +18,7 @@ import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
 import { dirname, join } from 'path';
-import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, ZipItem, ZipUtils } from '../service';
+import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, LoggerFactory, LogType, ZipItem, ZipUtils } from '../';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -28,35 +28,35 @@ export default class Pack extends Command {
 
     static examples = [
         `$ symbol-bootstrap pack`,
-        `$ symbol-bootstrap pack -p bootstrap -c custom-preset.yml`,
+        `$ symbol-bootstrap pack -c custom-preset.yml`,
         `$ symbol-bootstrap pack -p testnet -a dual -c custom-preset.yml`,
         `$ symbol-bootstrap pack -p mainnet -a dual --password 1234 -c custom-preset.yml`,
-        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -p mainnet -a dual -c custom-preset.yml`,
+        `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -c custom-preset.yml`,
     ];
 
     static flags = {
         ...Compose.flags,
         ...Clean.flags,
-        ...Config.resolveFlags(true),
+        ...Config.flags,
         ready: flags.boolean({
             description: 'If --ready is provided, the command will not ask offline confirmation.',
         }),
+        logger: CommandUtils.getLoggerFlag(LogType.Console),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Pack);
-        BootstrapUtils.showBanner();
-        const preset = flags.preset;
-        const assembly = flags.assembly;
-        const targetZip = join(dirname(flags.target), `${preset}-${assembly || 'default'}-node.zip`);
+        CommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(flags.logger);
+        const targetZip = join(dirname(flags.target), `symbol-node.zip`);
 
         if (existsSync(targetZip)) {
             throw new Error(
                 `The target zip file ${targetZip} already exist. Do you want to delete it before repackaging your target folder?`,
             );
         }
-        console.log();
-        console.log();
+        logger.info('');
+        logger.info('');
         if (
             !flags.ready &&
             !(
@@ -70,19 +70,20 @@ export default class Pack extends Command {
                 ])
             ).offlineNow
         ) {
-            console.log('Come back when you are offline...');
+            logger.info('Come back when you are offline...');
             return;
         }
 
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        const service = await new BootstrapService(this.config.root);
+        const service = new BootstrapService(logger);
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
-        const configResult = await service.config(flags);
+        const configResult = await service.config({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
         await service.compose(flags, configResult.presetData);
 
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';
@@ -109,10 +110,10 @@ export default class Pack extends Command {
             },
         ];
 
-        await ZipUtils.zip(targetZip, zipItems);
+        await new ZipUtils(logger).zip(targetZip, zipItems);
         await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
-        console.log();
-        console.log(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
-        console.log(`$ symbol-bootstrap start -p ${preset}${assembly ? ` -a ${assembly}` : ''} -c ${configOnlyCustomPresetFileName}`);
+        logger.info('');
+        logger.info(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
+        logger.info(`$ symbol-bootstrap start`);
     }
 }

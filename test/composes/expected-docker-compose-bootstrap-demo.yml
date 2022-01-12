@@ -1,0 +1,142 @@
+version: '2.4'
+services:
+    db:
+        user: '1000:1000'
+        environment:
+            MONGO_INITDB_DATABASE: catapult
+        container_name: db
+        image: 'mongo:4.4.3-bionic'
+        command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2
+        stop_signal: SIGINT
+        working_dir: /docker-entrypoint-initdb.d
+        volumes:
+            - './mongo:/docker-entrypoint-initdb.d:ro'
+            - '../databases/db:/dbdata:rw'
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+    node:
+        container_name: node
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.1'
+        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node DEBUG true
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        restart: 'on-failure:2'
+        ports:
+            - '7900:7900'
+        volumes:
+            - '../nodes/node:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
+        depends_on:
+            - db
+            - broker
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+    broker:
+        container_name: broker
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.1'
+        working_dir: /symbol-workdir
+        command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker DEBUG
+        stop_signal: SIGINT
+        restart: 'on-failure:2'
+        volumes:
+            - '../nodes/node:/symbol-workdir:rw'
+            - './server:/symbol-commands:ro'
+        depends_on:
+            - db
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+    rest-gateway:
+        container_name: rest-gateway
+        user: '1000:1000'
+        image: 'symbolplatform/symbol-rest:2.4.0'
+        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '3000:3000'
+        restart: 'on-failure:2'
+        volumes:
+            - '../gateways/rest-gateway:/symbol-workdir:rw'
+        depends_on:
+            - db
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+        networks:
+            default:
+                ipv4_address: 172.20.0.25
+    wallet:
+        container_name: wallet
+        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '80:80'
+        restart: 'on-failure:2'
+        volumes:
+            - '../wallets/wallet:/usr/share/nginx/html/config:ro'
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+    explorer:
+        container_name: explorer
+        image: 'symbolplatform/symbol-explorer:1.1.0-alpha'
+        entrypoint: ash -c "/bin/ash /symbol-commands/run.sh explorer"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '90:4000'
+        restart: 'on-failure:2'
+        volumes:
+            - '../explorers/explorer:/symbol-workdir:ro'
+            - './explorer:/symbol-commands:ro'
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+    faucet:
+        container_name: faucet
+        image: 'symbolplatform/symbol-faucet:1.0.1-alpha'
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: 'http://rest-gateway:3000'
+            DEFAULT_NODE_CLIENT: 'http://localhost:3000'
+            NATIVE_CURRENCY_NAME: cat.currency
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: 5000000
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
+            EXPLORER_URL: 'http://localhost:90/'
+            FAUCET_PRIVATE_KEY: MockMe
+            NATIVE_CURRENCY_ID: Mockme2
+        restart: 'on-failure:2'
+        ports:
+            - '100:4000'
+        depends_on:
+            - rest-gateway
+        security_opt:
+            - 'seccomp:unconfined'
+        cap_add:
+            - ALL
+        privileged: true
+networks:
+    default:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/24

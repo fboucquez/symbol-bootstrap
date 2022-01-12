@@ -20,12 +20,14 @@ import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src/logger';
 import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
 
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('CertificateService', () => {
     const target = 'target/tests/CertificateService.test';
-    const presetData = new ConfigLoader().createPresetData({
-        root: '.',
+    const presetData = new ConfigLoader(logger).createPresetData({
+        workingDir: BootstrapUtils.defaultWorkingDir,
         preset: Preset.testnet,
         assembly: 'dual',
         password: 'abc',
@@ -60,19 +62,9 @@ describe('CertificateService', () => {
 
     async function verifyCertFolder() {
         const files = await fsPromises.readdir(target);
-        expect(files).deep.eq([
-            'ca.cert.pem',
-            'ca.cnf',
-            'ca.pubkey.pem',
-            'metadata.yml',
-            'node.cnf',
-            'node.crt.pem',
-            'node.csr.pem',
-            'node.full.crt.pem',
-            'node.key.pem',
-        ]);
+        expect(files).deep.eq(['ca.cert.pem', 'ca.pubkey.pem', 'metadata.yml', 'node.crt.pem', 'node.full.crt.pem', 'node.key.pem']);
 
-        const diffFiles = ['new_certs', 'ca.cert.pem', 'index.txt', 'node.crt.pem', 'node.full.crt.pem'];
+        const diffFiles = ['ca.cert.pem', 'node.crt.pem', 'node.full.crt.pem'];
 
         // Filtering out files that aren't the same
         files
@@ -83,9 +75,9 @@ describe('CertificateService', () => {
     }
 
     it('createCertificates', async () => {
-        BootstrapUtils.deleteFolder(target);
+        BootstrapUtils.deleteFolder(logger, target);
 
-        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
         await service.run(presetData, name, keys, false, target, randomSerial);
 
         const expectedMetadata: CertificateMetadata = {
@@ -98,11 +90,11 @@ describe('CertificateService', () => {
     });
 
     it('createCertificates expiration warnings', async () => {
-        BootstrapUtils.deleteFolder(target);
+        BootstrapUtils.deleteFolder(logger, target);
         const nodeCertificateExpirationInDays = presetData.nodeCertificateExpirationInDays;
         const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
 
-        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
         await service.run(presetData, name, keys, false, target, randomSerial);
 
         async function willExpire(certificateFileName: string, certificateExpirationWarningInDays: number): Promise<boolean> {
@@ -124,8 +116,8 @@ describe('CertificateService', () => {
 
     it('create and renew certificates', async () => {
         const target = 'target/tests/CertificateService.test';
-        BootstrapUtils.deleteFolder(target);
-        const service = new CertificateService({ target: target, user: await BootstrapUtils.getDockerUserGroup() });
+        BootstrapUtils.deleteFolder(logger, target);
+        const service = new CertificateService(logger, { target: target, user: await BootstrapUtils.getDockerUserGroup(logger) });
 
         async function getCertFile(certificateFileName: string): Promise<string> {
             return readFileSync(join(target, certificateFileName), 'utf-8');

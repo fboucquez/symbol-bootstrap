@@ -17,8 +17,11 @@ OPTIONS
   -h, --help           It shows the help of this command.
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
+  --logger=logger      [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use
+                       ',' to select multiple loggers.
+
 EXAMPLE
   $ symbol-bootstrap resetData
 ```
 
-_See code: [src/commands/resetData.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/resetData.ts)_
+_See code: [src/commands/resetData.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/resetData.ts)_

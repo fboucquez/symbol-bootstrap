@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
+import { Assembly, LoggerFactory, LogType } from '../../src';
 import { CustomPreset } from '../../src/model';
 import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('ReportService', () => {
     const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
-        const configResult = await new ConfigService('.', params).run();
+        const configResult = await new ConfigService(logger, { ...params, offline: true }).run();
 
-        const paths = await new ReportService('.', params).run(configResult.presetData);
+        const paths = await new ReportService(logger, params).run(configResult.presetData);
         const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
         await BootstrapUtils.mkdir(expectedReportFolder);
 
@@ -34,7 +35,7 @@ describe('ReportService', () => {
             const generatedReport = (await BootstrapUtils.readTextFile(reportPath)).replace(BootstrapUtils.VERSION, 'CURRENT_VERSION');
             const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
             if (!existsSync(expectedReportPath)) {
-                await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim());
+                await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim() + '\n');
             }
             const expectedReport = await BootstrapUtils.readTextFile(expectedReportPath);
             expect(
@@ -50,7 +51,7 @@ describe('ReportService', () => {
             const currentRestJson = await BootstrapUtils.readTextFile(currentRestJsonFile);
             const expectedRestJsonFile = join(expectedReportFolder, `${gateway.name}-rest.json`);
             if (!existsSync(expectedRestJsonFile)) {
-                await BootstrapUtils.writeTextFile(expectedRestJsonFile, currentRestJson);
+                await BootstrapUtils.writeTextFile(expectedRestJsonFile, currentRestJson + '\n');
             }
             const expectedRestJson = await BootstrapUtils.readTextFile(expectedRestJsonFile);
             expect(
@@ -87,7 +88,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             target: target,
             report: true,
         };
@@ -112,7 +113,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
-            assembly: 'peer',
+            assembly: Assembly.peer,
             target: target,
             report: true,
         };
@@ -137,7 +138,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
-            assembly: 'peer',
+            assembly: Assembly.peer,
             target: target,
             report: true,
         };
@@ -163,7 +164,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.testnet,
             customPresetObject: customPresetObject,
-            assembly: 'api',
+            assembly: Assembly.api,
             target: target,
             report: true,
         };
@@ -187,7 +188,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.mainnet,
             customPresetObject: customPresetObject,
-            assembly: 'peer',
+            assembly: Assembly.peer,
             target: target,
             report: true,
         };
@@ -213,7 +214,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.mainnet,
             customPresetObject: customPresetObject,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             target: target,
             report: true,
         };
@@ -239,7 +240,7 @@ describe('ReportService', () => {
             upgrade: true,
             preset: Preset.mainnet,
             customPresetObject: customPresetObject,
-            assembly: 'dual',
+            assembly: Assembly.dual,
             target: target,
             report: true,
         };
@@ -279,5 +280,32 @@ describe('ReportService', () => {
         };
 
         await assertReport(params, 'bootstrap-voting');
+    });
+
+    it('ReportService custom network dual', async () => {
+        const target = 'target/tests/ReportService.customNetwork.dual.report';
+        const customPresetObject: CustomPreset = {
+            restDeploymentToolLastUpdatedDate: '2021-05-23',
+            restDeploymentToolVersion: 'abc',
+            nodes: [
+                {
+                    mainPrivateKey: 'CA82E7ADAF7AB729A5462A1BD5AA78632390634904A64EB1BB22295E2E1A1BDD',
+                    voting: false,
+                    friendlyName: 'myFriendlyName',
+                },
+            ],
+        };
+        const params = {
+            ...ConfigService.defaultParams,
+            upgrade: true,
+            workingDir: 'test/customNetwork',
+            preset: 'custom-network-preset.yml',
+            customPresetObject: customPresetObject,
+            assembly: Assembly.dual,
+            target: target,
+            report: true,
+        };
+
+        await assertReport(params, 'custom-network-dual');
     });
 });

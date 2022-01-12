@@ -19,6 +19,9 @@ OPTIONS
   -h, --help                 It shows the help of this command.
   --destination=destination  (required) The destination encrypted file to create. The destination file must not exist.
 
+  --logger=logger            [default: Console] The loggers the command will use. Options are: Console,File,Silent. Use
+                             ',' to select multiple loggers.
+
   --password=password        The password to use to encrypt the source file into the destination file. Bootstrap prompts
                              for a password by default, can be provided in the command line (--password=XXXX) or
                              disabled in the command line (--noPassword).
@@ -42,8 +45,8 @@ EXAMPLES
   $ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --customPreset encrypted-custom-preset.yml
 
 
-    $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap encrypt --source plain-custom-preset.yml --destination 
+   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap encrypt --source plain-custom-preset.yml --destination 
   encrypted-custom-preset.yml
 ```
 
-_See code: [src/commands/encrypt.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/encrypt.ts)_
+_See code: [src/commands/encrypt.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/encrypt.ts)_

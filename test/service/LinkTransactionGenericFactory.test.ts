@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import { it } from 'mocha';
 import { LinkAction } from 'symbol-sdk';
+import { LoggerFactory, LogType } from '../../src';
 import { GenericNodeAccount, KeyAccount, LinkTransactionGenericFactory, VotingKeyAccount } from '../../src/service';
 
 type GenericTransaction =
     | { name: string; action: LinkAction; publicKey: string }
     | { readonly endEpoch: number; name: string; action: LinkAction; readonly publicKey: string; readonly startEpoch: number };
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('LinkTransactionGenericFactory', () => {
     it('should test overlaps', () => {
         expect(
@@ -67,7 +68,7 @@ describe('LinkTransactionGenericFactory', () => {
     it('creates generic transactions when empty', async () => {
         const currentLinkedAccounts: GenericNodeAccount = {};
         const toLinkNodeAccounts: GenericNodeAccount = {};
-        const transactions = await new LinkTransactionGenericFactory({
+        const transactions = await new LinkTransactionGenericFactory(logger, {
             unlink: false,
             ready: true,
         }).createGenericTransactions(
@@ -89,7 +90,7 @@ describe('LinkTransactionGenericFactory', () => {
         unlink: boolean,
         expectedTransactions: GenericTransaction[],
     ) => {
-        const transactions: GenericTransaction[] = await new LinkTransactionGenericFactory({
+        const transactions: GenericTransaction[] = await new LinkTransactionGenericFactory(logger, {
             unlink: unlink,
             ready: true,
         }).createGenericTransactions(
@@ -101,7 +102,6 @@ describe('LinkTransactionGenericFactory', () => {
             vrfTransactionFactory,
             votingKeyTransactionFactory,
         );
-        console.log(JSON.stringify(transactions));
         expect(transactions).deep.equals(expectedTransactions);
     };
 

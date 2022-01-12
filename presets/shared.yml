@@ -64,13 +64,13 @@ maxNameSize: 64
 maxChildNamespaces: 256
 maxNamespaceDepth: 3
 batchVerificationRandomSource:
-symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.1.0
-symbolRestImage: symbolplatform/symbol-rest:2.3.6
+symbolServerImage: symbolplatform/symbol-server:gcc-10-1.0.3.1
+symbolRestImage: symbolplatform/symbol-rest:2.4.0
 symbolExplorerImage: symbolplatform/symbol-explorer:1.1.0-alpha
 symbolWalletImage: symbolplatform/symbol-desktop-wallet:1.0.1
 symbolFaucetImage: symbolplatform/symbol-faucet:1.0.1-alpha
-symbolAgentImage: symbolplatform/symbol-node-rewards-agent:2.0.0
 mongoImage: mongo:4.4.3-bionic
+httpsPortalImage: steveltn/https-portal:1.19
 mongoComposeRunParam: --wiredTigerCacheSizeGB 2
 logLevel: 'Info'
 # brokerLogLevel: 'Info'
@@ -84,8 +84,9 @@ dataDirectory: ./data
 votingKeysDirectory: ./votingkeys
 enableDelegatedHarvestersAutoDetection: true
 catapultAppFolder: /usr/catapult
-rewardProgramAgentPort: 7881
 enableRevoteOnBoot: true
+totalVotingBalanceCalculationFix: 0
+treasuryReissuance: 0
 caCertificateExpirationInDays: 7300 # 20 years
 nodeCertificateExpirationInDays: 375 # 1.02 years
 certificateExpirationWarningInDays: 30 # certificates are allowed to be renewed 30 before expiring
@@ -103,12 +104,13 @@ peersApiListLimit: 10
 shortLivedCacheMessageDuration: 10m
 messageSynchronizationMaxResponseSize: 20MB
 finalizationSize: 10000
-finalizationThreshold: 7000
+finalizationThreshold: 6700
 maxHashesPerPoint: 256
 prevoteBlocksMultiple: 4
 nonVotingUnfinalizedBlocksDuration: 8m
 votingUnfinalizedBlocksDuration: 0m
 voting: false
+treasuryReissuanceEpoch: 0
 
 # config messages:
 subscriberPort: 7902
@@ -165,9 +167,9 @@ delegatePrioritizationPolicy: Importance
 dockerComposeVersion: '2.4'
 dockerComposeServiceRestart: 'on-failure:2'
 dockerComposeDebugMode: false
-minPartnerNodeVersion: 1.0.0.0
+minPartnerNodeVersion: 1.0.2.0
 maxPartnerNodeVersion: 1.0.255.255
-serverVersion: 1.0.1.0
+serverVersion:
 outgoing_connections_maxConnections: 10
 outgoing_connections_maxConnectionAge: 200
 outgoing_connections_maxConnectionBanAge: 20
@@ -214,5 +216,14 @@ maxConnectionAttempts: 15
 baseRetryDelay: 750
 connectionPoolSize: 10
 maxSubscriptions: 300
-restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer, cmc'
+restExtensions: 'accountLink, aggregate, lockHash, lockSecret, mosaic, metadata, multisig, namespace, receipts, restrictions, transfer'
+restUncirculatingAccountPublicKeys: ''
 restDeploymentTool: symbol-bootstrap
+restProtocol: HTTP
+restSSLPath: '/symbol-workdir'
+restSSLKeyFileName: 'restSSL.key'
+restSSLCertificateFileName: 'restSSL.crt'
+statisticsServicePeerFilter: ''
+statisticsServicePeerLimit: 50
+statisticsServiceRestFilter: suggested
+statisticsServiceRestLimit: 10

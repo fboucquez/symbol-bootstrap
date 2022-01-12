@@ -86,13 +86,15 @@ config-finalization.properties
     enableVoting; true
     enableRevoteOnBoot; true
     size; 10'000
-    threshold; 7'000
+    threshold; 6'700
     stepDuration; 4m
     shortLivedCacheMessageDuration; 10m
     messageSynchronizationMaxResponseSize; 20MB
     maxHashesPerPoint; 256
     prevoteBlocksMultiple; 4
     unfinalizedBlocksDuration; 0m
+    treasuryReissuanceEpoch; 0
+    **treasury_reissuance_epoch_ineligible_voter_addresses**;
 
 config-harvesting.properties
 ============================
@@ -198,7 +200,7 @@ config-network.properties
     :delim: ;
 
     **network**; ; ;
-    identifier; public-test; NetworkIdentifier; Network identifier.
+    identifier; testnet; NetworkIdentifier; Network identifier.
     nemesisSignerPublicKey; DA007A7CCA877805DF0DD6250C9806E7B25DC3ED21E506569239D11A7175101A; Key; Nemesis public key.
     nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
     generationHashSeed; 6AF8E35BBC7AC341E7931B39E2C9A591EDBE9F9111996053E6771D48E9C53B31; ;
@@ -229,6 +231,7 @@ config-network.properties
     maxVotingKeyLifetime; 26280; uint32_t; Maximum number of finalization rounds for which voting key can be registered.
     harvestBeneficiaryPercentage; 10; uint8_t; Percentage of the harvested fee that is collected by the beneficiary account.
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
+    harvestNetworkFeeSinkAddressV1; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; ;
     harvestNetworkFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
     **plugin:catapult.plugins.accountlink**;
@@ -252,6 +255,7 @@ config-network.properties
     maxMosaicsPerAccount; 1'000; uint16_t; Maximum number of mosaics that an account can own.
     maxMosaicDuration; 3650d; utils::BlockSpan; Maximum mosaic duration.
     maxMosaicDivisibility; 6; uint8_t; Maximum mosaic divisibility.
+    mosaicRentalFeeSinkAddressV1; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; ;
     mosaicRentalFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the mosaic rental fee sink account.
     mosaicRentalFee; 500; Amount; Mosaic rental fee.
     **plugin:catapult.plugins.multisig**; ; ;
@@ -266,6 +270,7 @@ config-network.properties
     maxNamespaceDuration; 365d; utils::BlockSpan; Maximum namespace duration.
     namespaceGracePeriodDuration; 30d; utils::BlockSpan; Grace period during which time only the previous owner can renew an expired namespace.
     reservedRootNamespaceNames; symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info; unordered_set<string>; Reserved root namespaces that cannot be claimed.
+    namespaceRentalFeeSinkAddressV1; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; ;
     namespaceRentalFeeSinkAddress; TDGY4DD2U4YQQGERFMDQYHPYS6M7LHIF6XUCJ4Q; Address; Address of the namespace rental fee sink account.
     rootNamespaceRentalFeePerBlock; 1; Amount; Root namespace rental fee per block.
     childNamespaceRentalFee; 100; Amount; Child namespace rental fee.
@@ -275,6 +280,10 @@ config-network.properties
     maxMosaicRestrictionValues; 20; uint8_t; Maximum number of mosaic restriction values.
     **plugin:catapult.plugins.transfer**; ; ;
     maxMessageSize; 1024; uint16_t; Maximum transaction message size.
+    **fork_heights**; ; ;
+    totalVotingBalanceCalculationFix; 0; uint32_t; Height of fork to fix TotalVotingBalance calculation.
+    treasuryReissuance; 0; ;
+    **treasury_reissuance_transaction_signatures**;
 
 config-node.properties
 ======================
@@ -318,7 +327,7 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 1.0.0.0; ;
+    minPartnerNodeVersion; 1.0.2.0; ;
     maxPartnerNodeVersion; 1.0.255.255; ;
     trustedHosts; 127.0.0.1; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1; unordered_set<string>; Networks that should be treated as local.
@@ -334,7 +343,7 @@ config-node.properties
     **localnode**; ; ;
     host; peer-node-0; string; Node host (leave empty to auto-detect IP).
     friendlyName; my-peer-node-0; string; Node friendly name (leave empty to use address).
-    version; 1.0.1.0; uint32_t; Node version.
+    version; ; uint32_t; Node version.
     roles; Peer,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.

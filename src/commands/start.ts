@@ -15,8 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapService, BootstrapUtils } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { LoggerFactory } from '../logger';
+import { BootstrapService, BootstrapUtils, CommandUtils } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -26,10 +26,12 @@ export default class Start extends Command {
     static description = 'Single command that aggregates config, compose and run in one line!';
 
     static examples = [
-        `$ symbol-bootstrap start`,
         `$ symbol-bootstrap start -p bootstrap`,
         `$ symbol-bootstrap start -p testnet -a dual`,
+        `$ symbol-bootstrap start -p mainnet -a peer -c custom-preset.yml`,
         `$ symbol-bootstrap start -p testnet -a dual --password 1234`,
+        `$ symbol-bootstrap start -p mainnet -a my-custom-assembly.yml -c custom-preset.yml`,
+        `$ symbol-bootstrap start -p my-custom-network.yml -a dual -c custom-preset.yml`,
         `$ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual`,
     ];
 
@@ -37,13 +39,15 @@ export default class Start extends Command {
 
     public async run(): Promise<void> {
         const { flags } = this.parse(Start);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(flags.logger);
         flags.password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(this.config.root).start(flags);
+        await new BootstrapService(logger).start({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
     }
 }

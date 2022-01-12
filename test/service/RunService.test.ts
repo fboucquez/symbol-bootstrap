@@ -18,14 +18,16 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
+import { ConfigService, LoggerFactory, LogType } from '../../src';
 import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
-
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('RunService', () => {
     const target = 'target/tests/BootstrapService.standard';
 
     it('healthCheck', async () => {
-        const bootstrapService = new BootstrapService();
+        const bootstrapService = new BootstrapService(logger);
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
             preset: Preset.bootstrap,
@@ -41,7 +43,7 @@ describe('RunService', () => {
 
         await bootstrapService.compose(config);
 
-        const service = new RunService({ ...config });
+        const service = new RunService(logger, { ...config });
         try {
             await service.healthCheck(500);
         } catch (e) {
@@ -52,8 +54,9 @@ describe('RunService', () => {
     });
 
     it('resetData', async () => {
-        const bootstrapService = new BootstrapService();
+        const bootstrapService = new BootstrapService(logger);
         const config: StartParams = {
+            ...ConfigService.defaultParams,
             report: false,
             upgrade: false,
             preset: Preset.bootstrap,
@@ -70,9 +73,9 @@ describe('RunService', () => {
 
         const nodeDataFolder = BootstrapUtils.getTargetNodesFolder(target, false, configResult.presetData.nodes![0].name, 'data');
         expect(existsSync(nodeDataFolder)).eq(true);
-        BootstrapUtils.deleteFolder(nodeDataFolder);
+        BootstrapUtils.deleteFolder(logger, nodeDataFolder);
         expect(existsSync(nodeDataFolder)).eq(false);
-        const service = new RunService({ ...config });
+        const service = new RunService(logger, { ...config });
         await service.resetData();
         expect(existsSync(join(nodeDataFolder, '00000', '00001.dat'))).eq(false);
     });

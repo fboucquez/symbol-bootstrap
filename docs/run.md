@@ -18,7 +18,7 @@ OPTIONS
       If provided, docker-compose will run with -b (--build)
 
   -d, --detached
-      If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before 
+      If provided, docker-compose will run with -d (--detached) and this command will wait unit server is running before
       returning
 
   -h, --help
@@ -40,6 +40,10 @@ OPTIONS
 
       The health check process handles 'repeat' and custom 'openPort' services.
 
+  --logger=logger
+      [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use ',' to select
+      multiple loggers.
+
   --pullImages
       It pulls the images from DockerHub when running the configuration. It only affects alpha/dev docker images.
 
@@ -53,4 +57,4 @@ EXAMPLE
   $ symbol-bootstrap run
 ```
 
-_See code: [src/commands/run.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/run.ts)_

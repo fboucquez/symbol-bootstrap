@@ -1,9 +1,12 @@
 {
   "network": {
-    "name": "publicTest",
-    "description": "catapult public test network"
+    "name": "testnet",
+    "description": "Symbol Joeynet Network"
   },
   "port": 3000,
+  "protocol": "HTTP",
+  "sslKeyPath": "/symbol-workdir/restSSL.key",
+  "sslCertificatePath": "/symbol-workdir/restSSL.crt",
   "crossDomain": {
     "allowedHosts": [
       "*"
@@ -15,6 +18,7 @@
       "OPTIONS"
     ]
   },
+  "uncirculatingAccountPublicKeys": [],
   "extensions": [
     "accountLink",
     "aggregate",
@@ -26,8 +30,7 @@
     "namespace",
     "receipts",
     "restrictions",
-    "transfer",
-    "cmc"
+    "transfer"
   ],
   "db": {
     "url": "mongodb://db:27017/",

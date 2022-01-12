@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import fetch from 'cross-fetch';
 import { lookup } from 'dns';
-import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
-import { ConfigPreset } from '../model';
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp, RoleType } from 'symbol-sdk';
+import { Configuration, NodeApi, NodeListFilter, RequestContext } from 'symbol-statistics-service-typescript-fetch-client';
+import { Logger } from '../logger';
+import { ConfigPreset, PeerInfo } from '../model';
+import { KnownError } from './BootstrapUtils';
 
 export interface RepositoryInfo {
     repositoryFactory: RepositoryFactory;
@@ -28,36 +27,44 @@ export interface RepositoryInfo {
     chainInfo: ChainInfo;
 }
 export class RemoteNodeService {
-    public async resolveCurrentFinalizationEpoch(presetData: ConfigPreset): Promise<number> {
-        const votingNode = presetData.nodes?.find((n) => n.voting);
-        if (!votingNode) {
-            return presetData.lastKnownNetworkEpoch;
+    constructor(
+        private readonly logger: Logger,
+        private readonly presetData: ConfigPreset,
+        private readonly offline: boolean | undefined,
+    ) {}
+    private restUrls: string[] | undefined;
+
+    public async resolveCurrentFinalizationEpoch(): Promise<number> {
+        const votingNode = this.presetData.nodes?.find((n) => n.voting);
+        if (!votingNode || this.offline) {
+            return this.presetData.lastKnownNetworkEpoch;
         }
-        const remoteNodeService = new RemoteNodeService();
-        if (!(await remoteNodeService.isConnectedToInternet())) {
-            return presetData.lastKnownNetworkEpoch;
+        if (!(await this.isConnectedToInternet())) {
+            return this.presetData.lastKnownNetworkEpoch;
         }
-        return (await remoteNodeService.getBestFinalizationEpoch(presetData.knownRestGateways)) || presetData.lastKnownNetworkEpoch;
+        const urls = await this.getRestUrls();
+        return (await this.getBestFinalizationEpoch(urls)) || this.presetData.lastKnownNetworkEpoch;
     }
 
-    public async getBestFinalizationEpoch(urls: string[] | undefined): Promise<number | undefined> {
-        if (!urls || !urls.length) {
+    public async getBestFinalizationEpoch(urls: string[]): Promise<number | undefined> {
+        if (!urls.length) {
             return undefined;
         }
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
         const finalizationEpoch = repositoryInfo?.chainInfo.latestFinalizedBlock.finalizationEpoch;
         if (finalizationEpoch) {
-            logger.info(`The current network finalization epoch is ${finalizationEpoch}`);
+            this.logger.info(`The current network finalization epoch is ${finalizationEpoch}`);
         }
         return finalizationEpoch;
     }
 
-    public async getBestRepositoryInfo(urls: string[]): Promise<RepositoryInfo> {
+    public async getBestRepositoryInfo(url: string | undefined): Promise<RepositoryInfo> {
+        const urls = url ? [url] : await this.getRestUrls();
         const repositoryInfo = this.sortByHeight(await this.getKnownNodeRepositoryInfos(urls)).find((i) => i);
         if (!repositoryInfo) {
             throw new Error(`No up and running node could be found out of: \n - ${urls.join('\n - ')}`);
         }
-        logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
+        this.logger.info(`Connecting to node ${repositoryInfo.restGatewayUrl}`);
         return repositoryInfo;
     }
 
@@ -88,29 +95,130 @@ export class RemoteNodeService {
     }
 
     private async getKnownNodeRepositoryInfos(urls: string[]): Promise<RepositoryInfo[]> {
-        logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
+        if (!urls.length) {
+            throw new KnownError('There are not known nodes!');
+        }
+        this.logger.info(`Looking for the best node out of:  \n - ${urls.join('\n - ')}`);
         return (
             await Promise.all(
-                urls.map(
-                    async (restGatewayUrl): Promise<RepositoryInfo | undefined> => {
-                        const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
-                        try {
-                            const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
-                            return {
-                                restGatewayUrl,
-                                repositoryFactory,
-                                chainInfo,
-                            };
-                        } catch (e) {
-                            const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}}`;
-                            logger.warn(message);
-                            return undefined;
-                        }
-                    },
-                ),
+                urls.map(async (restGatewayUrl): Promise<RepositoryInfo | undefined> => {
+                    const repositoryFactory = new RepositoryFactoryHttp(restGatewayUrl);
+                    try {
+                        const chainInfo = await repositoryFactory.createChainRepository().getChainInfo().toPromise();
+                        return {
+                            restGatewayUrl,
+                            repositoryFactory,
+                            chainInfo,
+                        };
+                    } catch (e) {
+                        const message = `There has been an error talking to node ${restGatewayUrl}. Error: ${e.message}`;
+                        this.logger.warn(message);
+                        return undefined;
+                    }
+                }),
             )
         )
             .filter((i) => i)
             .map((i) => i as RepositoryInfo);
+    }
+
+    public async getRestUrls(): Promise<string[]> {
+        if (this.restUrls) {
+            return this.restUrls;
+        }
+        const presetData = this.presetData;
+        const urls = [...(presetData.knownRestGateways || [])];
+        const statisticsServiceUrl = presetData.statisticsServiceUrl;
+        if (statisticsServiceUrl && !this.offline) {
+            const client = this.createNodeApiRestClient(statisticsServiceUrl);
+            try {
+                const filter = presetData.statisticsServiceRestFilter as NodeListFilter;
+                const limit = presetData.statisticsServiceRestLimit;
+                const nodes = await client.getNodes(filter ? filter : undefined, limit);
+                urls.push(...nodes.map((n) => n.apiStatus?.restGatewayUrl).filter((url): url is string => !!url));
+            } catch (e) {
+                this.logger.warn(
+                    `There has been an error connecting to statistics ${statisticsServiceUrl}. Rest urls cannot be resolved! Error ${e.message}`,
+                );
+            }
+        }
+        if (!urls) {
+            throw new Error('Rest URLS could not be resolved!');
+        }
+        this.restUrls = urls;
+        return urls;
+    }
+
+    /**
+     * Return user friendly role type list
+     * @param role combined node role types
+     */
+    public static getNodeRoles(role: number): string {
+        const roles: string[] = [];
+        if ((RoleType.PeerNode.valueOf() & role) != 0) {
+            roles.push('Peer');
+        }
+        if ((RoleType.ApiNode.valueOf() & role) != 0) {
+            roles.push('Api');
+        }
+        if ((RoleType.VotingNode.valueOf() & role) != 0) {
+            roles.push('Voting');
+        }
+        return roles.join(',');
+    }
+
+    public async getPeerInfos(): Promise<PeerInfo[]> {
+        const presetData = this.presetData;
+        const statisticsServiceUrl = presetData.statisticsServiceUrl;
+        const knownPeers = [...(presetData.knownPeers || [])];
+        if (statisticsServiceUrl && !this.offline) {
+            const client = this.createNodeApiRestClient(statisticsServiceUrl);
+            try {
+                const filter = presetData.statisticsServicePeerFilter as NodeListFilter;
+                const limit = presetData.statisticsServicePeerLimit;
+                const nodes = await client.getNodes(filter ? filter : undefined, limit);
+                const peerInfos = nodes
+                    .map((n): PeerInfo | undefined => {
+                        if (!n.peerStatus?.isAvailable || !n.publicKey || !n.port || !n.friendlyName || !n.roles) {
+                            return undefined;
+                        }
+                        return {
+                            publicKey: n.publicKey,
+                            endpoint: {
+                                host: n.host || '',
+                                port: n.port,
+                            },
+                            metadata: {
+                                name: n.friendlyName,
+                                roles: RemoteNodeService.getNodeRoles(n.roles),
+                            },
+                        };
+                    })
+                    .filter((peerInfo): peerInfo is PeerInfo => !!peerInfo);
+                knownPeers.push(...peerInfos);
+            } catch (error) {
+                this.logger.warn(
+                    `There has been an error connecting to statistics ${statisticsServiceUrl}. Peers cannot be resolved! Error ${error.message}`,
+                );
+            }
+        }
+        return knownPeers;
+    }
+
+    public createNodeApiRestClient(statisticsServiceUrl: string): NodeApi {
+        return new NodeApi(
+            new Configuration({
+                fetchApi: fetch as any,
+                basePath: statisticsServiceUrl,
+                middleware: [
+                    {
+                        pre: (context: RequestContext): Promise<void> => {
+                            this.logger.info(`Getting nodes information from ${context.url}`);
+                            return Promise.resolve();
+                        },
+                    },
+                ],
+            }),
+        );
     }
 }

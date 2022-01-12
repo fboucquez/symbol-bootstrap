@@ -14,39 +14,48 @@ USAGE
   $ symbol-bootstrap link
 
 OPTIONS
-  -c, --customPreset=customPreset  This command uses the encrypted addresses.yml to resolve the main private key. If the
-                                   main private is only stored in the custom preset, you can provide it using this
-                                   param. Otherwise, the command may ask for it when required.
+  -c, --customPreset=customPreset                      This command uses the encrypted addresses.yml to resolve the main
+                                                       private key. If the main private is only stored in the custom
+                                                       preset, you can provide it using this param. Otherwise, the
+                                                       command may ask for it when required.
 
-  -h, --help                       It shows the help of this command.
+  -h, --help                                           It shows the help of this command.
 
-  -t, --target=target              [default: target] The target folder where the symbol-bootstrap network is generated
+  -t, --target=target                                  [default: target] The target folder where the symbol-bootstrap
+                                                       network is generated
 
-  -u, --url=url                    [default: http://localhost:3000] the network url
+  -u, --url=url                                        [default: http://localhost:3000] the network url
 
-  --maxFee=maxFee                  the max fee used when announcing (absolute). The node min multiplier will be used if
-                                   it is not provided.
+  --logger=logger                                      [default: Console] The loggers the command will use. Options are:
+                                                       Console,File,Silent. Use ',' to select multiple loggers.
 
-  --noPassword                     When provided, Bootstrap will not use a password, so private keys will be stored in
-                                   plain text. Use with caution.
+  --maxFee=maxFee                                      the max fee used when announcing (absolute). The node min
+                                                       multiplier will be used if it is not provided.
 
-  --password=password              A password used to encrypt and decrypt private keys in preset files like
-                                   addresses.yml and preset.yml. Bootstrap prompts for a password by default, can be
-                                   provided in the command line (--password=XXXX) or disabled in the command line
-                                   (--noPassword).
+  --noPassword                                         When provided, Bootstrap will not use a password, so private keys
+                                                       will be stored in plain text. Use with caution.
 
-  --ready                          If --ready is provided, the command will not ask for confirmation when announcing
-                                   transactions.
+  --password=password                                  A password used to encrypt and decrypt private keys in preset
+                                                       files like addresses.yml and preset.yml. Bootstrap prompts for a
+                                                       password by default, can be provided in the command line
+                                                       (--password=XXXX) or disabled in the command line (--noPassword).
 
-  --unlink                         Perform "Unlink" transactions unlinking the voting and VRF keys from the node signer
-                                   account
+  --ready                                              If --ready is provided, the command will not ask for confirmation
+                                                       when announcing transactions.
 
-  --useKnownRestGateways           Use the best NEM node available when announcing. Otherwise the command will use the
-                                   node provided by the --url parameter.
+  --serviceProviderPublicKey=serviceProviderPublicKey  Public key of the service provider account, used when the
+                                                       transaction announcer(service provider account) is different than
+                                                       the main account private key holder
+
+  --unlink                                             Perform "Unlink" transactions unlinking the voting and VRF keys
+                                                       from the node signer account
+
+  --useKnownRestGateways                               Use the best NEM node available when announcing. Otherwise the
+                                                       command will use the node provided by the --url parameter.
 
 EXAMPLES
   $ symbol-bootstrap link
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap link --unlink --useKnownRestGateways
 ```
 
-_See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/link.ts)_
+_See code: [src/commands/link.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/link.ts)_

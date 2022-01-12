@@ -14,10 +14,13 @@ USAGE
   $ symbol-bootstrap verify
 
 OPTIONS
-  -h, --help  It shows the help of this command.
+  -h, --help       It shows the help of this command.
+
+  --logger=logger  [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use ','
+                   to select multiple loggers.
 
 EXAMPLE
   $ symbol-bootstrap verify
 ```
 
-_See code: [src/commands/verify.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/verify.ts)_
+_See code: [src/commands/verify.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/verify.ts)_

@@ -1,14 +1,19 @@
 {
   "network": {
     "name": "{{{networkName}}}",
-    "description": "{{{description}}}"
+    "description": "{{{networkDescription}}}"
   },
 
   "port": 3000,
+  "protocol": "{{{restProtocol}}}",
+  "sslKeyPath": "{{{restSSLPath}}}/{{{restSSLKeyFileName}}}",
+  "sslCertificatePath": "{{{restSSLPath}}}/{{{restSSLCertificateFileName}}}",
+
   "crossDomain": {
     "allowedHosts": ["*"],
     "allowedMethods": ["GET", "POST", "PUT", "OPTIONS"]
   },
+  "uncirculatingAccountPublicKeys": {{{toJson (splitCsv restUncirculatingAccountPublicKeys)}}},
   "extensions": {{{toJson (splitCsv restExtensions)}}},
   "db": {
     "url": "mongodb://{{{databaseHost}}}:27017/",

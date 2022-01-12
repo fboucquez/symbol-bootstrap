@@ -17,9 +17,7 @@
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { Logger } from '../logger';
 import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
@@ -35,8 +33,6 @@ export interface CertificateMetadata {
     readonly mainPublicKey: string;
     readonly version: number;
 }
-
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export interface NodeCertificates {
     main: CertificatePair;
@@ -56,7 +52,7 @@ export class CertificateService {
     public static CA_CERTIFICATE_FILE_NAME = 'ca.cert.pem';
     private static readonly METADATA_VERSION = 1;
 
-    constructor(protected readonly params: CertificateParams) {}
+    constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {}
 
     public async run(
         presetData: CertificateConfigPreset,
@@ -78,19 +74,19 @@ export class CertificateService {
 
             if (willExpireReport.willExpire) {
                 if (renewIfRequired) {
-                    logger.info(
+                    this.logger.info(
                         `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. Renewing...`,
                     );
                     await this.createCertificate(true, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
                     return true;
                 } else {
-                    logger.warn(
+                    this.logger.warn(
                         `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. You need to renew it.`,
                     );
                     return false;
                 }
             } else {
-                logger.info(
+                this.logger.info(
                     `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire on ${willExpireReport.expirationDate}. No need to renew it yet.`,
                 );
                 return false;
@@ -110,10 +106,11 @@ export class CertificateService {
         metadataFile: string,
         randomSerial?: string,
     ) {
-        const copyFrom = `${BootstrapUtils.DEFAULT_ROOT_FOLDER}/config/cert`;
+        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'cert');
         const networkType = presetData.networkType;
 
         const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
+            this.logger,
             networkType,
             providedCertificates.main,
             KeyName.Main,
@@ -121,6 +118,7 @@ export class CertificateService {
             'generating the server CA certificates',
         );
         const transportPrivateKey = await CommandUtils.resolvePrivateKey(
+            this.logger,
             networkType,
             providedCertificates.transport,
             KeyName.Transport,
@@ -129,7 +127,7 @@ export class CertificateService {
         );
 
         if (!renew) {
-            BootstrapUtils.deleteFolder(certFolder);
+            BootstrapUtils.deleteFolder(this.logger, certFolder);
         }
 
         await BootstrapUtils.mkdir(certFolder);
@@ -157,8 +155,8 @@ export class CertificateService {
             false,
         );
         if (stdout.indexOf('Certificate Created') < 0) {
-            logger.info(BootstrapUtils.secureString(stdout));
-            logger.error(BootstrapUtils.secureString(stderr));
+            this.logger.info(BootstrapUtils.secureString(stdout));
+            this.logger.error(BootstrapUtils.secureString(stderr));
             throw new Error('Certificate creation failed. Check the logs!');
         }
 
@@ -166,7 +164,7 @@ export class CertificateService {
         if (certificates.length != 2) {
             throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
         }
-        logger.info(renew ? `Certificate for node ${name} renewed` : `Certificate for node ${name} created`);
+        this.logger.info(renew ? `Certificate for node ${name} renewed` : `Certificate for node ${name} created`);
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
@@ -195,7 +193,7 @@ export class CertificateService {
                 metadata.version !== CertificateService.METADATA_VERSION
             );
         } catch (e) {
-            logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
+            this.logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
             return true;
         }
     }
@@ -243,6 +241,8 @@ rm createNodeCertificates.sh
 rm ca.key.pem
 rm ca.der
 rm node.der
+rm node.csr.pem
+rm *.cnf
 rm index.txt*
 rm serial.dat*
 rm -rf new_certs
@@ -263,8 +263,8 @@ echo "Certificate Created"
         const { stdout, stderr } = await this.runOpenSslCommand(symbolServerImage, command, certFolder, true);
         const expirationDate = stdout.match('notAfter\\=(.*)\\n')?.[1];
         if (!expirationDate) {
-            logger.info(BootstrapUtils.secureString(stdout));
-            logger.error(BootstrapUtils.secureString(stderr));
+            this.logger.info(BootstrapUtils.secureString(stdout));
+            this.logger.error(BootstrapUtils.secureString(stderr));
             throw new Error(
                 `Cannot validate ${certificateFileName} certificate expiration. Expiration Date cannot be resolved. Check the logs!`,
             );
@@ -281,8 +281,8 @@ echo "Certificate Created"
                 expirationDate: expirationDate,
             };
         }
-        logger.info(BootstrapUtils.secureString(stdout));
-        logger.error(BootstrapUtils.secureString(stderr));
+        this.logger.info(BootstrapUtils.secureString(stdout));
+        this.logger.error(BootstrapUtils.secureString(stderr));
         throw new Error(`Cannot validate ${certificateFileName} certificate expiration. Check the logs!`);
     }
 
@@ -295,9 +295,9 @@ echo "Certificate Created"
         stdout: string;
         stderr: string;
     }> {
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.params.user);
+        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
         const binds = [`${resolve(certFolder)}:/data:rw`];
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec({
+        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
             image: symbolServerImage,
             userId: userId,
             workdir: '/data',

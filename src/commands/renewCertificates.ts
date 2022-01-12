@@ -15,12 +15,9 @@
  */
 import { Command, flags } from '@oclif/command';
 import { Account } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import { LoggerFactory, System } from '../logger';
 import { CertificatePair, ConfigAccount, ConfigPreset } from '../model';
 import { BootstrapUtils, CertificateService, CommandUtils, ConfigLoader } from '../service';
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
 
 export default class RenewCertificates extends Command {
     static description = `It renews the ssl certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
@@ -47,26 +44,29 @@ It's recommended to backup the target folder before running this operation!
             description: `User used to run docker images when generating the certificates. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: BootstrapUtils.CURRENT_USER,
         }),
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public async run(): Promise<void> {
         const { flags } = this.parse(RenewCertificates);
-        BootstrapUtils.showBanner();
+        CommandUtils.showBanner();
+        const logger = LoggerFactory.getLogger(flags.logger);
         const password = await CommandUtils.resolvePassword(
+            logger,
             flags.password,
             flags.noPassword,
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
         const target = flags.target;
-        const configLoader = new ConfigLoader();
+        const configLoader = new ConfigLoader(logger);
         const presetData = configLoader.loadExistingPresetData(target, password);
         const addresses = configLoader.loadExistingAddresses(target, password);
         const customPreset = configLoader.loadCustomPreset(flags.customPreset, password);
         const mergedPresetData: ConfigPreset = configLoader.mergePresets(presetData, customPreset);
 
         const networkType = presetData.networkType;
-        const certificateService = new CertificateService({
+        const certificateService = new CertificateService(logger, {
             target,
             user: flags.user,
         });

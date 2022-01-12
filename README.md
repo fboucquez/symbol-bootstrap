@@ -5,10 +5,10 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
 [![Downloads/week](https://img.shields.io/npm/dw/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
-[![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/nemtech/symbol-bootstrap/blob/master/package.json)
-[![Build Status](https://travis-ci.com/nemtech/symbol-bootstrap.svg?branch=main)](https://travis-ci.com/nemtech/symbol-bootstrap)
-[![Coverage Status](https://coveralls.io/repos/github/nemtech/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/nemtech/symbol-bootstrap?branch=main)
-[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://nemtech.github.io/symbol-bootstrap/)
+[![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json)
+[![Build Status](https://travis-ci.com/fboucquez/symbol-bootstrap.svg?branch=main)](https://travis-ci.com/fboucquez/symbol-bootstrap)
+[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
+[![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://fboucquez.github.io/symbol-bootstrap/)
 
 <!-- toc -->
 * [symbol-bootstrap](#symbol-bootstrap)
@@ -16,23 +16,16 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 * [Key benefits:](#key-benefits)
 * [Concepts](#concepts)
 * [Requirements](#requirements)
-* [Usage](#usage)
-* [General Usage](#general-usage)
+* [Installation](#installation)
 * [Wizard](#wizard)
 * [E2E Testing support](#e2e-testing-support)
 * [Development](#development)
-* [Commands](#commands)
 * [Command Topics](#command-topics)
 <!-- tocstop -->
 
 # Why this tool?
 
-This tool has been created to address the problems defined in Symbol's [NIP11](https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md).
-
-It replaces:
-
--   [catapult-service-bootstrap](https://github.com/nemtech/catapult-service-bootstrap)
--   [symbol-testnet-bootstrap](https://github.com/nemgrouplimited/symbol-service-bootstrap)
+This tool has been created to address the original problems defined in Symbol's [NIP11](https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md).
 
 # Key benefits:
 
@@ -58,20 +51,25 @@ Yaml files that define the configuration and layout of the network and nodes. It
 Presets are defined at 4 levels from general to specific:
 
 -   Shared: Default configurations for all the networks.
--   Network: It defines the main preset of a given network, example: `bootstrap` or `testnet`.
--   Assembly: It defines a modification of a network, example: `testnet peer`, `tesnet dual`, `testnet api`. Assembly is required for some networks (like `testnet`).
+-   Network: It defines the configuration of a given network.
+-   Assembly: It defines a modification of a network selecting the services that the node will run.
 -   Custom: A user provided yml file (`--customPreset` param) that could override some or all properties in the out-of-the-box presets.
 
 Properties in each file override the previous values (by object deep merge).
 
-### Out-of-the-box presets:
+### Network Presets:
 
--   `-p bootstrap`: Default [preset](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/network.yml). It's a private network with 1 mongo database, 2 peers, 1 api and 1 rest gateway. Nemesis block is generated.
--   `-p bootstrap -a light`: A [light](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-light.yml) network. It's a version of bootstrap preset with 1 mongo database, 1 dual peer and 1 rest gateway. Great for faster light e2e automatic testing. Nemesis block is generated.
--   `-p bootstrap -a full`: A [full](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/bootstrap/assembly-full.yml) network. The default bootstrap preset plus 1 wallet, 1 explorer and 1 faucet. Great for demonstration purposes. Nemesis block is generated.
--   `-p testnet -a peer`: A [harvesting](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-peer.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml). [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
--   `-p testnet -a api`: A [api](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-api.yml) peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
--   `-p testnet -a dual`: A [dual](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/assembly-dual.yml) haversting peer node that connects to the current public [testnet](https://github.com/nemtech/symbol-bootstrap/blob/main/presets/testnet/network.yml) running its own mongo database and rest gateway. [Nemesis block](https://github.com/nemtech/symbol-bootstrap/tree/main/presets/testnet/seed/00000) is copied over.
+-   [`mainnet`](presets/mainnet/network.yml): Used to create nodes connected to Symbol's Mainnet network. The [nemesis block](presets/mainnet/seed/00000) is copied over.
+-   [`testnet`](presets/testnet/network.yml): Used to create nodes connected to Symbol's Testnet network. The [nemesis block](presets/testnet/seed/00000) is copied over.
+-   [`bootstrap`](presets/bootstrap/network.yml): Used to create new private networks with dual currency configuration, network and harvest currencies. Nemesis block is generated.
+
+### Assemblies:
+
+-   [`peer`](presets/assemblies/assembly-peer.yml): A standard peer-only node that contains 1 peer node.
+-   [`api`](presets/assemblies/assembly-api.yml): A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.
+-   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.
+-   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer, web wallet and faucet for test and demonstration purposes.
+-   [`multinode`](presets/assemblies/assembly-multinode.yml): A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
 
 ### Custom preset:
 
@@ -81,28 +79,28 @@ Custom presets give Symbol Bootstrap its versatility. Check out the custom prese
 
 ## Target:
 
-The folder where the generated config, docker files and data are stored. The folder structure is:
+The folder where the generated config, docker files and data are stored.
 
--   `./preset.yml`: the final generated preset.yml that it's used to configure bootstrap, the nodes, docker, etc.
--   `./addresses.yml`: randomly generated data that wasn't provided in the preset. e.g.: SSL keys, nodes' keys, nemesis accounts, generation hash seed, etc.
--   `./nodes`: it holds the configuration, data and logs for all the defined node instances.
--   `./gateways`: it holds the configuration and logs for all the defined node rest gateways.
+The folder structure is:
+
+-   `./preset.yml`: The final generated preset.yml that it's used to configure bootstrap, the nodes, docker, etc.
+-   `./addresses.yml`: Randomly generated data that wasn't provided in the preset. e.g.: SSL keys, nodes' keys, nemesis accounts, generation hash seed, etc.
+-   `./nodes`: It holds the configuration, data and logs for all the defined node instances.
+-   `./gateways`: It holds the configuration and logs for all the defined node rest gateways.
 -   `./nemesis`: The folder used to hold the nemesis block. Block 1 data is generated via `nemgen` tool for new networks. For existing network, it is copied over.
--   `./databases`: the location where the mongo data is stored for the different database instances.
--   `./docker`: the generated docker-compose.yml, mongo init scripts and server basic bash scripts.
--   `./reports`: the location of the generated reports.
+-   `./databases`: The location where the mongo data is stored for the different database instances.
+-   `./docker`: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.
+-   `./explorers`: The generated explorer configuration.
+-   `./wallets`: The generated wallet configuration.
+-   `./reports`: The location of the generated reports.
+
+Note: **The target folder should not be manually modified**. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset [guides](docs/presetGuides.md)!
 
 # Requirements
 
 -   Node 12.0.0+
 -   Docker 18.3.0+
 -   Docker Compose 1.25.0+
-
-Validate your environment by running:
-
-```
-symbol-bootstrap verify
-```
 
 Check your user can run docker without sudo:
 
@@ -118,7 +116,7 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 
 Please follow this [guide](https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket).
 
-# Usage
+# Installation
 
 It's recommended to run the commands from en empty working dir.
 
@@ -137,7 +135,7 @@ $ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/1.0.8 linux-x64 node-v12.22.1
+symbol-bootstrap/1.1.2 linux-x64 node-v12.22.1
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -145,12 +143,16 @@ USAGE
 ```
 <!-- usagestop -->
 
-# General Usage
+Validate your environment by running:
+
+```
+symbol-bootstrap verify
+```
 
 The general usage would be:
 
 ```
-symbol-bootstrap config -p bootstrap
+symbol-bootstrap config -p testnet -a dual
 symbol-bootstrap compose
 symbol-bootstrap run
 ```
@@ -158,7 +160,7 @@ symbol-bootstrap run
 You can aggregate all these commands with this one liner:
 
 ```
-symbol-bootstrap start -p bootstrap
+symbol-bootstrap start -p testnet -a dual
 ```
 
 If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:
@@ -166,6 +168,28 @@ If you need to start fresh, you many need to sudo remove the target folder (dock
 ```
 sudo rm -rf ./target
 ```
+
+## Examples
+
+Network presets and assemblies can be combined to generate different types of nodes. Some examples:
+
+-   `$ symbol-bootstrap start -p mainnet -a dual -c customPreset.yml`
+-   `$ symbol-bootstrap start -p testnet -a peer -c customPreset.yml`
+-   `$ symbol-bootstrap start -p testnet -a demo -c customPreset.yml`
+-   `$ symbol-bootstrap start -p bootstrap -a multinode -c customPreset.yml`
+-   `$ symbol-bootstrap start -p bootstrap -a demo -c customPreset.yml`
+-   `$ symbol-bootstrap start -p bootstrap -a dual -c customPreset.yml`
+
+Although some combinations can be done, they may not be really useful. Examples that are NOT useful:
+
+-   `$ symbol-bootstrap start -p mainnet -a multinode`
+-   `$ symbol-bootstrap start -p testnet -a multinode`
+
+A custom network preset file can also be provided. This is useful when you have your own custom Symbol network, and you want other nodes to join.
+For this case, you provide your own `networkPreset.yml` and nemesis feed folder. The node admin can then run:
+
+-   `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
+
 
 # Wizard
 
@@ -180,7 +204,7 @@ symbol-bootstrap wizard
 One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:
 
 ```
-symbol-bootstrap start -p bootstrap --detached
+symbol-bootstrap start -p bootstrap -a dual -c my_custom_preset.yml --detached --healthCheck
 YOUR TEST (e.g: npm run test, gradle test, selenium etc.)
 symbol-bootstrap stop
 ```
@@ -205,7 +229,7 @@ Your `package.json` can look like this:
 scripts": {
 ...
     "clean-network": "symbol-bootstrap clean",
-    "run-network": "symbol-bootstrap start -c ./output/my_custom_preset.yml --detached --healthCheck",
+    "run-network": "symbol-bootstrap start -p bootstrap -a dual -c my_custom_preset.yml --detached --healthCheck",
     "run-stop": "symbol-bootstrap stop",
     "integration-test": "....some mocha/jest/etc tests running against localhost:3000 network....",
     "e2e": "npm run clean-network && npm run run-network && npm run integration-test && npm run stop-network",
@@ -221,7 +245,7 @@ npm run e2e
 
 ## Node client E2E via API:
 
-Alternatively, you can use the [BootstrapService](https://github.com/nemtech/symbol-bootstrap/blob/main/src/service/BootstrapService.ts) facade to programmatically start and stop a server.
+Alternatively, you can use the [BootstrapService](src/service/BootstrapService.ts) facade to programmatically start and stop a server.
 
 Example:
 
@@ -269,7 +293,13 @@ Pull Requests are appreciated! Please follow the contributing [guidelines](CONTR
 Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
 General users should install this tool like any other node module.
 
-# Commands
+## Code style
+
+To format the source code, verify/fix lint issues, and generate the commands docs, run:
+
+```
+npm run style:fix
+```
 
 <!-- commands -->
 # Command Topics
@@ -280,10 +310,10 @@ General users should install this tool like any other node module.
 * [`symbol-bootstrap config`](docs/config.md) - Command used to set up the configuration files and the nemesis block for the current network
 * [`symbol-bootstrap decrypt`](docs/decrypt.md) - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
 * [`symbol-bootstrap encrypt`](docs/encrypt.md) - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
-* [`symbol-bootstrap enrollRewardProgram`](docs/enrollRewardProgram.md) - It enrols the nodes in the rewards program by announcing the enroll transaction to the registration address.  You can also use this command to update the program registration when you change the agent keys (changing the agent-ca-csr) or server host.
 * [`symbol-bootstrap healthCheck`](docs/healthCheck.md) - It checks if the services created with docker compose are up and running.
 * [`symbol-bootstrap help`](docs/help.md) - display help for symbol-bootstrap
 * [`symbol-bootstrap link`](docs/link.md) - It announces VRF and Voting Link transactions to the network for each node with 'Peer' or 'Voting' roles. This command finalizes the node registration to an existing network.
+* [`symbol-bootstrap modifyMultisig`](docs/modifyMultisig.md) - Create or modify a multisig account
 * [`symbol-bootstrap pack`](docs/pack.md) - It configures and packages your node into a zip file that can be uploaded to the final node machine.
 * [`symbol-bootstrap renewCertificates`](docs/renewCertificates.md) - It renews the ssl certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
 * [`symbol-bootstrap report`](docs/report.md) - it generates reStructuredText (.rst) reports describing the configuration of each node.

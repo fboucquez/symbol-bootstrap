@@ -15,7 +15,7 @@ services:
     node:
         user: '1000:1000'
         container_name: node
-        image: 'symbolplatform/symbol-server:gcc-10-1.0.1.0'
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.1'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -31,7 +31,7 @@ services:
     broker:
         user: '1000:1000'
         container_name: broker
-        image: 'symbolplatform/symbol-server:gcc-10-1.0.1.0'
+        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.1'
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker NORMAL
         stop_signal: SIGINT
@@ -44,7 +44,7 @@ services:
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.3.6'
+        image: 'symbolplatform/symbol-rest:2.4.0'
         command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

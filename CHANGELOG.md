@@ -4,20 +4,79 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.8] - NEXT
+## [1.1.2] - NEXT
 
-**Milestone**: Mainnet(1.0.1.0)
+**Milestone**: Mainnet(1.0.3.1)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.2  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Joeynet Testnet Release.
+- The `bootstrap` preset is not the default anymore. The name must be provided via --preset or as a custom preset field.
+- A 'safe' custom preset is cached in the target folder. It's not required when upgrading the node without a configuration change.
+- Added `--logger` option to the commands.
+- Assemblies are shared between all the presets.
+- Allowing user provided --preset and --assembly yml files. 
+
+## [1.1.1] - Nov-16-2021
+
+**Milestone**: Mainnet(1.0.3.1)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.1  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Fixed `symbol-statistics-service-typescript-fetch-client` exception handling.
+- Rest `2.4.0` upgrade.
+- Fixed peer and api json file generation.
+- Changed `maxTimeBehindPullTransactionsStart` to 5m.
+
+## [1.1.0] - Nov-05-2021
+
+**Milestone**: Mainnet(1.0.3.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.0  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Added `wizard` command.
+- Added `pack` command.
+- Added `modifyMultisig` command.
+- Added `--serviceProviderPublicKey` to `link` command.
+- Rest `2.3.8` upgrade.
+- Explorer `1.1.0` upgrade.
+- Faucet `1.0.1` upgrade.
+- Removed node reward support.
+- Removed unused `sshpk` service and dependency.
+- Removed unused `forge` service and dependency.
+- Changed `stop` command to run `docker-compose stop` instead of `docker-compose down`
+- Added statistic service integration.
+- Removed node static list from `mainnet` and `testnet` preset. The node lists are resolved using the statistic service.
+- Updated explorer and faucet urls.
+- Removed private and mijin network types support.
+
+## [1.0.9] - Sep-15-2021
+
+**Milestone**: Mainnet(1.0.2.0)
+
+| Package          | Version | Link                                                               |
+| ---------------- | ------- | ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.0.9  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Hot fix `updateVotingKeys` command bug.
+
+## [1.0.8] - Sep-14-2021
+
+**Milestone**: Mainnet(1.0.2.0)
 
 | Package          | Version | Link                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.0.8  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
--   Added `wizard` command.
--   Added `pack` command.
--   Explorer `1.1.0` upgrade.
--   Faucet `1.0.1` upgrade.
--   Removed unused `sshpk` service and dependency.
--   Removed unused `forge` service and dependency.
+- Fixed `updateVotingKeys` command when upgrading from `1.0.6`.
+- Catapult `1.0.2.0` upgrade.
+- Updated `minPartnerNodeVersion` to `1.0.1.0`. Older Catapult clients will be rejected.
 
 ## [1.0.7] - June-22-2021
 

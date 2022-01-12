@@ -14,20 +14,45 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import 'mocha';
+import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
 import { BootstrapService, Preset, StartParams } from '../../src/service';
 
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
-    it(' bootstrap config compose non aws', async () => {
-        const service = new BootstrapService();
+    it(' bootstrap config compose bootstrap/default', async () => {
+        const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
+            workingDir: BootstrapUtils.defaultWorkingDir,
             preset: Preset.bootstrap,
             reset: true,
             upgrade: false,
             timeout: 60000 * 5,
             target: 'target/tests/BootstrapService.standard',
+            detached: true,
+            user: 'current',
+        };
+
+        const configResult = await service.config(config);
+        expect(configResult.presetData).to.not.null;
+        expect(configResult.addresses).to.not.null;
+        const dockerCompose = await service.compose(config);
+        expect(dockerCompose).to.not.undefined;
+    });
+
+    it(' bootstrap config compose testnet/dual', async () => {
+        const service = new BootstrapService(logger);
+        const config: StartParams = {
+            report: false,
+            workingDir: BootstrapUtils.defaultWorkingDir,
+            preset: Preset.testnet,
+            assembly: Assembly.dual,
+            reset: true,
+            upgrade: false,
+            timeout: 60000 * 5,
+            target: 'target/tests/BootstrapService.testnet',
             detached: true,
             user: 'current',
         };

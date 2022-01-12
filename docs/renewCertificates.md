@@ -30,6 +30,9 @@ OPTIONS
   -u, --user=user                  [default: current] User used to run docker images when generating the certificates.
                                    "current" means the current user.
 
+  --logger=logger                  [default: Console,File] The loggers the command will use. Options are:
+                                   Console,File,Silent. Use ',' to select multiple loggers.
+
   --noPassword                     When provided, Bootstrap will not use a password, so private keys will be stored in
                                    plain text. Use with caution.
 
@@ -48,4 +51,4 @@ EXAMPLE
   $ symbol-bootstrap renewCertificates
 ```
 
-_See code: [src/commands/renewCertificates.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/renewCertificates.ts)_
+_See code: [src/commands/renewCertificates.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/renewCertificates.ts)_

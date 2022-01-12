@@ -16,11 +16,10 @@
 
 import { expect, test } from '@oclif/test';
 import { existsSync } from 'fs';
-import { BootstrapUtils } from '../../src/service';
-import { CryptoUtils } from '../../src/service/CryptoUtils';
-
+import { BootstrapUtils, CryptoUtils, LoggerFactory, LogType } from '../../src';
+const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('encrypt', () => {
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/encrypted.yml --password 1111'.split(' '))
         .it('runs encrypt and creates file', async (ctx) => {
@@ -34,7 +33,7 @@ describe('encrypt', () => {
             );
         });
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination target/tests.encrypt/encrypted.yml --password 1'.split(' '))
         .catch((ctx) => {
@@ -42,7 +41,7 @@ describe('encrypt', () => {
         })
         .it('password too short');
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/encrypted.yml --destination target/tests.encrypt/encrypted.yml --password 1111'.split(' '))
         .catch((ctx) => {
@@ -52,7 +51,7 @@ describe('encrypt', () => {
         })
         .it('already encrypted');
 
-    test.add('remove target', () => BootstrapUtils.deleteFolder('target/tests.encrypt'))
+    test.add('remove target', () => BootstrapUtils.deleteFolder(logger, 'target/tests.encrypt'))
         .stdout()
         .command('encrypt --source test/encrypt/plain.yml --destination test/encrypt/plain.yml --password 1111'.split(' '))
         .catch((ctx) => {

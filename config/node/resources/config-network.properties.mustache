@@ -42,6 +42,7 @@ maxVotingKeyLifetime = {{{maxVotingKeyLifetime}}}
 
 harvestBeneficiaryPercentage = {{{harvestBeneficiaryPercentage}}}
 harvestNetworkPercentage = {{{harvestNetworkPercentage}}}
+harvestNetworkFeeSinkAddressV1 = {{{harvestNetworkFeeSinkAddressV1}}}
 harvestNetworkFeeSinkAddress = {{{harvestNetworkFeeSinkAddress}}}
 
 maxTransactionsPerBlock = {{{toAmount maxTransactionsPerBlock}}}
@@ -82,6 +83,7 @@ maxMosaicsPerAccount = {{{toAmount maxMosaicsPerAccount}}}
 maxMosaicDuration = {{{maxMosaicDuration}}}
 maxMosaicDivisibility = {{{maxMosaicDivisibility}}}
 
+mosaicRentalFeeSinkAddressV1 = {{{mosaicRentalFeeSinkAddressV1}}}
 mosaicRentalFeeSinkAddress = {{{mosaicRentalFeeSinkAddress}}}
 mosaicRentalFee = {{{mosaicRentalFee}}}
 
@@ -103,6 +105,7 @@ maxNamespaceDuration = {{{maxNamespaceDuration}}}
 namespaceGracePeriodDuration = {{{namespaceGracePeriodDuration}}}
 reservedRootNamespaceNames = {{{reservedRootNamespaceNames}}}
 
+namespaceRentalFeeSinkAddressV1 = {{{namespaceRentalFeeSinkAddressV1}}}
 namespaceRentalFeeSinkAddress = {{{namespaceRentalFeeSinkAddress}}}
 rootNamespaceRentalFeePerBlock = {{{rootNamespaceRentalFeePerBlock}}}
 childNamespaceRentalFee = {{{childNamespaceRentalFee}}}
@@ -118,3 +121,14 @@ maxMosaicRestrictionValues = {{{maxMosaicRestrictionValues}}}
 [plugin:catapult.plugins.transfer]
 
 maxMessageSize = {{{maxMessageSize}}}
+
+[fork_heights]
+
+totalVotingBalanceCalculationFix = {{{toAmount totalVotingBalanceCalculationFix}}}
+treasuryReissuance = {{{toAmount treasuryReissuance}}}
+
+[treasury_reissuance_transaction_signatures]
+
+{{#each treasuryReissuanceTransactionSignatures}}
+{{this}} = true
+{{/each}}

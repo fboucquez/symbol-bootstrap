@@ -15,6 +15,13 @@
  */
 
 export enum LogType {
-    Audit = 'AUDIT_LOG',
-    System = 'SYSTEM_LOG',
+    // Console log with line info
+    Console = 'Console',
+    // File log with line info
+    File = 'File',
+    // Silent, no log at all.
+    Silent = 'Silent',
 }
+
+//Shortcut
+export const System = [LogType.Console, LogType.File];

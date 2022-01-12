@@ -15,8 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapUtils, RunService } from '../service';
-import { CommandUtils } from '../service/CommandUtils';
+import { LoggerFactory, System } from '../logger';
+import { BootstrapService, CommandUtils } from '../service';
 
 export default class Stop extends Command {
     static description =
@@ -26,11 +26,13 @@ export default class Stop extends Command {
     static flags = {
         help: CommandUtils.helpFlag,
         target: CommandUtils.targetFlag,
+        logger: CommandUtils.getLoggerFlag(...System),
     };
 
     public run(): Promise<void> {
         const { flags } = this.parse(Stop);
-        BootstrapUtils.showBanner();
-        return new RunService(flags).stop();
+        const logger = LoggerFactory.getLogger(flags.logger);
+        CommandUtils.showBanner();
+        return new BootstrapService(logger).stop(flags);
     }
 }

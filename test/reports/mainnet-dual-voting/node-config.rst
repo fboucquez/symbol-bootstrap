@@ -86,13 +86,77 @@ config-finalization.properties
     enableVoting; true
     enableRevoteOnBoot; false
     size; 10'000
-    threshold; 7'000
+    threshold; 6'700
     stepDuration; 5m
     shortLivedCacheMessageDuration; 10m
     messageSynchronizationMaxResponseSize; 20MB
     maxHashesPerPoint; 256
     prevoteBlocksMultiple; 4
     unfinalizedBlocksDuration; 0m
+    treasuryReissuanceEpoch; 481
+    **treasury_reissuance_epoch_ineligible_voter_addresses**;
+    ND6667LJBJJ6UMJSZKN2BLHQCS3WNZ3W4UGCFKI; true
+    NCKAC225JEFJTB3EO64MIVYF5D7YGZM2ZFXRJNI; true
+    NACXOOKIDID7S75S4FFSC7KBBIBHOBUXB5VSE7A; true
+    NCVQPB2LZ6UCYKGYJAMCC7V4JGXA35BBY44BMHY; true
+    NDSQX6J2QALD2XTU5NQ4FWA2MMEFKBOBEB2BIOQ; true
+    NDLFVQ3C25P5VO2VWP6AMHPIJT6FZYTXNJD4ZAY; true
+    NCXX3KEIEZ3NABMUU45GM7X7BLMPMQHFOZMMF4Q; true
+    NDF4ZCXFKIU5DSJEVBOOI2BDZMDKJTGJVBD6JRY; true
+    NCTTMDTZUUQVN4OKTSF3FTEHJQL2QOGAV25MDCA; true
+    NDLORKVADZSXTIVAA2FYLDMM7I32AIWE7HDWGUQ; true
+    NCQADXOA7ZHLUW2567H33HNNEKCOCN2OJ53PXIQ; true
+    NDX4GP6OL32EOSGXSB5FTGKXDJZP4D535ZZYDFI; true
+    NCE3EP762222D5D2UAF6KIFL7XZ7U4TPFWBYVHA; true
+    NDRLHNV4W7W2M527QOIP35OI3HOMAGTCJDPFDEQ; true
+    NDNGH7WJHSMULMCKYE333V6WU4CQDWXZIJK2VCY; true
+    NB5NIEQF7FM7LLSFASHOQF4X3F6IPDYSIGR3UVA; true
+    NDC3U2UERNMRYFQA45XC74TEEETTZPRUVWKFPAY; true
+    NBNCW3DUUHGBCVJ53LYSYYNMKJ52TLR33C5U53A; true
+    NCAXT7RH6SUPXEU75EIPAPF7DM4VWUBC5AW2L4Q; true
+    NALOQMBU45WOLZ4BCBYZX3N2Y2VSYQFOXGAO34A; true
+    NA2KVKEQDZZMM3NGXYVBHZ46JHM46UWIX3KJ4AY; true
+    NBI2NEBVAD45WWV44H3A53AQ5675Z4G3ZDGDYLI; true
+    NB5ORUTTH2QYHEVTDBB5WPQI4US22FNMODFRK5Y; true
+    NDMR4GMUWGMODWY4FF2VZ3CEC2F56HTD3T6EJYY; true
+    NCBLL63WUAL7FBNPZQISGJR4WZNB7RVWCWG25MI; true
+    NBGGUKW3GEUFHKTO4DYSGDTHIVPKAME3T2XSCGY; true
+    NCASTBFHXMHGQB2UJVUDSW7ZI4N2FDW54OTSHKQ; true
+    ND726EB3B2VG77J3EEQSGNGUX3SS6L2IEBS7PIY; true
+    ND2MRMODKMLCFJWPFJ4MDFI76R7FLZVKIIVKD3A; true
+    NDG6ORUW4PVWVQJRQ5AXADQBUQVL3KBX7AW7MUY; true
+    NBQS3VKGOJ3YNIABN4Y4SFUDBDQHARUIVS6IMGQ; true
+    NCC3VKV3V2HCAP2KTXJUWSXCJ3B6U32EKR6VU5I; true
+    NBUW4OTD42VHELNPCLPQCUHNBHR47PQKLP2EKXA; true
+    NDBKLXZWYBMUUTNRRZ5ESRAJYMQIMHGLGAYLTGY; true
+    NABH3A5VDLYAVA73OV246JTVMAIPD2WEMAQL27I; true
+    NCVG74MGUGR3PLVBWVNNACD6R37JA4RCQMXY3DY; true
+    NDQLBLKXVOK2YS5G7J3AYYKTNW3S3RRK6RQONAQ; true
+    NDTNPG2NUA3MPVDXHLC6D5PSKM4JLLTMQJ5HEDY; true
+    ND4MLYCECHPACYSDDQUFMPXONSIQLPAWNVBWSIA; true
+    NCNRS6KDPHV4MNMXOEGYD6LNRBMWUR7NT4SZI7I; true
+    NBRENIWJUCSUU7RJ5S2DEJVXAOJOTZZDKEFOC3I; true
+    NA7YZPY222RVYQMUM65ZSVFSPAHL55UWO3S35FY; true
+    NCVR72OUOHVGTVLYBKI7PLUDTIAYPRUWPMJJP3Q; true
+    NDE57ICE4UOAPUV3E4CYU3PBA2X4ABUGRGKDFBA; true
+    NBBBCIKJV45U7PNYTNXETH2UFZLJ3C6TJKLJDQQ; true
+    NCRLDB2O2QDPU57PEG3D3AIFSGPGCZU7VVTKBUY; true
+    NC7QENF6OO2FRYV7Q4B5Q74LRSC54Y3YNYN5O3Y; true
+    NAL4XHZU6MANNNFQI4Z2WNMU3KRI2YW2MRRMHLI; true
+    NC5CFRDWEZVCMGQ4Y77OEFSQLMQ3V4EL7JERY2A; true
+    NAIPUZBSDXZIHQKKILAFT3F43IQPS4LOZCH2H4Q; true
+    ND6ZNSQG3I7VWLWSJ3DTYVPEZSJRGSEERW2F7DI; true
+    NC54KVIISZCMMB3ABAMV6NQ6DAUIYYVKQ23S73Q; true
+    NBNRFJSGE53UNHBGZIHYZXPG7SHLQISJN5REGIY; true
+    NCFFJV3VTAK6BJZNV6ZRUZKUJPOWST6MYFAAK5A; true
+    NAAZKYH4V6SARDIJRGFXYEZIHVRWY7R2T62QFYA; true
+    NAGCLXJZHZSBM5ILN4LQBDKU4NYVHB6ZLGRTKJI; true
+    NBGEJ36QK43DR4MYB6XFUFLSVFLULX3HBVNRCVY; true
+    NCGCVCURBA2GCKPEGEA2Q6HKFEHYITKUNWRLMEA; true
+    NA5ZUGHBUUHO63E5OQQND7CYK7UZ3HVQONR2O6Y; true
+    NC2GXL6FQXZY3FXZAYJLBDQHBKSANZLGP4PL7VA; true
+    NB3WMVRI4RM3O3NUSWBZM7U4EZMKADSOFDPPJRQ; true
+    NCFH35TMUJ5QJL6LTBYRBO7ERMM4NIBH7TL6TFY; true
 
 config-harvesting.properties
 ============================
@@ -619,7 +683,7 @@ config-network.properties
     :delim: ;
 
     **network**; ; ;
-    identifier; public; NetworkIdentifier; Network identifier.
+    identifier; mainnet; NetworkIdentifier; Network identifier.
     nemesisSignerPublicKey; BE0B4CF546B7B4F4BBFCFF9F574FDA527C07A53D3FC76F8BB7DB746F8E8E0A9F; Key; Nemesis public key.
     nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
     generationHashSeed; 57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6; ;
@@ -650,7 +714,8 @@ config-network.properties
     maxVotingKeyLifetime; 360; uint32_t; Maximum number of finalization rounds for which voting key can be registered.
     harvestBeneficiaryPercentage; 25; uint8_t; Percentage of the harvested fee that is collected by the beneficiary account.
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
-    harvestNetworkFeeSinkAddress; NBUTOBVT5JQDCV6UEPCPFHWWOAOPOCLA5AY5FLI; Address; Address of the harvest network fee sink account.
+    harvestNetworkFeeSinkAddressV1; NBUTOBVT5JQDCV6UEPCPFHWWOAOPOCLA5AY5FLI; ;
+    harvestNetworkFeeSinkAddress; NAVORTEX3IPBAUWQBBI3I3BDIOS4AVHPZLCFC7Y; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
@@ -673,7 +738,8 @@ config-network.properties
     maxMosaicsPerAccount; 1'000; uint16_t; Maximum number of mosaics that an account can own.
     maxMosaicDuration; 3650d; utils::BlockSpan; Maximum mosaic duration.
     maxMosaicDivisibility; 6; uint8_t; Maximum mosaic divisibility.
-    mosaicRentalFeeSinkAddress; NC733XE7DF46Q7QYLIIZBBSCJN2BEEP5FQ6PAYA; Address; Address of the mosaic rental fee sink account.
+    mosaicRentalFeeSinkAddressV1; NC733XE7DF46Q7QYLIIZBBSCJN2BEEP5FQ6PAYA; ;
+    mosaicRentalFeeSinkAddress; NCVORTEX4XD5IQASZQEHDWUXT33XBOTBMKFDCLI; Address; Address of the mosaic rental fee sink account.
     mosaicRentalFee; 500000; Amount; Mosaic rental fee.
     **plugin:catapult.plugins.multisig**; ; ;
     maxMultisigDepth; 3; uint8_t; Maximum number of multisig levels.
@@ -687,7 +753,8 @@ config-network.properties
     maxNamespaceDuration; 1825d; utils::BlockSpan; Maximum namespace duration.
     namespaceGracePeriodDuration; 30d; utils::BlockSpan; Grace period during which time only the previous owner can renew an expired namespace.
     reservedRootNamespaceNames; symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info; unordered_set<string>; Reserved root namespaces that cannot be claimed.
-    namespaceRentalFeeSinkAddress; NBDTBUD6R32ZYJWDEWLJM4YMOX3OOILHGDUMTSA; Address; Address of the namespace rental fee sink account.
+    namespaceRentalFeeSinkAddressV1; NBDTBUD6R32ZYJWDEWLJM4YMOX3OOILHGDUMTSA; ;
+    namespaceRentalFeeSinkAddress; NCVORTEX4XD5IQASZQEHDWUXT33XBOTBMKFDCLI; Address; Address of the namespace rental fee sink account.
     rootNamespaceRentalFeePerBlock; 2; Amount; Root namespace rental fee per block.
     childNamespaceRentalFee; 100000; Amount; Child namespace rental fee.
     **plugin:catapult.plugins.restrictionaccount**; ; ;
@@ -696,6 +763,17 @@ config-network.properties
     maxMosaicRestrictionValues; 20; uint8_t; Maximum number of mosaic restriction values.
     **plugin:catapult.plugins.transfer**; ; ;
     maxMessageSize; 1024; uint16_t; Maximum transaction message size.
+    **fork_heights**; ; ;
+    totalVotingBalanceCalculationFix; 528'000; uint32_t; Height of fork to fix TotalVotingBalance calculation.
+    treasuryReissuance; 689'761; ;
+    **treasury_reissuance_transaction_signatures**;
+    0BBEADD37539444D75C09A245102D2B883267925398504623835DCD625290DEE4FA2371341050C49C001DEDD1C9FE241EA4A7DB335B2069FD4DAFF77AF734C03; true
+    89447704270E8B2F8EED19526587DB58870D90A02ACEF8AE2A54311DEB95C227201CD39662A0229D5746FFB84074EA6C7DD9620A2CE5AA69065C508DC0335201; true
+    D19BCD440545CF785D88F903141DE794F2D57012509BC224B25BFCA220267D1ADD42182702F50C1A4E95D0F21604E4F9EEEEF329932FCD0C76B43992B0D90B0D; true
+    C478DB6053C639AFC96F5D965159DC95449E5EE69A62E5FA28DF42D85C031B3A131B3AC403D9BFF27E1E64FD8012D05C720F0D2A8654D9F4BC48C8DD2DCEBC03; true
+    C0BAE301EC15B514C5685A661BC3E23A6596CE9DC412A83F67A8C8611A4415B1B0447E8C09D2816CAE0D750C4AB1ED8FE9C85C05D448C2114147A2C935030708; true
+    A317F4EB085C8D3D80435669EF54C6C9C9AD9B57165B14CF051F43879D0112E3A79591DD6D469BFAA850891FA2CB601BA58CD1BAEBFF5D84C49179AC7FE14706; true
+    FDB98C472D0B98FDD766DA177366DEB2DB0E79721BD73DA96A84622A98932DA75BAA327BA9E23D448C6F25344654A6F17F7734C14D1530B327F911A97B4DE30A; true
 
 config-node.properties
 ======================
@@ -739,7 +817,7 @@ config-node.properties
     enableDispatcherAbortWhenFull; false; bool; Set to true if the process should terminate when any dispatcher is full.
     enableDispatcherInputAuditing; false; bool; Set to true if all dispatcher inputs should be audited.
     maxTrackedNodes; 5'000; uint32_t; Maximum number of nodes to track in memory.
-    minPartnerNodeVersion; 1.0.0.0; ;
+    minPartnerNodeVersion; 1.0.2.0; ;
     maxPartnerNodeVersion; 1.0.255.255; ;
     trustedHosts; 127.0.0.1, 172.20.0.25; unordered_set<string>; Trusted hosts that are allowed to execute protected API calls on this node.
     localNetworks; 127.0.0.1, 172.20.0.25; unordered_set<string>; Networks that should be treated as local.
@@ -755,7 +833,7 @@ config-node.properties
     **localnode**; ; ;
     host; ; string; Node host (leave empty to auto-detect IP).
     friendlyName; myFriendlyName; string; Node friendly name (leave empty to use address).
-    version; 1.0.1.0; uint32_t; Node version.
+    version; ; uint32_t; Node version.
     roles; Peer,Api,Voting; ionet::NodeRoles; Node roles.
     **outgoing_connections**; ; ;
     maxConnections; 10; uint16_t; Maximum number of active connections.

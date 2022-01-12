@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { exec, ExecException, spawn } from 'child_process';
-import { textSync } from 'figlet';
+import { ExecException, spawn } from 'child_process';
 import {
     createWriteStream,
     existsSync,
@@ -32,18 +31,18 @@ import * as Handlebars from 'handlebars';
 import { get } from 'https';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, dirname, join, resolve } from 'path';
+import { basename, dirname, isAbsolute, join, resolve } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
-import { LogType } from '../logger';
-import Logger from '../logger/Logger';
-import LoggerFactory from '../logger/LoggerFactory';
+import * as util from 'util';
+import { Logger } from '../logger';
 import { CryptoUtils } from './CryptoUtils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require('../../package.json').version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
-const logger: Logger = LoggerFactory.getLogger(LogType.System);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const exec = util.promisify(require('child_process').exec);
 
 export type Password = string | false | undefined;
 
@@ -68,12 +67,16 @@ export class BootstrapUtils {
     public static readonly targetWalletsFolder = 'wallets';
     public static readonly targetDatabasesFolder = 'databases';
     public static readonly targetNemesisFolder = 'nemesis';
+    public static readonly defaultWorkingDir = '.';
 
     public static readonly CURRENT_USER = 'current';
     private static readonly pulledImages: string[] = [];
 
     public static readonly VERSION = version;
-    public static readonly DEFAULT_ROOT_FOLDER = BootstrapUtils.resolveRootFolder();
+    /**
+     * The folder where this npm module is installed. It defines where the default presets, configurations, etc are located.
+     */
+    public static readonly ROOT_FOLDER = BootstrapUtils.resolveRootFolder();
 
     public static stopProcess = false;
 
@@ -104,6 +107,7 @@ export class BootstrapUtils {
     }
 
     public static async download(
+        logger: Logger,
         url: string,
         dest: string,
     ): Promise<{
@@ -184,14 +188,14 @@ export class BootstrapUtils {
         process.stdout.write(message);
     }
 
-    public static deleteFolder(folder: string, excludeFiles: string[] = []): void {
+    public static deleteFolder(logger: Logger, folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             logger.info(`Deleting folder ${folder}`);
         }
-        return BootstrapUtils.deleteFolderRecursive(folder, excludeFiles);
+        return BootstrapUtils.deleteFolderRecursive(logger, folder, excludeFiles);
     }
 
-    private static deleteFolderRecursive(folder: string, excludeFiles: string[] = []): void {
+    private static deleteFolderRecursive(logger: Logger, folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             readdirSync(folder).forEach((file: string) => {
                 const currentPath = join(folder, file);
@@ -202,6 +206,7 @@ export class BootstrapUtils {
                 if (lstatSync(currentPath).isDirectory()) {
                     // recurse
                     this.deleteFolderRecursive(
+                        logger,
                         currentPath,
                         excludeFiles.map((file) => join(currentPath, file)),
                     );
@@ -220,10 +225,6 @@ export class BootstrapUtils {
         }
     }
 
-    public static showBanner(): void {
-        console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
-    }
-
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static validateIsDefined(value: any, message: string): void {
         if (value === undefined || value === null) {
@@ -237,14 +238,14 @@ export class BootstrapUtils {
         }
     }
 
-    public static async pullImage(image: string): Promise<void> {
+    public static async pullImage(logger: Logger, image: string): Promise<void> {
         this.validateIsDefined(image, 'Image must be provided');
         if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
             return;
         }
         try {
             logger.info(`Pulling image ${image}`);
-            const stdout = await this.spawn('docker', ['pull', image], true, `${image} `);
+            const stdout = await this.spawn(logger, 'docker', ['pull', image], true, `${image} `);
             const outputLines = stdout.toString().split('\n');
             logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
             BootstrapUtils.pulledImages.push(image);
@@ -261,23 +262,26 @@ export class BootstrapUtils {
         return rootFolder;
     }
 
-    public static runImageUsingExec({
-        catapultAppFolder,
-        image,
-        userId,
-        workdir,
-        cmds,
-        binds,
-        ignoreErrors,
-    }: {
-        catapultAppFolder?: string;
-        image: string;
-        userId?: string;
-        workdir?: string;
-        cmds: string[];
-        binds: string[];
-        ignoreErrors?: boolean;
-    }): Promise<{ stdout: string; stderr: string }> {
+    public static runImageUsingExec(
+        logger: Logger,
+        {
+            catapultAppFolder,
+            image,
+            userId,
+            workdir,
+            cmds,
+            binds,
+            ignoreErrors,
+        }: {
+            catapultAppFolder?: string;
+            image: string;
+            userId?: string;
+            workdir?: string;
+            cmds: string[];
+            binds: string[];
+            ignoreErrors?: boolean;
+        },
+    ): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
@@ -286,7 +290,7 @@ export class BootstrapUtils {
             .map((a) => `"${a}"`)
             .join(' ')}`;
         logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
-        return this.exec(runCommand, ignoreErrors);
+        return this.exec(logger, runCommand, ignoreErrors);
     }
 
     public static toAns1(privateKey: string): string {
@@ -303,12 +307,19 @@ export class BootstrapUtils {
         // Create a promise that rejects in <ms> milliseconds
         return new Promise<void>((resolve) => {
             setTimeout(() => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
                 resolve();
             }, ms);
         });
     }
 
-    public static poll(promiseFunction: () => Promise<boolean>, totalPollingTime: number, pollIntervalMs: number): Promise<boolean> {
+    public static poll(
+        logger: Logger,
+        promiseFunction: () => Promise<boolean>,
+        totalPollingTime: number,
+        pollIntervalMs: number,
+    ): Promise<boolean> {
         const startTime = new Date().getMilliseconds();
         return promiseFunction().then(async (result) => {
             if (result) {
@@ -322,7 +333,7 @@ export class BootstrapUtils {
                 if (newPollingTime) {
                     logger.info(`Retrying in ${pollIntervalMs / 1000} seconds. Polling will stop in ${newPollingTime / 1000} seconds`);
                     await BootstrapUtils.sleep(pollIntervalMs);
-                    return this.poll(promiseFunction, newPollingTime, pollIntervalMs);
+                    return this.poll(logger, promiseFunction, newPollingTime, pollIntervalMs);
                 } else {
                     return false;
                 }
@@ -404,8 +415,7 @@ export class BootstrapUtils {
             const securedMessage = BootstrapUtils.secureString(e.message || 'Unknown');
 
             const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
-            logger.error(`${message}\nContext: \n${securedContext}`);
-            throw new Error(message);
+            throw new Error(`${message}\nContext: \n${securedContext}`);
         }
     }
 
@@ -485,22 +495,22 @@ export class BootstrapUtils {
 
     private static dockerUserId: string;
 
-    public static async resolveDockerUserFromParam(paramUser: string | undefined): Promise<string | undefined> {
+    public static async resolveDockerUserFromParam(logger: Logger, paramUser: string | undefined): Promise<string | undefined> {
         if (!paramUser || paramUser.trim() === '') {
             return undefined;
         }
         if (paramUser === BootstrapUtils.CURRENT_USER) {
-            return BootstrapUtils.getDockerUserGroup();
+            return BootstrapUtils.getDockerUserGroup(logger);
         }
         return paramUser;
     }
-    public static async createImageUsingExec(targetFolder: string, dockerFile: string, tag: string): Promise<string> {
+    public static async createImageUsingExec(logger: Logger, targetFolder: string, dockerFile: string, tag: string): Promise<string> {
         const runCommand = `docker build -f ${dockerFile} ${targetFolder} -t ${tag}`;
         logger.info(`Creating image image '${tag}' from ${dockerFile}`);
-        return (await this.exec(runCommand)).stdout;
+        return (await this.exec(logger, runCommand)).stdout;
     }
 
-    public static exec(runCommand: string, ignoreErrors?: boolean): Promise<{ stdout: string; stderr: string }> {
+    public static exec(logger: Logger, runCommand: string, ignoreErrors?: boolean): Promise<{ stdout: string; stderr: string }> {
         logger.debug(`Exec command: ${runCommand}`);
         return new Promise((promiseResolve, promiseReject) => {
             exec(runCommand, (error: ExecException | null, stdout: string, stderr: string) => {
@@ -510,7 +520,7 @@ export class BootstrapUtils {
         });
     }
 
-    public static async spawn(command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {
+    public static async spawn(logger: Logger, command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {
         const cmd = spawn(command, args);
         return new Promise<string>((resolve, reject) => {
             logger.info(`Spawn command: ${command} ${args.join(' ')}`);
@@ -561,7 +571,7 @@ export class BootstrapUtils {
         });
     }
 
-    public static async getDockerUserGroup(): Promise<string> {
+    public static async getDockerUserGroup(logger: Logger): Promise<string> {
         const isWin = this.isWindows();
         if (isWin) {
             return '';
@@ -700,7 +710,10 @@ export class BootstrapUtils {
     }
 
     public static splitCsv(object: string): string[] {
-        return (object || '').split(',').map((c) => c.trim());
+        return (object || '')
+            .split(',')
+            .map((string) => string.trim())
+            .filter((string) => string);
     }
 
     public static toSeconds(serverDuration: string): number {
@@ -708,7 +721,12 @@ export class BootstrapUtils {
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static migrate<T extends { version?: number }>(entityName: string, versioned: T, migrations: Migration[] = []): T {
+    public static migrate<T extends { version?: number }>(
+        logger: Logger,
+        entityName: string,
+        versioned: T,
+        migrations: Migration[] = [],
+    ): T {
         if (!versioned) {
             return versioned;
         }
@@ -736,43 +754,33 @@ export class BootstrapUtils {
     }
 
     public static getNetworkIdentifier(networkType: NetworkType): string {
-        switch (networkType) {
-            case NetworkType.MAIN_NET:
-                return 'public';
-            case NetworkType.TEST_NET:
-                return 'public-test';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijin-test';
-            case NetworkType.PRIVATE:
-                return 'private';
-            case NetworkType.PRIVATE_TEST:
-                return 'private-test';
-        }
-        throw new Error(`Invalid Network Type ${networkType}`);
+        return BootstrapUtils.getNetworkName(networkType);
     }
 
     public static getNetworkName(networkType: NetworkType): string {
         switch (networkType) {
             case NetworkType.MAIN_NET:
-                return 'public';
+                return 'mainnet';
             case NetworkType.TEST_NET:
-                return 'publicTest';
-            case NetworkType.MIJIN:
-                return 'mijin';
-            case NetworkType.MIJIN_TEST:
-                return 'mijinTest';
-            case NetworkType.PRIVATE:
-                return 'private';
-            case NetworkType.PRIVATE_TEST:
-                return 'privateTest';
+                return 'testnet';
         }
         throw new Error(`Invalid Network Type ${networkType}`);
     }
 
+    public static resolveWorkingDirPath(workingDir: string, path: string): string {
+        if (isAbsolute(path)) {
+            return path;
+        } else {
+            return join(workingDir, path);
+        }
+    }
+
     static createDerFile(privateKey: string, file: string): void {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
+    }
+
+    public static isYmlFile(string: string): boolean {
+        return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');
     }
 
     public static validatePassword(password: string): string {

@@ -1,9 +1,12 @@
 {
   "network": {
-    "name": "publicTest",
-    "description": "catapult development network"
+    "name": "testnet",
+    "description": "Symbol Local Bootstrap"
   },
   "port": 3000,
+  "protocol": "HTTP",
+  "sslKeyPath": "/symbol-workdir/restSSL.key",
+  "sslCertificatePath": "/symbol-workdir/restSSL.crt",
   "crossDomain": {
     "allowedHosts": [
       "*"
@@ -15,6 +18,7 @@
       "OPTIONS"
     ]
   },
+  "uncirculatingAccountPublicKeys": [],
   "extensions": [
     "accountLink",
     "aggregate",

@@ -24,6 +24,9 @@ OPTIONS
   -h, --help           It shows the help of this command.
   -t, --target=target  [default: target] The target folder where the symbol-bootstrap network is generated
 
+  --logger=logger      [default: Console,File] The loggers the command will use. Options are: Console,File,Silent. Use
+                       ',' to select multiple loggers.
+
 DESCRIPTION
   This command checks:
   - Whether the docker containers are running.
@@ -36,4 +39,4 @@ EXAMPLE
   $ symbol-bootstrap healthCheck
 ```
 
-_See code: [src/commands/healthCheck.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.0.8/src/commands/healthCheck.ts)_
+_See code: [src/commands/healthCheck.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/healthCheck.ts)_

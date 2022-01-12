@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { expect } from '@oclif/test';
+import { expect } from 'chai';
 import 'mocha';
 import { PrivateKeySecurityMode } from '../../src/model';
-import { BootstrapUtils } from '../../src/service';
 import { CryptoUtils } from '../../src/service/CryptoUtils';
 
 describe('CryptoUtils', () => {
@@ -66,7 +65,6 @@ describe('CryptoUtils', () => {
         const password = '1234';
         const encryptedObject = CryptoUtils.encrypt(object, password);
         const encryptedObjectJson = JSON.stringify(encryptedObject, null, 2);
-        console.log(BootstrapUtils.toYaml(encryptedObject));
         expect(encryptedObjectJson).not.deep.eq(object);
 
         expect(CryptoUtils.encryptedCount(object)).eq(0);
