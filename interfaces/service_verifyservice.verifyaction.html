@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>VotingKeyFileProvider | symbol-bootstrap</title>
+	<title>VerifyAction | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">symbol-bootstrap</a>
 				</li>
 				<li>
-					<a href="../modules/service_votingkeyfileprovider.html">service/VotingKeyFileProvider</a>
+					<a href="../modules/service_verifyservice.html">service/VerifyService</a>
 				</li>
 				<li>
-					<a href="service_votingkeyfileprovider.votingkeyfileprovider.html">VotingKeyFileProvider</a>
+					<a href="service_verifyservice.verifyaction.html">VerifyAction</a>
 				</li>
 			</ul>
-			<h1>Interface VotingKeyFileProvider</h1>
+			<h1>Interface VerifyAction</h1>
 		</div>
 	</div>
 </header>
@@ -72,15 +72,16 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">VotingKeyFileProvider</span>
+						<span class="target">VerifyAction</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../classes/service_votingkeyfileprovider.catapultvotingkeyfileprovider.html" class="tsd-signature-type" data-tsd-kind="Class">CatapultVotingKeyFileProvider</a></li>
-					<li><a href="../classes/service_votingkeyfileprovider.nativevotingkeyfileprovider.html" class="tsd-signature-type" data-tsd-kind="Class">NativeVotingKeyFileProvider</a></li>
+					<li><a href="../classes/service_verifyservice.appversionverifyaction.html" class="tsd-signature-type" data-tsd-kind="Class">AppVersionVerifyAction</a></li>
+					<li><a href="../classes/service_verifyservice.dockerrunverifyaction.html" class="tsd-signature-type" data-tsd-kind="Class">DockerRunVerifyAction</a></li>
+					<li><a href="../classes/service_verifyservice.sudorunverifyaction.html" class="tsd-signature-type" data-tsd-kind="Class">SudoRunVerifyAction</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -90,7 +91,8 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="service_votingkeyfileprovider.votingkeyfileprovider.html#createvotingfile" class="tsd-kind-icon">create<wbr>Voting<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="service_verifyservice.verifyaction.html#shouldrun" class="tsd-kind-icon">should<wbr>Run</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="service_verifyservice.verifyaction.html#verify" class="tsd-kind-icon">verify</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,25 +101,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="createvotingfile" class="tsd-anchor"></a>
-					<h3>create<wbr>Voting<wbr>File</h3>
+					<a name="shouldrun" class="tsd-anchor"></a>
+					<h3>should<wbr>Run</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Voting<wbr>File<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="service_votingkeyfileprovider.votingkeyparams.html" class="tsd-signature-type" data-tsd-kind="Interface">VotingKeyParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="service_votingkeyfileprovider.votingkeycreationresult.html" class="tsd-signature-type" data-tsd-kind="Interface">VotingKeyCreationResult</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">should<wbr>Run<span class="tsd-signature-symbol">(</span>lines<span class="tsd-signature-symbol">: </span><a href="service_verifyservice.reportline.html" class="tsd-signature-type" data-tsd-kind="Interface">ReportLine</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/54e7d0c/src/service/VotingKeyFileProvider.ts#L39">src/service/VotingKeyFileProvider.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/54e7d0c/src/service/VerifyService.ts#L45">src/service/VerifyService.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>params: <a href="service_votingkeyfileprovider.votingkeyparams.html" class="tsd-signature-type" data-tsd-kind="Interface">VotingKeyParams</a></h5>
+									<h5>lines: <a href="service_verifyservice.reportline.html" class="tsd-signature-type" data-tsd-kind="Interface">ReportLine</a><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="service_votingkeyfileprovider.votingkeycreationresult.html" class="tsd-signature-type" data-tsd-kind="Interface">VotingKeyCreationResult</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="verify" class="tsd-anchor"></a>
+					<h3>verify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">verify<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="service_verifyservice.reportline.html" class="tsd-signature-type" data-tsd-kind="Interface">ReportLine</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/54e7d0c/src/service/VerifyService.ts#L46">src/service/VerifyService.ts:46</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="service_verifyservice.reportline.html" class="tsd-signature-type" data-tsd-kind="Interface">ReportLine</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -130,35 +149,50 @@
 						<a href="../modules.html">Exports</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/service_votingkeyfileprovider.html">service/<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a>
+						<a href="../modules/service_verifyservice.html">service/<wbr>Verify<wbr>Service</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_votingkeyfileprovider.catapultvotingkeyfileprovider.html" class="tsd-kind-icon">Catapult<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a>
+						<a href="../classes/service_verifyservice.appversionservice.html" class="tsd-kind-icon">App<wbr>Version<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_votingkeyfileprovider.nativevotingkeyfileprovider.html" class="tsd-kind-icon">Native<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a>
+						<a href="../classes/service_verifyservice.appversionverifyaction.html" class="tsd-kind-icon">App<wbr>Version<wbr>Verify<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/service_verifyservice.dockerrunverifyaction.html" class="tsd-kind-icon">Docker<wbr>Run<wbr>Verify<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/service_verifyservice.sudorunverifyaction.html" class="tsd-kind-icon">Sudo<wbr>Run<wbr>Verify<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/service_verifyservice.verifyservice.html" class="tsd-kind-icon">Verify<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_votingkeyfileprovider.votingkeycreationresult.html" class="tsd-kind-icon">Voting<wbr>Key<wbr>Creation<wbr>Result</a>
+						<a href="service_verifyservice.expectedversions.html" class="tsd-kind-icon">Expected<wbr>Versions</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="service_verifyservice.reportline.html" class="tsd-kind-icon">Report<wbr>Line</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_votingkeyfileprovider.votingkeyfileprovider.html" class="tsd-kind-icon">Voting<wbr>Key<wbr>File<wbr>Provider</a>
+						<a href="service_verifyservice.verifyaction.html" class="tsd-kind-icon">Verify<wbr>Action</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="service_votingkeyfileprovider.votingkeyfileprovider.html#createvotingfile" class="tsd-kind-icon">create<wbr>Voting<wbr>File</a>
+								<a href="service_verifyservice.verifyaction.html#shouldrun" class="tsd-kind-icon">should<wbr>Run</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="service_verifyservice.verifyaction.html#verify" class="tsd-kind-icon">verify</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_votingkeyfileprovider.votingkeyparams.html" class="tsd-kind-icon">Voting<wbr>Key<wbr>Params</a>
+						<a href="service_verifyservice.verifyreport.html" class="tsd-kind-icon">Verify<wbr>Report</a>
 					</li>
 				</ul>
 			</nav>
