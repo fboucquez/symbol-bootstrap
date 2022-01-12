@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>VerifyReport | symbol-bootstrap</title>
+	<title>SpawnParams | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">symbol-bootstrap</a>
 				</li>
 				<li>
-					<a href="../modules/service_verifyservice.html">service/VerifyService</a>
+					<a href="../modules/service_runtimeservice.html">service/RuntimeService</a>
 				</li>
 				<li>
-					<a href="service_verifyservice.verifyreport.html">VerifyReport</a>
+					<a href="service_runtimeservice.spawnparams.html">SpawnParams</a>
 				</li>
 			</ul>
-			<h1>Interface VerifyReport</h1>
+			<h1>Interface SpawnParams</h1>
 		</div>
 	</div>
 </header>
@@ -72,7 +72,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">VerifyReport</span>
+						<span class="target">SpawnParams</span>
 					</li>
 				</ul>
 			</section>
@@ -83,8 +83,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_verifyservice.verifyreport.html#lines" class="tsd-kind-icon">lines</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_verifyservice.verifyreport.html#platform" class="tsd-kind-icon">platform</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_runtimeservice.spawnparams.html#args" class="tsd-kind-icon">args</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_runtimeservice.spawnparams.html#command" class="tsd-kind-icon">command</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_runtimeservice.spawnparams.html#logprefix" class="tsd-kind-icon">log<wbr>Prefix</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_runtimeservice.spawnparams.html#shell" class="tsd-kind-icon">shell</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_runtimeservice.spawnparams.html#uselogger" class="tsd-kind-icon">use<wbr>Logger</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,22 +96,52 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="lines" class="tsd-anchor"></a>
-					<h3>lines</h3>
-					<div class="tsd-signature tsd-kind-icon">lines<span class="tsd-signature-symbol">:</span> <a href="service_verifyservice.reportline.html" class="tsd-signature-type" data-tsd-kind="Interface">ReportLine</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="args" class="tsd-anchor"></a>
+					<h3>args</h3>
+					<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/VerifyService.ts#L23">src/service/VerifyService.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/RuntimeService.ts#L26">src/service/RuntimeService.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="platform" class="tsd-anchor"></a>
-					<h3>platform</h3>
-					<div class="tsd-signature tsd-kind-icon">platform<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="command" class="tsd-anchor"></a>
+					<h3>command</h3>
+					<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/VerifyService.ts#L22">src/service/VerifyService.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/RuntimeService.ts#L25">src/service/RuntimeService.ts:25</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="logprefix" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> log<wbr>Prefix</h3>
+					<div class="tsd-signature tsd-kind-icon">log<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/RuntimeService.ts#L28">src/service/RuntimeService.ts:28</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="shell" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> shell</h3>
+					<div class="tsd-signature tsd-kind-icon">shell<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/RuntimeService.ts#L29">src/service/RuntimeService.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="uselogger" class="tsd-anchor"></a>
+					<h3>use<wbr>Logger</h3>
+					<div class="tsd-signature tsd-kind-icon">use<wbr>Logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/31d0595/src/service/RuntimeService.ts#L27">src/service/RuntimeService.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -121,46 +154,37 @@
 						<a href="../modules.html">Exports</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/service_verifyservice.html">service/<wbr>Verify<wbr>Service</a>
+						<a href="../modules/service_runtimeservice.html">service/<wbr>Runtime<wbr>Service</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_verifyservice.appversionservice.html" class="tsd-kind-icon">App<wbr>Version<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_verifyservice.appversionverifyaction.html" class="tsd-kind-icon">App<wbr>Version<wbr>Verify<wbr>Action</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_verifyservice.dockerrunverifyaction.html" class="tsd-kind-icon">Docker<wbr>Run<wbr>Verify<wbr>Action</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_verifyservice.sudorunverifyaction.html" class="tsd-kind-icon">Sudo<wbr>Run<wbr>Verify<wbr>Action</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_verifyservice.verifyservice.html" class="tsd-kind-icon">Verify<wbr>Service</a>
+						<a href="../classes/service_runtimeservice.runtimeservice.html" class="tsd-kind-icon">Runtime<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.expectedversions.html" class="tsd-kind-icon">Expected<wbr>Versions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.reportline.html" class="tsd-kind-icon">Report<wbr>Line</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.verifyaction.html" class="tsd-kind-icon">Verify<wbr>Action</a>
+						<a href="service_runtimeservice.runimageusingexecparams.html" class="tsd-kind-icon">Run<wbr>Image<wbr>Using<wbr>Exec<wbr>Params</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_verifyservice.verifyreport.html" class="tsd-kind-icon">Verify<wbr>Report</a>
+						<a href="service_runtimeservice.spawnparams.html" class="tsd-kind-icon">Spawn<wbr>Params</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="service_verifyservice.verifyreport.html#lines" class="tsd-kind-icon">lines</a>
+								<a href="service_runtimeservice.spawnparams.html#args" class="tsd-kind-icon">args</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="service_verifyservice.verifyreport.html#platform" class="tsd-kind-icon">platform</a>
+								<a href="service_runtimeservice.spawnparams.html#command" class="tsd-kind-icon">command</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="service_runtimeservice.spawnparams.html#logprefix" class="tsd-kind-icon">log<wbr>Prefix</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="service_runtimeservice.spawnparams.html#shell" class="tsd-kind-icon">shell</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="service_runtimeservice.spawnparams.html#uselogger" class="tsd-kind-icon">use<wbr>Logger</a>
 							</li>
 						</ul>
 					</li>
