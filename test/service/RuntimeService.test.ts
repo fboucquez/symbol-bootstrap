@@ -26,16 +26,16 @@ describe('RuntimeService', async () => {
     });
 
     it('spawn when valid', async () => {
-        const response = await service.spawn('echo', ['ABC'], true, '', true);
+        const response = await service.spawn({ command: 'echo', args: ['ABC'], useLogger: true, logPrefix: '', shell: true });
         expect(response).eq('ABC\n');
     });
 
     it('spawn when invalid', async () => {
         try {
-            await service.spawn('wrong!', [], false, '', true);
+            await service.spawn({ command: 'wrong!', args: [], useLogger: false, logPrefix: '', shell: true });
             expect(true).eq(false); //Should fail!!
         } catch (e) {
-            const code = OSUtils.isWindows() ? 1 : -2;
+            const code = OSUtils.isWindows() ? 1 : 127;
             expect(e.message).eq(`Process exited with code ${code}\nCheck console for output....`);
         }
     });

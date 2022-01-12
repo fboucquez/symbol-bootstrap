@@ -20,6 +20,24 @@ import { Logger } from '../logger';
 import { OSUtils } from './OSUtils';
 import { Utils } from './Utils';
 const exec = util.promisify(callbackExec);
+
+export interface SpawnParams {
+    command: string;
+    args: string[];
+    useLogger: boolean;
+    logPrefix?: string;
+    shell?: boolean;
+}
+
+export interface RunImageUsingExecParams {
+    catapultAppFolder?: string;
+    image: string;
+    userId?: string;
+    workdir?: string;
+    cmds: string[];
+    binds: string[];
+}
+
 /**
  * Service in charge of running OS commands. Commands could be executed directly on the OS or via docker containers.
  */
@@ -42,14 +60,7 @@ export class RuntimeService {
         workdir,
         cmds,
         binds,
-    }: {
-        catapultAppFolder?: string;
-        image: string;
-        userId?: string;
-        workdir?: string;
-        cmds: string[];
-        binds: string[];
-    }): Promise<{ stdout: string; stderr: string }> {
+    }: RunImageUsingExecParams): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
         const workdirParam = workdir ? `--workdir=${workdir}` : '';
@@ -60,7 +71,7 @@ export class RuntimeService {
         return this.exec(runCommand);
     }
 
-    public async spawn(command: string, args: string[], useLogger: boolean, logPrefix = '', shell?: boolean): Promise<string> {
+    public async spawn({ command, args, useLogger, logPrefix = '', shell }: SpawnParams): Promise<string> {
         const cmd = spawn(command, args, { shell: shell });
         return new Promise<string>((resolve, reject) => {
             this.logger.info(`Spawn command: ${command} ${args.join(' ')}`);
@@ -117,7 +128,7 @@ export class RuntimeService {
         }
         try {
             this.logger.info(`Pulling image ${image}`);
-            const stdout = await this.spawn('docker', ['pull', image], true, `${image} `);
+            const stdout = await this.spawn({ command: 'docker', args: ['pull', image], useLogger: true, logPrefix: `${image} ` });
             const outputLines = stdout.toString().split('\n');
             this.logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
             RuntimeService.pulledImages.push(image);
