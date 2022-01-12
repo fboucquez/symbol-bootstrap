@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { spawn } from 'child_process';
 import {
     createWriteStream,
     existsSync,
@@ -33,16 +32,13 @@ import * as _ from 'lodash';
 import { totalmem } from 'os';
 import { basename, dirname, isAbsolute, join, resolve } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
-import * as util from 'util';
 import { Logger } from '../logger';
 import { CryptoUtils } from './CryptoUtils';
+import { Utils } from './Utils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require('../../package.json').version;
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const exec = util.promisify(require('child_process').exec);
 
 export type Password = string | false | undefined;
 
@@ -69,7 +65,6 @@ export class BootstrapUtils {
     public static readonly defaultWorkingDir = '.';
 
     public static readonly CURRENT_USER = 'current';
-    private static readonly pulledImages: string[] = [];
 
     public static readonly VERSION = version;
     /**
@@ -131,7 +126,7 @@ export class BootstrapUtils {
                 function showDownloadingProgress(received: number, total: number) {
                     const percentage = ((received * 100) / total).toFixed(2);
                     const message = percentage + '% | ' + received + ' bytes downloaded out of ' + total + ' bytes.';
-                    BootstrapUtils.logSameLineMessage(message);
+                    Utils.logSameLineMessage(message);
                 }
                 const request = get(url, (response) => {
                     const total = parseInt(response.headers['content-length'] || '0', 10);
@@ -182,11 +177,6 @@ export class BootstrapUtils {
         }
     }
 
-    public static logSameLineMessage(message: string): void {
-        process.stdout.write(BootstrapUtils.isWindows() ? '\x1b[0G' : '\r');
-        process.stdout.write(message);
-    }
-
     public static deleteFolder(logger: Logger, folder: string, excludeFiles: string[] = []): void {
         if (existsSync(folder)) {
             logger.info(`Deleting folder ${folder}`);
@@ -224,35 +214,6 @@ export class BootstrapUtils {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static validateIsDefined(value: any, message: string): void {
-        if (value === undefined || value === null) {
-            throw new Error(message);
-        }
-    }
-
-    public static validateIsTrue(value: boolean, message: string): void {
-        if (!value) {
-            throw new Error(message);
-        }
-    }
-
-    public static async pullImage(logger: Logger, image: string): Promise<void> {
-        this.validateIsDefined(image, 'Image must be provided');
-        if (BootstrapUtils.pulledImages.indexOf(image) > -1) {
-            return;
-        }
-        try {
-            logger.info(`Pulling image ${image}`);
-            const stdout = await this.spawn(logger, 'docker', ['pull', image], true, `${image} `);
-            const outputLines = stdout.toString().split('\n');
-            logger.info(`Image pulled: ${outputLines[outputLines.length - 2]}`);
-            BootstrapUtils.pulledImages.push(image);
-        } catch (e) {
-            logger.warn(`Image ${image} could not be pulled!`);
-        }
-    }
-
     public static resolveRootFolder(): string {
         const rootFolder = resolve(__dirname, '../..');
         if (!existsSync(join(rootFolder, 'presets', 'shared.yml'))) {
@@ -261,43 +222,9 @@ export class BootstrapUtils {
         return rootFolder;
     }
 
-    public static runImageUsingExec(
-        logger: Logger,
-        {
-            catapultAppFolder,
-            image,
-            userId,
-            workdir,
-            cmds,
-            binds,
-        }: {
-            catapultAppFolder?: string;
-            image: string;
-            userId?: string;
-            workdir?: string;
-            cmds: string[];
-            binds: string[];
-        },
-    ): Promise<{ stdout: string; stderr: string }> {
-        const volumes = binds.map((b) => `-v ${b}`).join(' ');
-        const userParam = userId ? `-u ${userId}` : '';
-        const workdirParam = workdir ? `--workdir=${workdir}` : '';
-        const environmentParam = catapultAppFolder ? `--env LD_LIBRARY_PATH=${catapultAppFolder}/lib:${catapultAppFolder}/deps` : '';
-        const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${cmds
-            .map((a) => `"${a}"`)
-            .join(' ')}`;
-        logger.info(BootstrapUtils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
-        return this.exec(logger, runCommand);
-    }
-
     public static toAns1(privateKey: string): string {
         const prefix = '302e020100300506032b657004220420';
         return `${prefix}${privateKey.toLowerCase()}`;
-    }
-
-    public static secureString(text: string): string {
-        const regex = new RegExp('[0-9a-fA-F]{64}', 'g');
-        return text.replace(regex, 'HIDDEN_KEY');
     }
 
     public static sleep(ms: number): Promise<any> {
@@ -407,9 +334,9 @@ export class BootstrapUtils {
             const compiledTemplate = Handlebars.compile(template);
             return compiledTemplate(templateContext);
         } catch (e) {
-            const securedTemplate = BootstrapUtils.secureString(template);
-            const securedContext = BootstrapUtils.secureString(BootstrapUtils.toYaml(templateContext));
-            const securedMessage = BootstrapUtils.secureString(e.message || 'Unknown');
+            const securedTemplate = Utils.secureString(template);
+            const securedContext = Utils.secureString(BootstrapUtils.toYaml(templateContext));
+            const securedMessage = Utils.secureString(e.message || 'Unknown');
 
             const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
             throw new Error(`${message}\nContext: \n${securedContext}`);
@@ -488,112 +415,6 @@ export class BootstrapUtils {
 
     public static async readTextFile(path: string): Promise<string> {
         return await fsPromises.readFile(path, 'utf8');
-    }
-
-    private static dockerUserId: string;
-
-    public static async resolveDockerUserFromParam(logger: Logger, paramUser: string | undefined): Promise<string | undefined> {
-        if (!paramUser || paramUser.trim() === '') {
-            return undefined;
-        }
-        if (paramUser === BootstrapUtils.CURRENT_USER) {
-            return BootstrapUtils.getDockerUserGroup(logger);
-        }
-        return paramUser;
-    }
-    public static async createImageUsingExec(logger: Logger, targetFolder: string, dockerFile: string, tag: string): Promise<string> {
-        const runCommand = `docker build -f ${dockerFile} ${targetFolder} -t ${tag}`;
-        logger.info(`Creating image image '${tag}' from ${dockerFile}`);
-        return (await this.exec(logger, runCommand)).stdout;
-    }
-
-    public static async exec(logger: Logger, runCommand: string): Promise<{ stdout: string; stderr: string }> {
-        logger.debug(`Exec command: ${runCommand}`);
-        const { stdout, stderr } = await exec(runCommand);
-        return { stdout, stderr };
-    }
-
-    public static async spawn(logger: Logger, command: string, args: string[], useLogger: boolean, logPrefix = ''): Promise<string> {
-        const cmd = spawn(command, args);
-        return new Promise<string>((resolve, reject) => {
-            logger.info(`Spawn command: ${command} ${args.join(' ')}`);
-            let logText = useLogger ? '' : 'Check console for output....';
-            const log = (data: string, isError: boolean) => {
-                if (useLogger) {
-                    logText = logText + `${data}\n`;
-                    if (isError) logger.warn(BootstrapUtils.secureString(logPrefix + data));
-                    else logger.info(BootstrapUtils.secureString(logPrefix + data));
-                } else {
-                    console.log(logPrefix + data);
-                }
-            };
-
-            cmd.stdout.on('data', (data) => {
-                log(`${data}`.trim(), false);
-            });
-
-            cmd.stderr.on('data', (data) => {
-                log(`${data}`.trim(), true);
-            });
-
-            cmd.on('error', (error) => {
-                log(`${error.message}`.trim(), true);
-            });
-
-            cmd.on('exit', (code, signal) => {
-                if (code) {
-                    log(`Process exited with code ${code} and signal ${signal}`, true);
-                    reject(logText);
-                } else {
-                    resolve(logText);
-                }
-            });
-
-            cmd.on('close', (code) => {
-                if (code) {
-                    log(`Process closed with code ${code}`, true);
-                    reject(logText);
-                } else {
-                    resolve(logText);
-                }
-            });
-
-            process.on('SIGINT', () => {
-                resolve(logText);
-            });
-        });
-    }
-
-    public static async getDockerUserGroup(logger: Logger): Promise<string> {
-        const isWin = this.isWindows();
-        if (isWin) {
-            return '';
-        }
-        if (BootstrapUtils.dockerUserId !== undefined) {
-            return BootstrapUtils.dockerUserId;
-        }
-        try {
-            const userId = process?.getuid();
-            const groupId = process?.getgid();
-            const user = `${userId}:${groupId}`;
-            logger.info(`User for docker resolved: ${user}`);
-            if (userId === 0) {
-                logger.error('YOU ARE RUNNING BOOTSTRAP AS ROOT!!!! THIS IS NOT RECOMMENDED!!!');
-            }
-            BootstrapUtils.dockerUserId = user;
-            return user;
-        } catch (e) {
-            logger.info(`User for docker could not be resolved: ${e}`);
-            return '';
-        }
-    }
-
-    public static isRoot(): boolean {
-        return !this.isWindows() && process?.getuid() === 0;
-    }
-
-    public static isWindows(): boolean {
-        return process.platform === 'win32';
     }
 
     public static validateFolder(workingDirFullPath: string): void {

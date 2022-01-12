@@ -23,7 +23,9 @@ import { Logger } from '../logger';
 import { DockerCompose, DockerComposeService } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { OSUtils } from './OSUtils';
 import { PortService } from './PortService';
+import { RuntimeService } from './RuntimeService';
 /**
  * params necessary to run the docker-compose network.
  */
@@ -47,9 +49,11 @@ export class RunService {
     };
 
     private readonly configLoader: ConfigLoader;
+    private readonly runtimeService: RuntimeService;
 
     constructor(private readonly logger: Logger, protected readonly params: RunParams) {
         this.configLoader = new ConfigLoader(this.logger);
+        this.runtimeService = new RuntimeService(this.logger);
     }
 
     public async run(): Promise<void> {
@@ -98,7 +102,7 @@ export class RunService {
     }
 
     private async runOneCheck(services: DockerComposeService[]): Promise<boolean> {
-        const runningContainers = (await BootstrapUtils.exec(this.logger, 'docker ps --format {{.Names}}')).stdout.split(`\n`);
+        const runningContainers = (await this.runtimeService.exec('docker ps --format {{.Names}}')).stdout.split(`\n`);
         const allServicesChecks: Promise<boolean>[] = services.map(async (service) => {
             if (runningContainers.indexOf(service.container_name) < 0) {
                 this.logger.warn(`Container ${service.container_name} is NOT running YET.`);
@@ -200,7 +204,7 @@ export class RunService {
             volumenList.map(async (v) => {
                 const volumenPath = join(this.params.target, `docker`, v);
                 if (!existsSync(volumenPath)) await BootstrapUtils.mkdir(volumenPath);
-                if (v.startsWith('../databases') && BootstrapUtils.isRoot()) {
+                if (v.startsWith('../databases') && OSUtils.isRoot()) {
                     this.logger.info(`Chmod 777 folder ${volumenPath}`);
                     chmodSync(volumenPath, '777');
                 }
@@ -213,7 +217,7 @@ export class RunService {
         const dockerFile = join(this.params.target, `docker`, `docker-compose.yml`);
         const dockerComposeArgs = ['-f', dockerFile];
         const args = [...dockerComposeArgs, ...extraArgs];
-        return BootstrapUtils.spawn(this.logger, 'docker-compose', args, false);
+        return this.runtimeService.spawn({ command: 'docker-compose', args: args, useLogger: false });
     }
 
     private async pullImages(dockerCompose: DockerCompose) {
@@ -223,6 +227,6 @@ export class RunService {
                 .filter((s) => s)
                 .map((s) => s as string),
         );
-        await Promise.all(images.map((image) => BootstrapUtils.pullImage(this.logger, image)));
+        await Promise.all(images.map((image) => this.runtimeService.pullImage(image)));
     }
 }

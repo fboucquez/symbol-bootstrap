@@ -16,13 +16,14 @@
 import { expect } from 'chai';
 import * as os from 'os';
 import * as semver from 'semver';
-import { AppVersionService, LoggerFactory, LogType } from '../../src';
+import { AppVersionService, LoggerFactory, LogType, OSUtils, RuntimeService, VerifyReport } from '../../src';
 import { VerifyService } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const runtimeService = new RuntimeService(logger);
 
 describe('AppVersionService', () => {
     it('loadVersion', async () => {
-        const service = new AppVersionService(logger);
+        const service = new AppVersionService(logger, runtimeService);
         expect(service.loadVersion('Docker version 19.03.8, build afacb8b7f0')).eq('19.03.8');
         expect(service.loadVersion('Docker version 19.0.8, build afacb8b7f0')).eq('19.0.8');
         expect(service.loadVersion('Docker version 19 build a')).eq('19.0.0');
@@ -32,7 +33,7 @@ describe('AppVersionService', () => {
 describe('VerifyService', () => {
     const currentNodeJsVersion = VerifyService.currentNodeJsVersion;
     async function getCurrentVersions() {
-        const appVersionService = new AppVersionService(logger);
+        const appVersionService = new AppVersionService(logger, runtimeService);
         const currentDockerVersion = await appVersionService.loadVersionFromCommand('docker --version');
         const currentDockerComposeVersion = await appVersionService.loadVersionFromCommand('docker-compose --version');
         expect(semver.valid(VerifyService.currentNodeJsVersion, AppVersionService.semverOptions));
@@ -44,8 +45,10 @@ describe('VerifyService', () => {
     it('VerifyService verify current installation', async () => {
         const service = new VerifyService(logger);
         const { currentDockerVersion, currentDockerComposeVersion } = await getCurrentVersions();
+        expect(currentDockerVersion).not.undefined;
+        expect(currentDockerComposeVersion).not.undefined;
         const report = await service.createReport();
-        const expected = {
+        const expected: VerifyReport = {
             lines: [
                 {
                     header: 'NodeVersion',
@@ -53,23 +56,25 @@ describe('VerifyService', () => {
                 },
                 {
                     header: 'Docker Version',
-                    message: currentDockerVersion,
+                    message: currentDockerVersion!,
                 },
                 {
                     header: 'Docker Compose Version',
-                    message: currentDockerComposeVersion,
+                    message: currentDockerComposeVersion!,
                 },
                 {
                     header: 'Docker Run Test',
                     message: "Command 'docker run hello-world' executed!",
                 },
-                {
-                    header: 'Sudo User Test',
-                    message: 'Your are not the sudo user!',
-                },
             ],
             platform: `${os.type()} - ${os.release()} - ${os.platform()}`,
         };
+        if (!OSUtils.isWindows()) {
+            expected.lines.push({
+                header: 'Sudo User Test',
+                message: 'Your are not the sudo user!',
+            });
+        }
         expect(report).to.be.deep.eq(expected);
         service.logReport(report);
         expect(() => service.validateReport(report)).not.to.throw();
@@ -83,9 +88,10 @@ describe('VerifyService', () => {
         };
         const service = new VerifyService(logger, expectedVersions);
         const { currentDockerVersion, currentDockerComposeVersion } = await getCurrentVersions();
-
+        expect(currentDockerVersion).not.undefined;
+        expect(currentDockerComposeVersion).not.undefined;
         const report = await service.createReport();
-        const expected = {
+        const expected: VerifyReport = {
             lines: [
                 {
                     header: 'NodeVersion',
@@ -94,21 +100,23 @@ describe('VerifyService', () => {
                 },
                 {
                     header: 'Docker Version',
-                    message: currentDockerVersion,
+                    message: currentDockerVersion!,
                     recommendation: `At least version ${expectedVersions.docker} is required. Currently installed version is ${currentDockerVersion}. Check https://docs.docker.com/get-docker/`,
                 },
                 {
                     header: 'Docker Compose Version',
-                    message: currentDockerComposeVersion,
+                    message: currentDockerComposeVersion!,
                     recommendation: `At least version ${expectedVersions.dockerCompose} is required. Currently installed version is ${currentDockerComposeVersion}. Check https://docs.docker.com/compose/install/`,
-                },
-                {
-                    header: 'Sudo User Test',
-                    message: 'Your are not the sudo user!',
                 },
             ],
             platform: `${os.type()} - ${os.release()} - ${os.platform()}`,
         };
+        if (!OSUtils.isWindows()) {
+            expected.lines.push({
+                header: 'Sudo User Test',
+                message: 'Your are not the sudo user!',
+            });
+        }
         expect(report).to.be.deep.eq(expected);
         service.logReport(report);
         expect(() => service.validateReport(report)).to.throw(

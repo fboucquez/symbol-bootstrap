@@ -24,18 +24,9 @@ import { Account, NetworkType } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src';
 import { ConfigAccount } from '../../src/model';
 import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
-import assert = require('assert');
 import nock = require('nock');
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapUtils', () => {
-    it('BootstrapUtils dockerUserId', async () => {
-        const user1 = await BootstrapUtils.getDockerUserGroup(logger);
-        const user2 = await BootstrapUtils.getDockerUserGroup(logger);
-        const user3 = await BootstrapUtils.getDockerUserGroup(logger);
-        assert.strictEqual(user1, user2);
-        assert.strictEqual(user1, user3);
-    });
-
     it('BootstrapUtils generate random', async () => {
         const networkType = NetworkType.TEST_NET;
 
@@ -94,22 +85,6 @@ describe('BootstrapUtils', () => {
         } catch (e) {
             expect(e.message).eq('Server responded with 404');
         }
-    });
-
-    it('Bootstrap.secureText', function () {
-        expect(
-            BootstrapUtils.secureString(
-                '--secret=9F9D35D4BFA630012F074AAE11CF12191105EBA1435036FEF6AFAD8088918A62 --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n',
-            ),
-        ).to.be.eq('--secret=HIDDEN_KEY --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n');
-
-        expect(
-            BootstrapUtils.secureString(
-                'Running image using Exec: symbolplatform/symbol-server:tools-gcc-0.10.0.5 /usr/catapult/bin/catapult.tools.votingkey --secret=9F9D35D4BFA630012F074AAE11CF12191105EBA1435036FEF6AFAD8088918A62 --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n',
-            ),
-        ).to.be.eq(
-            'Running image using Exec: symbolplatform/symbol-server:tools-gcc-0.10.0.5 /usr/catapult/bin/catapult.tools.votingkey --secret=HIDDEN_KEY --startEpoch=1 --endEpoch=26280 --output=/votingKeys/private_key_tree1.dat\n',
-        );
     });
 
     it('BootstrapUtils.computerMemory', async () => {

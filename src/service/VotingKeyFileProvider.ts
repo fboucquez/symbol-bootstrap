@@ -18,7 +18,7 @@ import { join } from 'path';
 import { Account } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
+import { RuntimeService } from './RuntimeService';
 import { VotingUtils } from './VotingUtils';
 
 export interface VotingKeyParams {
@@ -40,7 +40,10 @@ export interface VotingKeyFileProvider {
 }
 
 export class NativeVotingKeyFileProvider implements VotingKeyFileProvider {
-    constructor(private readonly logger: Logger) {}
+    private readonly runtimeService: RuntimeService;
+    constructor(private readonly logger: Logger) {
+        this.runtimeService = new RuntimeService(logger);
+    }
     public async createVotingFile({
         presetData,
         votingKeysFolder,
@@ -61,7 +64,10 @@ export class NativeVotingKeyFileProvider implements VotingKeyFileProvider {
 }
 
 export class CatapultVotingKeyFileProvider implements VotingKeyFileProvider {
-    constructor(private readonly logger: Logger, private readonly user: string) {}
+    private readonly runtimeService: RuntimeService;
+    constructor(private readonly logger: Logger, private readonly user: string) {
+        this.runtimeService = new RuntimeService(logger);
+    }
     public async createVotingFile({
         presetData,
         votingKeysFolder,
@@ -81,8 +87,8 @@ export class CatapultVotingKeyFileProvider implements VotingKeyFileProvider {
             `--endEpoch=${votingKeyEndEpoch}`,
             `--output=/votingKeys/${privateKeyTreeFileName}`,
         ];
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
+        const userId = await this.runtimeService.resolveDockerUserFromParam(this.user);
+        const { stdout, stderr } = await this.runtimeService.runImageUsingExec({
             catapultAppFolder: presetData.catapultAppFolder,
             image: symbolServerImage,
             userId: userId,

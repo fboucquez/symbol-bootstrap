@@ -20,11 +20,15 @@ import { Logger } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigParams } from './ConfigService';
+import { RuntimeService } from './RuntimeService';
 
 type NemgenParams = ConfigParams;
 
 export class NemgenService {
-    constructor(private readonly logger: Logger, protected readonly params: NemgenParams) {}
+    private readonly runtimeService: RuntimeService;
+    constructor(private readonly logger: Logger, protected readonly params: NemgenParams) {
+        this.runtimeService = new RuntimeService(logger);
+    }
 
     public async run(presetData: ConfigPreset): Promise<void> {
         const networkIdentifier = presetData.networkIdentifier;
@@ -54,13 +58,13 @@ export class NemgenService {
 
         const binds = [`${serverConfigWorkingDir}:/server-config`, `${nemesisWorkingDir}:/nemesis`];
 
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
+        const userId = await this.runtimeService.resolveDockerUserFromParam(this.params.user);
         let stdout: string;
         let stderr: string;
         let message: string | undefined;
         let failed: boolean;
         try {
-            ({ stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
+            ({ stdout, stderr } = await this.runtimeService.runImageUsingExec({
                 catapultAppFolder: presetData.catapultAppFolder,
                 image: symbolServerImage,
                 userId: userId,

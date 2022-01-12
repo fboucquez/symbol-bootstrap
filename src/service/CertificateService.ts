@@ -22,10 +22,12 @@ import { CertificatePair } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
+import { RuntimeService } from './RuntimeService';
+import { Utils } from './Utils';
 
 export interface CertificateParams {
     readonly target: string;
-    readonly user: string;
+    readonly user?: string;
 }
 
 export interface CertificateMetadata {
@@ -42,7 +44,11 @@ export interface NodeCertificates {
 export class CertificateService {
     private static readonly METADATA_VERSION = 1;
 
-    constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {}
+    private readonly runtimeService: RuntimeService;
+
+    constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {
+        this.runtimeService = new RuntimeService(this.logger);
+    }
 
     public static getCertificates(stdout: string): CertificatePair[] {
         const locations = (string: string, substring: string): number[] => {
@@ -129,8 +135,8 @@ export class CertificateService {
         await BootstrapUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
         const cmd = ['bash', 'createNodeCertificates.sh'];
         const binds = [`${resolve(certFolder)}:/data:rw`];
-        const userId = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
-        const { stdout, stderr } = await BootstrapUtils.runImageUsingExec(this.logger, {
+        const userId = await this.runtimeService.resolveDockerUserFromParam(this.params.user);
+        const { stdout, stderr } = await this.runtimeService.runImageUsingExec({
             image: symbolServerImage,
             userId: userId,
             workdir: '/data',
@@ -138,8 +144,8 @@ export class CertificateService {
             binds: binds,
         });
         if (stdout.indexOf('Certificate Created') < 0) {
-            this.logger.info(BootstrapUtils.secureString(stdout));
-            this.logger.error(BootstrapUtils.secureString(stderr));
+            this.logger.info(Utils.secureString(stdout));
+            this.logger.error(Utils.secureString(stderr));
             throw new Error('Certificate creation failed. Check the logs!');
         }
 
@@ -151,10 +157,10 @@ export class CertificateService {
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
-        BootstrapUtils.validateIsTrue(caCertificate.privateKey === mainAccountPrivateKey, 'Invalid ca private key');
-        BootstrapUtils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
-        BootstrapUtils.validateIsTrue(nodeCertificate.privateKey === transportPrivateKey, 'Invalid Node private key');
-        BootstrapUtils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
+        Utils.validateIsTrue(caCertificate.privateKey === mainAccountPrivateKey, 'Invalid ca private key');
+        Utils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
+        Utils.validateIsTrue(nodeCertificate.privateKey === transportPrivateKey, 'Invalid Node private key');
+        Utils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
 
         const metadata: CertificateMetadata = {
             version: CertificateService.METADATA_VERSION,

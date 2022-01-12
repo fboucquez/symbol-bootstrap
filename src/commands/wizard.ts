@@ -22,7 +22,17 @@ import { join } from 'path';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
 import { CustomPreset, PrivateKeySecurityMode } from '../model';
-import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigLoader, ConfigService, KeyName, Preset } from '../service';
+import {
+    Assembly,
+    BootstrapService,
+    BootstrapUtils,
+    CommandUtils,
+    ConfigLoader,
+    ConfigService,
+    KeyName,
+    Preset,
+    RuntimeService,
+} from '../service';
 
 export const assembliesDescriptions: Record<Assembly, string> = {
     [Assembly.dual]: 'Dual Node',
@@ -136,10 +146,10 @@ export class Wizard {
 
         if (!flags.skipPull) {
             const service = new BootstrapService(this.logger);
+            const runtimeService = new RuntimeService(this.logger);
             this.logger.info('\nPulling catapult tools image before asking to go offline...\n');
             ConfigLoader.presetInfoLogged = true;
-            await BootstrapUtils.pullImage(
-                this.logger,
+            await runtimeService.pullImage(
                 service.resolveConfigPreset({
                     ...ConfigService.defaultParams,
                     preset: preset,

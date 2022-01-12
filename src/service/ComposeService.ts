@@ -21,6 +21,7 @@ import { Logger } from '../logger';
 import { Addresses, ConfigPreset, DockerCompose, DockerComposeService, DockerServicePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { RuntimeService } from './RuntimeService';
 
 export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
 
@@ -83,7 +84,7 @@ export class ComposeService {
 
         await BootstrapUtils.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
 
-        const user: string | undefined = await BootstrapUtils.resolveDockerUserFromParam(this.logger, this.params.user);
+        const user: string | undefined = await new RuntimeService(this.logger).resolveDockerUserFromParam(this.params.user);
 
         const vol = (hostFolder: string, imageFolder: string, readOnly: boolean): string => {
             return `${hostFolder}:${imageFolder}:${readOnly ? 'ro' : 'rw'}`;
