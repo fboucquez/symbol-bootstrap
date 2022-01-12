@@ -133,7 +133,7 @@
 					<li>  <a href="presets/assemblies/assembly-peer.yml"><code>peer</code></a>: A standard peer-only node that contains 1 peer node.</li>
 					<li>  <a href="presets/assemblies/assembly-api.yml"><code>api</code></a>: A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.</li>
 					<li>  <a href="presets/assemblies/assembly-dual.yml"><code>dual</code></a>: A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.</li>
-					<li>  <a href="presets/assemblies/assembly-demo.yml"><code>demo</code></a>: A dual node with an additional explorer, web wallet and faucet for test and demonstration purposes.</li>
+					<li>  <a href="presets/assemblies/assembly-demo.yml"><code>demo</code></a>: A dual node with an additional explorer and faucet for test and demonstration purposes.</li>
 					<li>  <a href="presets/assemblies/assembly-multinode.yml"><code>multinode</code></a>: A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.</li>
 				</ul>
 				<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
@@ -155,7 +155,6 @@
 					<li>  <code>./databases</code>: The location where the mongo data is stored for the different database instances.</li>
 					<li>  <code>./docker</code>: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.</li>
 					<li>  <code>./explorers</code>: The generated explorer configuration.</li>
-					<li>  <code>./wallets</code>: The generated wallet configuration.</li>
 					<li>  <code>./reports</code>: The location of the generated reports.</li>
 				</ul>
 				<p>Note: <strong>The target folder should not be manually modified</strong>. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
