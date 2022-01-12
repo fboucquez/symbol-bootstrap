@@ -17,6 +17,7 @@ import * as os from 'os';
 import * as semver from 'semver';
 import { Logger } from '../logger';
 import { BootstrapUtils } from './BootstrapUtils';
+
 export interface VerifyReport {
     platform: string;
     lines: ReportLine[];
@@ -41,7 +42,7 @@ const defaultExpectedVersions: ExpectedVersions = {
 };
 
 export interface VerifyAction {
-    shouldRun(lines: ReportLine[]): Promise<boolean>;
+    shouldRun(lines: ReportLine[]): boolean;
     verify(): Promise<ReportLine>;
 }
 
@@ -70,20 +71,22 @@ export class AppVersionService {
         minVersion: string,
         recommendationUrl: string,
     ): Promise<ReportLine> {
+        const recommendationPrefix = `At least version ${minVersion} is required.`;
+        const recommendationSuffix = `Check ${recommendationUrl}`;
         try {
             const version = await versionLoader();
             if (!version) {
                 return {
                     header,
                     message: `Version could not be found! Output: ${versionLoader}`,
-                    recommendation: `At least version ${minVersion} is required. Check ${recommendationUrl}`,
+                    recommendation: `${recommendationPrefix} ${recommendationSuffix}`,
                 };
             }
             if (semver.lt(version, minVersion, AppVersionService.semverOptions)) {
                 return {
                     header,
                     message: version,
-                    recommendation: `At least version ${minVersion} is required. Currently installed version is ${version}. Check ${recommendationUrl}`,
+                    recommendation: `${recommendationPrefix} Currently installed version is ${version}. ${recommendationSuffix}`,
                 };
             }
             return { header, message: version };
@@ -91,7 +94,7 @@ export class AppVersionService {
             return {
                 header,
                 message: `Error: ${e.message}`,
-                recommendation: `At least version ${minVersion} is required. Check ${recommendationUrl}`,
+                recommendation: `${recommendationPrefix} ${recommendationSuffix}`,
             };
         }
     }
@@ -126,8 +129,8 @@ export class AppVersionVerifyAction implements VerifyAction {
         );
     }
 
-    shouldRun(): Promise<boolean> {
-        return Promise.resolve(true);
+    shouldRun(): boolean {
+        return true;
     }
 }
 
@@ -157,9 +160,8 @@ export class DockerRunVerifyAction implements VerifyAction {
             };
         }
     }
-    shouldRun(lines: ReportLine[]): Promise<boolean> {
-        const dockerIsFine = !!lines.find((l) => l.header === 'Docker Version' && !l.recommendation);
-        return Promise.resolve(dockerIsFine);
+    shouldRun(lines: ReportLine[]): boolean {
+        return !!lines.find((l) => l.header === 'Docker Version' && !l.recommendation);
     }
 }
 
@@ -175,13 +177,14 @@ export class SudoRunVerifyAction implements VerifyAction {
         }
         return { header, message: `Your are not the sudo user!` };
     }
-    shouldRun(): Promise<boolean> {
-        return Promise.resolve(!BootstrapUtils.isWindows());
+    shouldRun(): boolean {
+        return !BootstrapUtils.isWindows();
     }
 }
 
 export class VerifyService {
     private readonly expectedVersions: ExpectedVersions;
+    public static readonly currentNodeJsVersion = process.versions.node;
 
     public actions: VerifyAction[] = [];
 
@@ -192,7 +195,7 @@ export class VerifyService {
         this.actions.push(
             new AppVersionVerifyAction(appVersionService, {
                 header: 'NodeVersion',
-                version: process.versions.node,
+                version: VerifyService.currentNodeJsVersion,
                 recommendationUrl: `https://nodejs.org/en/download/package-manager/`,
                 expectedVersion: this.expectedVersions.node,
             }),
@@ -222,7 +225,7 @@ export class VerifyService {
         const lines: ReportLine[] = [];
         const platform = `${os.type()} - ${os.release()} - ${os.platform()}`;
         for (const action of this.actions) {
-            if (await action.shouldRun(lines)) lines.push(await action.verify());
+            if (action.shouldRun(lines)) lines.push(await action.verify());
         }
         return { lines, platform };
     }
