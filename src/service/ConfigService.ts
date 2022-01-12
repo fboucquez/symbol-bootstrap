@@ -15,7 +15,7 @@
  */
 
 import * as fs from 'fs';
-import { copyFileSync, existsSync, promises as fsPromises } from 'fs';
+import { copyFileSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import {
@@ -175,7 +175,6 @@ export class ConfigService {
             await this.generateNodes(presetData, addresses, remoteNodeService);
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData, remoteNodeService);
-            await this.generateWallets(presetData, remoteNodeService);
             const isUpgrade = !!oldPresetData || !!oldAddresses;
             await this.resolveNemesis(presetData, addresses, isUpgrade);
             await this.copyNemesis(addresses);
@@ -695,58 +694,6 @@ export class ConfigService {
                 const name = templateContext.name || `explorer-${index}`;
                 const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetExplorersFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
-            }),
-        );
-    }
-
-    private generateWallets(presetData: ConfigPreset, remoteNodeService: RemoteNodeService) {
-        return Promise.all(
-            (presetData.wallets || []).map(async (walletPreset, index: number) => {
-                const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'wallet');
-                const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
-                const templateContext = {
-                    namespaceName: `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`,
-                    defaultNodeUrl: defaultNode,
-                    restNodes: restNodes.map((url) => {
-                        return { url: url, roles: 2, friendlyName: new URL(url).hostname };
-                    }),
-                    ...presetData,
-                    ...walletPreset,
-                };
-
-                const name = templateContext.name || `wallet-${index}`;
-                const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetWalletsFolder, name);
-                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
-                await fsPromises.chmod(join(moveTo, 'app.conf.js'), 0o777);
-                await fsPromises.chmod(join(moveTo, 'fees.conf.js'), 0o777);
-                await fsPromises.chmod(join(moveTo, 'network.conf.js'), 0o777);
-                await fsPromises.chmod(join(moveTo, 'profileImporter.html'), 0o777);
-                await Promise.all(
-                    (walletPreset.profiles || []).map(async (profile) => {
-                        if (!profile.name) {
-                            throw new Error('Profile`s name must be provided in the wallets preset when creating wallet profiles.');
-                        }
-                        const profileJsonFileName = `wallet-profile-${profile.name}.json`;
-
-                        const loadProfileData = async (): Promise<string> => {
-                            if (profile.data) {
-                                return JSON.stringify(profile.data, null, 2);
-                            }
-                            if (profile.location) {
-                                return BootstrapUtils.loadFileAsText(profile.location);
-                            }
-                            return BootstrapUtils.loadFileAsText(profileJsonFileName);
-                        };
-
-                        try {
-                            const profileData = await loadProfileData();
-                            await BootstrapUtils.writeTextFile(join(moveTo, profileJsonFileName), profileData);
-                        } catch (e) {
-                            const message = `Cannot create Wallet profile with name '${profile.name}'. Do you have the file '${profileJsonFileName}' in the current folder?. ${e}`;
-                            throw new Error(message);
-                        }
-                    }),
-                );
             }),
         );
     }

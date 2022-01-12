@@ -22,13 +22,6 @@ explorers:
       defaultNode: 'http://aws-rest-gateway-{{$index}}:3000'
       restNodes:
           - 'http://aws-rest-gateway-{{$index}}:3000'
-wallets:
-    - repeat: 1
-      defaultNodeUrl: 'http://aws-rest-gateway-{{$index}}:3000'
-      restNodes:
-          - friendlyName: 'Bootstrap Rest $index'
-            url: 'http://aws-rest-gateway-{{$index}}:3000'
-            roles: 2
 faucets:
     - repeat: 1
       environment:

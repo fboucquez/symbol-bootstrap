@@ -68,7 +68,7 @@ Properties in each file override the previous values (by object deep merge).
 -   [`peer`](presets/assemblies/assembly-peer.yml): A standard peer-only node that contains 1 peer node.
 -   [`api`](presets/assemblies/assembly-api.yml): A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.
 -   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.
--   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer, web wallet and faucet for test and demonstration purposes.
+-   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer and faucet for test and demonstration purposes.
 -   [`multinode`](presets/assemblies/assembly-multinode.yml): A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
 
 ### Custom preset:
@@ -91,7 +91,6 @@ The folder structure is:
 -   `./databases`: The location where the mongo data is stored for the different database instances.
 -   `./docker`: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.
 -   `./explorers`: The generated explorer configuration.
--   `./wallets`: The generated wallet configuration.
 -   `./reports`: The location of the generated reports.
 
 Note: **The target folder should not be manually modified**. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset [guides](docs/presetGuides.md)!

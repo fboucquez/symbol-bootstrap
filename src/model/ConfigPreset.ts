@@ -342,20 +342,6 @@ export interface ExplorerPreset extends DockerServicePreset {
     name: string;
 }
 
-export interface WalletProfilePreset {
-    name: number;
-    // if not provided, A file will be copied over from the working dir.
-    data?: any;
-    location?: string;
-}
-
-export interface WalletPreset extends DockerServicePreset {
-    // At least these properties.
-    repeat?: number;
-    name: string;
-    profiles?: WalletProfilePreset[];
-}
-
 export interface FaucetPreset extends DockerServicePreset {
     // At least these properties.
     gateway: string;
@@ -394,7 +380,6 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     faucetUrl?: string;
     nemesisSeedFolder?: string; // Optional seed folder if user provides an external seed/00000 folder.
 
-    symbolWalletImage: string;
     symbolServerImage: string;
     symbolExplorerImage: string;
     symbolRestImage: string;
@@ -450,7 +435,6 @@ export interface ConfigPreset extends CommonConfigPreset {
     nodes?: NodePreset[];
     gateways?: GatewayPreset[];
     explorers?: ExplorerPreset[];
-    wallets?: WalletPreset[];
     faucets?: FaucetPreset[];
     httpsProxies?: HttpsProxyPreset[];
     customPresetCache?: CustomPreset;
@@ -462,7 +446,6 @@ export interface CustomPreset extends Partial<CommonConfigPreset> {
     nodes?: Partial<NodePreset>[];
     gateways?: Partial<GatewayPreset>[];
     explorers?: Partial<ExplorerPreset>[];
-    wallets?: Partial<WalletPreset>[];
     faucets?: Partial<FaucetPreset>[];
     httpsProxies?: Partial<HttpsProxyPreset>[];
 }

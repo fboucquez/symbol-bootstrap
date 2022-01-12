@@ -64,7 +64,6 @@ export class BootstrapUtils {
     public static readonly targetNodesFolder = 'nodes';
     public static readonly targetGatewaysFolder = 'gateways';
     public static readonly targetExplorersFolder = 'explorers';
-    public static readonly targetWalletsFolder = 'wallets';
     public static readonly targetDatabasesFolder = 'databases';
     public static readonly targetNemesisFolder = 'nemesis';
     public static readonly defaultWorkingDir = '.';
