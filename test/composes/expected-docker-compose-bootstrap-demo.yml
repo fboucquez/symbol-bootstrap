@@ -76,21 +76,6 @@ services:
         networks:
             default:
                 ipv4_address: 172.20.0.25
-    wallet:
-        container_name: wallet
-        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '80:80'
-        restart: 'on-failure:2'
-        volumes:
-            - '../wallets/wallet:/usr/share/nginx/html/config:ro'
-        security_opt:
-            - 'seccomp:unconfined'
-        cap_add:
-            - ALL
-        privileged: true
     explorer:
         container_name: explorer
         image: 'symbolplatform/symbol-explorer:1.1.0-alpha'

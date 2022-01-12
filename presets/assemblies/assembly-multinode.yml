@@ -33,17 +33,6 @@ gateways:
       databaseHost: 'db-{{$index}}'
       openPort: '{{add $index 3000}}'
       ipv4_address: '172.20.0.{{add $index 25}}'
-wallets:
-    - repeat: 0
-      title: 'Symbol Bootstrap Wallet'
-      name: 'wallet-{{$index}}'
-      defaultNodeUrl: 'http://localhost:{{add $index 3000}}'
-      namespaceName: '{{baseNamespace}}.{{currencyName}}'
-      openPort: '{{add $index 80}}'
-      restNodes:
-          - friendlyName: 'Bootstrap Rest $index'
-            url: 'http://localhost:{{add $index 3000}}'
-            roles: 2
 explorers:
     - repeat: 0
       name: 'explorer-{{$index}}'

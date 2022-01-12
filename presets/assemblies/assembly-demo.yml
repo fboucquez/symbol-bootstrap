@@ -21,10 +21,6 @@ gateways:
       databaseHost: 'db'
       openPort: true
       ipv4_address: 172.20.0.25
-wallets:
-    - name: 'wallet'
-      title: 'Symbol Bootstrap Wallet'
-      openPort: '80'
 explorers:
     - name: 'explorer'
       openPort: '90'

@@ -314,26 +314,6 @@ services:
         networks:
             default:
                 ipv4_address: 172.20.0.28
-    wallet-0:
-        container_name: wallet-0
-        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '80:80'
-        restart: 'on-failure:2'
-        volumes:
-            - '../wallets/wallet-0:/usr/share/nginx/html/config:ro'
-    wallet-1:
-        container_name: wallet-1
-        image: 'symbolplatform/symbol-desktop-wallet:1.0.1'
-        stop_signal: SIGINT
-        working_dir: /symbol-workdir
-        ports:
-            - '81:80'
-        restart: 'on-failure:2'
-        volumes:
-            - '../wallets/wallet-1:/usr/share/nginx/html/config:ro'
     explorer-0:
         container_name: explorer-0
         image: 'symbolplatform/symbol-explorer:1.1.0-alpha'

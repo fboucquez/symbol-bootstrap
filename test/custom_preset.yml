@@ -18,8 +18,3 @@ nemesis:
         TAI4NEL4SBQDSPY2XKMPIGOC53UALIXJ5WHRJVQ: 10000000000
         TAWBSSHIKZNX6E65FJG4BVIJR236Z64Z77CMOJA: 5000000000
         TDTZLYALSDGWBW5ZJJYKOM65YFHELZHGEEUDZ7A: 3000000000
-
-wallets:
-    - profiles:
-          - name: test
-            location: ./test/profiles/wallet-profile-test.json

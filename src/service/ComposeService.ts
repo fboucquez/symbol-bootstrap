@@ -28,7 +28,6 @@ const targetNodesFolder = BootstrapUtils.targetNodesFolder;
 const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
 const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
 const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
-const targetWalletsFolder = BootstrapUtils.targetWalletsFolder;
 
 export interface PortConfiguration {
     internalPort: number;
@@ -292,27 +291,6 @@ export class ComposeService {
                             },
                             restart: restart,
                             depends_on: [presetData.gateways![0].name],
-                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                            ...n.compose,
-                        }),
-                    );
-                }),
-        );
-
-        await Promise.all(
-            (presetData.wallets || [])
-                .filter((d) => !d.excludeDockerService)
-                .map(async (n) => {
-                    const volumes = [vol(`../${targetWalletsFolder}/${n.name}`, '/usr/share/nginx/html/config', true)];
-                    services.push(
-                        await resolveService(n, {
-                            container_name: n.name,
-                            image: presetData.symbolWalletImage,
-                            stop_signal: 'SIGINT',
-                            working_dir: nodeWorkingDirectory,
-                            ports: resolvePorts([{ internalPort: 80, openPort: n.openPort }]),
-                            restart: restart,
-                            volumes: volumes,
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                             ...n.compose,
                         }),
