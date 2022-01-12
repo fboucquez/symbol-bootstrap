@@ -17,6 +17,7 @@ import * as os from 'os';
 import * as semver from 'semver';
 import { Logger } from '../logger';
 import { BootstrapUtils } from './BootstrapUtils';
+
 export interface VerifyReport {
     platform: string;
     lines: ReportLine[];
@@ -40,71 +41,102 @@ const defaultExpectedVersions: ExpectedVersions = {
     dockerCompose: '1.25.0',
 };
 
-export class VerifyService {
-    private readonly expectedVersions: ExpectedVersions;
-    public readonly semverOptions = { loose: true };
+export interface VerifyAction {
+    shouldRun(lines: ReportLine[]): boolean;
+    verify(): Promise<ReportLine>;
+}
 
-    constructor(private readonly logger: Logger, expectedVersions: Partial<ExpectedVersions> = {}) {
-        this.expectedVersions = { ...defaultExpectedVersions, ...expectedVersions };
-    }
-
-    public async createReport(): Promise<VerifyReport> {
-        const lines: ReportLine[] = [];
-        const platform = `${os.type()} - ${os.release()} - ${os.platform()}`;
-        lines.push(await this.testNodeJs());
-        const docker = await this.testDocker();
-        lines.push(docker);
-        lines.push(await this.testDockerCompose());
-        if (!docker.recommendation) lines.push(await this.testDockerRun());
-        if (!BootstrapUtils.isWindows()) {
-            lines.push(await this.testSudo());
-        }
-        return { lines, platform };
-    }
-
+export class AppVersionService {
+    public static readonly semverOptions = { loose: true };
+    constructor(private readonly logger: Logger) {}
     public loadVersion(text: string): string | undefined {
         return text
             .replace(',', '')
             .split(' ')
             .map((word) => {
-                const coerce = semver.coerce(word.trim(), this.semverOptions);
+                const coerce = semver.coerce(word.trim(), AppVersionService.semverOptions);
                 return coerce?.raw;
             })
             .find((a) => a)
             ?.trim();
     }
 
-    public async testNodeJs(): Promise<ReportLine> {
-        const header = 'NodeVersion';
-        const recommendationUrl = `https://nodejs.org/en/download/package-manager/`;
-        const output = process.versions.node;
-        return this.verifyInstalledApp(async () => output, header, this.expectedVersions.node, recommendationUrl);
+    public async loadVersionFromCommand(command: string): Promise<string | undefined> {
+        return this.loadVersion((await BootstrapUtils.exec(this.logger, command)).stdout.trim());
     }
 
-    public async testDocker(): Promise<ReportLine> {
-        const header = 'Docker Version';
-        const command = 'docker --version';
-        const recommendationUrl = `https://docs.docker.com/get-docker/`;
-        return this.verifyInstalledApp(
-            async () => await this.loadVersionFromCommand(command),
-            header,
-            this.expectedVersions.docker,
-            recommendationUrl,
-        );
+    public async verifyInstalledApp(
+        versionLoader: () => Promise<string | undefined>,
+        header: string,
+        minVersion: string,
+        recommendationUrl: string,
+    ): Promise<ReportLine> {
+        const recommendationPrefix = `At least version ${minVersion} is required.`;
+        const recommendationSuffix = `Check ${recommendationUrl}`;
+        try {
+            const version = await versionLoader();
+            if (!version) {
+                return {
+                    header,
+                    message: `Version could not be found! Output: ${versionLoader}`,
+                    recommendation: `${recommendationPrefix} ${recommendationSuffix}`,
+                };
+            }
+            if (semver.lt(version, minVersion, AppVersionService.semverOptions)) {
+                return {
+                    header,
+                    message: version,
+                    recommendation: `${recommendationPrefix} Currently installed version is ${version}. ${recommendationSuffix}`,
+                };
+            }
+            return { header, message: version };
+        } catch (e) {
+            return {
+                header,
+                message: `Error: ${e.message}`,
+                recommendation: `${recommendationPrefix} ${recommendationSuffix}`,
+            };
+        }
     }
-    public async testDockerCompose(): Promise<ReportLine> {
-        const header = 'Docker Compose Version';
-        const command = 'docker-compose --version';
-        const recommendationUrl = `https://docs.docker.com/compose/install/`;
-        return this.verifyInstalledApp(
-            async () => await this.loadVersionFromCommand(command),
-            header,
-            this.expectedVersions.dockerCompose,
-            recommendationUrl,
+}
+
+export class AppVersionVerifyAction implements VerifyAction {
+    constructor(
+        readonly service: AppVersionService,
+        readonly params: {
+            header: string;
+            version?: string;
+            command?: string;
+            recommendationUrl: string;
+            expectedVersion: string;
+        },
+    ) {}
+
+    verify(): Promise<ReportLine> {
+        return this.service.verifyInstalledApp(
+            async () => {
+                if (this.params.version) {
+                    return this.params.version;
+                }
+                if (this.params.command) {
+                    return this.service.loadVersionFromCommand(this.params.command);
+                }
+                throw new Error('Either version or command must be provided!');
+            },
+            this.params.header,
+            this.params.expectedVersion,
+            this.params.recommendationUrl,
         );
     }
 
-    public async testDockerRun(): Promise<ReportLine> {
+    shouldRun(): boolean {
+        return true;
+    }
+}
+
+export class DockerRunVerifyAction implements VerifyAction {
+    constructor(private readonly logger: Logger) {}
+    async verify(): Promise<ReportLine> {
         const header = 'Docker Run Test';
         const command = 'docker run hello-world';
         const recommendationUrl = `https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket`;
@@ -128,8 +160,13 @@ export class VerifyService {
             };
         }
     }
+    shouldRun(lines: ReportLine[]): boolean {
+        return !!lines.find((l) => l.header === 'Docker Version' && !l.recommendation);
+    }
+}
 
-    public async testSudo(): Promise<ReportLine> {
+export class SudoRunVerifyAction implements VerifyAction {
+    async verify(): Promise<ReportLine> {
         const header = 'Sudo User Test';
         if (BootstrapUtils.isRoot()) {
             return {
@@ -140,40 +177,77 @@ export class VerifyService {
         }
         return { header, message: `Your are not the sudo user!` };
     }
+    shouldRun(): boolean {
+        return !BootstrapUtils.isWindows();
+    }
+}
 
-    public async loadVersionFromCommand(command: string): Promise<string | undefined> {
-        return this.loadVersion((await BootstrapUtils.exec(this.logger, command)).stdout.trim());
+export class VerifyService {
+    private readonly expectedVersions: ExpectedVersions;
+    public static readonly currentNodeJsVersion = process.versions.node;
+
+    public actions: VerifyAction[] = [];
+
+    constructor(private readonly logger: Logger, expectedVersions: Partial<ExpectedVersions> = {}) {
+        this.expectedVersions = { ...defaultExpectedVersions, ...expectedVersions };
+
+        const appVersionService = new AppVersionService(this.logger);
+        this.actions.push(
+            new AppVersionVerifyAction(appVersionService, {
+                header: 'NodeVersion',
+                version: VerifyService.currentNodeJsVersion,
+                recommendationUrl: `https://nodejs.org/en/download/package-manager/`,
+                expectedVersion: this.expectedVersions.node,
+            }),
+        );
+        this.actions.push(
+            new AppVersionVerifyAction(appVersionService, {
+                header: 'Docker Version',
+                command: 'docker --version',
+                recommendationUrl: `https://docs.docker.com/get-docker/`,
+                expectedVersion: this.expectedVersions.docker,
+            }),
+        );
+
+        this.actions.push(
+            new AppVersionVerifyAction(appVersionService, {
+                header: 'Docker Compose Version',
+                command: 'docker-compose --version',
+                recommendationUrl: `https://docs.docker.com/compose/install/`,
+                expectedVersion: this.expectedVersions.dockerCompose,
+            }),
+        );
+        this.actions.push(new DockerRunVerifyAction(this.logger));
+        this.actions.push(new SudoRunVerifyAction());
     }
 
-    private async verifyInstalledApp(
-        versionLoader: () => Promise<string | undefined>,
-        header: string,
-        minVersion: string,
-        recommendationUrl: string,
-    ): Promise<ReportLine> {
-        try {
-            const version = await versionLoader();
-            if (!version) {
-                return {
-                    header,
-                    message: `Version could not be found! Output: ${versionLoader}`,
-                    recommendation: `At least version ${minVersion} is required. Check ${recommendationUrl}`,
-                };
+    public async createReport(): Promise<VerifyReport> {
+        const lines: ReportLine[] = [];
+        const platform = `${os.type()} - ${os.release()} - ${os.platform()}`;
+        for (const action of this.actions) {
+            if (action.shouldRun(lines)) lines.push(await action.verify());
+        }
+        return { lines, platform };
+    }
+
+    public logReport(report: VerifyReport): void {
+        this.logger.info(`OS: ${report.platform}`);
+        report.lines.forEach((line) => {
+            if (line.recommendation) {
+                this.logger.error(`${line.header}  - Error! - ${line.message} - ${line.recommendation}`);
+            } else {
+                this.logger.info(`${line.header} - OK! - ${line.message}`);
             }
-            if (semver.lt(version, minVersion, this.semverOptions)) {
-                return {
-                    header,
-                    message: version,
-                    recommendation: `At least version ${minVersion} is required. Currently installed version is ${version}. Check ${recommendationUrl}`,
-                };
-            }
-            return { header, message: version };
-        } catch (e) {
-            return {
-                header,
-                message: `Error: ${e.message}`,
-                recommendation: `At least version ${minVersion} is required. Check ${recommendationUrl}`,
-            };
+        });
+    }
+
+    public validateReport(report: VerifyReport): void {
+        const errors = report.lines.filter((r) => r.recommendation);
+        if (errors.length) {
+            throw new Error(
+                'There has been an error. Check the report:\n' +
+                    errors.map((line) => ` - ${line.header}  - Error! - ${line.message} - ${line.recommendation}`).join('\n'),
+            );
         }
     }
 }
