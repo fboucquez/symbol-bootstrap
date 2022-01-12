@@ -1,0 +1,95 @@
+name: build
+on: [push]
+jobs:
+    build:
+        name: Build, Test, Coverage
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [12.x, 14.x, 15.x]
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm pack
+            - run: npm test
+            - name: Coveralls
+              uses: coverallsapp/github-action@master
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm run lint
+    doc:
+        name: Github Pages Deploy
+        runs-on: ubuntu-latest
+        if: contains(github.base_ref, 'dev')
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm run doc
+            - name: Deploy Docs
+              uses: JamesIves/github-pages-deploy-action@v4.2.2
+              with:
+                  branch: gh-pages
+                  folder: ts-docs
+    alpha:
+        needs: build
+        name: Alpha NPM Deploy
+        runs-on: ubuntu-latest
+        if: contains(github.base_ref, 'dev')
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm pack
+            - id: version
+              run: echo "version=$(npm run version --silent)" >> $GITHUB_ENV
+            - id: newVersion
+              run: echo "newVersion=${{ env.version }}-alpha-${GITHUB_SHA::7}" >> $GITHUB_ENV
+            - run: echo "Deploying version ${{ env.newVersion }}"
+            - run: npm version "${{ env.newVersion }}" --commit-hooks false --git-tag-version false
+            - run: npm publish --tag alpha
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#        steps:
+#            - uses: actions/checkout@v2
+#            - run: sudo rm /usr/local/bin/docker-compose
+#            - run: curl -L https://github.com/docker/compose/releases/download/${env.DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+#            - run: chmod +x docker-compose
+#            - sudo mv docker-compose /usr/local/bin
+#            - name: Build symbol.yml
+#              run: python3 -m catparser --schema symbol/all.cats --include symbol --output  dist/symbol.yml
+#            - name: Build nem.yml
+#              run: python3 -m catparser --schema nem/all.cats --include nem --output  dist/nem.yml
+#            - run: ls -la dist
+#            - uses: 'marvinpinto/action-automatic-releases@latest'
+#              name: Publish Pre Release
+#              if: github.ref == 'refs/heads/main'
+#              with:
+#                  repo_token: '${{ secrets.GITHUB_TOKEN }}'
+#                  automatic_release_tag: 'alpha'
+#                  prerelease: true
+#                  title: 'Alpha Build'
+#                  files: |
+#                      dist/symbol.yml
+#                      dist/nem.yml
