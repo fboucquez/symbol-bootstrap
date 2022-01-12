@@ -58,4 +58,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap link --unlink --useKnownRestGateways
 ```
 
-_See code: [src/commands/link.ts](https://github.com/nemtech/symbol-bootstrap/blob/v1.1.2/src/commands/link.ts)_
+_See code: [src/commands/link.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/link.ts)_
