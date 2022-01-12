@@ -22,7 +22,7 @@ importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
 votingKeyDesiredFutureLifetime: 120
-lastKnownNetworkEpoch: 1
+lastKnownNetworkEpoch: 124
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m
@@ -493,38 +493,43 @@ knownRestGateways:
     - 'https://201-joey-dual.symboltest.net:3001'
     - 'https://401-joey-dual.symboltest.net:3001'
 knownPeers:
-    - publicKey: AAA1922FA60DB681092CBE70A9A1BAB85745025310AE7567F95EA7FD05B3D3FC
-      endpoint:
-          host: 001-joey-dual.symboltest.net
-          port: 7900
-      metadata:
-          name: 001-joey-dual
-          roles: 'Api,Peer,Voting'
-    - publicKey: 0B366C6ED891D9461DC81F4B85D253669E88D055970527D65353F4D22AE7DAFD
-      endpoint:
-          host: 101-joey-peer.symboltest.net
-          port: 7900
-      metadata:
-          name: 101-joey-peer
-          roles: 'Peer,Voting'
-    - publicKey: 3460D29534CA997D6A74BEBB93F38356833B806E1A35F700EBE08D57FC8D3FED
-      endpoint:
-          host: 201-joey-dual.symboltest.net
-          port: 7900
-      metadata:
-          name: 201-joey-dual
-          roles: 'Api,Peer'
-    - publicKey: DFD29AD20BFEECBA8999C566226B39A63D5076CBE3C69201632C092D2F2C6373
-      endpoint:
-          host: 301-joey-peer.symboltest.net
-          port: 7900
-      metadata:
-          name: 301-joey-peer
-          roles: 'Peer,Voting'
-    - publicKey: 3E9C8CCC16DDB1EDFF9F2D0BB92D3F839CCC33D38034E526DC768F7BA3958E00
-      endpoint:
-          host: 401-joey-dual.symboltest.net
-          port: 7900
-      metadata:
-          name: 401-joey-dual
-          roles: 'Api,Peer,Voting'
+    -
+        publicKey: AAA1922FA60DB681092CBE70A9A1BAB85745025310AE7567F95EA7FD05B3D3FC
+        endpoint:
+            host: 001-joey-dual.symboltest.net
+            port: 7900
+        metadata:
+            name: 001-joey-dual
+            roles: 'Api,Peer,Voting'
+    -
+        publicKey: 0B366C6ED891D9461DC81F4B85D253669E88D055970527D65353F4D22AE7DAFD
+        endpoint:
+            host: 101-joey-peer.symboltest.net
+            port: 7900
+        metadata:
+            name: 101-joey-peer
+            roles: 'Peer,Voting'
+    -
+        publicKey: 3460D29534CA997D6A74BEBB93F38356833B806E1A35F700EBE08D57FC8D3FED
+        endpoint:
+            host: 201-joey-dual.symboltest.net
+            port: 7900
+        metadata:
+            name: 201-joey-dual
+            roles: 'Api,Peer'
+    -
+        publicKey: DFD29AD20BFEECBA8999C566226B39A63D5076CBE3C69201632C092D2F2C6373
+        endpoint:
+            host: 301-joey-peer.symboltest.net
+            port: 7900
+        metadata:
+            name: 301-joey-peer
+            roles: 'Peer,Voting'
+    -
+        publicKey: 3E9C8CCC16DDB1EDFF9F2D0BB92D3F839CCC33D38034E526DC768F7BA3958E00
+        endpoint:
+            host: 401-joey-dual.symboltest.net
+            port: 7900
+        metadata:
+            name: 401-joey-dual
+            roles: 'Api,Peer,Voting'

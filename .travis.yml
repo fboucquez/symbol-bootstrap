@@ -36,9 +36,6 @@ jobs:
         - stage: test
           name: docs
           script: npm run doc
-        - name: e2e tests
-          script: npm run e2e
-          if: (branch = env(DEV_BRANCH) AND type = cron) OR (commit_message = e2e)
         - stage: publish
           name: github alpha pages
           script: /bin/bash travis/node-functions.sh node_push_github_pages
