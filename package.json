@@ -6,7 +6,7 @@
     "bin": {
         "symbol-bootstrap": "bin/run"
     },
-    "bugs": "https://github.com/nemtech/symbol-bootstrap/issues",
+    "bugs": "https://github.com/fboucquez/symbol-bootstrap/issues",
     "dependencies": {
         "@oclif/command": "^1.8.12",
         "@oclif/config": "^1.18.2",
@@ -83,7 +83,7 @@
         "/npm-shrinkwrap.json",
         "/oclif.manifest.json"
     ],
-    "homepage": "https://github.com/nemtech/symbol-bootstrap",
+    "homepage": "https://github.com/fboucquez/symbol-bootstrap",
     "keywords": [
         "oclif"
     ],
@@ -97,7 +97,7 @@
             "@oclif/plugin-help"
         ]
     },
-    "repository": "nemtech/symbol-bootstrap",
+    "repository": "fboucquez/symbol-bootstrap",
     "scripts": {
         "doc": "typedoc --out \"ts-docs\" src && touch ./ts-docs/.nojekyll",
         "lint": "eslint --cache src/ test/ --ext .ts",
