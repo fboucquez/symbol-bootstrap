@@ -18,24 +18,10 @@ import * as _ from 'lodash';
 import { join } from 'path';
 import { Account, PublicAccount } from 'symbol-sdk';
 import { Logger } from '../logger';
-import {
-    Addresses,
-    ConfigAccount,
-    ConfigPreset,
-    CustomPreset,
-    MosaicAccounts,
-    NodeAccount,
-    NodePreset,
-    PrivateKeySecurityMode,
-} from '../model';
-import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
-import { Assembly, defaultAssembly, KeyName } from './ConfigService';
-import { Constants } from './Constants';
-import { CryptoUtils } from './CryptoUtils';
 import { Addresses, ConfigAccount, ConfigPreset, CustomPreset, NodePreset } from '../model';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { Assembly, defaultAssembly } from './ConfigService';
+import { Constants } from './Constants';
 import { MigrationService } from './MigrationService';
 
 /**

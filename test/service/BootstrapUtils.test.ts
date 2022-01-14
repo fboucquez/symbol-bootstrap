@@ -20,14 +20,10 @@ import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
 import { Account, NetworkType } from 'symbol-sdk';
-import { ConfigurationUtils, LoggerFactory, LogType } from '../../src';
+import { ConfigurationUtils } from '../../src';
 import { ConfigAccount } from '../../src/model';
-import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
-
 import { BootstrapUtils, CryptoUtils } from '../../src/service';
-import assert = require('assert');
-import nock = require('nock');
-const logger = LoggerFactory.getLogger(LogType.Silent);
+
 describe('BootstrapUtils', () => {
     it('BootstrapUtils generate random', async () => {
         const networkType = NetworkType.TEST_NET;

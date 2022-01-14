@@ -32,15 +32,15 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { AccountResolver, Assembly, BootstrapUtils, DefaultAccountResolver, LoggerFactory, LogType } from '../../src';
 import {
+    AccountResolver,
     AnnounceService,
     Assembly,
     BootstrapService,
     BootstrapUtils,
-    CommandUtils,
     ConfigService,
     Constants,
+    DefaultAccountResolver,
     LoggerFactory,
     LogType,
     Preset,

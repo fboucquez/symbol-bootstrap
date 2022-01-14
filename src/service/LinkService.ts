@@ -27,13 +27,12 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
+import { AccountResolver, BootstrapAccountResolver } from '../service';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { VotingKeyAccount } from './VotingUtils';
 
-import { AccountResolver, AnnounceService, BootstrapAccountResolver, ConfigLoader, TransactionFactory, VotingKeyAccount } from '../service';
-import { BootstrapUtils } from './BootstrapUtils';
 /**
  * params necessary to announce link transactions network.
  */

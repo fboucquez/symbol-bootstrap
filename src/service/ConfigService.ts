@@ -37,8 +37,8 @@ import { AddressesService } from './AddressesService';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
-import { Constants } from './Constants';
 import { ConfigurationUtils } from './ConfigurationUtils';
+import { Constants } from './Constants';
 import { CryptoUtils } from './CryptoUtils';
 import { FileSystemService } from './FileSystemService';
 import { NemgenService } from './NemgenService';
@@ -331,7 +331,12 @@ export class ConfigService {
                     main: account.main,
                     transport: account.transport,
                 };
-                return new CertificateService(this.logger, this.params.accountResolver, this.params).run(presetData, account.name, providedCertificates, false);
+                return new CertificateService(this.logger, this.params.accountResolver, this.params).run(
+                    presetData,
+                    account.name,
+                    providedCertificates,
+                    false,
+                );
             }),
         );
     }

@@ -27,6 +27,7 @@ import {
     CertificateService,
     ConfigLoader,
     Constants,
+    DefaultAccountResolver,
     FileSystemService,
     NodeCertificates,
     Preset,
@@ -35,6 +36,7 @@ import {
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const runtimeService = new RuntimeService(logger);
+const accountResolver = new DefaultAccountResolver();
 const fileSystemService = new FileSystemService(logger);
 describe('CertificateService', () => {
     const target = 'target/tests/CertificateService.test';
@@ -89,7 +91,10 @@ describe('CertificateService', () => {
     it('createCertificates', async () => {
         fileSystemService.deleteFolder(target);
 
-        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+        const service = new CertificateService(logger, accountResolver, {
+            target: target,
+            user: await runtimeService.getDockerUserGroup(),
+        });
         await service.run(presetData, name, keys, false, target, randomSerial);
 
         const expectedMetadata: CertificateMetadata = {
@@ -106,7 +111,10 @@ describe('CertificateService', () => {
         const nodeCertificateExpirationInDays = presetData.nodeCertificateExpirationInDays;
         const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
 
-        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+        const service = new CertificateService(logger, accountResolver, {
+            target: target,
+            user: await runtimeService.getDockerUserGroup(),
+        });
         await service.run(presetData, name, keys, false, target, randomSerial);
 
         async function willExpire(certificateFileName: string, certificateExpirationWarningInDays: number): Promise<boolean> {
@@ -129,8 +137,10 @@ describe('CertificateService', () => {
     it('create and renew certificates', async () => {
         const target = 'target/tests/CertificateService.test';
         fileSystemService.deleteFolder(target);
-        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
-
+        const service = new CertificateService(logger, accountResolver, {
+            target: target,
+            user: await runtimeService.getDockerUserGroup(),
+        });
         async function getCertFile(certificateFileName: string): Promise<string> {
             return readFileSync(join(target, certificateFileName), 'utf-8');
         }

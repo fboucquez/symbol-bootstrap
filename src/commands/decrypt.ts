@@ -17,9 +17,8 @@
 import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
-import { BootstrapUtils, CommandUtils, FileSystemService, KnownError, LoggerFactory, LogType } from '../';
 import { LoggerFactory, LogType } from '../logger';
-import { BootstrapUtils, CommandUtils, KnownError } from '../service';
+import { BootstrapUtils, CommandUtils, FileSystemService, KnownError } from '../service';
 
 export default class Decrypt extends Command {
     static description = `It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.

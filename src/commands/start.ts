@@ -16,8 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { LoggerFactory } from '../logger';
-import { BootstrapAccountResolver, BootstrapService, BootstrapUtils, CommandUtils } from '../service';
-import { BootstrapService, CommandUtils, Constants } from '../service';
+import { BootstrapAccountResolver, BootstrapService, CommandUtils, Constants } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -50,8 +49,7 @@ export default class Start extends Command {
             true,
         );
 
-      const workingDir = Constants.defaultWorkingDir;
-      await new BootstrapService(logger).start({ ...flags, workingDir });
+        const workingDir = Constants.defaultWorkingDir;
         const accountResolver = new BootstrapAccountResolver(logger);
         await new BootstrapService(logger).start({ ...flags, accountResolver, workingDir });
     }

@@ -28,7 +28,6 @@ import { Addresses, ConfigPreset } from '../model';
 import { AccountResolver } from './AccountResolver';
 import { AnnounceService, TransactionFactory, TransactionFactoryParams } from './AnnounceService';
 import { BootstrapAccountResolver } from './BootstrapAccountResolver';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { TransactionUtils } from './TransactionUtils';

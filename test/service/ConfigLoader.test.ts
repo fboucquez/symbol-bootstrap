@@ -16,21 +16,8 @@
 
 import { expect } from 'chai';
 import 'mocha';
-import { Assembly, LoggerFactory, LogType } from '../../src';
+import { Assembly, Constants, LoggerFactory, LogType } from '../../src';
 import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
-import { Account, NetworkType } from 'symbol-sdk';
-import {
-    Assembly,
-    BootstrapUtils,
-    ConfigAccount,
-    ConfigLoader,
-    Constants,
-    KeyName,
-    LoggerFactory,
-    LogType,
-    Preset,
-    PrivateKeySecurityMode,
-} from '../../src';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 

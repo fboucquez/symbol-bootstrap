@@ -19,10 +19,7 @@ import { textSync } from 'figlet';
 import { prompt } from 'inquirer';
 import { Convert, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
-import { CertificatePair } from '../model';
-import { KeyName } from './ConfigService';
 import { Constants } from './Constants';
-import { BootstrapUtils } from './BootstrapUtils';
 
 export class CommandUtils {
     public static passwordPromptDefaultMessage = `Enter the password used to encrypt and decrypt custom presets, addresses.yml, and preset.yml files. When providing a password, private keys will be encrypted. Keep this password in a secure place!`;

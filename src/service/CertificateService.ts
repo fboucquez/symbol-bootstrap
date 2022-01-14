@@ -19,14 +19,13 @@ import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { CertificatePair } from '../model';
+import { AccountResolver } from './';
 import { BootstrapUtils } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
 import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
-import { AccountResolver, BootstrapUtils, KeyName } from './';
 
 export interface CertificateParams {
     readonly target: string;
@@ -59,7 +58,11 @@ export class CertificateService {
     private readonly fileSystemService: FileSystemService;
     private readonly runtimeService: RuntimeService;
 
-    constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {
+    constructor(
+        private readonly logger: Logger,
+        private readonly accountResolver: AccountResolver,
+        protected readonly params: CertificateParams,
+    ) {
         this.runtimeService = new RuntimeService(this.logger);
         this.fileSystemService = new FileSystemService(logger);
     }
@@ -144,8 +147,8 @@ export class CertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
+        BootstrapUtils.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
+        BootstrapUtils.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
         await BootstrapUtils.writeTextFile(
             join(certFolder, 'serial.dat'),
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
@@ -178,9 +181,9 @@ export class CertificateService {
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
-        Utils.validateIsTrue(caCertificate.privateKey === mainAccountPrivateKey, 'Invalid ca private key');
+        Utils.validateIsTrue(caCertificate.privateKey === mainAccount.privateKey, 'Invalid ca private key');
         Utils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
-        Utils.validateIsTrue(nodeCertificate.privateKey === transportPrivateKey, 'Invalid Node private key');
+        Utils.validateIsTrue(nodeCertificate.privateKey === transportAccount.privateKey, 'Invalid Node private key');
         Utils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
 
         const metadata: CertificateMetadata = {

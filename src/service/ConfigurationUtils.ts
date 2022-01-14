@@ -3,6 +3,7 @@ import { join } from 'path';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
 import { ConfigAccount, ConfigPreset, NodePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
+import { Constants } from './Constants';
 
 /**
  * Utility class for bootstrap configuration related methods.
@@ -75,8 +76,7 @@ export class ConfigurationUtils {
         return (
             presetData.nemesis &&
             !presetData.nemesisSeedFolder &&
-            (BootstrapUtils.isYmlFile(presetData.preset) ||
-                !existsSync(join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed')))
+            (BootstrapUtils.isYmlFile(presetData.preset) || !existsSync(join(Constants.ROOT_FOLDER, 'presets', presetData.preset, 'seed')))
         );
     }
 }
