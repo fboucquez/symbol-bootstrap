@@ -36,6 +36,7 @@ export interface RunImageUsingExecParams {
     workdir?: string;
     cmds: string[];
     binds: string[];
+    ignoreErrors?: boolean;
 }
 
 /**
@@ -47,10 +48,12 @@ export class RuntimeService {
     public static readonly CURRENT_USER = 'current';
     constructor(private readonly logger: Logger) {}
 
-    public async exec(runCommand: string): Promise<{ stdout: string; stderr: string }> {
+    public exec(runCommand: string, ignoreErrors?: boolean): Promise<{ stdout: string; stderr: string }> {
         this.logger.debug(`Exec command: ${runCommand}`);
-        const { stdout, stderr } = await exec(runCommand);
-        return { stdout, stderr };
+        return exec(runCommand).catch((error) => {
+            if (ignoreErrors) return { stdout: error.stdout, stderr: error.stderr };
+            throw error;
+        });
     }
 
     public runImageUsingExec({
@@ -60,6 +63,7 @@ export class RuntimeService {
         workdir,
         cmds,
         binds,
+        ignoreErrors,
     }: RunImageUsingExecParams): Promise<{ stdout: string; stderr: string }> {
         const volumes = binds.map((b) => `-v ${b}`).join(' ');
         const userParam = userId ? `-u ${userId}` : '';
@@ -68,7 +72,7 @@ export class RuntimeService {
         const commandLine = cmds.map((a) => `"${a}"`).join(' ');
         const runCommand = `docker run --rm ${userParam} ${workdirParam} ${environmentParam} ${volumes} ${image} ${commandLine}`;
         this.logger.info(Utils.secureString(`Running image using Exec: ${image} ${cmds.join(' ')}`));
-        return this.exec(runCommand);
+        return this.exec(runCommand, ignoreErrors);
     }
 
     public async spawn({ command, args, useLogger, logPrefix = '', shell }: SpawnParams): Promise<string> {

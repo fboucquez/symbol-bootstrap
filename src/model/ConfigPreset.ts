@@ -251,6 +251,9 @@ export interface NodeConfigPreset {
     maxProofSize: number;
     maxTransactionsPerBlock: number;
     localNetworks: string;
+    caCertificateExpirationInDays: number;
+    nodeCertificateExpirationInDays: number;
+    certificateExpirationWarningInDays: number;
 }
 
 export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPreset> {

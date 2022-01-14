@@ -41,7 +41,17 @@ export interface NodeCertificates {
     transport: CertificatePair;
 }
 
+export interface CertificateConfigPreset {
+    networkType: NetworkType;
+    symbolServerImage: string;
+    caCertificateExpirationInDays: number;
+    nodeCertificateExpirationInDays: number;
+    certificateExpirationWarningInDays: number;
+}
+
 export class CertificateService {
+    public static NODE_CERTIFICATE_FILE_NAME = 'node.crt.pem';
+    public static CA_CERTIFICATE_FILE_NAME = 'ca.cert.pem';
     private static readonly METADATA_VERSION = 1;
 
     private readonly runtimeService: RuntimeService;
@@ -50,62 +60,60 @@ export class CertificateService {
         this.runtimeService = new RuntimeService(this.logger);
     }
 
-    public static getCertificates(stdout: string): CertificatePair[] {
-        const locations = (string: string, substring: string): number[] => {
-            const indexes = [];
-            let i = -1;
-            while ((i = string.indexOf(substring, i + 1)) >= 0) indexes.push(i);
-            return indexes;
-        };
-
-        const extractKey = (subtext: string): string => {
-            const key = subtext
-                .trim()
-                .split(':')
-                .map((m) => m.trim())
-                .join('');
-            if (!key || key.length !== 64) {
-                throw Error(`SSL Certificate key cannot be loaded from the openssl script. Output: \n${subtext}`);
-            }
-            return key.toUpperCase();
-        };
-
-        const from = 'priv:';
-        const middle = 'pub:';
-        const to = 'Certificate';
-
-        const indexes = locations(stdout, from);
-
-        return indexes.map((index) => {
-            const privateKey = extractKey(stdout.substring(index + from.length, stdout.indexOf(middle, index)));
-            const publicKey = extractKey(stdout.substring(stdout.indexOf(middle, index) + middle.length, stdout.indexOf(to, index)));
-            return { privateKey: privateKey, publicKey: publicKey };
-        });
-    }
-
     public async run(
-        networkType: NetworkType,
-        symbolServerImage: string,
+        presetData: CertificateConfigPreset,
         name: string,
         providedCertificates: NodeCertificates,
+        renewIfRequired: boolean,
         customCertFolder?: string,
         randomSerial?: string,
-    ): Promise<void> {
-        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'cert');
+    ): Promise<boolean> {
         const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
-
         const metadataFile = join(certFolder, 'metadata.yml');
-
         if (!(await this.shouldGenerateCertificate(metadataFile, providedCertificates))) {
-            this.logger.info(`Certificates for node ${name} have been previously generated. Reusing...`);
-            return;
+            const willExpireReport = await this.willCertificateExpire(
+                presetData.symbolServerImage,
+                certFolder,
+                CertificateService.NODE_CERTIFICATE_FILE_NAME,
+                presetData.certificateExpirationWarningInDays,
+            );
+
+            if (willExpireReport.willExpire) {
+                if (renewIfRequired) {
+                    this.logger.info(
+                        `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. Renewing...`,
+                    );
+                    await this.createCertificate(true, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
+                    return true;
+                } else {
+                    this.logger.warn(
+                        `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. You need to renew it.`,
+                    );
+                    return false;
+                }
+            } else {
+                this.logger.info(
+                    `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire on ${willExpireReport.expirationDate}. No need to renew it yet.`,
+                );
+                return false;
+            }
+        } else {
+            await this.createCertificate(false, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
+            return true;
         }
-        BootstrapUtils.deleteFolder(this.logger, certFolder);
-        await BootstrapUtils.mkdir(certFolder);
-        const newCertsFolder = join(certFolder, 'new_certs');
-        await BootstrapUtils.mkdir(newCertsFolder);
-        const generatedContext = { name };
-        await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
+    }
+
+    private async createCertificate(
+        renew: boolean,
+        presetData: CertificateConfigPreset,
+        certFolder: string,
+        name: string,
+        providedCertificates: NodeCertificates,
+        metadataFile: string,
+        randomSerial?: string,
+    ) {
+        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'cert');
+        const networkType = presetData.networkType;
 
         const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
             this.logger,
@@ -123,6 +131,15 @@ export class CertificateService {
             name,
             'generating the server Node certificates',
         );
+
+        if (!renew) {
+            BootstrapUtils.deleteFolder(this.logger, certFolder);
+        }
+
+        await BootstrapUtils.mkdir(certFolder);
+        const generatedContext = { name };
+        await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
+
         BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
         BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
         await BootstrapUtils.writeTextFile(
@@ -130,19 +147,19 @@ export class CertificateService {
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
         );
 
-        // TODO. Migrate this process to forge, sshpk or any node native implementation.
-        const command = this.createCertCommands('/data');
+        const command = this.createCertCommands(
+            renew,
+            presetData.caCertificateExpirationInDays,
+            presetData.nodeCertificateExpirationInDays,
+        );
         await BootstrapUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
-        const cmd = ['bash', 'createNodeCertificates.sh'];
-        const binds = [`${resolve(certFolder)}:/data:rw`];
-        const userId = await this.runtimeService.resolveDockerUserFromParam(this.params.user);
-        const { stdout, stderr } = await this.runtimeService.runImageUsingExec({
-            image: symbolServerImage,
-            userId: userId,
-            workdir: '/data',
-            cmds: cmd,
-            binds: binds,
-        });
+
+        const { stdout, stderr } = await this.runOpenSslCommand(
+            presetData.symbolServerImage,
+            'bash createNodeCertificates.sh',
+            certFolder,
+            false,
+        );
         if (stdout.indexOf('Certificate Created') < 0) {
             this.logger.info(Utils.secureString(stdout));
             this.logger.error(Utils.secureString(stderr));
@@ -153,7 +170,7 @@ export class CertificateService {
         if (certificates.length != 2) {
             throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
         }
-        this.logger.info(`Certificate for node ${name} created`);
+        this.logger.info(renew ? `Certificate for node ${name} renewed` : `Certificate for node ${name} created`);
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
@@ -187,9 +204,16 @@ export class CertificateService {
         }
     }
 
-    private createCertCommands(target: string): string {
+    private createCertCommands(renew: boolean, caCertificateExpirationInDays: number, nodeCertificateExpirationInDays: number): string {
+        const createCaCertificate = renew
+            ? `openssl x509 -in ${CertificateService.CA_CERTIFICATE_FILE_NAME}  -text -noout`
+            : `# create CA cert and self-sign it
+    openssl req -config ca.cnf -keyform PEM -key ca.key.pem -new -x509 -days ${caCertificateExpirationInDays} -out ${CertificateService.CA_CERTIFICATE_FILE_NAME}
+    openssl x509 -in ${CertificateService.CA_CERTIFICATE_FILE_NAME}  -text -noout
+    `;
         return `set -e
-cd ${target}
+
+mkdir new_certs
 chmod 700 new_certs
 touch index.txt.attr
 touch index.txt
@@ -199,9 +223,7 @@ cat ca.der | openssl pkey -inform DER -outform PEM -out ca.key.pem
 openssl pkey -inform pem -in ca.key.pem -text -noout
 openssl pkey -in ca.key.pem -pubout -out ca.pubkey.pem
 
-# create CA cert and self-sign it
-openssl req -config ca.cnf -keyform PEM -key ca.key.pem -new -x509 -days 7300 -out ca.cert.pem
-openssl x509 -in ca.cert.pem  -text -noout
+${createCaCertificate}
 
 # create node key
 cat node.der | openssl pkey -inform DER -outform PEM -out node.key.pem
@@ -215,11 +237,11 @@ openssl req  -text -noout -verify -in node.csr.pem
 # CA side
 
 # sign cert for 375 days
-openssl ca -batch -config ca.cnf -days 375 -notext -in node.csr.pem -out node.crt.pem
-openssl verify -CAfile ca.cert.pem node.crt.pem
+openssl ca -batch -config ca.cnf -days ${nodeCertificateExpirationInDays} -notext -in node.csr.pem -out ${CertificateService.NODE_CERTIFICATE_FILE_NAME}
+openssl verify -CAfile ${CertificateService.CA_CERTIFICATE_FILE_NAME} ${CertificateService.NODE_CERTIFICATE_FILE_NAME}
 
 # finally create full crt
-cat node.crt.pem ca.cert.pem > node.full.crt.pem
+cat ${CertificateService.NODE_CERTIFICATE_FILE_NAME} ${CertificateService.CA_CERTIFICATE_FILE_NAME} > node.full.crt.pem
 
 rm createNodeCertificates.sh
 rm ca.key.pem
@@ -233,5 +255,93 @@ rm -rf new_certs
 
 echo "Certificate Created"
 `;
+    }
+
+    public async willCertificateExpire(
+        symbolServerImage: string,
+        certFolder: string,
+        certificateFileName: string,
+        certificateExpirationWarningInDays: number,
+    ): Promise<{ willExpire: boolean; expirationDate: string }> {
+        const command = `openssl x509 -enddate -noout -in ${certificateFileName} -checkend ${
+            certificateExpirationWarningInDays * 24 * 60 * 60
+        }`;
+        const { stdout, stderr } = await this.runOpenSslCommand(symbolServerImage, command, certFolder, true);
+        const expirationDate = stdout.match('notAfter\\=(.*)\\n')?.[1];
+        if (!expirationDate) {
+            this.logger.info(Utils.secureString(stdout));
+            this.logger.error(Utils.secureString(stderr));
+            throw new Error(
+                `Cannot validate ${certificateFileName} certificate expiration. Expiration Date cannot be resolved. Check the logs!`,
+            );
+        }
+        if (stdout.indexOf('Certificate will expire') > -1) {
+            return {
+                willExpire: true,
+                expirationDate: expirationDate,
+            };
+        }
+        if (stdout.indexOf('Certificate will not expire') > -1) {
+            return {
+                willExpire: false,
+                expirationDate: expirationDate,
+            };
+        }
+        this.logger.info(Utils.secureString(stdout));
+        this.logger.error(Utils.secureString(stderr));
+        throw new Error(`Cannot validate ${certificateFileName} certificate expiration. Check the logs!`);
+    }
+
+    private async runOpenSslCommand(
+        symbolServerImage: string,
+        cmd: string,
+        certFolder: string,
+        ignoreErrors: boolean,
+    ): Promise<{
+        stdout: string;
+        stderr: string;
+    }> {
+        const userId = await this.runtimeService.resolveDockerUserFromParam(this.params.user);
+        const binds = [`${resolve(certFolder)}:/data:rw`];
+        const { stdout, stderr } = await this.runtimeService.runImageUsingExec({
+            image: symbolServerImage,
+            userId: userId,
+            workdir: '/data',
+            cmds: cmd.split(' '),
+            binds: binds,
+            ignoreErrors: ignoreErrors,
+        });
+        return { stdout, stderr };
+    }
+
+    public static getCertificates(stdout: string): CertificatePair[] {
+        const locations = (string: string, substring: string): number[] => {
+            const indexes = [];
+            let i = -1;
+            while ((i = string.indexOf(substring, i + 1)) >= 0) indexes.push(i);
+            return indexes;
+        };
+
+        const extractKey = (subtext: string): string => {
+            const key = subtext
+                .trim()
+                .split(':')
+                .map((m) => m.trim())
+                .join('');
+            if (!key || key.length !== 64) {
+                throw Error(`SSL Certificate key cannot be loaded from the openssl script. Output: \n${subtext}`);
+            }
+            return key.toUpperCase();
+        };
+
+        const from = 'priv:';
+        const middle = 'pub:';
+        const to = 'Certificate';
+
+        return locations(stdout, from).map((index) => {
+            const privateKey = extractKey(stdout.substring(index + from.length, stdout.indexOf(middle, index)));
+            const publicKey = extractKey(stdout.substring(stdout.indexOf(middle, index) + middle.length, stdout.indexOf(to, index)));
+            return { privateKey: privateKey, publicKey: publicKey };
+        });
     }
 }

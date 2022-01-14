@@ -14,16 +14,45 @@
  * limitations under the License.
  */
 
+import { expect } from '@oclif/test';
 import { deepStrictEqual } from 'assert';
-import { expect } from 'chai';
 import { promises as fsPromises, readFileSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
-import { LoggerFactory, LogType, RuntimeService } from '../../src';
-import { BootstrapUtils, CertificateMetadata, CertificateService, ConfigLoader, NodeCertificates, Preset } from '../../src/service';
+import { LoggerFactory, LogType } from '../../src/logger';
+import {
+    BootstrapUtils,
+    CertificateMetadata,
+    CertificateService,
+    ConfigLoader,
+    NodeCertificates,
+    Preset,
+    RuntimeService,
+} from '../../src/service';
+
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const runtimeService = new RuntimeService(logger);
 describe('CertificateService', () => {
+    const target = 'target/tests/CertificateService.test';
+    const presetData = new ConfigLoader(logger).createPresetData({
+        workingDir: BootstrapUtils.defaultWorkingDir,
+        preset: Preset.testnet,
+        assembly: 'dual',
+        password: 'abc',
+    });
+    const networkType = NetworkType.TEST_NET;
+    const keys: NodeCertificates = {
+        main: ConfigLoader.toConfig(
+            Account.createFromPrivateKey('E095162875BB1D98CA5E0941670E01C1B0DBDF86DF7B3BEDA4A93635F8E51A03', networkType),
+        ),
+        transport: ConfigLoader.toConfig(
+            Account.createFromPrivateKey('415F253ABF0FB2DFD39D7F409EFA2E88769873CAEB45617313B98657A1476A15', networkType),
+        ),
+    };
+    const randomSerial = '4C87E5C49034B711E2DA38D116366829DA144B\n'.toLowerCase();
+    const name = 'test-node';
+
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;
         const output = BootstrapUtils.loadFileAsText(outputFile);
@@ -40,35 +69,7 @@ describe('CertificateService', () => {
         ]);
     });
 
-    it('createCertificates', async () => {
-        const target = 'target/tests/CertificateService.test';
-        await BootstrapUtils.deleteFolder(logger, target);
-        const service = new CertificateService(logger, { target: target, user: await new RuntimeService(logger).getDockerUserGroup() });
-        const presetData = new ConfigLoader(logger).createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
-            preset: Preset.bootstrap,
-            password: 'abc',
-        });
-        const networkType = NetworkType.TEST_NET;
-        const keys: NodeCertificates = {
-            main: ConfigLoader.toConfig(
-                Account.createFromPrivateKey('E095162875BB1D98CA5E0941670E01C1B0DBDF86DF7B3BEDA4A93635F8E51A03', networkType),
-            ),
-            transport: ConfigLoader.toConfig(
-                Account.createFromPrivateKey('415F253ABF0FB2DFD39D7F409EFA2E88769873CAEB45617313B98657A1476A15', networkType),
-            ),
-        };
-
-        const randomSerial = '4C87E5C49034B711E2DA38D116366829DA144B\n'.toLowerCase();
-        await service.run(networkType, presetData.symbolServerImage, 'test-node', keys, target, randomSerial);
-
-        const expectedMetadata: CertificateMetadata = {
-            version: 1,
-            transportPublicKey: keys.transport.publicKey,
-            mainPublicKey: keys.main.publicKey,
-        };
-        expect(expectedMetadata).deep.eq(BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
-
+    async function verifyCertFolder() {
         const files = await fsPromises.readdir(target);
         expect(files).deep.eq(['ca.cert.pem', 'ca.pubkey.pem', 'metadata.yml', 'node.crt.pem', 'node.full.crt.pem', 'node.key.pem']);
 
@@ -80,5 +81,79 @@ describe('CertificateService', () => {
             .forEach((f) => {
                 expect(readFileSync(join(target, f)), `Different fields: ${f}`).deep.eq(readFileSync(join('test', 'nodeCertificates', f)));
             });
+    }
+
+    it('createCertificates', async () => {
+        BootstrapUtils.deleteFolder(logger, target);
+
+        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+        await service.run(presetData, name, keys, false, target, randomSerial);
+
+        const expectedMetadata: CertificateMetadata = {
+            version: 1,
+            transportPublicKey: keys.transport.publicKey,
+            mainPublicKey: keys.main.publicKey,
+        };
+        expect(expectedMetadata).deep.eq(BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
+        await verifyCertFolder();
+    });
+
+    it('createCertificates expiration warnings', async () => {
+        BootstrapUtils.deleteFolder(logger, target);
+        const nodeCertificateExpirationInDays = presetData.nodeCertificateExpirationInDays;
+        const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
+
+        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+        await service.run(presetData, name, keys, false, target, randomSerial);
+
+        async function willExpire(certificateFileName: string, certificateExpirationWarningInDays: number): Promise<boolean> {
+            const report = await service.willCertificateExpire(
+                presetData.symbolServerImage,
+                target,
+                certificateFileName,
+                certificateExpirationWarningInDays,
+            );
+            expect(report.expirationDate.endsWith(' GMT')).eq(true);
+            return report.willExpire;
+        }
+
+        expect(await willExpire(CertificateService.NODE_CERTIFICATE_FILE_NAME, nodeCertificateExpirationInDays - 1)).eq(false);
+        expect(await willExpire(CertificateService.NODE_CERTIFICATE_FILE_NAME, nodeCertificateExpirationInDays + 1)).eq(true);
+        expect(await willExpire(CertificateService.CA_CERTIFICATE_FILE_NAME, caCertificateExpirationInDays - 1)).eq(false);
+        expect(await willExpire(CertificateService.CA_CERTIFICATE_FILE_NAME, caCertificateExpirationInDays + 1)).eq(true);
+    });
+
+    it('create and renew certificates', async () => {
+        const target = 'target/tests/CertificateService.test';
+        BootstrapUtils.deleteFolder(logger, target);
+        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+
+        async function getCertFile(certificateFileName: string): Promise<string> {
+            return readFileSync(join(target, certificateFileName), 'utf-8');
+        }
+
+        // First time generation
+        expect(await service.run({ ...presetData, nodeCertificateExpirationInDays: 10 }, name, keys, true, target)).eq(true);
+        await verifyCertFolder();
+        const originalCaFile = await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME);
+        const originalNodeFile = await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME);
+
+        //Renew is not required
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 9 }, name, keys, true, target)).eq(false);
+        await verifyCertFolder();
+        expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
+        expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).eq(originalNodeFile);
+
+        //Renew is required but not auto-upgrade
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, false, target)).eq(false);
+        await verifyCertFolder();
+        expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
+        expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).eq(originalNodeFile);
+
+        //Renew is required and auto-upgrade
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, true, target)).eq(true);
+        await verifyCertFolder();
+        expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
+        expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).not.eq(originalNodeFile); // Renewed
     });
 });
