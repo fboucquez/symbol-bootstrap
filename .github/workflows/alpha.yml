@@ -1,0 +1,43 @@
+name: Alpha
+on:
+    workflow_run:
+        workflows: [build]
+        branches: [dev]
+        types: [completed]
+jobs:
+    doc:
+        name: Github Pages Deploy
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm run doc
+            - name: Deploy Docs
+              uses: JamesIves/github-pages-deploy-action@v4.2.2
+              with:
+                  branch: gh-pages
+                  folder: ts-docs
+    alpha:
+        name: Alpha NPM Deploy
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm pack
+            - id: version
+              run: echo "version=$(npm run version --silent)" >> $GITHUB_ENV
+            - id: newVersion
+              run: echo "newVersion=${{ env.version }}-alpha-${GITHUB_SHA::7}" >> $GITHUB_ENV
+            - run: echo "Deploying version ${{ env.newVersion }}"
+            - run: npm version "${{ env.newVersion }}" --commit-hooks false --git-tag-version false
+            - run: npm publish --tag alpha
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
