@@ -78,7 +78,7 @@ services:
                 ipv4_address: 172.20.0.25
     explorer:
         container_name: explorer
-        image: 'symbolplatform/symbol-explorer:1.1.0-alpha'
+        image: 'symbolplatform/symbol-explorer:1.1.1-alpha-202110290945'
         entrypoint: ash -c "/bin/ash /symbol-commands/run.sh explorer"
         stop_signal: SIGINT
         working_dir: /symbol-workdir
