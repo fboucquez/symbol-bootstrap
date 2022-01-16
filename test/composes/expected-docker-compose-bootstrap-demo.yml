@@ -95,7 +95,7 @@ services:
         privileged: true
     faucet:
         container_name: faucet
-        image: 'symbolplatform/symbol-faucet:1.0.1-alpha'
+        image: 'symbolplatform/symbol-faucet:1.0.1-alpha-202110131930'
         stop_signal: SIGINT
         environment:
             DEFAULT_NODE: 'http://rest-gateway:3000'

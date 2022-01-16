@@ -21,6 +21,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Allowing user provided `--preset` and `--assembly` yml files. 
 - Removed wallet from `demo` preset.
 - CI migrated from Travis to GitHub Actions.
+- Fixed Faucet and Explorer versions. Full upgrade requires adding statistic service to `demo` preset.
 
 ## [1.1.1] - Nov-16-2021
 
