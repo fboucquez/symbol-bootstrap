@@ -22,11 +22,11 @@ import { LoggerFactory, LogType } from '../logger';
 import {
     BootstrapAccountResolver,
     BootstrapService,
-    BootstrapUtils,
     CommandUtils,
     Constants,
     CryptoUtils,
     FileSystemService,
+    YamlUtils,
     ZipItem,
     ZipUtils,
 } from '../service';
@@ -102,13 +102,13 @@ export default class Pack extends Command {
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';
 
         if (flags.customPreset) {
-            await BootstrapUtils.writeYaml(
+            await YamlUtils.writeYaml(
                 noPrivateKeyTempFile,
-                CryptoUtils.removePrivateKeys(BootstrapUtils.loadYaml(flags.customPreset, flags.password)),
+                CryptoUtils.removePrivateKeys(YamlUtils.loadYaml(flags.customPreset, flags.password)),
                 flags.password,
             );
         } else {
-            await BootstrapUtils.writeYaml(noPrivateKeyTempFile, {}, flags.password);
+            await YamlUtils.writeYaml(noPrivateKeyTempFile, {}, flags.password);
         }
         const zipItems: ZipItem[] = [
             {

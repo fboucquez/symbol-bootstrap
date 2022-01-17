@@ -23,6 +23,7 @@ import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { Assembly, defaultAssembly } from './ConfigService';
 import { Constants } from './Constants';
 import { MigrationService } from './MigrationService';
+import { YamlUtils } from './YamlUtils';
 
 /**
  * Helper object that knows how to load addresses and preset files.
@@ -41,7 +42,7 @@ export class ConfigLoader {
                 `Custom preset '${customPreset}' doesn't exist. Have you provided the right --customPreset <customPrestFileLocation> ?`,
             );
         }
-        return BootstrapUtils.loadYaml(customPreset, password);
+        return YamlUtils.loadYaml(customPreset, password);
     }
 
     public static loadAssembly(preset: string, assembly: string, workingDir: string): CustomPreset {
@@ -57,21 +58,21 @@ export class ConfigLoader {
     }
 
     private static loadBundledPreset(presetFile: string, bundledLocation: string, workingDir: string, errorMessage: string): CustomPreset {
-        if (BootstrapUtils.isYmlFile(presetFile)) {
+        if (YamlUtils.isYmlFile(presetFile)) {
             const assemblyFile = BootstrapUtils.resolveWorkingDirPath(workingDir, presetFile);
             if (!existsSync(assemblyFile)) {
                 throw new KnownError(errorMessage);
             }
-            return BootstrapUtils.loadYaml(assemblyFile, false);
+            return YamlUtils.loadYaml(assemblyFile, false);
         }
         if (existsSync(bundledLocation)) {
-            return BootstrapUtils.loadYaml(bundledLocation, false);
+            return YamlUtils.loadYaml(bundledLocation, false);
         }
         throw new KnownError(errorMessage);
     }
 
     public static loadSharedPreset(): CustomPreset {
-        return BootstrapUtils.loadYaml(join(Constants.ROOT_FOLDER, 'presets', 'shared.yml'), false) as ConfigPreset;
+        return YamlUtils.loadYaml(join(Constants.ROOT_FOLDER, 'presets', 'shared.yml'), false) as ConfigPreset;
     }
     public mergePresets<T extends CustomPreset>(object: T | undefined, ...otherArgs: (CustomPreset | undefined)[]): T {
         const presets = [object, ...otherArgs];
@@ -269,7 +270,7 @@ export class ConfigLoader {
     public loadExistingPresetDataIfPreset(target: string, password: Password): ConfigPreset | undefined {
         const generatedPresetLocation = this.getGeneratedPresetLocation(target);
         if (existsSync(generatedPresetLocation)) {
-            return BootstrapUtils.loadYaml(generatedPresetLocation, password);
+            return YamlUtils.loadYaml(generatedPresetLocation, password);
         }
         return undefined;
     }
@@ -293,7 +294,7 @@ export class ConfigLoader {
     public loadExistingAddressesIfPreset(target: string, password: Password): Addresses | undefined {
         const generatedAddressLocation = this.getGeneratedAddressLocation(target);
         if (existsSync(generatedAddressLocation)) {
-            return new MigrationService(this.logger).migrateAddresses(BootstrapUtils.loadYaml(generatedAddressLocation, password));
+            return new MigrationService(this.logger).migrateAddresses(YamlUtils.loadYaml(generatedAddressLocation, password));
         }
         return undefined;
     }

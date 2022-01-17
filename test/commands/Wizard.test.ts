@@ -18,7 +18,6 @@ import { expect } from 'chai';
 import { Account, NetworkType } from 'symbol-sdk';
 import {
     Assembly,
-    BootstrapUtils,
     Constants,
     CustomPreset,
     FileSystemService,
@@ -26,6 +25,7 @@ import {
     LogType,
     Preset,
     PrivateKeySecurityMode,
+    YamlUtils,
 } from '../../src';
 import { Wizard } from '../../src/commands/wizard';
 // Including a test util class that it's not compiled.
@@ -100,7 +100,7 @@ describe('Wizard', () => {
             preset: Preset.mainnet,
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
         };
-        const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
+        const customPreset = YamlUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
@@ -160,7 +160,7 @@ describe('Wizard', () => {
             preset: Preset.mainnet,
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
         };
-        const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
+        const customPreset = YamlUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
@@ -224,7 +224,7 @@ describe('Wizard', () => {
                 },
             ],
         };
-        const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
+        const customPreset = YamlUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
@@ -296,7 +296,7 @@ describe('Wizard', () => {
             ],
         };
 
-        const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
+        const customPreset = YamlUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 
@@ -407,7 +407,7 @@ describe('Wizard', () => {
             preset: 'custom-network-preset.yml',
             privateKeySecurityMode: PrivateKeySecurityMode.PROMPT_MAIN_TRANSPORT,
         };
-        const customPreset = BootstrapUtils.loadYaml(customPresetFile, password);
+        const customPreset = YamlUtils.loadYaml(customPresetFile, password);
         expect(customPreset).deep.eq(expectedCustomPreset);
     });
 });

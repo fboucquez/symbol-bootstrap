@@ -7,6 +7,7 @@ import { KeyName } from './ConfigService';
 import { ConfigurationUtils } from './ConfigurationUtils';
 import { CryptoUtils } from './CryptoUtils';
 import { MigrationService } from './MigrationService';
+import { YamlUtils } from './YamlUtils';
 
 /**
  * Object in charge of resolving the address.yml and its accounts.
@@ -109,7 +110,7 @@ export class AddressesService {
                     throw new Error(
                         `Nemesis distribution balance cannot be less than 0. Mosaic ${mosaicName}, distribution address: ${
                             d.address
-                        }, amount: ${d.amount}, index ${index}. \nDistributions are:\n${BootstrapUtils.toYaml(distribution)}`,
+                        }, amount: ${d.amount}, index ${index}. \nDistributions are:\n${YamlUtils.toYaml(distribution)}`,
                     );
                 }
                 return d.amount;
@@ -200,7 +201,7 @@ export class AddressesService {
                 throw new Error(
                     `Invalid nemgen total supplied value, expected ${
                         m.supply
-                    } but total is ${supplied}. \nDistributions are:\n${BootstrapUtils.toYaml(m.currencyDistributions)}`,
+                    } but total is ${supplied}. \nDistributions are:\n${YamlUtils.toYaml(m.currencyDistributions)}`,
                 );
             }
         });

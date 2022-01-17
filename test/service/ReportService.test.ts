@@ -20,7 +20,6 @@ import 'mocha';
 import { join } from 'path';
 import {
     Assembly,
-    BootstrapUtils,
     ConfigParams,
     ConfigService,
     Constants,
@@ -30,6 +29,7 @@ import {
     LogType,
     Preset,
     ReportService,
+    YamlUtils,
 } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
@@ -43,12 +43,12 @@ describe('ReportService', () => {
 
         const promises = paths.map(async (reportPath) => {
             expect(reportPath.indexOf(join(params.target, 'report'))).to.be.greaterThan(-1);
-            const generatedReport = (await BootstrapUtils.readTextFile(reportPath)).replace(Constants.VERSION, 'CURRENT_VERSION');
+            const generatedReport = (await YamlUtils.readTextFile(reportPath)).replace(Constants.VERSION, 'CURRENT_VERSION');
             const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
             if (!existsSync(expectedReportPath)) {
-                await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim() + '\n');
+                await YamlUtils.writeTextFile(expectedReportPath, generatedReport.trim() + '\n');
             }
-            const expectedReport = await BootstrapUtils.readTextFile(expectedReportPath);
+            const expectedReport = await YamlUtils.readTextFile(expectedReportPath);
             expect(
                 generatedReport.trim(),
                 `Report ${reportPath} doesn't match
@@ -59,12 +59,12 @@ describe('ReportService', () => {
 
         for (const gateway of configResult.presetData.gateways || []) {
             const currentRestJsonFile = fileSystemService.getTargetGatewayFolder(params.target, true, gateway.name, 'rest.json');
-            const currentRestJson = await BootstrapUtils.readTextFile(currentRestJsonFile);
+            const currentRestJson = await YamlUtils.readTextFile(currentRestJsonFile);
             const expectedRestJsonFile = join(expectedReportFolder, `${gateway.name}-rest.json`);
             if (!existsSync(expectedRestJsonFile)) {
-                await BootstrapUtils.writeTextFile(expectedRestJsonFile, currentRestJson + '\n');
+                await YamlUtils.writeTextFile(expectedRestJsonFile, currentRestJson + '\n');
             }
-            const expectedRestJson = await BootstrapUtils.readTextFile(expectedRestJsonFile);
+            const expectedRestJson = await YamlUtils.readTextFile(expectedRestJsonFile);
             expect(
                 currentRestJson.trim(),
                 `Rest ${currentRestJsonFile} doesn't match

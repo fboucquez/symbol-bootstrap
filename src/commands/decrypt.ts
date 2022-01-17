@@ -18,7 +18,7 @@ import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
 import { LoggerFactory, LogType } from '../logger';
-import { BootstrapUtils, CommandUtils, FileSystemService, KnownError } from '../service';
+import { CommandUtils, FileSystemService, KnownError, YamlUtils } from '../service';
 
 export default class Decrypt extends Command {
     static description = `It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
@@ -85,9 +85,9 @@ $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap decrypt --source target/address
             `Enter the password to use to decrypt the source file into the destination file. Keep this password in a secure place!`,
             false,
         );
-        const data = await BootstrapUtils.loadYaml(flags.source, password);
+        const data = await YamlUtils.loadYaml(flags.source, password);
         await new FileSystemService(logger).mkdir(dirname(flags.destination));
-        await BootstrapUtils.writeYaml(flags.destination, data, '');
+        await YamlUtils.writeYaml(flags.destination, data, '');
         logger.info(
             `Decrypted file ${flags.destination} has been created! Any private keys on this file are now in plain text. Remember to remove the file!`,
         );

@@ -25,7 +25,6 @@ import { CustomPreset, PrivateKeySecurityMode } from '../model';
 import {
     Assembly,
     BootstrapService,
-    BootstrapUtils,
     CommandUtils,
     ConfigLoader,
     ConfigService,
@@ -33,6 +32,7 @@ import {
     KeyName,
     Preset,
     RuntimeService,
+    YamlUtils,
 } from '../service';
 
 export const assembliesDescriptions: Record<Assembly, string> = {
@@ -266,7 +266,7 @@ export class Wizard {
         };
 
         const defaultParams = ConfigService.defaultParams;
-        await BootstrapUtils.writeYaml(customPresetFile, presetContent, password);
+        await YamlUtils.writeYaml(customPresetFile, presetContent, password);
         this.logger.info('');
         this.logger.info('');
         this.logger.info(`The Symbol Bootstrap preset file '${customPresetFile}' has been created!!!. Keep this safe!`);
@@ -451,7 +451,7 @@ export class Wizard {
                     type: 'input',
                     validate(input: string): string | boolean {
                         const fileLocation = join(workingDir, input);
-                        if (!BootstrapUtils.isYmlFile(fileLocation)) {
+                        if (!YamlUtils.isYmlFile(fileLocation)) {
                             return `${fileLocation} is not a yaml file`;
                         }
                         if (!existsSync(fileLocation)) {

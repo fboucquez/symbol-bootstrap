@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { existsSync } from 'fs';
+import { existsSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
@@ -26,6 +26,7 @@ import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
+import { YamlUtils } from './YamlUtils';
 
 export interface CertificateParams {
     readonly target: string;
@@ -147,9 +148,9 @@ export class CertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        BootstrapUtils.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
-        await BootstrapUtils.writeTextFile(
+        CertificateService.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
+        CertificateService.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
+        await YamlUtils.writeTextFile(
             join(certFolder, 'serial.dat'),
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
         );
@@ -159,7 +160,7 @@ export class CertificateService {
             presetData.caCertificateExpirationInDays,
             presetData.nodeCertificateExpirationInDays,
         );
-        await BootstrapUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
+        await YamlUtils.writeTextFile(join(certFolder, 'createNodeCertificates.sh'), command);
 
         const { stdout, stderr } = await this.runOpenSslCommand(
             presetData.symbolServerImage,
@@ -191,7 +192,7 @@ export class CertificateService {
             transportPublicKey: providedCertificates.transport.publicKey,
             mainPublicKey: providedCertificates.main.publicKey,
         };
-        await BootstrapUtils.writeYaml(metadataFile, metadata, undefined);
+        await YamlUtils.writeYaml(metadataFile, metadata, undefined);
     }
 
     private async shouldGenerateCertificate(metadataFile: string, providedCertificates: NodeCertificates): Promise<boolean> {
@@ -199,7 +200,7 @@ export class CertificateService {
             return true;
         }
         try {
-            const metadata = BootstrapUtils.loadYaml(metadataFile, false) as CertificateMetadata;
+            const metadata = YamlUtils.loadYaml(metadataFile, false) as CertificateMetadata;
             return (
                 metadata.mainPublicKey !== providedCertificates.main.publicKey ||
                 metadata.transportPublicKey !== providedCertificates.transport.publicKey ||
@@ -350,5 +351,13 @@ echo "Certificate Created"
             const publicKey = extractKey(stdout.substring(stdout.indexOf(middle, index) + middle.length, stdout.indexOf(to, index)));
             return { privateKey: privateKey, publicKey: publicKey };
         });
+    }
+
+    public static createDerFile(privateKey: string, file: string): void {
+        writeFileSync(file, Convert.hexToUint8(this.toAns1(privateKey)));
+    }
+    public static toAns1(privateKey: string): string {
+        const prefix = '302e020100300506032b657004220420';
+        return `${prefix}${privateKey.toLowerCase()}`;
     }
 }

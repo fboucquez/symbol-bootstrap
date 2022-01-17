@@ -20,7 +20,7 @@ import { KnownError } from './BootstrapUtils';
 
 export class CryptoUtils {
     private static readonly ENCRYPT_PREFIX = 'ENCRYPTED:';
-    private static readonly ENCRYPTABLE_KEYS = ['privateKey', 'restSSLKeyBase64'];
+    private static readonly ENCRYPTABLE_KEYS = ['privateKey', 'restSSLKeyBase64', 'privateFileContent'];
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static encrypt(value: any, password: string, fieldName?: string): any {

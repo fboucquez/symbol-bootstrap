@@ -37,7 +37,6 @@ import {
     AnnounceService,
     Assembly,
     BootstrapService,
-    BootstrapUtils,
     ConfigService,
     Constants,
     DefaultAccountResolver,
@@ -47,6 +46,7 @@ import {
     RemoteNodeService,
     RepositoryInfo,
     TransactionUtils,
+    YamlUtils,
 } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Announce Service', () => {
@@ -90,7 +90,7 @@ describe('Announce Service', () => {
     const root = Constants.ROOT_FOLDER;
     const preset = params.preset;
     const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
-    const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
+    const networkPreset = YamlUtils.loadYaml(networkPresetLocation, false);
     const epochAdjustment = parseInt(networkPreset.epochAdjustment.replace('s', ''));
     const networkGenerationHash = networkPreset.nemesisGenerationHashSeed;
 

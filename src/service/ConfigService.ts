@@ -45,6 +45,7 @@ import { NemgenService } from './NemgenService';
 import { RemoteNodeService } from './RemoteNodeService';
 import { ReportParams, ReportService } from './ReportService';
 import { VotingParams, VotingService } from './VotingService';
+import { YamlUtils } from './YamlUtils';
 
 /**
  * Defined presets.
@@ -189,12 +190,12 @@ export class ConfigService {
             if (this.params.report) {
                 await new ReportService(this.logger, this.params).run(presetData);
             }
-            await BootstrapUtils.writeYaml(
+            await YamlUtils.writeYaml(
                 addressesLocation,
                 CryptoUtils.removePrivateKeysAccordingToSecurityMode(addresses, privateKeySecurityMode),
                 password,
             );
-            await BootstrapUtils.writeYaml(presetLocation, CryptoUtils.removePrivateKeys(presetData), password);
+            await YamlUtils.writeYaml(presetLocation, CryptoUtils.removePrivateKeys(presetData), password);
             this.logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {
@@ -283,7 +284,7 @@ export class ConfigService {
             await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
             return;
         }
-        if (BootstrapUtils.isYmlFile(presetData.preset)) {
+        if (YamlUtils.isYmlFile(presetData.preset)) {
             throw new KnownError(`Seed for preset ${presetData.preset} could not be found. Please provide 'nemesisSeedFolder'!`);
         } else {
             const networkNemesisSeed = join(Constants.ROOT_FOLDER, 'presets', presetData.preset, 'seed');

@@ -16,8 +16,8 @@
 
 import { expect } from 'chai';
 import 'mocha';
-import { Assembly, Constants, LoggerFactory, LogType } from '../../src';
-import { BootstrapUtils, ConfigLoader, Preset } from '../../src/service';
+import { Assembly, Constants, LoggerFactory, LogType, YamlUtils } from '../../src';
+import { ConfigLoader, Preset } from '../../src/service';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 
@@ -372,8 +372,8 @@ describe('ConfigLoader', () => {
         });
         expect(presetData).to.not.be.undefined;
         expect(presetData?.nemesis?.mosaics?.[0].accounts).to.be.eq(20);
-        const yaml = BootstrapUtils.toYaml(presetData);
-        expect(BootstrapUtils.fromYaml(yaml)).to.be.deep.eq(presetData);
+        const yaml = YamlUtils.toYaml(presetData);
+        expect(YamlUtils.fromYaml(yaml)).to.be.deep.eq(presetData);
     });
 
     it('ConfigLoader loadPresetData bootstrap custom too short!', async () => {
@@ -531,7 +531,7 @@ describe('ConfigLoader', () => {
         };
 
         expect(configLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
-        expect(configLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
+        expect(configLoader.applyValueTemplate({}, YamlUtils.fromYaml(YamlUtils.toYaml(value)))).to.be.deep.eq(value);
     });
 
     it('applyValueTemplate when array', async () => {
@@ -556,6 +556,6 @@ describe('ConfigLoader', () => {
         ];
 
         expect(configLoader.applyValueTemplate({}, value)).to.be.deep.eq(value);
-        expect(configLoader.applyValueTemplate({}, BootstrapUtils.fromYaml(BootstrapUtils.toYaml(value)))).to.be.deep.eq(value);
+        expect(configLoader.applyValueTemplate({}, YamlUtils.fromYaml(YamlUtils.toYaml(value)))).to.be.deep.eq(value);
     });
 });

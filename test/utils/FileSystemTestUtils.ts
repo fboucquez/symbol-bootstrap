@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { compareSync, Result } from 'dir-compare';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { BootstrapUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
+import { FileSystemService, LoggerFactory, LogType, YamlUtils } from '../../src';
 
 interface AssertFoldersParams {
     expectFolder: string;
@@ -38,7 +38,7 @@ export class FileSystemTestUtils {
             excludeFilter: excludeFilter,
         });
         const differences = compareResult.diffSet?.filter((s) => s.state != 'equal') || [];
-        const report = BootstrapUtils.toYaml(differences);
+        const report = YamlUtils.toYaml(differences);
 
         const differentContents = differences
             .filter(

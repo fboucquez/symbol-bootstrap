@@ -16,7 +16,7 @@
 
 import { expect, test } from '@oclif/test';
 import { existsSync } from 'fs';
-import { BootstrapUtils, CryptoUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
+import { CryptoUtils, FileSystemService, LoggerFactory, LogType, YamlUtils } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
 describe('encrypt', () => {
@@ -26,11 +26,11 @@ describe('encrypt', () => {
         .it('runs encrypt and creates file', async (ctx) => {
             expect(ctx.stdout).to.contain('Encrypted file target/tests.encrypt/encrypted.yml has been created!');
             expect(existsSync('target/tests.encrypt/encrypted.yml')).eq(true);
-            expect(await BootstrapUtils.loadYaml('target/tests.encrypt/encrypted.yml', '1111')).deep.eq(
-                await BootstrapUtils.loadYaml('test/encrypt/encrypted.yml', '1111'),
+            expect(await YamlUtils.loadYaml('target/tests.encrypt/encrypted.yml', '1111')).deep.eq(
+                await YamlUtils.loadYaml('test/encrypt/encrypted.yml', '1111'),
             );
-            expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/encrypted.yml', false))).eq(
-                CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('test/encrypt/encrypted.yml', false)),
+            expect(CryptoUtils.encryptedCount(await YamlUtils.loadYaml('target/tests.encrypt/encrypted.yml', false))).eq(
+                CryptoUtils.encryptedCount(await YamlUtils.loadYaml('test/encrypt/encrypted.yml', false)),
             );
         });
 

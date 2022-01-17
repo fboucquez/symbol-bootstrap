@@ -1,7 +1,7 @@
 import { Account, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses } from '../model';
-import { BootstrapUtils, Migration } from './BootstrapUtils';
+import { Migration } from './BootstrapUtils';
 import { ConfigurationUtils } from './ConfigurationUtils';
 
 export class MigrationService {
@@ -14,7 +14,7 @@ export class MigrationService {
             throw new Error(`networkType must exist on current ${addressesFileName}`);
         }
         const migrations = this.getAddressesMigration(networkType);
-        return BootstrapUtils.migrate(this.logger, addressesFileName, addresses, migrations);
+        return MigrationService.migrate(this.logger, addressesFileName, addresses, migrations);
     }
 
     public getAddressesMigration(networkType: NetworkType): Migration[] {
@@ -49,5 +49,37 @@ export class MigrationService {
                 },
             },
         ];
+    }
+
+    public static migrate<T extends { version?: number }>(
+        logger: Logger,
+        entityName: string,
+        versioned: T,
+        migrations: Migration[] = [],
+    ): T {
+        if (!versioned) {
+            return versioned;
+        }
+        const currentVersion = migrations.length + 1;
+        versioned.version = versioned.version || 1;
+
+        if (versioned.version == currentVersion) {
+            return versioned;
+        }
+        logger.info(`Migrating object ${entityName} from version ${versioned.version} to version ${currentVersion}`);
+        if (versioned.version > currentVersion) {
+            throw new Error(`Current data version is ${versioned.version} but higher version is ${currentVersion}`);
+        }
+        const migratedVersioned = migrations.slice(versioned.version - 1).reduce((toMigrateData, migration) => {
+            if (toMigrateData === undefined) {
+                logger.info(`data to migrate is undefined, ignoring migration ${migration.description}`);
+                return undefined;
+            }
+            logger.info(`Applying migration ${migration.description}`);
+            return migration.migrate(toMigrateData);
+        }, versioned);
+        migratedVersioned.version = currentVersion;
+        logger.info(`Object ${entityName} migrated to version ${currentVersion}`);
+        return migratedVersioned;
     }
 }
