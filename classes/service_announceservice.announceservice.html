@@ -119,19 +119,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Announce<wbr>Service<span class="tsd-signature-symbol">(</span>logger<span class="tsd-signature-symbol">: </span><a href="../interfaces/logger_logger.logger.html" class="tsd-signature-type" data-tsd-kind="Interface">Logger</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="service_announceservice.announceservice.html" class="tsd-signature-type" data-tsd-kind="Class">AnnounceService</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Announce<wbr>Service<span class="tsd-signature-symbol">(</span>logger<span class="tsd-signature-symbol">: </span><a href="../interfaces/logger_logger.logger.html" class="tsd-signature-type" data-tsd-kind="Interface">Logger</a>, accountResolver<span class="tsd-signature-symbol">: </span><a href="../interfaces/service_accountresolver.accountresolver.html" class="tsd-signature-type" data-tsd-kind="Interface">AccountResolver</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="service_announceservice.announceservice.html" class="tsd-signature-type" data-tsd-kind="Class">AnnounceService</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L65">src/service/AnnounceService.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L66">src/service/AnnounceService.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>logger: <a href="../interfaces/logger_logger.logger.html" class="tsd-signature-type" data-tsd-kind="Interface">Logger</a></h5>
+								</li>
+								<li>
+									<h5>accountResolver: <a href="../interfaces/service_accountresolver.accountresolver.html" class="tsd-signature-type" data-tsd-kind="Interface">AccountResolver</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="service_announceservice.announceservice.html" class="tsd-signature-type" data-tsd-kind="Class">AnnounceService</a></h4>
@@ -147,7 +150,7 @@
 					<div class="tsd-signature tsd-kind-icon">flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>customPreset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>maxFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>noPassword<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>serviceProviderPublicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOptionFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>useKnownRestGateways<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IBooleanFlag</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L73">src/service/AnnounceService.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L74">src/service/AnnounceService.ts:74</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -193,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L102">src/service/AnnounceService.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L103">src/service/AnnounceService.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -243,7 +246,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L520">src/service/AnnounceService.ts:520</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L514">src/service/AnnounceService.ts:514</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -320,7 +323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L592">src/service/AnnounceService.ts:592</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L586">src/service/AnnounceService.ts:586</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -397,7 +400,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L640">src/service/AnnounceService.ts:640</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L634">src/service/AnnounceService.ts:634</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -447,7 +450,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L487">src/service/AnnounceService.ts:487</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L481">src/service/AnnounceService.ts:481</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -473,7 +476,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L495">src/service/AnnounceService.ts:495</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L489">src/service/AnnounceService.ts:489</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -502,7 +505,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L715">src/service/AnnounceService.ts:715</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L709">src/service/AnnounceService.ts:709</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -540,7 +543,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L674">src/service/AnnounceService.ts:674</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L668">src/service/AnnounceService.ts:668</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -569,7 +572,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L512">src/service/AnnounceService.ts:512</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L506">src/service/AnnounceService.ts:506</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -595,7 +598,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L428">src/service/AnnounceService.ts:428</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L422">src/service/AnnounceService.ts:422</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -624,7 +627,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L690">src/service/AnnounceService.ts:690</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L684">src/service/AnnounceService.ts:684</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -659,7 +662,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L483">src/service/AnnounceService.ts:483</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L477">src/service/AnnounceService.ts:477</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -682,7 +685,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/a1a6e1b/src/service/AnnounceService.ts#L68">src/service/AnnounceService.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75c32ac/src/service/AnnounceService.ts#L69">src/service/AnnounceService.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
