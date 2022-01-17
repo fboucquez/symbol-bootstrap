@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { promises as fsPromises, readFileSync, writeFileSync } from 'fs';
+import { promises as fsPromises, writeFileSync } from 'fs';
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, dirname, isAbsolute, join } from 'path';
+import { basename, isAbsolute, join } from 'path';
 import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
-import { CryptoUtils } from './CryptoUtils';
 import { Utils } from './Utils';
+import { YamlUtils } from './YamlUtils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const yaml = require('js-yaml');
@@ -50,11 +50,6 @@ export class BootstrapUtils {
             BootstrapUtils.stopProcess = true;
         });
     })();
-
-    public static toAns1(privateKey: string): string {
-        const prefix = '302e020100300506032b657004220420';
-        return `${prefix}${privateKey.toLowerCase()}`;
-    }
 
     public static sleep(ms: number): Promise<any> {
         // Create a promise that rejects in <ms> milliseconds
@@ -149,18 +144,12 @@ export class BootstrapUtils {
             return compiledTemplate(templateContext);
         } catch (e) {
             const securedTemplate = Utils.secureString(template);
-            const securedContext = Utils.secureString(BootstrapUtils.toYaml(templateContext));
+            const securedContext = Utils.secureString(YamlUtils.toYaml(templateContext));
             const securedMessage = Utils.secureString(e.message || 'Unknown');
 
             const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
             throw new Error(`${message}\nContext: \n${securedContext}`);
         }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static async writeYaml(path: string, object: any, password: string | undefined): Promise<void> {
-        const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, BootstrapUtils.validatePassword(password)) : object);
-        await BootstrapUtils.writeTextFile(path, yamlString);
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -177,53 +166,6 @@ export class BootstrapUtils {
 
             return current;
         })(_.cloneDeep(obj)); // Do not modify the original object, create a clone instead
-    }
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static toYaml(object: any): string {
-        return yaml.safeDump(object, { skipInvalid: true, indent: 4, lineWidth: 140, noRefs: true });
-    }
-
-    public static fromYaml(yamlString: string): any {
-        return yaml.safeLoad(yamlString);
-    }
-
-    public static loadYaml(fileLocation: string, password: Password): any {
-        const object = this.fromYaml(this.loadFileAsText(fileLocation));
-        if (password) {
-            BootstrapUtils.validatePassword(password);
-            try {
-                return CryptoUtils.decrypt(object, password);
-            } catch (e) {
-                throw new KnownError(`Cannot decrypt file ${fileLocation}. Have you used the right password?`);
-            }
-        } else {
-            if (password !== false && CryptoUtils.encryptedCount(object) > 0) {
-                throw new KnownError(
-                    `File ${fileLocation} seems to be encrypted but no password has been provided. Have you entered the right password?`,
-                );
-            }
-        }
-        return object;
-    }
-
-    public static loadFileAsText(fileLocation: string): string {
-        return readFileSync(fileLocation, 'utf8');
-    }
-
-    public static async writeTextFile(path: string, text: string): Promise<void> {
-        const mkdirParentFolder = async (fileName: string): Promise<void> => {
-            const parentFolder = dirname(fileName);
-            if (parentFolder) {
-                return fsPromises.mkdir(parentFolder, { recursive: true });
-            }
-        };
-        await mkdirParentFolder(path);
-        await fsPromises.writeFile(path, text, 'utf8');
-    }
-
-    public static async readTextFile(path: string): Promise<string> {
-        return fsPromises.readFile(path, 'utf8');
     }
 
     //HANDLEBARS READY FUNCTIONS:
@@ -278,6 +220,7 @@ export class BootstrapUtils {
         const numberAsString = BootstrapUtils.toSimpleHex(renderedText);
         return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
     }
+
     public static toSimpleHex(renderedText: string): string {
         if (!renderedText) {
             return '';
@@ -367,17 +310,5 @@ export class BootstrapUtils {
 
     static createDerFile(privateKey: string, file: string): void {
         writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
-    }
-
-    public static isYmlFile(string: string): boolean {
-        return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');
-    }
-
-    public static validatePassword(password: string): string {
-        const passwordMinSize = 4;
-        if (password.length < passwordMinSize) {
-            throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
-        }
-        return password;
     }
 }

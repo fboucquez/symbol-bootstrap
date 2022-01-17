@@ -152,7 +152,7 @@ export class ReportService {
                     description: '',
                 }),
             );
-            this.logger.debug('Missing yaml properties: ' + BootstrapUtils.toYaml(missingDescriptionsObject));
+            this.logger.debug('Missing yaml properties: ' + YamlUtils.toYaml(missingDescriptionsObject));
         }
 
         // const missingDescriptions = reportNodes.map(node -> node.files)

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { KnownError } from './BootstrapUtils';
 import { OSUtils } from './OSUtils';
 
 /**
@@ -39,5 +40,12 @@ export class Utils {
     public static logSameLineMessage(message: string): void {
         process.stdout.write(OSUtils.isWindows() ? '\x1b[0G' : '\r');
         process.stdout.write(message);
+    }
+    public static validatePassword(password: string): string {
+        const passwordMinSize = 4;
+        if (password.length < passwordMinSize) {
+            throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
+        }
+        return password;
     }
 }
