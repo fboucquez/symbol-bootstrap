@@ -67,41 +67,41 @@
 					<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/dw/symbol-bootstrap.svg" alt="Downloads/week"></a>
 					<a href="https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json"><img src="https://img.shields.io/npm/l/symbol-bootstrap.svg" alt="License"></a>
 					<a href="https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml"><img src="https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml/badge.svg" alt="Build"></a>
-					<a href="https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main"><img src="https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=main" alt="Coverage Status"></a>
+					<a href="https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main"><img src="https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=dev" alt="Coverage Status"></a>
 				<a href="https://fboucquez.github.io/symbol-bootstrap/"><img src="https://img.shields.io/badge/api-doc-blue.svg" alt="Api Doc"></a></p>
 				<!-- toc -->
 				<ul>
 					<li><a href="#symbol-bootstrap">symbol-bootstrap</a></li>
-					<li><a href="#why-this-tool">Why this tool?</a></li>
-					<li><a href="#key-benefits">Key benefits:</a></li>
+					<li><a href="#key-features">Key features:</a></li>
 					<li><a href="#concepts">Concepts</a></li>
 					<li><a href="#requirements">Requirements</a></li>
 					<li><a href="#installation">Installation</a></li>
 					<li><a href="#wizard">Wizard</a></li>
-					<li><a href="#e2e-testing-support">E2E Testing support</a></li>
 					<li><a href="#development">Development</a></li>
+					<li><a href="#support">Support</a></li>
 					<li><a href="#command-topics">Command Topics</a><!-- tocstop --></li>
 				</ul>
-				<a href="#why-this-tool" id="why-this-tool" style="color: inherit; text-decoration: none;">
-					<h1>Why this tool?</h1>
-				</a>
-				<p>This tool has been created to address the original problems defined in Symbol&#39;s <a href="https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md">NIP11</a>.</p>
-				<a href="#key-benefits" id="key-benefits" style="color: inherit; text-decoration: none;">
-					<h1>Key benefits:</h1>
+				<a href="#key-features" id="key-features" style="color: inherit; text-decoration: none;">
+					<h1>Key features:</h1>
 				</a>
 				<ul>
 					<li>  It&#39;s an installable cli tool. It&#39;s not a repo you need to clone and compile.</li>
+					<li>  It provides a one liner command for testnet/mainnet node creation and upgrades.</li>
+					<li>  It provides a one liner command for local test network creation and upgrades.</li>
+					<li>  It includes a wizard for easy node and accounts creation.</li>
+					<li>  It includes a comprehensive list of commands for node administration.</li>
 					<li>  The configuration is parametrized via CLI commands and presets instead of by changing properties files.</li>
 					<li>  The tools code is unique for any type of network, new networks or nodes in a network. It doesn&#39;t need to be copied and pasted in different projects or assemblies.</li>
 					<li>  The config command runs on the host machine, not via docker making it easier to debug or tune</li>
-					<li>  It&#39;s uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
+					<li>  It uses the TS SDK for key generation, vrf transactions, voting files, and address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
 					<li>  Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
 					<li>  Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
 					<li>  Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
 					<li>  The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
-					<li>  The used docker images versions can be changed via configuration/preset</li>
+					<li>  The used docker images versions can be changed via configuration/preset.</li>
 					<li>  It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
-					<li>  It can be included as a npm dependency for clients&#39; e2e testing.</li>
+					<li>  It can be used for <a href="docs/e2eTesting.md">e2e testing</a>.</li>
+					<li>  It works on Linux, Mac and Windows x86-64 arch.</li>
 				</ul>
 				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
 					<h1>Concepts</h1>
@@ -167,7 +167,7 @@
 					<li>  Docker Compose 1.25.0+</li>
 				</ul>
 				<p>Check your user can run docker without sudo:</p>
-				<pre><code><span style="color: #001080">docker</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">hello</span><span style="color: #000000">-</span><span style="color: #001080">world</span>
+				<pre><code class="language-shell"><span style="color: #000000">docker run hello-world</span>
 </code></pre>
 				<p>If you see an error like:</p>
 				<pre><code><span style="color: #001080">Got</span><span style="color: #000000"> </span><span style="color: #001080">permission</span><span style="color: #000000"> </span><span style="color: #001080">denied</span><span style="color: #000000"> </span><span style="color: #AF00DB">while</span><span style="color: #000000"> </span><span style="color: #001080">trying</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">connect</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #001080">Docker</span><span style="color: #000000"> </span><span style="color: #001080">daemon</span><span style="color: #000000"> </span><span style="color: #001080">socket</span><span style="color: #000000"> </span><span style="color: #001080">at</span><span style="color: #000000"> unix:</span><span style="color: #008000">///var/run/docker.sock</span>
@@ -178,8 +178,8 @@
 				</a>
 				<p>It&#39;s recommended to run the commands from en empty working dir.</p>
 				<p>The network configuration, data and docker files will be created inside the target folder (&#39;./target&#39;) by default.</p>
-				<pre><code><span style="color: #001080">mkdir</span><span style="color: #000000"> </span><span style="color: #001080">my</span><span style="color: #000000">-</span><span style="color: #001080">networks</span>
-<span style="color: #001080">cd</span><span style="color: #000000"> </span><span style="color: #001080">my</span><span style="color: #000000">-</span><span style="color: #001080">networks</span>
+				<pre><code class="language-shell"><span style="color: #000000">mkdir my-networks</span>
+<span style="color: #795E26">cd</span><span style="color: #000000"> my-networks</span>
 </code></pre>
 				<p>Once in the working dir:</p>
 				<!-- usage -->
@@ -195,18 +195,18 @@ USAGE
 </code></pre>
 				<!-- usagestop -->
 				<p>Validate your environment by running:</p>
-				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">verify</span>
+				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap verify</span>
 </code></pre>
 				<p>The general usage would be:</p>
-				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">config</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">testnet</span><span style="color: #000000"> -</span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #001080">dual</span>
-<span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">compose</span>
-<span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">run</span>
+				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap config -p testnet -a dual</span>
+<span style="color: #000000">symbol-bootstrap compose</span>
+<span style="color: #000000">symbol-bootstrap run</span>
 </code></pre>
 				<p>You can aggregate all these commands with this one liner:</p>
-				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">start</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">testnet</span><span style="color: #000000"> -</span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #001080">dual</span>
+				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap start -p testnet -a dual</span>
 </code></pre>
 				<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
-				<pre><code><span style="color: #001080">sudo</span><span style="color: #000000"> </span><span style="color: #001080">rm</span><span style="color: #000000"> -</span><span style="color: #001080">rf</span><span style="color: #000000"> ./</span><span style="color: #001080">target</span>
+				<pre><code class="language-shell"><span style="color: #000000">sudo rm -rf ./target</span>
 </code></pre>
 				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
 					<h2>Examples</h2>
@@ -234,79 +234,13 @@ USAGE
 					<h1>Wizard</h1>
 				</a>
 				<p>If this is your first time creating a node, it&#39;s recommended to use the Wizard. Just follow the instructions:</p>
-				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">wizard</span>
+				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap wizard</span>
 </code></pre>
-				<a href="#e2e-testing-support" id="e2e-testing-support" style="color: inherit; text-decoration: none;">
-					<h1>E2E Testing support</h1>
-				</a>
-				<p>One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:</p>
-				<pre><code><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">start</span><span style="color: #000000"> -</span><span style="color: #001080">p</span><span style="color: #000000"> </span><span style="color: #001080">bootstrap</span><span style="color: #000000"> -</span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #001080">dual</span><span style="color: #000000"> -</span><span style="color: #001080">c</span><span style="color: #000000"> </span><span style="color: #001080">my_custom_preset</span><span style="color: #000000">.</span><span style="color: #001080">yml</span><span style="color: #000000"> --</span><span style="color: #001080">detached</span><span style="color: #000000"> --</span><span style="color: #001080">healthCheck</span>
-<span style="color: #0070C1">YOUR</span><span style="color: #000000"> </span><span style="color: #795E26">TEST</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">g</span><span style="color: #000000">: </span><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000">, </span><span style="color: #001080">gradle</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000">, </span><span style="color: #001080">selenium</span><span style="color: #000000"> </span><span style="color: #001080">etc</span><span style="color: #000000">.)</span>
-<span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">bootstrap</span><span style="color: #000000"> </span><span style="color: #001080">stop</span>
-</code></pre>
-				<p><code>--detached</code> starts the server waiting until it is up (by polling the network <a href="http://localhost:3000/node/health">http://localhost:3000/node/health</a>). The command will fail if the components are not up in 30 seconds.</p>
-				<p>You can also provide your own custom preset (<code>-c</code>) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)</p>
-				<a href="#node-client-e2e-via-cli" id="node-client-e2e-via-cli" style="color: inherit; text-decoration: none;">
-					<h2>Node client E2E via CLI:</h2>
-				</a>
-				<p>The CLI can also be used as npm project (dev) dependency (<code>npm install --save-dev symbol-bootstrap</code>). Then you can integrate the network to your npm test cycle.
-				Your <code>package.json</code> can look like this:</p>
-				<pre><code class="language-yaml">
-<span style="color: #A31515">&quot;devDependencies&quot;</span><span style="color: #000000">: {</span>
-<span style="color: #000000">    </span><span style="color: #098658">....</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;symbol-bootstrap&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;0.0.x&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #098658">....</span>
-<span style="color: #000000">}</span>
-
-<span style="color: #800000">scripts&quot;</span><span style="color: #000000">: {</span>
-<span style="color: #098658">...</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;clean-network&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;symbol-bootstrap clean&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;run-network&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;symbol-bootstrap start -p bootstrap -a dual -c my_custom_preset.yml --detached --healthCheck&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;run-stop&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;symbol-bootstrap stop&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;integration-test&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;....some mocha/jest/etc tests running against localhost:3000 network....&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;e2e&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;npm run clean-network &amp;&amp; npm run run-network &amp;&amp; npm run integration-test &amp;&amp; npm run stop-network&quot;</span><span style="color: #000000">,</span>
-<span style="color: #098658">...</span>
-<span style="color: #000000">}</span>
-</code></pre>
-				<p>Then, you, Jenkins, Travis or your CI tool can run;</p>
-				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">e2e</span>
-</code></pre>
-				<a href="#node-client-e2e-via-api" id="node-client-e2e-via-api" style="color: inherit; text-decoration: none;">
-					<h2>Node client E2E via API:</h2>
-				</a>
-				<p>Alternatively, you can use the <a href="src/service/BootstrapService.ts">BootstrapService</a> facade to programmatically start and stop a server.</p>
-				<p>Example:</p>
-				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">BootstrapService</span><span style="color: #000000">, </span><span style="color: #001080">StartParams</span><span style="color: #000000">, </span><span style="color: #001080">Preset</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;symbol-bootstrap&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">expect</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@oclif/test&#039;</span><span style="color: #000000">;</span>
-
-<span style="color: #795E26">it</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Bootstrap e2e test&#039;</span><span style="color: #000000">, </span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">service</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BootstrapService</span><span style="color: #000000">();</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">config</span><span style="color: #000000">: </span><span style="color: #267F99">StartParams</span><span style="color: #000000"> = {</span>
-<span style="color: #000000">        </span><span style="color: #001080">preset:</span><span style="color: #000000"> </span><span style="color: #001080">Preset</span><span style="color: #000000">.</span><span style="color: #001080">bootstrap</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">reset:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">healthCheck:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">timeout:</span><span style="color: #000000"> </span><span style="color: #098658">60000</span><span style="color: #000000"> * </span><span style="color: #098658">5</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">target:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;target/bootstrap-test&#039;</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">detached:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">user:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;current&#039;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    };</span>
-<span style="color: #000000">    </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">service</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">(</span><span style="color: #001080">config</span><span style="color: #000000">);</span>
-<span style="color: #000000">        </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">configResult</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">service</span><span style="color: #000000">.</span><span style="color: #795E26">start</span><span style="color: #000000">(</span><span style="color: #001080">config</span><span style="color: #000000">);</span>
-<span style="color: #000000">        </span><span style="color: #795E26">expect</span><span style="color: #000000">(</span><span style="color: #001080">configResult</span><span style="color: #000000">.</span><span style="color: #001080">presetData</span><span style="color: #000000">).</span><span style="color: #001080">not</span><span style="color: #000000">.</span><span style="color: #001080">null</span><span style="color: #000000">;</span>
-<span style="color: #000000">        </span><span style="color: #795E26">expect</span><span style="color: #000000">(</span><span style="color: #001080">configResult</span><span style="color: #000000">.</span><span style="color: #001080">addresses</span><span style="color: #000000">).</span><span style="color: #001080">not</span><span style="color: #000000">.</span><span style="color: #001080">null</span><span style="color: #000000">;</span>
-<span style="color: #000000">        </span><span style="color: #008000">// Here you can write unit tests against a http://localhost:3000 network</span>
-<span style="color: #000000">    } </span><span style="color: #AF00DB">finally</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">service</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">(</span><span style="color: #001080">config</span><span style="color: #000000">);</span>
-<span style="color: #000000">    }</span>
-<span style="color: #000000">});</span>
-</code></pre>
-				<p>It&#39;s recommended to reuse the same server for multiple tests by using <code>beforeAll</code>, <code>afterAll</code> kind of statements.</p>
 				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
 					<h1>Development</h1>
 				</a>
 				<p>If you want to contribute to this tool, clone this repo and run:</p>
-				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> -</span><span style="color: #001080">g</span>
+				<pre><code class="language-shell"><span style="color: #000000">npm install -g</span>
 </code></pre>
 				<p>Then, <code>symbol-bootstrap</code> runs from the source code. You can now try your features after changing the code.</p>
 				<p>Pull Requests are appreciated! Please follow the contributing <a href="CONTRIBUTING.md">guidelines</a>.</p>
@@ -316,8 +250,17 @@ USAGE
 					<h2>Code style</h2>
 				</a>
 				<p>To format the source code, verify/fix lint issues, and generate the commands docs, run:</p>
-				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> style:</span><span style="color: #001080">fix</span>
+				<pre><code class="language-shell"><span style="color: #000000">npm run style:fix</span>
 </code></pre>
+				<a href="#support" id="support" style="color: inherit; text-decoration: none;">
+					<h1>Support</h1>
+				</a>
+				<p>Symbol Bootstrap is a personal project maintained on my free time.</p>
+				<p>If you like it, please consider supporting it by delegating your Symbol account to my <a href="http://symbol-node-dual-1.tawa.solutions:3000/node/info">node</a>:</p>
+				<pre><code><span style="color: #000000">name: </span><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">node</span><span style="color: #000000">-</span><span style="color: #001080">dual</span><span style="color: #000000">-1.</span><span style="color: #001080">tawa</span><span style="color: #000000">.</span><span style="color: #001080">solutions</span>
+<span style="color: #000000">publicKey: 6</span><span style="color: #0070C1">DB275B83F4839768821FF621DD90358F99A84EC61EB7DE1F6947E5B0926B9BB</span>
+</code></pre>
+				<p>If you don&#39;t like it, let me know by creating issues on GitHub. Pull Requests are welcome!</p>
 				<!-- commands -->
 				<a href="#command-topics" id="command-topics" style="color: inherit; text-decoration: none;">
 					<h1>Command Topics</h1>
@@ -345,8 +288,6 @@ USAGE
 					<li><a href="docs/wizard.md"><code>symbol-bootstrap wizard</code></a> - An utility command that will help you configuring node!</li>
 				</ul>
 				<!-- commandsstop -->
-				<pre><code>
-</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
