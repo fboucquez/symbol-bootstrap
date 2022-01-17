@@ -15,7 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapService, CommandUtils, LoggerFactory, System } from '../';
+import { LoggerFactory, System } from '../logger';
+import { BootstrapService, CommandUtils } from '../service';
 
 export default class HealthCheck extends Command {
     static description = `It checks if the services created with docker compose are up and running.

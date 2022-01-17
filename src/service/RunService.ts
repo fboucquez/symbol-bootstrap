@@ -21,6 +21,7 @@ import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
 import { RepositoryFactoryHttp } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { DockerCompose, DockerComposeService } from '../model';
+import { DefaultAccountResolver } from './AccountResolver';
 import { BootstrapUtils } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
@@ -110,7 +111,10 @@ export class RunService {
 
     private async checkCertificates(): Promise<boolean> {
         const presetData = this.configLoader.loadExistingPresetData(this.params.target, false);
-        const service = new CertificateService(this.logger, { target: this.params.target, user: Constants.CURRENT_USER });
+        const service = new CertificateService(this.logger, new DefaultAccountResolver(), {
+            target: this.params.target,
+            user: Constants.CURRENT_USER,
+        });
         const allServicesChecks: Promise<boolean>[] = (presetData.nodes || []).map(async (nodePreset) => {
             const name = nodePreset.name;
             const certFolder = this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'cert');

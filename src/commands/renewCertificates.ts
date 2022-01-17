@@ -17,7 +17,7 @@ import { Command, flags } from '@oclif/command';
 import { Account } from 'symbol-sdk';
 import { LoggerFactory, System } from '../logger';
 import { CertificatePair, ConfigAccount, ConfigPreset } from '../model';
-import { CertificateService, CommandUtils, ConfigLoader, Constants } from '../service';
+import { BootstrapAccountResolver, CertificateService, CommandUtils, ConfigLoader, Constants } from '../service';
 
 export default class RenewCertificates extends Command {
     static description = `It renews the SSL certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
@@ -66,7 +66,8 @@ It's recommended to backup the target folder before running this operation!
         const mergedPresetData: ConfigPreset = configLoader.mergePresets(presetData, customPreset);
 
         const networkType = presetData.networkType;
-        const certificateService = new CertificateService(logger, {
+        const accountResolver = new BootstrapAccountResolver(logger);
+        const certificateService = new CertificateService(logger, accountResolver, {
             target,
             user: flags.user,
         });
