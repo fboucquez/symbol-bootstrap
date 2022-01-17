@@ -51,4 +51,4 @@ EXAMPLE
   $ symbol-bootstrap renewCertificates
 ```
 
-_See code: [src/commands/renewCertificates.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.2/src/commands/renewCertificates.ts)_
+_See code: [src/commands/renewCertificates.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.3/src/commands/renewCertificates.ts)_

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
-import { BootstrapUtils, CommandUtils, KnownError, LoggerFactory, LogType } from '../';
+import { LoggerFactory, LogType } from '../logger';
+import { BootstrapUtils, CommandUtils, FileSystemService, KnownError } from '../service';
 
 export default class Decrypt extends Command {
     static description = `It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.
@@ -85,7 +86,7 @@ $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap decrypt --source target/address
             false,
         );
         const data = await BootstrapUtils.loadYaml(flags.source, password);
-        await BootstrapUtils.mkdir(dirname(flags.destination));
+        await new FileSystemService(logger).mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, '');
         logger.info(
             `Decrypted file ${flags.destination} has been created! Any private keys on this file are now in plain text. Remember to remove the file!`,

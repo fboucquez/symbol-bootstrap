@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
-import { BootstrapUtils, CommandUtils, CryptoUtils, KnownError, LoggerFactory, LogType } from '../';
+import { LoggerFactory, LogType } from '../logger';
+import { BootstrapUtils, CommandUtils, CryptoUtils, FileSystemService, KnownError } from '../service';
 
 export default class Encrypt extends Command {
     static description = `It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
@@ -77,7 +78,7 @@ $ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --cust
         if (CryptoUtils.encryptedCount(data) > 0) {
             throw new KnownError(`Source file ${flags.source} is already encrypted. If you want to decrypt it use the decrypt command.`);
         }
-        await BootstrapUtils.mkdir(dirname(flags.destination));
+        await new FileSystemService(logger).mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, password);
         logger.info(`Encrypted file ${flags.destination} has been created!`);
     }

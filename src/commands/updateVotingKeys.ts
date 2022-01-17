@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
 import { ConfigPreset } from '../model';
-import { BootstrapUtils, CommandUtils, ConfigLoader, CryptoUtils, RemoteNodeService, VotingService } from '../service';
+import { BootstrapUtils, CommandUtils, ConfigLoader, Constants, CryptoUtils, RemoteNodeService, VotingService } from '../service';
 
 export default class UpdateVotingKeys extends Command {
     static description = `It updates the voting files containing the voting keys when required.
@@ -37,8 +37,8 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         target: CommandUtils.targetFlag,
         user: flags.string({
             char: 'u',
-            description: `User used to run docker images when creating the the voting key files. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
-            default: BootstrapUtils.CURRENT_USER,
+            description: `User used to run docker images when creating the the voting key files. "${Constants.CURRENT_USER}" means the current user.`,
+            default: Constants.CURRENT_USER,
         }),
         finalizationEpoch: flags.integer({
             description: `The network's finalization epoch. It can be retrieved from the /chain/info rest endpoint. If not provided, the bootstrap known epoch is used.`,
@@ -58,7 +58,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
         try {
             const oldPresetData = configLoader.loadExistingPresetData(target, password);
             presetData = configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
+                workingDir: Constants.defaultWorkingDir,
                 password: password,
                 oldPresetData,
             });

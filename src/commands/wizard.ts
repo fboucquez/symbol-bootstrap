@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import {
     CommandUtils,
     ConfigLoader,
     ConfigService,
+    Constants,
     KeyName,
     Preset,
     RuntimeService,
@@ -100,7 +101,7 @@ export default class WizardCommand extends Command {
     public async run(): Promise<void> {
         const flags = this.parse(WizardCommand).flags;
         const logger = LoggerFactory.getLogger(flags.logger);
-        return new Wizard(logger).execute({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+        return new Wizard(logger).execute({ ...flags, workingDir: Constants.defaultWorkingDir });
     }
 }
 

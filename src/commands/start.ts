@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { LoggerFactory } from '../logger';
-import { BootstrapService, BootstrapUtils, CommandUtils } from '../service';
+import { BootstrapAccountResolver, BootstrapService, CommandUtils, Constants } from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -48,6 +48,9 @@ export default class Start extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).start({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+
+        const workingDir = Constants.defaultWorkingDir;
+        const accountResolver = new BootstrapAccountResolver(logger);
+        await new BootstrapService(logger).start({ ...flags, accountResolver, workingDir });
     }
 }

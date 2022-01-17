@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 import { expect } from 'chai';
 import 'mocha';
-import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
-import { BootstrapService, Preset, StartParams } from '../../src/service';
+import { Assembly, BootstrapService, Constants, DefaultAccountResolver, LoggerFactory, LogType, Preset, StartParams } from '../../src';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('BootstrapService', () => {
@@ -25,11 +24,12 @@ describe('BootstrapService', () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.bootstrap,
             reset: true,
             upgrade: false,
             timeout: 60000 * 5,
+            accountResolver: new DefaultAccountResolver(),
             target: 'target/tests/BootstrapService.standard',
             detached: true,
             user: 'current',
@@ -46,12 +46,13 @@ describe('BootstrapService', () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
             report: false,
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.testnet,
             assembly: Assembly.dual,
             reset: true,
             upgrade: false,
             timeout: 60000 * 5,
+            accountResolver: new DefaultAccountResolver(),
             target: 'target/tests/BootstrapService.testnet',
             detached: true,
             user: 'current',

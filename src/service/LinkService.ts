@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,10 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
+import { AccountResolver, BootstrapAccountResolver } from '../service';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
 import { VotingKeyAccount } from './VotingUtils';
 
 /**
@@ -46,6 +47,7 @@ export type LinkParams = {
     customPreset?: string;
     serviceProviderPublicKey?: string;
     removeOldLinked?: boolean; //TEST ONLY!
+    accountResolver?: AccountResolver;
 };
 
 export type KeyAccount = { publicKey: string };
@@ -67,7 +69,7 @@ export interface GenericNodeAccount {
 
 export class LinkService implements TransactionFactory {
     public static readonly defaultParams: LinkParams = {
-        target: BootstrapUtils.defaultTargetFolder,
+        target: Constants.defaultTargetFolder,
         useKnownRestGateways: false,
         ready: false,
         url: 'http://localhost:3000',
@@ -86,8 +88,8 @@ export class LinkService implements TransactionFactory {
         const addresses = passedAddresses ?? this.configLoader.loadExistingAddresses(this.params.target, this.params.password);
         const customPreset = this.configLoader.loadCustomPreset(this.params.customPreset, this.params.password);
         this.logger.info(`${this.params.unlink ? 'Unlinking' : 'Linking'} nodes`);
-
-        await new AnnounceService(this.logger).announce(
+        const accountResolver = this.params.accountResolver || new BootstrapAccountResolver(this.logger);
+        await new AnnounceService(this.logger, accountResolver).announce(
             this.params.url,
             this.params.maxFee,
             this.params.useKnownRestGateways,

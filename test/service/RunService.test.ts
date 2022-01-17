@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { ConfigService, LoggerFactory, LogType } from '../../src';
-import { BootstrapService, BootstrapUtils, Preset, RunService, StartParams } from '../../src/service';
+import { ConfigService, FileSystemService, LoggerFactory, LogType } from '../../src';
+import { BootstrapService, Preset, RunService, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const fileSystemService = new FileSystemService(logger);
 describe('RunService', () => {
     const target = 'target/tests/BootstrapService.standard';
 
@@ -71,9 +72,9 @@ describe('RunService', () => {
         const configResult = await bootstrapService.config(config);
         await bootstrapService.compose(config);
 
-        const nodeDataFolder = BootstrapUtils.getTargetNodesFolder(target, false, configResult.presetData.nodes![0].name, 'data');
+        const nodeDataFolder = fileSystemService.getTargetNodesFolder(target, false, configResult.presetData.nodes![0].name, 'data');
         expect(existsSync(nodeDataFolder)).eq(true);
-        BootstrapUtils.deleteFolder(logger, nodeDataFolder);
+        fileSystemService.deleteFolder(nodeDataFolder);
         expect(existsSync(nodeDataFolder)).eq(false);
         const service = new RunService(logger, { ...config });
         await service.resetData();

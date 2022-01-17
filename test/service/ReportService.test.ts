@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,32 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { Assembly, LoggerFactory, LogType } from '../../src';
-import { CustomPreset } from '../../src/model';
-import { BootstrapUtils, ConfigParams, ConfigService, Preset, ReportService } from '../../src/service';
+import {
+    Assembly,
+    BootstrapUtils,
+    ConfigParams,
+    ConfigService,
+    Constants,
+    CustomPreset,
+    FileSystemService,
+    LoggerFactory,
+    LogType,
+    Preset,
+    ReportService,
+} from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const fileSystemService = new FileSystemService(logger);
 describe('ReportService', () => {
     const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
         const configResult = await new ConfigService(logger, { ...params, offline: true }).run();
 
         const paths = await new ReportService(logger, params).run(configResult.presetData);
         const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
-        await BootstrapUtils.mkdir(expectedReportFolder);
+        await fileSystemService.mkdir(expectedReportFolder);
 
         const promises = paths.map(async (reportPath) => {
             expect(reportPath.indexOf(join(params.target, 'report'))).to.be.greaterThan(-1);
-            const generatedReport = (await BootstrapUtils.readTextFile(reportPath)).replace(BootstrapUtils.VERSION, 'CURRENT_VERSION');
+            const generatedReport = (await BootstrapUtils.readTextFile(reportPath)).replace(Constants.VERSION, 'CURRENT_VERSION');
             const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
             if (!existsSync(expectedReportPath)) {
                 await BootstrapUtils.writeTextFile(expectedReportPath, generatedReport.trim() + '\n');
@@ -47,7 +58,7 @@ describe('ReportService', () => {
         });
 
         for (const gateway of configResult.presetData.gateways || []) {
-            const currentRestJsonFile = BootstrapUtils.getTargetGatewayFolder(params.target, true, gateway.name, 'rest.json');
+            const currentRestJsonFile = fileSystemService.getTargetGatewayFolder(params.target, true, gateway.name, 'rest.json');
             const currentRestJson = await BootstrapUtils.readTextFile(currentRestJsonFile);
             const expectedRestJsonFile = join(expectedReportFolder, `${gateway.name}-rest.json`);
             if (!existsSync(expectedRestJsonFile)) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,16 @@ import { Logger } from '../logger';
 import { Addresses, ConfigPreset, DockerCompose, DockerComposeService, DockerServicePreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
+import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 
 export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
 
-const targetNodesFolder = BootstrapUtils.targetNodesFolder;
-const targetDatabasesFolder = BootstrapUtils.targetDatabasesFolder;
-const targetGatewaysFolder = BootstrapUtils.targetGatewaysFolder;
-const targetExplorersFolder = BootstrapUtils.targetExplorersFolder;
+const targetNodesFolder = Constants.targetNodesFolder;
+const targetDatabasesFolder = Constants.targetDatabasesFolder;
+const targetGatewaysFolder = Constants.targetGatewaysFolder;
+const targetExplorersFolder = Constants.targetExplorersFolder;
 
 export interface PortConfiguration {
     internalPort: number;
@@ -37,8 +39,8 @@ export interface PortConfiguration {
 
 export class ComposeService {
     public static defaultParams: ComposeParams = {
-        target: BootstrapUtils.defaultTargetFolder,
-        user: BootstrapUtils.CURRENT_USER,
+        target: Constants.defaultTargetFolder,
+        user: Constants.CURRENT_USER,
         upgrade: false,
     };
 
@@ -49,9 +51,11 @@ export class ComposeService {
     };
 
     private readonly configLoader: ConfigLoader;
+    private readonly fileSystemService: FileSystemService;
 
     constructor(private readonly logger: Logger, protected readonly params: ComposeParams) {
         this.configLoader = new ConfigLoader(logger);
+        this.fileSystemService = new FileSystemService(logger);
     }
 
     public resolveDebugOptions(dockerComposeDebugMode: boolean, dockerComposeServiceDebugMode: boolean | undefined): any {
@@ -71,7 +75,7 @@ export class ComposeService {
         const target = join(currentDir, this.params.target);
         const targetDocker = join(target, `docker`);
         if (this.params.upgrade) {
-            BootstrapUtils.deleteFolder(this.logger, targetDocker);
+            this.fileSystemService.deleteFolder(targetDocker);
         }
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (existsSync(dockerFile)) {
@@ -79,10 +83,10 @@ export class ComposeService {
             return BootstrapUtils.loadYaml(dockerFile, false);
         }
 
-        await BootstrapUtils.mkdir(targetDocker);
-        await BootstrapUtils.generateConfiguration(presetData, join(BootstrapUtils.ROOT_FOLDER, 'config', 'docker'), targetDocker);
+        await this.fileSystemService.mkdir(targetDocker);
+        await BootstrapUtils.generateConfiguration(presetData, join(Constants.ROOT_FOLDER, 'config', 'docker'), targetDocker);
 
-        await BootstrapUtils.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
+        await this.fileSystemService.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
 
         const user: string | undefined = await new RuntimeService(this.logger).resolveDockerUserFromParam(this.params.user);
 

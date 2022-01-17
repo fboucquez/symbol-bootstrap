@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
-import { Assembly, BootstrapService, BootstrapUtils, CommandUtils, ConfigService, Preset } from '../service';
+import { Assembly, BootstrapAccountResolver, BootstrapService, CommandUtils, ConfigService, Constants, Preset } from '../service';
 
 export default class Config extends Command {
     static description = 'Command used to set up the configuration files and the nemesis block for the current network';
@@ -69,8 +69,8 @@ export default class Config extends Command {
 
         user: flags.string({
             char: 'u',
-            description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
-            default: BootstrapUtils.CURRENT_USER,
+            description: `User used to run docker images when creating configuration files like certificates or nemesis block. "${Constants.CURRENT_USER}" means the current user.`,
+            default: Constants.CURRENT_USER,
         }),
         logger: CommandUtils.getLoggerFlag(...System),
     };
@@ -86,6 +86,8 @@ export default class Config extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).config({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+        const workingDir = Constants.defaultWorkingDir;
+        const accountResolver = new BootstrapAccountResolver(logger);
+        await new BootstrapService(logger).config({ ...flags, workingDir, accountResolver });
     }
 }

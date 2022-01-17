@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ export interface Addresses {
     version: number;
     nodes?: NodeAccount[];
     nemesisGenerationHashSeed: string;
-    sinkAddress: string;
+    sinkAddress?: string;
     nemesisSigner?: ConfigAccount;
     networkType: NetworkType;
     mosaics?: MosaicAccounts[];

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@ import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { CertificatePair } from '../model';
+import { AccountResolver } from './';
 import { BootstrapUtils } from './BootstrapUtils';
-import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
+import { Constants } from './Constants';
+import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
 
@@ -53,11 +55,16 @@ export class CertificateService {
     public static NODE_CERTIFICATE_FILE_NAME = 'node.crt.pem';
     public static CA_CERTIFICATE_FILE_NAME = 'ca.cert.pem';
     private static readonly METADATA_VERSION = 1;
-
+    private readonly fileSystemService: FileSystemService;
     private readonly runtimeService: RuntimeService;
 
-    constructor(private readonly logger: Logger, protected readonly params: CertificateParams) {
+    constructor(
+        private readonly logger: Logger,
+        private readonly accountResolver: AccountResolver,
+        protected readonly params: CertificateParams,
+    ) {
         this.runtimeService = new RuntimeService(this.logger);
+        this.fileSystemService = new FileSystemService(logger);
     }
 
     public async run(
@@ -68,7 +75,7 @@ export class CertificateService {
         customCertFolder?: string,
         randomSerial?: string,
     ): Promise<boolean> {
-        const certFolder = customCertFolder || BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'cert');
+        const certFolder = customCertFolder || this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'cert');
         const metadataFile = join(certFolder, 'metadata.yml');
         if (!(await this.shouldGenerateCertificate(metadataFile, providedCertificates))) {
             const willExpireReport = await this.willCertificateExpire(
@@ -112,36 +119,36 @@ export class CertificateService {
         metadataFile: string,
         randomSerial?: string,
     ) {
-        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'cert');
+        const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'cert');
         const networkType = presetData.networkType;
 
-        const mainAccountPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const mainAccount = await this.accountResolver.resolveAccount(
             networkType,
             providedCertificates.main,
             KeyName.Main,
             name,
             'generating the server CA certificates',
+            'Should not generate!',
         );
-        const transportPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const transportAccount = await this.accountResolver.resolveAccount(
             networkType,
             providedCertificates.transport,
             KeyName.Transport,
             name,
             'generating the server Node certificates',
+            'Should not generate!',
         );
 
         if (!renew) {
-            BootstrapUtils.deleteFolder(this.logger, certFolder);
+            this.fileSystemService.deleteFolder(certFolder);
         }
 
-        await BootstrapUtils.mkdir(certFolder);
+        await this.fileSystemService.mkdir(certFolder);
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        BootstrapUtils.createDerFile(mainAccountPrivateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportPrivateKey, join(certFolder, 'node.der'));
+        BootstrapUtils.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
+        BootstrapUtils.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
         await BootstrapUtils.writeTextFile(
             join(certFolder, 'serial.dat'),
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
@@ -174,9 +181,9 @@ export class CertificateService {
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
-        Utils.validateIsTrue(caCertificate.privateKey === mainAccountPrivateKey, 'Invalid ca private key');
+        Utils.validateIsTrue(caCertificate.privateKey === mainAccount.privateKey, 'Invalid ca private key');
         Utils.validateIsTrue(caCertificate.publicKey === providedCertificates.main.publicKey, 'Invalid ca public key');
-        Utils.validateIsTrue(nodeCertificate.privateKey === transportPrivateKey, 'Invalid Node private key');
+        Utils.validateIsTrue(nodeCertificate.privateKey === transportAccount.privateKey, 'Invalid Node private key');
         Utils.validateIsTrue(nodeCertificate.publicKey === providedCertificates.transport.publicKey, 'Invalid Node public key');
 
         const metadata: CertificateMetadata = {

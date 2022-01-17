@@ -1,8 +1,24 @@
+/*
+ * Copyright 2022 Fernando Boucquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { expect } from 'chai';
 import { compareSync, Result } from 'dir-compare';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { BootstrapUtils } from '../../src';
+import { BootstrapUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
 
 interface AssertFoldersParams {
     expectFolder: string;
@@ -12,8 +28,9 @@ interface AssertFoldersParams {
 
 export class FileSystemTestUtils {
     public static assertSameFolder({ expectFolder, actualFolder, excludeFilter }: AssertFoldersParams): void {
-        BootstrapUtils.validateFolder(expectFolder);
-        BootstrapUtils.validateFolder(actualFolder);
+        const fileSystemService = new FileSystemService(LoggerFactory.getLogger(LogType.Silent));
+        fileSystemService.validateFolder(expectFolder);
+        fileSystemService.validateFolder(actualFolder);
         const compareResult: Result = compareSync(expectFolder, actualFolder, {
             compareSize: true,
             compareContent: true,

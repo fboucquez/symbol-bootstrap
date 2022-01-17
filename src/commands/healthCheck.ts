@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { BootstrapService, CommandUtils, LoggerFactory, System } from '../';
+import { LoggerFactory, System } from '../logger';
+import { BootstrapService, CommandUtils } from '../service';
 
 export default class HealthCheck extends Command {
     static description = `It checks if the services created with docker compose are up and running.

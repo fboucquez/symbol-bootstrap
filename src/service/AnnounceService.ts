@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount, NodePreset } from '../model';
+import { AccountResolver } from './AccountResolver';
 import { CommandUtils } from './CommandUtils';
 import { KeyName } from './ConfigService';
 import { TransactionUtils } from './TransactionUtils';
@@ -63,7 +64,7 @@ export interface TransactionFactory {
 }
 
 export class AnnounceService {
-    constructor(private readonly logger: Logger) {}
+    constructor(private readonly logger: Logger, private readonly accountResolver: AccountResolver) {}
 
     private static onProcessListener = () => {
         process.on('SIGINT', () => {
@@ -225,16 +226,13 @@ export class AnnounceService {
                     }
                 }
 
-                return Account.createFromPrivateKey(
-                    await CommandUtils.resolvePrivateKey(
-                        this.logger,
-                        networkType,
-                        nodeAccount.main,
-                        KeyName.Main,
-                        nodeAccount.name,
-                        'signing a transaction',
-                    ),
+                return this.accountResolver.resolveAccount(
                     networkType,
+                    nodeAccount.main,
+                    KeyName.Main,
+                    nodeAccount.name,
+                    'signing a transaction',
+                    'Should not generate!',
                 );
             };
 
@@ -262,17 +260,13 @@ export class AnnounceService {
                     signerAccount = bestCosigner; // override with a cosigner when multisig
                     requiredCosignatures = multisigAccountInfo.minApproval;
                 } else {
-                    // ask for serviceProviderAccount private key
-                    signerAccount = Account.createFromPrivateKey(
-                        await CommandUtils.resolvePrivateKey(
-                            this.logger,
-                            networkType,
-                            serviceProviderPublicAccount,
-                            KeyName.ServiceProvider,
-                            '',
-                            'signing a transaction',
-                        ),
+                    signerAccount = await this.accountResolver.resolveAccount(
                         networkType,
+                        serviceProviderPublicAccount,
+                        KeyName.ServiceProvider,
+                        undefined,
+                        'signing a transaction',
+                        'Should not generate!',
                     );
                 }
                 const mainMultisigAccountInfo = await TransactionUtils.getMultisigAccount(repositoryFactory, mainAccount.address);

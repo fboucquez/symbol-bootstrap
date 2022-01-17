@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,15 @@
  */
 
 import { expect } from 'chai';
-import { statSync } from 'fs';
 import * as _ from 'lodash';
 import 'mocha';
 import { it } from 'mocha';
 import { totalmem } from 'os';
 import { Account, NetworkType } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { ConfigurationUtils } from '../../src';
 import { ConfigAccount } from '../../src/model';
-import { BootstrapUtils, ConfigLoader, CryptoUtils } from '../../src/service';
-import nock = require('nock');
-const logger = LoggerFactory.getLogger(LogType.Silent);
+import { BootstrapUtils, CryptoUtils } from '../../src/service';
+
 describe('BootstrapUtils', () => {
     it('BootstrapUtils generate random', async () => {
         const networkType = NetworkType.TEST_NET;
@@ -34,7 +32,7 @@ describe('BootstrapUtils', () => {
 
         for (let i = 0; i < 10; i++) {
             console.log();
-            const account = ConfigLoader.toConfig(Account.generateNewAccount(networkType));
+            const account = ConfigurationUtils.toConfigAccount(Account.generateNewAccount(networkType));
             balances.push({ ...account, balance: 1000000 });
         }
         console.log(BootstrapUtils.toYaml({ nemesisBalances: balances }));
@@ -48,43 +46,6 @@ describe('BootstrapUtils', () => {
         expect(BootstrapUtils.toAmount(12345678)).to.be.eq("12'345'678");
         expect(BootstrapUtils.toAmount('12345678')).to.be.eq("12'345'678");
         expect(BootstrapUtils.toAmount("12'3456'78")).to.be.eq("12'345'678");
-    });
-
-    it('BootstrapUtils.download', async () => {
-        const url = 'https://myserver.get';
-
-        BootstrapUtils.deleteFile('boat.png');
-
-        const expectedSize = 43970;
-        async function download(): Promise<boolean> {
-            nock(url).get('/boat.png').replyWithFile(200, 'test/boat.png', { 'content-length': expectedSize.toString() });
-            const result = await BootstrapUtils.download(logger, url + '/boat.png', 'boat.png');
-            expect(statSync('boat.png').size).eq(expectedSize);
-            return result.downloaded;
-        }
-        expect(await download()).eq(true);
-        expect(await download()).eq(false);
-        expect(await download()).eq(false);
-        await BootstrapUtils.writeTextFile('boat.png', 'abc');
-        expect(statSync('boat.png').size).not.eq(expectedSize);
-        expect(await download()).eq(true);
-        expect(await download()).eq(false);
-    });
-
-    it('BootstrapUtils.resolveRootFolder', async () => {
-        expect(BootstrapUtils.resolveRootFolder()).to.not.undefined;
-    });
-
-    it('BootstrapUtils.download when invalid', async () => {
-        BootstrapUtils.deleteFile('boat.png');
-        try {
-            const url = 'https://myserver.get';
-            nock(url).get('/boat.png').reply(404);
-            await BootstrapUtils.download(logger, url + '/boat.png', 'boat.png');
-            expect(false).eq(true);
-        } catch (e) {
-            expect(e.message).eq('Server responded with 404');
-        }
     });
 
     it('BootstrapUtils.computerMemory', async () => {

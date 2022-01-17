@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import {
     CertificateMetadata,
     CertificateService,
     ConfigLoader,
+    Constants,
+    DefaultAccountResolver,
+    FileSystemService,
     NodeCertificates,
     Preset,
     RuntimeService,
@@ -33,10 +36,12 @@ import {
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const runtimeService = new RuntimeService(logger);
+const accountResolver = new DefaultAccountResolver();
+const fileSystemService = new FileSystemService(logger);
 describe('CertificateService', () => {
     const target = 'target/tests/CertificateService.test';
     const presetData = new ConfigLoader(logger).createPresetData({
-        workingDir: BootstrapUtils.defaultWorkingDir,
+        workingDir: Constants.defaultWorkingDir,
         preset: Preset.testnet,
         assembly: 'dual',
         password: 'abc',
@@ -84,9 +89,12 @@ describe('CertificateService', () => {
     }
 
     it('createCertificates', async () => {
-        BootstrapUtils.deleteFolder(logger, target);
+        fileSystemService.deleteFolder(target);
 
-        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+        const service = new CertificateService(logger, accountResolver, {
+            target: target,
+            user: await runtimeService.getDockerUserGroup(),
+        });
         await service.run(presetData, name, keys, false, target, randomSerial);
 
         const expectedMetadata: CertificateMetadata = {
@@ -99,11 +107,14 @@ describe('CertificateService', () => {
     });
 
     it('createCertificates expiration warnings', async () => {
-        BootstrapUtils.deleteFolder(logger, target);
+        fileSystemService.deleteFolder(target);
         const nodeCertificateExpirationInDays = presetData.nodeCertificateExpirationInDays;
         const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
 
-        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+        const service = new CertificateService(logger, accountResolver, {
+            target: target,
+            user: await runtimeService.getDockerUserGroup(),
+        });
         await service.run(presetData, name, keys, false, target, randomSerial);
 
         async function willExpire(certificateFileName: string, certificateExpirationWarningInDays: number): Promise<boolean> {
@@ -125,9 +136,11 @@ describe('CertificateService', () => {
 
     it('create and renew certificates', async () => {
         const target = 'target/tests/CertificateService.test';
-        BootstrapUtils.deleteFolder(logger, target);
-        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
-
+        fileSystemService.deleteFolder(target);
+        const service = new CertificateService(logger, accountResolver, {
+            target: target,
+            user: await runtimeService.getDockerUserGroup(),
+        });
         async function getCertFile(certificateFileName: string): Promise<string> {
             return readFileSync(join(target, certificateFileName), 'utf-8');
         }

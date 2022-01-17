@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Fernando Boucquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { expect } from 'chai';
 import { of } from 'rxjs';
 import { match, restore, spy, stub } from 'sinon';
@@ -16,23 +32,30 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
 import {
+    AccountResolver,
     AnnounceService,
+    Assembly,
     BootstrapService,
-    CommandUtils,
+    BootstrapUtils,
     ConfigService,
+    Constants,
+    DefaultAccountResolver,
+    LoggerFactory,
+    LogType,
     Preset,
     RemoteNodeService,
     RepositoryInfo,
     TransactionUtils,
-} from '../../src/service';
+} from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Announce Service', () => {
     let announceService: AnnounceService;
+    let accountResolver: AccountResolver;
 
     beforeEach(() => {
-        announceService = new AnnounceService(logger);
+        accountResolver = new DefaultAccountResolver();
+        announceService = new AnnounceService(logger, accountResolver);
     });
 
     afterEach(restore);
@@ -41,7 +64,7 @@ describe('Announce Service', () => {
     const params = {
         ...ConfigService.defaultParams,
         ready: true,
-        target: 'target/tests/testnet-dual',
+        target: 'target/tests/announce-service-test',
         password,
         reset: false,
         offline: true,
@@ -64,7 +87,7 @@ describe('Announce Service', () => {
     const useKnownRestGateways = false;
     const networkType = NetworkType.TEST_NET;
 
-    const root = BootstrapUtils.ROOT_FOLDER;
+    const root = Constants.ROOT_FOLDER;
     const preset = params.preset;
     const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
     const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
@@ -182,8 +205,9 @@ describe('Announce Service', () => {
         const transactionFactory = singleTransactionFactory;
 
         const { addresses, presetData } = await new BootstrapService(logger).config(params);
-        stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
+        expect(addresses!.nodes![0]!.main.publicKey).eq(mainPublicKey);
 
+        stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const announceSimple = spy(announceService, <any>'announceSimple');
         await announceService.announce(
@@ -221,6 +245,7 @@ describe('Announce Service', () => {
         );
 
         expect(announceAggregateComplete.called).to.be.true;
+
         expect(tsAnnounce.calledOnceWith(match({ signerPublicKey: mainPublicKey }), match.any)).to.be.true;
     });
 
@@ -263,8 +288,8 @@ describe('Announce Service', () => {
 
         const { addresses, presetData } = await new BootstrapService(logger).config(params);
         stubCommon(networkType, epochAdjustment, currencyMosaicId, networkGenerationHash);
+        stub(accountResolver, 'resolveAccount').returns(Promise.resolve(serviceProviderAccount));
 
-        stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(serviceProviderAccount.privateKey));
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const tsAnnounceBonded = stub(TransactionService.prototype, 'announceAggregateBonded').returns(of({} as AggregateTransaction));
         const announceAggregateBonded = spy(announceService, <any>'announceAggregateBonded');
@@ -315,8 +340,7 @@ describe('Announce Service', () => {
             cosigners.push(...cosigns);
             return bestCosigner;
         });
-
-        stub(CommandUtils, 'resolvePrivateKey').returns(Promise.resolve(bestCosigner.privateKey));
+        stub(accountResolver, 'resolveAccount').returns(Promise.resolve(bestCosigner));
         const tsAnnounce = stub(TransactionService.prototype, 'announce').returns(of({} as Transaction));
         const tsAnnounceBonded = stub(TransactionService.prototype, 'announceAggregateBonded').returns(of({} as AggregateTransaction));
         const announceAggregateBonded = spy(announceService, <any>'announceAggregateBonded');

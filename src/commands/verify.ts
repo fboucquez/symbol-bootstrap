@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NEM
+ * Copyright 2022 Fernando Boucquez
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 
 import { Command } from '@oclif/command';
-import { CommandUtils, LoggerFactory, System, VerifyService } from '../';
+import { LoggerFactory, System } from '../logger';
+import { CommandUtils, VerifyService } from '../service';
 
 export default class Verify extends Command {
     static description =
