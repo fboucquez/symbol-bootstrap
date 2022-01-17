@@ -187,7 +187,9 @@ Although some combinations can be done, they may not be really useful. Examples 
 A custom network preset file can also be provided. This is useful when you have your own custom Symbol network, and you want other nodes to join.
 For this case, you provide your own `networkPreset.yml` and nemesis feed folder. The node admin can then run:
 
--   `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
+- `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
+
+The `demo` assemblies starts a local Explorer http://localhost:90 and Faucet http://localhost:100.
 
 # Wizard
 
