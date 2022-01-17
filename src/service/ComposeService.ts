@@ -24,6 +24,7 @@ import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
+import { YamlUtils } from './YamlUtils';
 
 export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
 
@@ -80,7 +81,7 @@ export class ComposeService {
         const dockerFile = join(targetDocker, 'docker-compose.yml');
         if (existsSync(dockerFile)) {
             this.logger.info(dockerFile + ' already exist. Reusing. (run --upgrade to drop and upgrade)');
-            return BootstrapUtils.loadYaml(dockerFile, false);
+            return YamlUtils.loadYaml(dockerFile, false);
         }
 
         await this.fileSystemService.mkdir(targetDocker);
@@ -368,7 +369,7 @@ export class ComposeService {
             };
 
         dockerCompose = BootstrapUtils.pruneEmpty(_.merge({}, dockerCompose, presetData.compose));
-        await BootstrapUtils.writeYaml(dockerFile, dockerCompose, undefined);
+        await YamlUtils.writeYaml(dockerFile, dockerCompose, undefined);
         this.logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;
     }

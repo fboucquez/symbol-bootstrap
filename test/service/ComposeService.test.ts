@@ -18,9 +18,9 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { Assembly, Constants, FileSystemService, LoggerFactory, LogType, RuntimeService } from '../../src';
+import { Assembly, Constants, FileSystemService, LoggerFactory, LogType, RuntimeService, YamlUtils } from '../../src';
 import { DockerCompose } from '../../src/model';
-import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
+import { ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
 describe('ComposeService', () => {
@@ -38,10 +38,10 @@ describe('ComposeService', () => {
         expect(existsSync(targetDocker)).to.be.true;
         const expectedFileLocation = `./test/composes/${expectedComposeFile}`;
         if (!existsSync(expectedFileLocation)) {
-            await BootstrapUtils.writeYaml(expectedFileLocation, dockerCompose, params.password);
+            await YamlUtils.writeYaml(expectedFileLocation, dockerCompose, params.password);
         }
 
-        const expectedDockerCompose: DockerCompose = BootstrapUtils.loadYaml(expectedFileLocation, params.password);
+        const expectedDockerCompose: DockerCompose = YamlUtils.loadYaml(expectedFileLocation, params.password);
 
         const promises = Object.values(expectedDockerCompose.services).map(async (service) => {
             if (!service.user) {
@@ -60,7 +60,7 @@ describe('ComposeService', () => {
             dockerCompose,
             `Generated Docker Compose:
 
-${BootstrapUtils.toYaml(dockerCompose)}
+${YamlUtils.toYaml(dockerCompose)}
 
 `,
         ).to.be.deep.eq(expectedDockerCompose);

@@ -17,7 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
 import { ConfigPreset } from '../model';
-import { BootstrapUtils, CommandUtils, ConfigLoader, Constants, CryptoUtils, RemoteNodeService, VotingService } from '../service';
+import { CommandUtils, ConfigLoader, Constants, CryptoUtils, RemoteNodeService, VotingService, YamlUtils } from '../service';
 
 export default class UpdateVotingKeys extends Command {
     static description = `It updates the voting files containing the voting keys when required.
@@ -90,7 +90,7 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
             )
         ).find((f) => f);
         if (votingKeyUpgrade) {
-            await BootstrapUtils.writeYaml(
+            await YamlUtils.writeYaml(
                 addressesLocation,
                 CryptoUtils.removePrivateKeysAccordingToSecurityMode(addresses, privateKeySecurityMode),
                 undefined,

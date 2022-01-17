@@ -22,7 +22,6 @@ import { join } from 'path';
 import { Account, NetworkType } from 'symbol-sdk';
 import { LoggerFactory, LogType } from '../../src/logger';
 import {
-    BootstrapUtils,
     CertificateMetadata,
     CertificateService,
     ConfigLoader,
@@ -32,6 +31,7 @@ import {
     NodeCertificates,
     Preset,
     RuntimeService,
+    YamlUtils,
 } from '../../src/service';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
@@ -60,7 +60,7 @@ describe('CertificateService', () => {
 
     it('getCertificates from output', async () => {
         const outputFile = `./test/certificates/output.txt`;
-        const output = BootstrapUtils.loadFileAsText(outputFile);
+        const output = YamlUtils.loadFileAsText(outputFile);
         const certificates = CertificateService.getCertificates(output);
         deepStrictEqual(certificates, [
             {
@@ -102,7 +102,7 @@ describe('CertificateService', () => {
             transportPublicKey: keys.transport.publicKey,
             mainPublicKey: keys.main.publicKey,
         };
-        expect(expectedMetadata).deep.eq(BootstrapUtils.loadYaml(join(target, 'metadata.yml'), false));
+        expect(expectedMetadata).deep.eq(YamlUtils.loadYaml(join(target, 'metadata.yml'), false));
         await verifyCertFolder();
     });
 

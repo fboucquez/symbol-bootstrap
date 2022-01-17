@@ -31,4 +31,5 @@ export * from './VerifyService';
 export * from './VotingKeyFileProvider';
 export * from './VotingService';
 export * from './VotingUtils';
+export * from './YamlUtils';
 export * from './ZipUtils';

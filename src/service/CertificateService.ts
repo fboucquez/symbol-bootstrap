@@ -148,9 +148,9 @@ export class CertificateService {
         const generatedContext = { name };
         await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
-        BootstrapUtils.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
-        BootstrapUtils.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
-        await BootstrapUtils.writeTextFile(
+        CertificateService.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
+        CertificateService.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));
+        await YamlUtils.writeTextFile(
             join(certFolder, 'serial.dat'),
             (randomSerial?.trim() || Convert.uint8ToHex(Crypto.randomBytes(19))).toLowerCase() + '\n',
         );

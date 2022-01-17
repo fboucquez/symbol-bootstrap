@@ -20,8 +20,8 @@ import { it } from 'mocha';
 import { join } from 'path';
 import { restore, stub } from 'sinon';
 import { NodeApi } from 'symbol-statistics-service-typescript-fetch-client';
-import { ConfigPreset, LoggerFactory, LogType } from '../../src';
-import { BootstrapUtils, ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
+import { ConfigPreset, LoggerFactory, LogType, YamlUtils } from '../../src';
+import { ConfigLoader, Preset, RemoteNodeService } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const list = [
     {
@@ -425,8 +425,8 @@ const preset = Preset.testnet;
 const root = './';
 const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
 const sharedPresetLocation = join(root, 'presets', 'shared.yml');
-const sharedPreset = BootstrapUtils.loadYaml(sharedPresetLocation, false);
-const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);
+const sharedPreset = YamlUtils.loadYaml(sharedPresetLocation, false);
+const networkPreset = YamlUtils.loadYaml(networkPresetLocation, false);
 const presetData: ConfigPreset = new ConfigLoader(logger).mergePresets(sharedPreset, networkPreset, customPresetObject);
 
 describe('RemoteNodeService', () => {

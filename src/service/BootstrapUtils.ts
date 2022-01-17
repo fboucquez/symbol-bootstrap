@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-import { promises as fsPromises, writeFileSync } from 'fs';
+import { promises as fsPromises } from 'fs';
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
 import { basename, isAbsolute, join } from 'path';
-import { Convert, DtoMapping, NetworkType } from 'symbol-sdk';
+import { DtoMapping, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const yaml = require('js-yaml');
 
 export type Password = string | false | undefined;
 
@@ -115,7 +112,7 @@ export class BootstrapUtils {
                     const inWhitelistIfAny = includeFiles.length === 0 || includeFiles.indexOf(fileName) > -1;
                     if (notBlacklisted && inWhitelistIfAny) {
                         if (isMustache) {
-                            const template = await BootstrapUtils.readTextFile(fromPath);
+                            const template = await YamlUtils.readTextFile(fromPath);
                             const renderedTemplate = this.runTemplate(template, templateContext);
 
                             await fsPromises.writeFile(
@@ -253,39 +250,6 @@ export class BootstrapUtils {
         return DtoMapping.parseServerDuration(serverDuration).seconds();
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static migrate<T extends { version?: number }>(
-        logger: Logger,
-        entityName: string,
-        versioned: T,
-        migrations: Migration[] = [],
-    ): T {
-        if (!versioned) {
-            return versioned;
-        }
-        const currentVersion = migrations.length + 1;
-        versioned.version = versioned.version || 1;
-
-        if (versioned.version == currentVersion) {
-            return versioned;
-        }
-        logger.info(`Migrating object ${entityName} from version ${versioned.version} to version ${currentVersion}`);
-        if (versioned.version > currentVersion) {
-            throw new Error(`Current data version is ${versioned.version} but higher version is ${currentVersion}`);
-        }
-        const migratedVersioned = migrations.slice(versioned.version - 1).reduce((toMigrateData, migration) => {
-            if (toMigrateData === undefined) {
-                logger.info(`data to migrate is undefined, ignoring migration ${migration.description}`);
-                return undefined;
-            }
-            logger.info(`Applying migration ${migration.description}`);
-            return migration.migrate(toMigrateData);
-        }, versioned);
-        migratedVersioned.version = currentVersion;
-        logger.info(`Object ${entityName} migrated to version ${currentVersion}`);
-        return migratedVersioned;
-    }
-
     public static getNetworkIdentifier(networkType: NetworkType): string {
         return BootstrapUtils.getNetworkName(networkType);
     }
@@ -306,9 +270,5 @@ export class BootstrapUtils {
         } else {
             return join(workingDir, path);
         }
-    }
-
-    static createDerFile(privateKey: string, file: string): void {
-        writeFileSync(file, Convert.hexToUint8(BootstrapUtils.toAns1(privateKey)));
     }
 }

@@ -16,7 +16,7 @@
 
 import { expect, test } from '@oclif/test';
 import { existsSync } from 'fs';
-import { BootstrapUtils, CryptoUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
+import { CryptoUtils, FileSystemService, LoggerFactory, LogType, YamlUtils } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
 describe('decrypt', () => {
@@ -28,10 +28,10 @@ describe('decrypt', () => {
                 'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
             expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
-            expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
-                await BootstrapUtils.loadYaml('test/encrypt/plain.yml', false),
+            expect(await YamlUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
+                await YamlUtils.loadYaml('test/encrypt/plain.yml', false),
             );
-            expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
+            expect(CryptoUtils.encryptedCount(await YamlUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
         });
 
     test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
@@ -41,10 +41,10 @@ describe('decrypt', () => {
             expect(ctx.stdout).to.contain(
                 'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
-            expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
-                await BootstrapUtils.loadYaml('test/encrypt/plain.yml', false),
+            expect(await YamlUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
+                await YamlUtils.loadYaml('test/encrypt/plain.yml', false),
             );
-            expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
+            expect(CryptoUtils.encryptedCount(await YamlUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
         });
 
     test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))
@@ -55,10 +55,10 @@ describe('decrypt', () => {
                 'Decrypted file target/tests.encrypt/plain.yml has been created! Any private keys on this file are now in plain text. Remember to remove the file!',
             );
             expect(existsSync('target/tests.encrypt/plain.yml')).eq(true);
-            expect(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
-                await BootstrapUtils.loadYaml('test/encrypt/plain.yml', false),
+            expect(await YamlUtils.loadYaml('target/tests.encrypt/plain.yml', false)).deep.eq(
+                await YamlUtils.loadYaml('test/encrypt/plain.yml', false),
             );
-            expect(CryptoUtils.encryptedCount(await BootstrapUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
+            expect(CryptoUtils.encryptedCount(await YamlUtils.loadYaml('target/tests.encrypt/plain.yml', false))).eq(0);
         });
 
     test.add('remove target', () => fileSystemService.deleteFolder('target/tests.encrypt'))

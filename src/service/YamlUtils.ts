@@ -21,6 +21,9 @@ import { KnownError, Password } from './BootstrapUtils';
 import { CryptoUtils } from './CryptoUtils';
 import { Utils } from './Utils';
 
+/**
+ * Utility methods in charge of loading and saving yaml files (and text files).
+ */
 export class YamlUtils {
     public static isYmlFile(string: string): boolean {
         return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');

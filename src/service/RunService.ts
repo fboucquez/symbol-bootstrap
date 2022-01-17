@@ -30,6 +30,7 @@ import { FileSystemService } from './FileSystemService';
 import { OSUtils } from './OSUtils';
 import { PortService } from './PortService';
 import { RuntimeService } from './RuntimeService';
+import { YamlUtils } from './YamlUtils';
 /**
  * params necessary to run the docker-compose network.
  */
@@ -98,7 +99,7 @@ export class RunService {
         if (!(await this.checkCertificates())) {
             throw new Error(`Certificates are about to expire. Check the logs!`);
         }
-        const dockerCompose: DockerCompose = BootstrapUtils.fromYaml(await BootstrapUtils.readTextFile(dockerFile));
+        const dockerCompose: DockerCompose = YamlUtils.fromYaml(await YamlUtils.readTextFile(dockerFile));
         const services = Object.values(dockerCompose.services);
         const timeout = this.params.timeout || RunService.defaultParams.timeout || 0;
         const started = await BootstrapUtils.poll(this.logger, () => this.runOneCheck(services), timeout, pollIntervalMs);
@@ -232,7 +233,7 @@ export class RunService {
         }
 
         //Creating folders to avoid being created using sudo. Is there a better way?
-        const dockerCompose: DockerCompose = await BootstrapUtils.loadYaml(dockerFile, false);
+        const dockerCompose: DockerCompose = await YamlUtils.loadYaml(dockerFile, false);
         if (!ignoreIfNotFound && this.params.pullImages) await this.pullImages(dockerCompose);
 
         const volumenList = _.flatMap(Object.values(dockerCompose?.services), (s) => s.volumes?.map((v) => v.split(':')[0]) || []) || [];

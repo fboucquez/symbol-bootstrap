@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { statSync } from 'fs';
 import 'mocha';
 import { it } from 'mocha';
-import { BootstrapUtils, FileSystemService, LoggerFactory, LogType } from '../../src';
+import { FileSystemService, LoggerFactory, LogType, YamlUtils } from '../../src';
 import nock = require('nock');
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
@@ -38,7 +38,7 @@ describe('FileSystemService', () => {
         expect(await download()).eq(true);
         expect(await download()).eq(false);
         expect(await download()).eq(false);
-        await BootstrapUtils.writeTextFile('boat.png', 'abc');
+        await YamlUtils.writeTextFile('boat.png', 'abc');
         expect(statSync('boat.png').size).not.eq(expectedSize);
         expect(await download()).eq(true);
         expect(await download()).eq(false);

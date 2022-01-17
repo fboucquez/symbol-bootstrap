@@ -49,9 +49,9 @@ treasuryReissuanceEpoch: 0
 treasuryReissuanceEpochIneligibleVoterAddresses: []
 votingUnfinalizedBlocksDuration: 0m
 timeSynchronizationMinImportance: 10000000000
-faucetUrl: 'https://testnet.symbol.tools'
-explorerUrl: 'https://testnet.symbol.fyi'
-statisticsServiceUrl: 'https://testnet.symbol.services'
+faucetUrl: https://testnet.symbol.tools
+explorerUrl: https://testnet.symbol.fyi
+statisticsServiceUrl: https://testnet.symbol.services
 treasuryReissuanceTransactionSignatures: []
 nemesis:
     mosaics:
@@ -489,9 +489,9 @@ inflation:
     starting-at-height-110422799: 0
 treasuryReissuance: 0
 knownRestGateways:
-    - 'https://001-joey-dual.symboltest.net:3001'
-    - 'https://201-joey-dual.symboltest.net:3001'
-    - 'https://401-joey-dual.symboltest.net:3001'
+    - https://001-joey-dual.symboltest.net:3001
+    - https://201-joey-dual.symboltest.net:3001
+    - https://401-joey-dual.symboltest.net:3001
 knownPeers:
     -
         publicKey: AAA1922FA60DB681092CBE70A9A1BAB85745025310AE7567F95EA7FD05B3D3FC
@@ -500,7 +500,7 @@ knownPeers:
             port: 7900
         metadata:
             name: 001-joey-dual
-            roles: 'Api,Peer,Voting'
+            roles: Api,Peer,Voting
     -
         publicKey: 0B366C6ED891D9461DC81F4B85D253669E88D055970527D65353F4D22AE7DAFD
         endpoint:
@@ -508,7 +508,7 @@ knownPeers:
             port: 7900
         metadata:
             name: 101-joey-peer
-            roles: 'Peer,Voting'
+            roles: Peer,Voting
     -
         publicKey: 3460D29534CA997D6A74BEBB93F38356833B806E1A35F700EBE08D57FC8D3FED
         endpoint:
@@ -516,7 +516,7 @@ knownPeers:
             port: 7900
         metadata:
             name: 201-joey-dual
-            roles: 'Api,Peer'
+            roles: Api,Peer
     -
         publicKey: DFD29AD20BFEECBA8999C566226B39A63D5076CBE3C69201632C092D2F2C6373
         endpoint:
@@ -524,7 +524,7 @@ knownPeers:
             port: 7900
         metadata:
             name: 301-joey-peer
-            roles: 'Peer,Voting'
+            roles: Peer,Voting
     -
         publicKey: 3E9C8CCC16DDB1EDFF9F2D0BB92D3F839CCC33D38034E526DC768F7BA3958E00
         endpoint:
@@ -532,4 +532,4 @@ knownPeers:
             port: 7900
         metadata:
             name: 401-joey-dual
-            roles: 'Api,Peer,Voting'
+            roles: Api,Peer,Voting
