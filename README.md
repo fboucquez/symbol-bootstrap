@@ -1,6 +1,6 @@
 # symbol-bootstrap
 
-Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s complete networks or nodes to be sync with existing networks.
+Symbol CLI tool that allows you creating, configuring and running [Symbol](https://docs.symbolplatform.com/) blockchain complete networks or nodes to be sync with existing networks.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
