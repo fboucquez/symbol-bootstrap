@@ -37,7 +37,9 @@ import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
 import { CryptoUtils } from './CryptoUtils';
+import { FileSystemService } from './FileSystemService';
 import { NemgenService } from './NemgenService';
 import { RemoteNodeService } from './RemoteNodeService';
 import { ReportParams, ReportService } from './ReportService';
@@ -97,18 +99,20 @@ export interface ConfigResult {
 
 export class ConfigService {
     public static defaultParams: ConfigParams = {
-        target: BootstrapUtils.defaultTargetFolder,
-        workingDir: BootstrapUtils.defaultWorkingDir,
+        target: Constants.defaultTargetFolder,
+        workingDir: Constants.defaultWorkingDir,
         report: false,
         offline: false,
         reset: false,
         upgrade: false,
-        user: BootstrapUtils.CURRENT_USER,
+        user: Constants.CURRENT_USER,
     };
     private readonly configLoader: ConfigLoader;
+    private readonly fileSystemService: FileSystemService;
 
     constructor(private readonly logger: Logger, private readonly params: ConfigParams) {
         this.configLoader = new ConfigLoader(logger);
+        this.fileSystemService = new FileSystemService(logger);
     }
 
     public resolveConfigPreset(password: Password): ConfigPreset {
@@ -125,7 +129,7 @@ export class ConfigService {
         const target = this.params.target;
         try {
             if (this.params.reset) {
-                BootstrapUtils.deleteFolder(this.logger, target);
+                this.fileSystemService.deleteFolder(target);
             }
             const presetLocation = this.configLoader.getGeneratedPresetLocation(target);
             const addressesLocation = this.configLoader.getGeneratedAddressLocation(target);
@@ -166,7 +170,7 @@ export class ConfigService {
             const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, oldPresetData, presetData);
 
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
-            await BootstrapUtils.mkdir(target);
+            await this.fileSystemService.mkdir(target);
 
             const remoteNodeService = new RemoteNodeService(this.logger, presetData, this.params.offline);
 
@@ -211,21 +215,21 @@ export class ConfigService {
 
     private async copyNemesis(addresses: Addresses) {
         const target = this.params.target;
-        const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
+        const nemesisSeedFolder = this.fileSystemService.getTargetNemesisFolder(target, false, 'seed');
         await this.validateSeedFolder(nemesisSeedFolder, `Invalid final seed folder ${nemesisSeedFolder}`);
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
                 const name = account.name;
-                const dataFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'data');
-                await BootstrapUtils.mkdir(dataFolder);
-                const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
-                await BootstrapUtils.generateConfiguration({}, nemesisSeedFolder, seedFolder);
+                const dataFolder = this.fileSystemService.getTargetNodesFolder(target, false, name, 'data');
+                await this.fileSystemService.mkdir(dataFolder);
+                const seedFolder = this.fileSystemService.getTargetNodesFolder(target, false, name, 'seed');
+                await this.fileSystemService.copyDir(nemesisSeedFolder, seedFolder);
             }),
         );
     }
 
     private async validateSeedFolder(nemesisSeedFolder: string, message: string) {
-        BootstrapUtils.validateFolder(nemesisSeedFolder);
+        this.fileSystemService.validateFolder(nemesisSeedFolder);
         const seedData = join(nemesisSeedFolder, '00000', '00001.dat');
         if (!existsSync(seedData)) {
             throw new KnownError(`File ${seedData} doesn't exist! ${message}`);
@@ -238,14 +242,14 @@ export class ConfigService {
 
     private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses, isUpgrade: boolean): Promise<void> {
         const target = this.params.target;
-        const nemesisSeedFolder = BootstrapUtils.getTargetNemesisFolder(target, false, 'seed');
-        await BootstrapUtils.mkdir(nemesisSeedFolder);
+        const nemesisSeedFolder = this.fileSystemService.getTargetNemesisFolder(target, false, 'seed');
+        await this.fileSystemService.mkdir(nemesisSeedFolder);
         if (ConfigLoader.shouldCreateNemesis(presetData)) {
             if (isUpgrade) {
                 this.logger.info('Nemesis data cannot be generated when upgrading...');
             } else {
-                BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
-                await BootstrapUtils.mkdir(nemesisSeedFolder);
+                this.fileSystemService.deleteFolder(nemesisSeedFolder);
+                await this.fileSystemService.mkdir(nemesisSeedFolder);
                 await this.generateNemesisConfig(presetData, addresses);
                 await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
             }
@@ -269,20 +273,20 @@ export class ConfigService {
                 `Is the provided preset nemesisSeedFolder: ${presetNemesisSeedFolder} a valid seed folder?`,
             );
             this.logger.info(`Using custom nemesis seed folder in ${presetNemesisSeedFolder}`);
-            BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
-            await BootstrapUtils.mkdir(nemesisSeedFolder);
-            await BootstrapUtils.generateConfiguration({}, presetNemesisSeedFolder, nemesisSeedFolder);
+            this.fileSystemService.deleteFolder(nemesisSeedFolder);
+            await this.fileSystemService.mkdir(nemesisSeedFolder);
+            await this.fileSystemService.copyDir(presetNemesisSeedFolder, nemesisSeedFolder);
             await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
             return;
         }
         if (BootstrapUtils.isYmlFile(presetData.preset)) {
             throw new KnownError(`Seed for preset ${presetData.preset} could not be found. Please provide 'nemesisSeedFolder'!`);
         } else {
-            const networkNemesisSeed = join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed');
+            const networkNemesisSeed = join(Constants.ROOT_FOLDER, 'presets', presetData.preset, 'seed');
             if (existsSync(networkNemesisSeed)) {
-                BootstrapUtils.deleteFolder(this.logger, nemesisSeedFolder);
-                await BootstrapUtils.mkdir(nemesisSeedFolder);
-                await BootstrapUtils.generateConfiguration({}, networkNemesisSeed, nemesisSeedFolder);
+                this.fileSystemService.deleteFolder(nemesisSeedFolder);
+                await this.fileSystemService.mkdir(nemesisSeedFolder);
+                await this.fileSystemService.copyDir(networkNemesisSeed, nemesisSeedFolder);
                 await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
                 return;
             }
@@ -335,13 +339,13 @@ export class ConfigService {
         currentFinalizationEpoch: number | undefined,
         knownPeers: PeerInfo[],
     ) {
-        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'node');
+        const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'node');
         const name = account.name;
 
-        const serverConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'server-config');
-        const brokerConfig = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'broker-config');
-        const dataFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, name, 'data');
-        await BootstrapUtils.mkdir(dataFolder);
+        const serverConfig = this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'server-config');
+        const brokerConfig = this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'broker-config');
+        const dataFolder = this.fileSystemService.getTargetNodesFolder(this.params.target, false, name, 'data');
+        await this.fileSystemService.mkdir(dataFolder);
 
         const nodePreset = (presetData.nodes || [])[index];
 
@@ -467,10 +471,10 @@ export class ConfigService {
             throw new Error('nemesis must not be defined!');
         }
         const target = this.params.target;
-        const nemesisWorkingDir = BootstrapUtils.getTargetNemesisFolder(target, false);
+        const nemesisWorkingDir = this.fileSystemService.getTargetNemesisFolder(target, false);
         const transactionsDirectory = join(nemesisWorkingDir, presetData.nemesis.transactionsDirectory || presetData.transactionsDirectory);
-        await BootstrapUtils.mkdir(transactionsDirectory);
-        const copyFrom = join(BootstrapUtils.ROOT_FOLDER, `config`, `nemesis`);
+        await this.fileSystemService.mkdir(transactionsDirectory);
+        const copyFrom = join(Constants.ROOT_FOLDER, `config`, `nemesis`);
         const moveTo = join(nemesisWorkingDir, `server-config`);
         const templateContext = { ...(presetData as any), addresses };
         const nodes = (addresses.nodes || []).filter((n, index) => !presetData.nodes?.[index]?.excludeFromNemesis);
@@ -604,23 +608,28 @@ export class ConfigService {
     private generateGateways(presetData: ConfigPreset) {
         return Promise.all(
             (presetData.gateways || []).map(async (gatewayPreset, index: number) => {
-                const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'rest-gateway');
+                const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'rest-gateway');
                 const generatedContext: Partial<GatewayConfigPreset> = {
-                    restDeploymentToolVersion: BootstrapUtils.VERSION,
+                    restDeploymentToolVersion: Constants.VERSION,
                     restDeploymentToolLastUpdatedDate: new Date().toISOString().slice(0, 10),
                 };
                 const templateContext = { ...generatedContext, ...presetData, ...gatewayPreset };
                 const name = templateContext.name || `rest-gateway-${index}`;
-                const moveTo = BootstrapUtils.getTargetGatewayFolder(this.params.target, false, name);
+                const moveTo = this.fileSystemService.getTargetGatewayFolder(this.params.target, false, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
-                const apiNodeConfigFolder = BootstrapUtils.getTargetNodesFolder(
+                const apiNodeConfigFolder = this.fileSystemService.getTargetNodesFolder(
                     this.params.target,
                     false,
                     gatewayPreset.apiNodeName,
                     'server-config',
                     'resources',
                 );
-                const apiNodeCertFolder = BootstrapUtils.getTargetNodesFolder(this.params.target, false, gatewayPreset.apiNodeName, 'cert');
+                const apiNodeCertFolder = this.fileSystemService.getTargetNodesFolder(
+                    this.params.target,
+                    false,
+                    gatewayPreset.apiNodeName,
+                    'cert',
+                );
                 await BootstrapUtils.generateConfiguration(
                     {},
                     apiNodeConfigFolder,
@@ -675,7 +684,7 @@ export class ConfigService {
     private generateExplorers(presetData: ConfigPreset, remoteNodeService: RemoteNodeService) {
         return Promise.all(
             (presetData.explorers || []).map(async (explorerPreset, index: number) => {
-                const copyFrom = join(BootstrapUtils.ROOT_FOLDER, 'config', 'explorer');
+                const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'explorer');
                 const fullName = `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`;
                 const namespaceId = new NamespaceId(fullName);
                 const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
@@ -688,7 +697,7 @@ export class ConfigService {
                     ...explorerPreset,
                 };
                 const name = templateContext.name || `explorer-${index}`;
-                const moveTo = BootstrapUtils.getTargetFolder(this.params.target, false, BootstrapUtils.targetExplorersFolder, name);
+                const moveTo = this.fileSystemService.getTargetFolder(this.params.target, false, Constants.targetExplorersFolder, name);
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
             }),
         );
@@ -710,22 +719,22 @@ export class ConfigService {
     private cleanUpConfiguration(presetData: ConfigPreset) {
         const target = this.params.target;
         (presetData.nodes || []).forEach(({ name }) => {
-            const serverConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'server-config');
-            BootstrapUtils.deleteFolder(this.logger, serverConfigFolder);
+            const serverConfigFolder = this.fileSystemService.getTargetNodesFolder(target, false, name, 'server-config');
+            this.fileSystemService.deleteFolder(serverConfigFolder);
 
-            const brokerConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'broker-config');
-            BootstrapUtils.deleteFolder(this.logger, brokerConfigFolder);
+            const brokerConfigFolder = this.fileSystemService.getTargetNodesFolder(target, false, name, 'broker-config');
+            this.fileSystemService.deleteFolder(brokerConfigFolder);
 
             // Remove old user configs when upgrading.
-            const userConfigFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'userconfig');
-            BootstrapUtils.deleteFolder(this.logger, userConfigFolder);
+            const userConfigFolder = this.fileSystemService.getTargetNodesFolder(target, false, name, 'userconfig');
+            this.fileSystemService.deleteFolder(userConfigFolder);
 
-            const seedFolder = BootstrapUtils.getTargetNodesFolder(target, false, name, 'seed');
-            BootstrapUtils.deleteFolder(this.logger, seedFolder);
+            const seedFolder = this.fileSystemService.getTargetNodesFolder(target, false, name, 'seed');
+            this.fileSystemService.deleteFolder(seedFolder);
         });
         (presetData.gateways || []).forEach(({ name }) => {
-            const configFolder = BootstrapUtils.getTargetGatewayFolder(target, false, name);
-            BootstrapUtils.deleteFolder(this.logger, configFolder, [
+            const configFolder = this.fileSystemService.getTargetGatewayFolder(target, false, name);
+            this.fileSystemService.deleteFolder(configFolder, [
                 join(configFolder, presetData.restSSLKeyFileName),
                 join(configFolder, presetData.restSSLCertificateFileName),
             ]);

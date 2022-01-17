@@ -28,8 +28,8 @@ import {
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
 import { VotingKeyAccount } from './VotingUtils';
 
 /**
@@ -67,7 +67,7 @@ export interface GenericNodeAccount {
 
 export class LinkService implements TransactionFactory {
     public static readonly defaultParams: LinkParams = {
-        target: BootstrapUtils.defaultTargetFolder,
+        target: Constants.defaultTargetFolder,
         useKnownRestGateways: false,
         ready: false,
         url: 'http://localhost:3000',

@@ -17,9 +17,18 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { Assembly, LoggerFactory, LogType } from '../../src';
-import { ConfigAccount, PrivateKeySecurityMode } from '../../src/model';
-import { BootstrapUtils, ConfigLoader, KeyName, Preset } from '../../src/service';
+import {
+    Assembly,
+    BootstrapUtils,
+    ConfigAccount,
+    ConfigLoader,
+    Constants,
+    KeyName,
+    LoggerFactory,
+    LogType,
+    Preset,
+    PrivateKeySecurityMode,
+} from '../../src';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
 class ConfigLoaderMocked extends ConfigLoader {
@@ -38,7 +47,7 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
+                workingDir: Constants.defaultWorkingDir,
                 preset: undefined,
                 assembly: undefined,
                 customPreset: undefined,
@@ -57,7 +66,7 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
+                workingDir: Constants.defaultWorkingDir,
                 preset: Preset.testnet,
                 assembly: undefined,
                 customPreset: undefined,
@@ -76,7 +85,7 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
+                workingDir: Constants.defaultWorkingDir,
                 preset: Preset.testnet,
                 assembly: 'invalid-assembly.yml',
                 customPreset: undefined,
@@ -95,7 +104,7 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
+                workingDir: Constants.defaultWorkingDir,
                 preset: 'invalid-preset.yml',
                 assembly: Assembly.dual,
                 customPreset: undefined,
@@ -111,7 +120,7 @@ describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData bootstrap no assembly', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.bootstrap,
             customPreset: undefined,
             customPresetObject: undefined,
@@ -125,7 +134,7 @@ describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData testnet assembly', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.testnet,
             assembly: Assembly.api,
             customPreset: undefined,
@@ -140,7 +149,7 @@ describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData testnet assembly using external files', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: 'presets/testnet/network.yml',
             assembly: 'presets/assemblies/assembly-api.yml',
             customPreset: undefined,
@@ -155,7 +164,7 @@ describe('ConfigLoader', () => {
     it('ConfigLoader custom maxUnlockedAccounts', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const originalPresetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.testnet,
             assembly: Assembly.dual,
             customPreset: 'test/unit-test-profiles/custom_preset.yml',
@@ -183,7 +192,7 @@ describe('ConfigLoader', () => {
         });
 
         const upgradedPresetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             oldPresetData: originalPresetData,
             preset: Preset.testnet,
             assembly: Assembly.dual,
@@ -265,7 +274,7 @@ describe('ConfigLoader', () => {
     it('ConfigLoader custom maxUnlockedAccounts', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const originalPresetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.testnet,
             assembly: Assembly.dual,
             customPreset: 'test/unit-test-profiles/custom_preset.yml',
@@ -293,7 +302,7 @@ describe('ConfigLoader', () => {
         });
 
         const upgradedPresetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             oldPresetData: originalPresetData,
             preset: Preset.testnet,
             assembly: Assembly.dual,
@@ -318,7 +327,7 @@ describe('ConfigLoader', () => {
         });
 
         const upgradedPresetResetToDefaults = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             oldPresetData: originalPresetData,
             preset: Preset.testnet,
             customPresetObject: {
@@ -375,7 +384,7 @@ describe('ConfigLoader', () => {
     it('ConfigLoader loadPresetData bootstrap custom', async () => {
         const configLoader = new ConfigLoaderMocked(logger);
         const presetData = await configLoader.createPresetData({
-            workingDir: BootstrapUtils.defaultWorkingDir,
+            workingDir: Constants.defaultWorkingDir,
             preset: Preset.bootstrap,
             assembly: undefined,
             customPreset: 'test/override-currency-preset.yml',
@@ -392,7 +401,7 @@ describe('ConfigLoader', () => {
         const configLoader = new ConfigLoaderMocked(logger);
         try {
             await configLoader.createPresetData({
-                workingDir: BootstrapUtils.defaultWorkingDir,
+                workingDir: Constants.defaultWorkingDir,
                 preset: Preset.bootstrap,
                 assembly: undefined,
                 customPreset: 'test/override-currency-preset.yml',

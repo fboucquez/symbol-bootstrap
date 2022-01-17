@@ -26,8 +26,8 @@ import {
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset } from '../model';
 import { AnnounceService, TransactionFactory, TransactionFactoryParams } from './AnnounceService';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
 import { TransactionUtils } from './TransactionUtils';
 
 /**
@@ -50,7 +50,7 @@ export type ModifyMultisigParams = {
 
 export class ModifyMultisigService implements TransactionFactory {
     public static readonly defaultParams: ModifyMultisigParams = {
-        target: BootstrapUtils.defaultTargetFolder,
+        target: Constants.defaultTargetFolder,
         useKnownRestGateways: false,
         ready: false,
         url: 'http://localhost:3000',

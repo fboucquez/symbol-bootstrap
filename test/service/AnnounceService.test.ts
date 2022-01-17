@@ -32,17 +32,21 @@ import {
     TransferTransaction,
     UInt64,
 } from 'symbol-sdk';
-import { Assembly, BootstrapUtils, LoggerFactory, LogType } from '../../src';
 import {
     AnnounceService,
+    Assembly,
     BootstrapService,
+    BootstrapUtils,
     CommandUtils,
     ConfigService,
+    Constants,
+    LoggerFactory,
+    LogType,
     Preset,
     RemoteNodeService,
     RepositoryInfo,
     TransactionUtils,
-} from '../../src/service';
+} from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 describe('Announce Service', () => {
     let announceService: AnnounceService;
@@ -80,7 +84,7 @@ describe('Announce Service', () => {
     const useKnownRestGateways = false;
     const networkType = NetworkType.TEST_NET;
 
-    const root = BootstrapUtils.ROOT_FOLDER;
+    const root = Constants.ROOT_FOLDER;
     const preset = params.preset;
     const networkPresetLocation = `${root}/presets/${preset}/network.yml`;
     const networkPreset = BootstrapUtils.loadYaml(networkPresetLocation, false);

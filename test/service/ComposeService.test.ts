@@ -18,15 +18,16 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { Assembly, LoggerFactory, LogType, RuntimeService } from '../../src';
+import { Assembly, Constants, FileSystemService, LoggerFactory, LogType, RuntimeService } from '../../src';
 import { DockerCompose } from '../../src/model';
 import { BootstrapUtils, ComposeService, ConfigLoader, ConfigService, LinkService, Preset, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
+const fileSystemService = new FileSystemService(logger);
 describe('ComposeService', () => {
     const password = '1234';
 
     const assertDockerCompose = async (params: StartParams, expectedComposeFile: string) => {
-        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params, workingDir: BootstrapUtils.defaultWorkingDir });
+        const presetData = new ConfigLoader(logger).createPresetData({ password, ...params, workingDir: Constants.defaultWorkingDir });
         const dockerCompose = await new ComposeService(logger, params).run(presetData);
         Object.values(dockerCompose.services).forEach((service) => {
             if (service.mem_limit) {
@@ -63,7 +64,7 @@ ${BootstrapUtils.toYaml(dockerCompose)}
 
 `,
         ).to.be.deep.eq(expectedDockerCompose);
-        BootstrapUtils.deleteFolder(logger, params.target);
+        fileSystemService.deleteFolder(params.target);
     };
 
     it('Compose testnet dual', async () => {

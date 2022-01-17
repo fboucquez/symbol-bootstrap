@@ -15,9 +15,9 @@
  */
 
 import { join } from 'path';
-import { Logger } from '../logger/Logger';
+import { Logger } from '../logger';
 import { ConfigPreset, NodeAccount, NodePreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
+import { FileSystemService } from './FileSystemService';
 import { CatapultVotingKeyFileProvider, NativeVotingKeyFileProvider, VotingKeyFileProvider } from './VotingKeyFileProvider';
 import { VotingUtils } from './VotingUtils';
 
@@ -28,7 +28,10 @@ export interface VotingParams {
 }
 
 export class VotingService {
-    constructor(private readonly logger: Logger, protected readonly params: VotingParams) {}
+    private readonly fileSystemService: FileSystemService;
+    constructor(private readonly logger: Logger, protected readonly params: VotingParams) {
+        this.fileSystemService = new FileSystemService(logger);
+    }
 
     public async run(
         presetData: ConfigPreset,
@@ -46,7 +49,10 @@ export class VotingService {
             return false;
         }
         const target = this.params.target;
-        const votingKeysFolder = join(BootstrapUtils.getTargetNodesFolder(target, true, nodeAccount.name), presetData.votingKeysDirectory);
+        const votingKeysFolder = join(
+            this.fileSystemService.getTargetNodesFolder(target, true, nodeAccount.name),
+            presetData.votingKeysDirectory,
+        );
         const votingKeyDesiredFutureLifetime = presetData.votingKeyDesiredFutureLifetime;
         const votingKeyDesiredLifetime = presetData.votingKeyDesiredLifetime;
         if (votingKeyDesiredFutureLifetime > votingKeyDesiredLifetime) {
@@ -54,9 +60,9 @@ export class VotingService {
                 `votingKeyDesiredFutureLifetime (${votingKeyDesiredFutureLifetime}) cannot be greater than votingKeyDesiredLifetime (${votingKeyDesiredLifetime})`,
             );
         }
-        await BootstrapUtils.mkdir(votingKeysFolder);
+        await this.fileSystemService.mkdir(votingKeysFolder);
         const votingUtils = new VotingUtils();
-        BootstrapUtils.deleteFile(join(votingKeysFolder, 'metadata.yml'));
+        this.fileSystemService.deleteFile(join(votingKeysFolder, 'metadata.yml'));
         const currentVotingFiles = votingUtils.loadVotingFiles(votingKeysFolder);
         const maxVotingKeyEndEpoch = Math.max(currentVotingFiles[currentVotingFiles.length - 1]?.endEpoch || 0, networkEpoch - 1);
 

@@ -20,8 +20,8 @@ import { prompt } from 'inquirer';
 import { Account, Convert, NetworkType, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
 import { CertificatePair } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
 import { KeyName } from './ConfigService';
+import { Constants } from './Constants';
 
 export class CommandUtils {
     public static passwordPromptDefaultMessage = `Enter the password used to encrypt and decrypt custom presets, addresses.yml, and preset.yml files. When providing a password, private keys will be encrypted. Keep this password in a secure place!`;
@@ -30,7 +30,7 @@ export class CommandUtils {
     public static targetFlag = flags.string({
         char: 't',
         description: 'The target folder where the symbol-bootstrap network is generated',
-        default: BootstrapUtils.defaultTargetFolder,
+        default: Constants.defaultTargetFolder,
     });
 
     public static passwordFlag = CommandUtils.getPasswordFlag(

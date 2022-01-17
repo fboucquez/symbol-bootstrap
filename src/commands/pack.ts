@@ -18,7 +18,18 @@ import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
 import { dirname, join } from 'path';
-import { BootstrapService, BootstrapUtils, CommandUtils, CryptoUtils, LoggerFactory, LogType, ZipItem, ZipUtils } from '../';
+import {
+    BootstrapService,
+    BootstrapUtils,
+    CommandUtils,
+    Constants,
+    CryptoUtils,
+    FileSystemService,
+    LoggerFactory,
+    LogType,
+    ZipItem,
+    ZipUtils,
+} from '../';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -83,7 +94,7 @@ export default class Pack extends Command {
         );
         const service = new BootstrapService(logger);
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
-        const configResult = await service.config({ ...flags, workingDir: BootstrapUtils.defaultWorkingDir });
+        const configResult = await service.config({ ...flags, workingDir: Constants.defaultWorkingDir });
         await service.compose(flags, configResult.presetData);
 
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';
@@ -111,7 +122,7 @@ export default class Pack extends Command {
         ];
 
         await new ZipUtils(logger).zip(targetZip, zipItems);
-        await BootstrapUtils.deleteFile(noPrivateKeyTempFile);
+        await new FileSystemService(logger).deleteFile(noPrivateKeyTempFile);
         logger.info('');
         logger.info(`Zip file ${targetZip} has been created. You can unzip it in your node's machine and run:`);
         logger.info(`$ symbol-bootstrap start`);

@@ -31,6 +31,7 @@ import {
 import { BootstrapUtils, KnownError, Migration, Password } from './BootstrapUtils';
 import { CommandUtils } from './CommandUtils';
 import { Assembly, defaultAssembly, KeyName } from './ConfigService';
+import { Constants } from './Constants';
 import { CryptoUtils } from './CryptoUtils';
 
 export class ConfigLoader {
@@ -235,8 +236,7 @@ export class ConfigLoader {
         return (
             presetData.nemesis &&
             !presetData.nemesisSeedFolder &&
-            (BootstrapUtils.isYmlFile(presetData.preset) ||
-                !existsSync(join(BootstrapUtils.ROOT_FOLDER, 'presets', presetData.preset, 'seed')))
+            (BootstrapUtils.isYmlFile(presetData.preset) || !existsSync(join(Constants.ROOT_FOLDER, 'presets', presetData.preset, 'seed')))
         );
     }
 
@@ -440,13 +440,13 @@ export class ConfigLoader {
     }
 
     public static loadAssembly(preset: string, assembly: string, workingDir: string): CustomPreset {
-        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', 'assemblies', `assembly-${assembly}.yml`);
+        const fileLocation = join(Constants.ROOT_FOLDER, 'presets', 'assemblies', `assembly-${assembly}.yml`);
         const errorMessage = `Assembly '${assembly}' is not valid for preset '${preset}'. Have you provided the right --preset <preset> --assembly <assembly> ?`;
         return this.loadBundledPreset(assembly, fileLocation, workingDir, errorMessage);
     }
 
     public static loadNetworkPreset(preset: string, workingDir: string): CustomPreset {
-        const fileLocation = join(BootstrapUtils.ROOT_FOLDER, 'presets', preset, `network.yml`);
+        const fileLocation = join(Constants.ROOT_FOLDER, 'presets', preset, `network.yml`);
         const errorMessage = `Preset '${preset}' does not exist. Have you provided the right --preset <preset> ?`;
         return this.loadBundledPreset(preset, fileLocation, workingDir, errorMessage);
     }
@@ -466,7 +466,7 @@ export class ConfigLoader {
     }
 
     public static loadSharedPreset(): CustomPreset {
-        return BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'shared.yml'), false) as ConfigPreset;
+        return BootstrapUtils.loadYaml(join(Constants.ROOT_FOLDER, 'presets', 'shared.yml'), false) as ConfigPreset;
     }
     public mergePresets<T extends CustomPreset>(object: T | undefined, ...otherArgs: (CustomPreset | undefined)[]): T {
         const presets = [object, ...otherArgs];

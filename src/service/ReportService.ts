@@ -21,6 +21,8 @@ import { Logger } from '../logger';
 import { ConfigPreset } from '../model';
 import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { Constants } from './Constants';
+import { FileSystemService } from './FileSystemService';
 
 export type ReportParams = { target: string };
 
@@ -49,11 +51,13 @@ interface ReportNode {
 
 export class ReportService {
     public static defaultParams: ReportParams = {
-        target: BootstrapUtils.defaultTargetFolder,
+        target: Constants.defaultTargetFolder,
     };
     private readonly configLoader: ConfigLoader;
+    private readonly fileSystemService: FileSystemService;
     constructor(private readonly logger: Logger, protected readonly params: ReportParams) {
         this.configLoader = new ConfigLoader(logger);
+        this.fileSystemService = new FileSystemService(logger);
     }
 
     private createReportFromFile(resourceContent: string, descriptions: any): ReportSection[] {
@@ -96,9 +100,9 @@ export class ReportService {
     private async createReportsPerNode(presetData: ConfigPreset): Promise<ReportNode[]> {
         const workingDir = process.cwd();
         const target = join(workingDir, this.params.target);
-        const descriptions = await BootstrapUtils.loadYaml(join(BootstrapUtils.ROOT_FOLDER, 'presets', 'descriptions.yml'), false);
+        const descriptions = await BootstrapUtils.loadYaml(join(Constants.ROOT_FOLDER, 'presets', 'descriptions.yml'), false);
         const promises: Promise<ReportNode>[] = (presetData.nodes || []).map(async (n) => {
-            const resourcesFolder = join(BootstrapUtils.getTargetNodesFolder(target, false, n.name), 'server-config', 'resources');
+            const resourcesFolder = join(this.fileSystemService.getTargetNodesFolder(target, false, n.name), 'server-config', 'resources');
             const files = await fsPromises.readdir(resourcesFolder);
             const reportFiles = files
                 .filter((fileName) => fileName.indexOf('.properties') > -1)
@@ -129,7 +133,7 @@ export class ReportService {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, false);
 
         const reportFolder = join(this.params.target, 'reports');
-        BootstrapUtils.deleteFolder(this.logger, reportFolder);
+        this.fileSystemService.deleteFolder(reportFolder);
         const reportNodes: ReportNode[] = await this.createReportsPerNode(presetData);
 
         const missingProperties = _.flatMap(reportNodes, (n) =>
@@ -153,7 +157,7 @@ export class ReportService {
 
         // const missingDescriptions = reportNodes.map(node -> node.files)
 
-        await BootstrapUtils.mkdir(reportFolder);
+        await this.fileSystemService.mkdir(reportFolder);
         const promises = _.flatMap(reportNodes, (n) => {
             return [this.toRstReport(reportFolder, n), this.toCsvReport(reportFolder, n)];
         });
@@ -163,7 +167,7 @@ export class ReportService {
     private async toRstReport(reportFolder: string, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.rst`);
         const reportContent =
-            `Symbol Bootstrap Version: ${BootstrapUtils.VERSION}\n` +
+            `Symbol Bootstrap Version: ${Constants.VERSION}\n` +
             n.files
                 .map((fileReport) => {
                     const hasDescriptionSection = fileReport.sections.find((s) => s.lines.find((l) => l.description || l.type));
@@ -205,7 +209,7 @@ ${csvBody.trim().replace(/^/gm, '    ')}`;
     private async toCsvReport(reportFolder: string, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.csv`);
         const reportContent =
-            `symbol-bootstrap-version; ${BootstrapUtils.VERSION}\n\n` +
+            `symbol-bootstrap-version; ${Constants.VERSION}\n\n` +
             n.files
                 .map((fileReport) => {
                     const csvBody = fileReport.sections

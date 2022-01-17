@@ -17,7 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { dirname } from 'path';
-import { BootstrapUtils, CommandUtils, CryptoUtils, KnownError, LoggerFactory, LogType } from '../';
+import { BootstrapUtils, CommandUtils, CryptoUtils, FileSystemService, KnownError, LoggerFactory, LogType } from '../';
 
 export default class Encrypt extends Command {
     static description = `It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.
@@ -77,7 +77,7 @@ $ symbol-bootstrap start --password 1234 --preset testnet --assembly dual --cust
         if (CryptoUtils.encryptedCount(data) > 0) {
             throw new KnownError(`Source file ${flags.source} is already encrypted. If you want to decrypt it use the decrypt command.`);
         }
-        await BootstrapUtils.mkdir(dirname(flags.destination));
+        await new FileSystemService(logger).mkdir(dirname(flags.destination));
         await BootstrapUtils.writeYaml(flags.destination, data, password);
         logger.info(`Encrypted file ${flags.destination} has been created!`);
     }
