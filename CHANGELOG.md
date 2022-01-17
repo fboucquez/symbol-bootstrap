@@ -13,6 +13,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | Symbol Bootstrap | v1.1.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
 - `BootstrapUtils` code clean up split.
+- Allowing user provided compose services via custom preset.
+
 
 ## [1.1.2] - Jan-17-2022
 

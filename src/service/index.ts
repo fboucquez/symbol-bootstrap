@@ -1,6 +1,9 @@
 // created from 'create-ts-index'
 
+export * from './AccountResolver';
+export * from './AddressesService';
 export * from './AnnounceService';
+export * from './BootstrapAccountResolver';
 export * from './BootstrapService';
 export * from './BootstrapUtils';
 export * from './CertificateService';
@@ -8,10 +11,12 @@ export * from './CommandUtils';
 export * from './ComposeService';
 export * from './ConfigLoader';
 export * from './ConfigService';
+export * from './ConfigurationUtils';
 export * from './Constants';
 export * from './CryptoUtils';
 export * from './FileSystemService';
 export * from './LinkService';
+export * from './MigrationService';
 export * from './ModifyMultisigService';
 export * from './NemgenService';
 export * from './OSUtils';

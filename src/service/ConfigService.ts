@@ -19,7 +19,6 @@ import { copyFileSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
 import {
-    Account,
     AccountKeyLinkTransaction,
     Convert,
     Deadline,
@@ -33,10 +32,12 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, PeerInfo } from '../model';
+import { AccountResolver, DefaultAccountResolver } from './AccountResolver';
+import { AddressesService } from './AddressesService';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService } from './CertificateService';
-import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
+import { ConfigurationUtils } from './ConfigurationUtils';
 import { Constants } from './Constants';
 import { CryptoUtils } from './CryptoUtils';
 import { FileSystemService } from './FileSystemService';
@@ -72,7 +73,6 @@ export enum KeyName {
     Transport = 'Transport',
     Voting = 'Voting',
     VRF = 'VRF',
-    NemesisSigner = 'Nemesis Signer',
     NemesisAccount = 'Nemesis Account',
     ServiceProvider = 'Service Provider',
 }
@@ -90,6 +90,7 @@ export interface ConfigParams extends VotingParams, ReportParams {
     assembly?: string;
     customPreset?: string;
     customPresetObject?: CustomPreset;
+    accountResolver: AccountResolver;
 }
 
 export interface ConfigResult {
@@ -106,13 +107,16 @@ export class ConfigService {
         reset: false,
         upgrade: false,
         user: Constants.CURRENT_USER,
+        accountResolver: new DefaultAccountResolver(),
     };
     private readonly configLoader: ConfigLoader;
     private readonly fileSystemService: FileSystemService;
+    private readonly addressesService: AddressesService;
 
     constructor(private readonly logger: Logger, private readonly params: ConfigParams) {
         this.configLoader = new ConfigLoader(logger);
         this.fileSystemService = new FileSystemService(logger);
+        this.addressesService = new AddressesService(logger, params.accountResolver);
     }
 
     public resolveConfigPreset(password: Password): ConfigPreset {
@@ -167,7 +171,7 @@ export class ConfigService {
             }
 
             const presetData: ConfigPreset = this.resolveCurrentPresetData(oldPresetData, password);
-            const addresses = await this.configLoader.generateRandomConfiguration(oldAddresses, oldPresetData, presetData);
+            const addresses = await this.addressesService.resolveAddresses(oldAddresses, oldPresetData, presetData);
 
             const privateKeySecurityMode = CryptoUtils.getPrivateKeySecurityMode(presetData.privateKeySecurityMode);
             await this.fileSystemService.mkdir(target);
@@ -244,7 +248,7 @@ export class ConfigService {
         const target = this.params.target;
         const nemesisSeedFolder = this.fileSystemService.getTargetNemesisFolder(target, false, 'seed');
         await this.fileSystemService.mkdir(nemesisSeedFolder);
-        if (ConfigLoader.shouldCreateNemesis(presetData)) {
+        if (ConfigurationUtils.shouldCreateNemesis(presetData)) {
             if (isUpgrade) {
                 this.logger.info('Nemesis data cannot be generated when upgrading...');
             } else {
@@ -308,7 +312,7 @@ export class ConfigService {
                 },
                 metadata: {
                     name: nodePresetData.friendlyName || '',
-                    roles: ConfigLoader.resolveRoles(nodePresetData),
+                    roles: ConfigurationUtils.resolveRoles(nodePresetData),
                 },
             };
         });
@@ -327,7 +331,12 @@ export class ConfigService {
                     main: account.main,
                     transport: account.transport,
                 };
-                return new CertificateService(this.logger, this.params).run(presetData, account.name, providedCertificates, false);
+                return new CertificateService(this.logger, this.params.accountResolver, this.params).run(
+                    presetData,
+                    account.name,
+                    providedCertificates,
+                    false,
+                );
             }),
         );
     }
@@ -349,36 +358,40 @@ export class ConfigService {
 
         const nodePreset = (presetData.nodes || [])[index];
 
-        const harvesterSigningPrivateKey = nodePreset.harvesting
-            ? await CommandUtils.resolvePrivateKey(
-                  this.logger,
+        const harvestingKeyName = account.remote ? KeyName.Remote : KeyName.Main;
+        const harvestingAccount = account.remote || account.main;
+        const harvesterSigningAccount = nodePreset.harvesting
+            ? await this.params.accountResolver.resolveAccount(
                   presetData.networkType,
-                  account.remote || account.main,
-                  account.remote ? KeyName.Remote : KeyName.Main,
+                  harvestingAccount,
+                  harvestingKeyName,
                   account.name,
                   'storing the harvesterSigningPrivateKey in the server properties',
+                  'Should not generate!',
               )
-            : '';
-        const harvesterVrfPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
-            presetData.networkType,
-            account.vrf,
-            KeyName.VRF,
-            account.name,
-            'storing the harvesterVrfPrivateKey in the server properties',
-        );
+            : undefined;
+        const harvesterVrf = nodePreset.harvesting
+            ? await this.params.accountResolver.resolveAccount(
+                  presetData.networkType,
+                  account.vrf,
+                  KeyName.VRF,
+                  account.name,
+                  'storing the harvesterVrfPrivateKey in the server properties',
+                  'Should not generate!',
+              )
+            : undefined;
 
         const beneficiaryAddress = nodePreset.beneficiaryAddress || presetData.beneficiaryAddress;
         const generatedContext = {
             name: name,
             friendlyName: nodePreset?.friendlyName || account.friendlyName,
-            harvesterSigningPrivateKey: harvesterSigningPrivateKey,
-            harvesterVrfPrivateKey: harvesterVrfPrivateKey,
+            harvesterSigningPrivateKey: harvesterSigningAccount?.privateKey || '',
+            harvesterVrfPrivateKey: harvesterVrf?.privateKey || '',
             unfinalizedBlocksDuration: nodePreset.voting
                 ? presetData.votingUnfinalizedBlocksDuration
                 : presetData.nonVotingUnfinalizedBlocksDuration,
             beneficiaryAddress: beneficiaryAddress == undefined ? account.main.address : beneficiaryAddress,
-            roles: ConfigLoader.resolveRoles(nodePreset),
+            roles: ConfigurationUtils.resolveRoles(nodePreset),
         };
         const templateContext: any = { ...presetData, ...generatedContext, ...nodePreset };
         const excludeFiles: string[] = [];
@@ -451,7 +464,7 @@ export class ConfigService {
             nodePreset,
             currentFinalizationEpoch,
             undefined,
-            ConfigLoader.shouldCreateNemesis(presetData),
+            ConfigurationUtils.shouldCreateNemesis(presetData),
         );
     }
 
@@ -521,15 +534,14 @@ export class ConfigService {
         }
         const deadline = Deadline.createFromDTO('1');
         const vrf = VrfKeyLinkTransaction.create(deadline, node.vrf.publicKey, LinkAction.Link, presetData.networkType, UInt64.fromUint(0));
-        const mainPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const account = await this.params.accountResolver.resolveAccount(
             presetData.networkType,
             node.main,
             KeyName.Main,
             node.name,
             'creating the vrf key link transactions',
+            'Should not generate!',
         );
-        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(vrf, presetData.nemesisGenerationHashSeed);
         return this.storeTransaction(transactionsDirectory, `vrf_${node.name}`, signedTransaction.payload);
     }
@@ -553,15 +565,14 @@ export class ConfigService {
             presetData.networkType,
             UInt64.fromUint(0),
         );
-        const mainPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const account = await this.params.accountResolver.resolveAccount(
             presetData.networkType,
             node.main,
             KeyName.Main,
             node.name,
             'creating the account link transactions',
+            'Should not generate!',
         );
-        const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
         const signedTransaction = account.sign(akl, presetData.nemesisGenerationHashSeed);
         return this.storeTransaction(transactionsDirectory, `remote_${node.name}`, signedTransaction.payload);
     }
@@ -572,13 +583,13 @@ export class ConfigService {
         node: NodeAccount,
     ): Promise<Transaction[]> {
         const votingFiles = node.voting || [];
-        const mainPrivateKey = await CommandUtils.resolvePrivateKey(
-            this.logger,
+        const account = await this.params.accountResolver.resolveAccount(
             presetData.networkType,
             node.main,
             KeyName.Main,
             node.name,
             'creating the voting key link transactions',
+            'Should not generate!',
         );
         return Promise.all(
             votingFiles.map(async (votingFile) => {
@@ -592,7 +603,6 @@ export class ConfigService {
                     1,
                     UInt64.fromUint(0),
                 );
-                const account = Account.createFromPrivateKey(mainPrivateKey, presetData.networkType);
                 const signedTransaction = account.sign(voting, presetData.nemesisGenerationHashSeed);
                 return this.storeTransaction(transactionsDirectory, `voting_${node.name}`, signedTransaction.payload);
             }),

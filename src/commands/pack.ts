@@ -18,18 +18,18 @@ import { Command, flags } from '@oclif/command';
 import { existsSync } from 'fs';
 import { prompt } from 'inquirer';
 import { dirname, join } from 'path';
+import { LoggerFactory, LogType } from '../logger';
 import {
+    BootstrapAccountResolver,
     BootstrapService,
     BootstrapUtils,
     CommandUtils,
     Constants,
     CryptoUtils,
     FileSystemService,
-    LoggerFactory,
-    LogType,
     ZipItem,
     ZipUtils,
-} from '../';
+} from '../service';
 import Clean from './clean';
 import Compose from './compose';
 import Config from './config';
@@ -92,9 +92,11 @@ export default class Pack extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
+        const workingDir = Constants.defaultWorkingDir;
         const service = new BootstrapService(logger);
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
-        const configResult = await service.config({ ...flags, workingDir: Constants.defaultWorkingDir });
+        const accountResolver = new BootstrapAccountResolver(logger);
+        const configResult = await service.config({ ...flags, workingDir, accountResolver });
         await service.compose(flags, configResult.presetData);
 
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';

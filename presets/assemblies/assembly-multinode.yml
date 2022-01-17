@@ -65,16 +65,17 @@ faucets:
     - repeat: 0
       name: 'faucet-{{$index}}'
       gateway: 'rest-gateway-{{$index}}'
-      environment:
-          DEFAULT_NODE: 'http://rest-gateway-{{$index}}:{{add $index 3000}}'
-          DEFAULT_NODE_CLIENT: 'http://localhost:{{add $index 3000}}'
-          NATIVE_CURRENCY_OUT_MAX: 500000000
-          NATIVE_CURRENCY_OUT_MIN: 100000000
-          MAX_FEE: 5000000
-          ENOUGH_BALANCE: 100000000000
-          MAX_UNCONFIRMED: 99
-          BLACKLIST_MOSAIC_IDS: '[]'
-          EXPLORER_URL: 'http://localhost:{{add $index 90}}/'
+      compose:
+          environment:
+              DEFAULT_NODE: 'http://rest-gateway-{{$index}}:{{add $index 3000}}'
+              DEFAULT_NODE_CLIENT: 'http://localhost:{{add $index 3000}}'
+              NATIVE_CURRENCY_OUT_MAX: 500000000
+              NATIVE_CURRENCY_OUT_MIN: 100000000
+              MAX_FEE: 5000000
+              ENOUGH_BALANCE: 100000000000
+              MAX_UNCONFIRMED: 99
+              BLACKLIST_MOSAIC_IDS: '[]'
+              EXPLORER_URL: 'http://localhost:{{add $index 90}}/'
       openPort: '{{add $index 100}}'
 httpsProxies:
     - name: 'https-proxy'

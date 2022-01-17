@@ -15,6 +15,7 @@
  */
 
 import { NetworkType } from 'symbol-sdk';
+import { DockerCompose, DockerComposeService } from './DockerCompose';
 
 export enum PrivateKeySecurityMode {
     ENCRYPT = 'ENCRYPT',
@@ -28,8 +29,7 @@ export interface DockerServicePreset {
     openPort?: boolean | number | string;
     host?: string;
     excludeDockerService?: boolean;
-    environment?: any;
-    compose?: any;
+    compose?: DockerComposeService;
     dockerComposeDebugMode?: boolean;
 }
 
@@ -429,6 +429,8 @@ export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPrese
     // Allows hardcoded list. For new networks and for possible fallbacks.
     knownRestGateways?: string[];
     knownPeers?: PeerInfo[];
+    // Allows users to provide their own modification to the generate compose.yml, for example, a new docker service.
+    compose: DeepPartial<DockerCompose>;
 }
 
 export interface ConfigPreset extends CommonConfigPreset {
@@ -445,10 +447,10 @@ export interface ConfigPreset extends CommonConfigPreset {
 
 export interface CustomPreset extends Partial<CommonConfigPreset> {
     nemesis?: DeepPartial<NemesisPreset>;
-    databases?: Partial<DatabasePreset>[];
-    nodes?: Partial<NodePreset>[];
-    gateways?: Partial<GatewayPreset>[];
-    explorers?: Partial<ExplorerPreset>[];
-    faucets?: Partial<FaucetPreset>[];
-    httpsProxies?: Partial<HttpsProxyPreset>[];
+    databases?: DeepPartial<DatabasePreset>[];
+    nodes?: DeepPartial<NodePreset>[];
+    gateways?: DeepPartial<GatewayPreset>[];
+    explorers?: DeepPartial<ExplorerPreset>[];
+    faucets?: DeepPartial<FaucetPreset>[];
+    httpsProxies?: DeepPartial<HttpsProxyPreset>[];
 }
