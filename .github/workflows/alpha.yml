@@ -1,9 +1,7 @@
 name: Alpha
 on:
-    workflow_run:
-        workflows: [build]
+    push:
         branches: [dev]
-        types: [completed]
 jobs:
     doc:
         name: Github Pages Deploy

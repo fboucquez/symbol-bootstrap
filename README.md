@@ -7,40 +7,40 @@ Symbol CLI tool that allows you creating, configuring and running Symbol&#39;s c
 [![Downloads/week](https://img.shields.io/npm/dw/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
 [![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json)
 [![Build](https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml/badge.svg)](https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml)
-[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=main)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=dev)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
 [![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://fboucquez.github.io/symbol-bootstrap/)
 
 <!-- toc -->
 * [symbol-bootstrap](#symbol-bootstrap)
-* [Why this tool?](#why-this-tool)
-* [Key benefits:](#key-benefits)
+* [Key features:](#key-features)
 * [Concepts](#concepts)
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Wizard](#wizard)
-* [E2E Testing support](#e2e-testing-support)
 * [Development](#development)
+* [Support](#support)
 * [Command Topics](#command-topics)
 <!-- tocstop -->
 
-# Why this tool?
-
-This tool has been created to address the original problems defined in Symbol's [NIP11](https://github.com/nemtech/NIP/blob/main/NIPs/nip-0011.md).
-
-# Key benefits:
+# Key features:
 
 -   It's an installable cli tool. It's not a repo you need to clone and compile.
+-   It provides a one liner command for testnet/mainnet node creation and upgrades.
+-   It provides a one liner command for local test network creation and upgrades.
+-   It includes a wizard for easy node and accounts creation.
+-   It includes a comprehensive list of commands for node administration.
 -   The configuration is parametrized via CLI commands and presets instead of by changing properties files.
 -   The tools code is unique for any type of network, new networks or nodes in a network. It doesn't need to be copied and pasted in different projects or assemblies.
 -   The config command runs on the host machine, not via docker making it easier to debug or tune
--   It's uses the TS SDK for key generation, vrf transactions, address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).
+-   It uses the TS SDK for key generation, vrf transactions, voting files, and address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).
 -   Easier to maintain, the properties files are reused for all nodes, assemblies and network types.
 -   Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.
 -   Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.
 -   The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.
--   The used docker images versions can be changed via configuration/preset
+-   The used docker images versions can be changed via configuration/preset.
 -   It uses the [oclif](https://oclif.io) framework. New commands are easy to add and document.
--   It can be included as a npm dependency for clients' e2e testing.
+-   It can be used for [e2e testing](docs/e2eTesting.md).
+-   It works on Linux, Mac and Windows x86-64 arch.
 
 # Concepts
 
@@ -103,7 +103,7 @@ Note: **The target folder should not be manually modified**. This tool may overr
 
 Check your user can run docker without sudo:
 
-```
+```shell
 docker run hello-world
 ```
 
@@ -121,7 +121,7 @@ It's recommended to run the commands from en empty working dir.
 
 The network configuration, data and docker files will be created inside the target folder ('./target') by default.
 
-```
+```shell
 mkdir my-networks
 cd my-networks
 ```
@@ -144,13 +144,13 @@ USAGE
 
 Validate your environment by running:
 
-```
+```shell
 symbol-bootstrap verify
 ```
 
 The general usage would be:
 
-```
+```shell
 symbol-bootstrap config -p testnet -a dual
 symbol-bootstrap compose
 symbol-bootstrap run
@@ -158,13 +158,13 @@ symbol-bootstrap run
 
 You can aggregate all these commands with this one liner:
 
-```
+```shell
 symbol-bootstrap start -p testnet -a dual
 ```
 
 If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:
 
-```
+```shell
 sudo rm -rf ./target
 ```
 
@@ -189,99 +189,19 @@ For this case, you provide your own `networkPreset.yml` and nemesis feed folder.
 
 -   `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
 
-
 # Wizard
 
 If this is your first time creating a node, it's recommended to use the Wizard. Just follow the instructions:
 
-```
+```shell
 symbol-bootstrap wizard
 ```
-
-# E2E Testing support
-
-One use case of this CLI is client E2E testing support. If you are coding a Symbol client, you (Travis or Jenkins) can run e2e tests like:
-
-```
-symbol-bootstrap start -p bootstrap -a dual -c my_custom_preset.yml --detached --healthCheck
-YOUR TEST (e.g: npm run test, gradle test, selenium etc.)
-symbol-bootstrap stop
-```
-
-`--detached` starts the server waiting until it is up (by polling the network http://localhost:3000/node/health). The command will fail if the components are not up in 30 seconds.
-
-You can also provide your own custom preset (`-c`) if you want your e2e test to start with a specific state (specific balances addresses, mosaics, namespaces, generation hash seed, etc.)
-
-## Node client E2E via CLI:
-
-The CLI can also be used as npm project (dev) dependency (`npm install --save-dev symbol-bootstrap`). Then you can integrate the network to your npm test cycle.
-Your `package.json` can look like this:
-
-```yaml
-
-"devDependencies": {
-    ....
-    "symbol-bootstrap": "0.0.x",
-    ....
-}
-
-scripts": {
-...
-    "clean-network": "symbol-bootstrap clean",
-    "run-network": "symbol-bootstrap start -p bootstrap -a dual -c my_custom_preset.yml --detached --healthCheck",
-    "run-stop": "symbol-bootstrap stop",
-    "integration-test": "....some mocha/jest/etc tests running against localhost:3000 network....",
-    "e2e": "npm run clean-network && npm run run-network && npm run integration-test && npm run stop-network",
-...
-}
-```
-
-Then, you, Jenkins, Travis or your CI tool can run;
-
-```
-npm run e2e
-```
-
-## Node client E2E via API:
-
-Alternatively, you can use the [BootstrapService](src/service/BootstrapService.ts) facade to programmatically start and stop a server.
-
-Example:
-
-```ts
-import {BootstrapService, StartParams, Preset} from 'symbol-bootstrap';
-import {expect} from '@oclif/test';
-
-it('Bootstrap e2e test', async () => {
-    const service = new BootstrapService();
-    const config: StartParams = {
-        preset: Preset.bootstrap,
-        reset: true,
-        healthCheck: true,
-        timeout: 60000 * 5,
-        target: 'target/bootstrap-test',
-        detached: true,
-        user: 'current',
-    };
-    try {
-        await service.stop(config);
-        const configResult = await service.start(config);
-        expect(configResult.presetData).not.null;
-        expect(configResult.addresses).not.null;
-        // Here you can write unit tests against a http://localhost:3000 network
-    } finally {
-        await service.stop(config);
-    }
-});
-```
-
-It's recommended to reuse the same server for multiple tests by using `beforeAll`, `afterAll` kind of statements.
 
 # Development
 
 If you want to contribute to this tool, clone this repo and run:
 
-```
+```shell
 npm install -g
 ```
 
@@ -296,9 +216,22 @@ General users should install this tool like any other node module.
 
 To format the source code, verify/fix lint issues, and generate the commands docs, run:
 
-```
+```shell
 npm run style:fix
 ```
+
+# Support
+
+Symbol Bootstrap is a personal project maintained on my free time.
+
+If you like it, please consider supporting it by delegating your Symbol account to my [node](http://symbol-node-dual-1.tawa.solutions:3000/node/info):
+
+```
+name: symbol-node-dual-1.tawa.solutions
+publicKey: 6DB275B83F4839768821FF621DD90358F99A84EC61EB7DE1F6947E5B0926B9BB
+```
+
+If you don't like it, let me know by creating issues on GitHub. Pull Requests are welcome!
 
 <!-- commands -->
 # Command Topics
@@ -325,7 +258,3 @@ npm run style:fix
 * [`symbol-bootstrap wizard`](docs/wizard.md) - An utility command that will help you configuring node!
 
 <!-- commandsstop -->
-
-```
-
-```
