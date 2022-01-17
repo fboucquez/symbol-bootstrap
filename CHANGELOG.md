@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.1.2] - Jan-14-2022
+## [1.1.3] - NEXT
+
+**Milestone**: Mainnet(1.0.3.1)
+
+| Package          | Version | Link                                                               |
+| ---------------- |---------| ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+
+## [1.1.2] - Jan-17-2022
 
 **Milestone**: Mainnet(1.0.3.1)
 
