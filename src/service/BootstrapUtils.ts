@@ -20,7 +20,6 @@ import * as _ from 'lodash';
 import { totalmem } from 'os';
 import { basename, isAbsolute, join } from 'path';
 import { DtoMapping, NetworkType } from 'symbol-sdk';
-import { Logger } from '../logger';
 import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
 
@@ -30,62 +29,7 @@ export class KnownError extends Error {
     public readonly known = true;
 }
 
-/**
- * The operation to migrate the data.
- */
-export interface Migration {
-    readonly description: string;
-
-    migrate(from: any): any;
-}
-
 export class BootstrapUtils {
-    public static stopProcess = false;
-
-    private static onProcessListener = (() => {
-        process.on('SIGINT', () => {
-            BootstrapUtils.stopProcess = true;
-        });
-    })();
-
-    public static sleep(ms: number): Promise<any> {
-        // Create a promise that rejects in <ms> milliseconds
-        return new Promise<void>((resolve) => {
-            setTimeout(() => {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                resolve();
-            }, ms);
-        });
-    }
-
-    public static poll(
-        logger: Logger,
-        promiseFunction: () => Promise<boolean>,
-        totalPollingTime: number,
-        pollIntervalMs: number,
-    ): Promise<boolean> {
-        const startTime = new Date().getMilliseconds();
-        return promiseFunction().then(async (result) => {
-            if (result) {
-                return true;
-            } else {
-                if (BootstrapUtils.stopProcess) {
-                    return Promise.resolve(false);
-                }
-                const endTime = new Date().getMilliseconds();
-                const newPollingTime: number = Math.max(totalPollingTime - pollIntervalMs - (endTime - startTime), 0);
-                if (newPollingTime) {
-                    logger.info(`Retrying in ${pollIntervalMs / 1000} seconds. Polling will stop in ${newPollingTime / 1000} seconds`);
-                    await BootstrapUtils.sleep(pollIntervalMs);
-                    return this.poll(logger, promiseFunction, newPollingTime, pollIntervalMs);
-                } else {
-                    return false;
-                }
-            }
-        });
-    }
-
     public static async generateConfiguration(
         // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
         templateContext: any,

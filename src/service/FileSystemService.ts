@@ -2,6 +2,7 @@ import { createWriteStream, existsSync, lstatSync, promises as fsPromises, readd
 import { get } from 'https';
 import { basename, dirname, join } from 'path';
 import { Logger } from '../logger';
+import { KnownError } from './BootstrapUtils';
 import { Constants } from './Constants';
 import { Utils } from './Utils';
 
@@ -17,6 +18,18 @@ export class FileSystemService {
         }
         if (!lstatSync(workingDirFullPath).isDirectory()) {
             throw new Error(`${workingDirFullPath} is not a folder!`);
+        }
+    }
+
+    public validateSeedFolder(nemesisSeedFolder: string, message: string) {
+        this.validateFolder(nemesisSeedFolder);
+        const seedData = join(nemesisSeedFolder, '00000', '00001.dat');
+        if (!existsSync(seedData)) {
+            throw new KnownError(`File ${seedData} doesn't exist! ${message}`);
+        }
+        const seedIndex = join(nemesisSeedFolder, 'index.dat');
+        if (!existsSync(seedIndex)) {
+            throw new KnownError(`File ${seedIndex} doesn't exist! ${message}`);
         }
     }
 

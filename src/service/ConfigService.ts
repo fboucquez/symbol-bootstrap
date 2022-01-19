@@ -221,7 +221,7 @@ export class ConfigService {
     private async copyNemesis(addresses: Addresses) {
         const target = this.params.target;
         const nemesisSeedFolder = this.fileSystemService.getTargetNemesisFolder(target, false, 'seed');
-        await this.validateSeedFolder(nemesisSeedFolder, `Invalid final seed folder ${nemesisSeedFolder}`);
+        await this.fileSystemService.validateSeedFolder(nemesisSeedFolder, `Invalid final seed folder ${nemesisSeedFolder}`);
         await Promise.all(
             (addresses.nodes || []).map(async (account) => {
                 const name = account.name;
@@ -231,18 +231,6 @@ export class ConfigService {
                 await this.fileSystemService.copyDir(nemesisSeedFolder, seedFolder);
             }),
         );
-    }
-
-    private async validateSeedFolder(nemesisSeedFolder: string, message: string) {
-        this.fileSystemService.validateFolder(nemesisSeedFolder);
-        const seedData = join(nemesisSeedFolder, '00000', '00001.dat');
-        if (!existsSync(seedData)) {
-            throw new KnownError(`File ${seedData} doesn't exist! ${message}`);
-        }
-        const seedIndex = join(nemesisSeedFolder, 'index.dat');
-        if (!existsSync(seedIndex)) {
-            throw new KnownError(`File ${seedIndex} doesn't exist! ${message}`);
-        }
     }
 
     private async resolveNemesis(presetData: ConfigPreset, addresses: Addresses, isUpgrade: boolean): Promise<void> {
@@ -256,7 +244,7 @@ export class ConfigService {
                 this.fileSystemService.deleteFolder(nemesisSeedFolder);
                 await this.fileSystemService.mkdir(nemesisSeedFolder);
                 await this.generateNemesisConfig(presetData, addresses);
-                await this.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
+                await this.fileSystemService.validateSeedFolder(nemesisSeedFolder, `Is the generated nemesis seed a valid seed folder?`);
             }
             return;
         }
@@ -273,7 +261,7 @@ export class ConfigService {
 
         const presetNemesisSeedFolder = resolvePresetNemesisSeedFolder();
         if (presetNemesisSeedFolder) {
-            await this.validateSeedFolder(
+            await this.fileSystemService.validateSeedFolder(
                 presetNemesisSeedFolder,
                 `Is the provided preset nemesisSeedFolder: ${presetNemesisSeedFolder} a valid seed folder?`,
             );
@@ -281,7 +269,10 @@ export class ConfigService {
             this.fileSystemService.deleteFolder(nemesisSeedFolder);
             await this.fileSystemService.mkdir(nemesisSeedFolder);
             await this.fileSystemService.copyDir(presetNemesisSeedFolder, nemesisSeedFolder);
-            await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
+            await this.fileSystemService.validateSeedFolder(
+                nemesisSeedFolder,
+                `Is the ${presetData.preset} preset default seed a valid seed folder?`,
+            );
             return;
         }
         if (YamlUtils.isYmlFile(presetData.preset)) {
@@ -292,7 +283,10 @@ export class ConfigService {
                 this.fileSystemService.deleteFolder(nemesisSeedFolder);
                 await this.fileSystemService.mkdir(nemesisSeedFolder);
                 await this.fileSystemService.copyDir(networkNemesisSeed, nemesisSeedFolder);
-                await this.validateSeedFolder(nemesisSeedFolder, `Is the ${presetData.preset} preset default seed a valid seed folder?`);
+                await this.fileSystemService.validateSeedFolder(
+                    nemesisSeedFolder,
+                    `Is the ${presetData.preset} preset default seed a valid seed folder?`,
+                );
                 return;
             }
             this.logger.warn(`Seed for preset ${presetData.preset} could not be found in ${networkNemesisSeed}`);
@@ -472,7 +466,7 @@ export class ConfigService {
     private async generateP2PFile(knownPeers: PeerInfo[], listLimit: number, outputFolder: string, info: string, jsonFileName: string) {
         const data = {
             _info: info,
-            knownPeers: _.sampleSize(knownPeers, listLimit),
+            knownPeers: knownPeers.length > listLimit ? _.sampleSize(knownPeers, listLimit) : knownPeers,
         };
         const peerFile = join(outputFolder, `resources`, jsonFileName);
         await fs.promises.writeFile(peerFile, JSON.stringify(data, null, 2));

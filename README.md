@@ -7,7 +7,7 @@ Symbol CLI tool that allows you creating, configuring and running [Symbol](https
 [![Downloads/week](https://img.shields.io/npm/dw/symbol-bootstrap.svg)](https://npmjs.org/package/symbol-bootstrap)
 [![License](https://img.shields.io/npm/l/symbol-bootstrap.svg)](https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json)
 [![Build](https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml/badge.svg)](https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml)
-[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=dev)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=dev)](https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=dev)
 [![Api Doc](https://img.shields.io/badge/api-doc-blue.svg)](https://fboucquez.github.io/symbol-bootstrap/)
 
 <!-- toc -->

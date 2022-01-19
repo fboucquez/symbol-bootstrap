@@ -17,7 +17,7 @@ import * as archiver from 'archiver';
 import { createWriteStream } from 'fs';
 import * as StreamZip from 'node-stream-zip';
 import { Logger } from '../logger';
-import { BootstrapUtils } from './BootstrapUtils';
+import { AsyncUtils } from './AsyncUtils';
 import { Utils } from './Utils';
 
 export interface ZipItem {
@@ -102,7 +102,7 @@ export class ZipUtils {
                     const message = `${percentage}% | ${process} files unzipped out of ${totalFiles}`;
                     Utils.logSameLineMessage(message);
                 }
-                if (BootstrapUtils.stopProcess) {
+                if (AsyncUtils.stopProcess) {
                     zip.close();
                     reject(new Error('Process cancelled!'));
                 }

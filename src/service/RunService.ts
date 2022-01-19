@@ -22,7 +22,7 @@ import { RepositoryFactoryHttp } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { DockerCompose, DockerComposeService } from '../model';
 import { DefaultAccountResolver } from './AccountResolver';
-import { BootstrapUtils } from './BootstrapUtils';
+import { AsyncUtils } from './AsyncUtils';
 import { CertificateService } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
@@ -84,7 +84,7 @@ export class RunService {
         const promises: Promise<any>[] = [];
         promises.push(this.basicRun(basicArgs));
         if (this.params.healthCheck) {
-            await BootstrapUtils.sleep(5000);
+            await AsyncUtils.sleep(5000);
             promises.push(this.healthCheck());
         }
         await Promise.all(promises);
@@ -102,7 +102,7 @@ export class RunService {
         const dockerCompose: DockerCompose = YamlUtils.fromYaml(await YamlUtils.readTextFile(dockerFile));
         const services = Object.values(dockerCompose.services);
         const timeout = this.params.timeout || RunService.defaultParams.timeout || 0;
-        const started = await BootstrapUtils.poll(this.logger, () => this.runOneCheck(services), timeout, pollIntervalMs);
+        const started = await AsyncUtils.poll(this.logger, () => this.runOneCheck(services), timeout, pollIntervalMs);
         if (!started) {
             throw new Error(`Network did NOT start!!!`);
         } else {
