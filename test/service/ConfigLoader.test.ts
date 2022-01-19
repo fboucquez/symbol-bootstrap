@@ -16,7 +16,7 @@
 
 import { expect } from 'chai';
 import 'mocha';
-import { Assembly, Constants, LoggerFactory, LogType, YamlUtils } from '../../src';
+import { Assembly, Constants, LoggerFactory, LogType, Utils, YamlUtils } from '../../src';
 import { ConfigLoader, Preset } from '../../src/service';
 
 const logger = LoggerFactory.getLogger(LogType.Silent);
@@ -35,7 +35,7 @@ describe('ConfigLoader', () => {
             });
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq(
+            expect(Utils.getMessage(e)).eq(
                 'Preset value could not be resolved from target folder contents. Please provide the --preset parameter when running the config/start command.',
             );
         }
@@ -54,7 +54,7 @@ describe('ConfigLoader', () => {
             });
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq(
+            expect(Utils.getMessage(e)).eq(
                 'Preset testnet requires assembly (-a, --assembly option). Possible values are: dual, peer, api, demo, multinode, services',
             );
         }
@@ -73,7 +73,7 @@ describe('ConfigLoader', () => {
             });
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq(
+            expect(Utils.getMessage(e)).eq(
                 "Assembly 'invalid-assembly.yml' is not valid for preset 'testnet'. Have you provided the right --preset <preset> --assembly <assembly> ?",
             );
         }
@@ -92,7 +92,7 @@ describe('ConfigLoader', () => {
             });
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq("Preset 'invalid-preset.yml' does not exist. Have you provided the right --preset <preset> ?");
+            expect(Utils.getMessage(e)).eq("Preset 'invalid-preset.yml' does not exist. Have you provided the right --preset <preset> ?");
         }
     });
 
@@ -388,7 +388,7 @@ describe('ConfigLoader', () => {
                 password: 'abc',
             });
         } catch (e) {
-            expect(e.message).eq('Password is too short. It should have at least 4 characters!');
+            expect(Utils.getMessage(e)).eq('Password is too short. It should have at least 4 characters!');
         }
     });
 

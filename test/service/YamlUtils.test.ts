@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 import 'mocha';
 import { it } from 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { ConfigurationUtils, YamlUtils } from '../../src';
+import { ConfigurationUtils, Utils, YamlUtils } from '../../src';
 import { ConfigAccount } from '../../src/model';
 import { CryptoUtils } from '../../src/service';
 
@@ -44,21 +44,21 @@ describe('YamlUtils', () => {
             YamlUtils.loadYaml('test/encrypted.yml', 'abc');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq('Password is too short. It should have at least 4 characters!');
+            expect(Utils.getMessage(e)).eq('Password is too short. It should have at least 4 characters!');
         }
 
         try {
             YamlUtils.loadYaml('test/encrypted.yml', 'abcd');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq('Cannot decrypt file test/encrypted.yml. Have you used the right password?');
+            expect(Utils.getMessage(e)).eq('Cannot decrypt file test/encrypted.yml. Have you used the right password?');
         }
 
         try {
             YamlUtils.loadYaml('test/encrypted.yml', '');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq(
+            expect(Utils.getMessage(e)).eq(
                 'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you entered the right password?',
             );
         }
@@ -67,7 +67,7 @@ describe('YamlUtils', () => {
             YamlUtils.loadYaml('test/encrypted.yml', undefined);
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq(
+            expect(Utils.getMessage(e)).eq(
                 'File test/encrypted.yml seems to be encrypted but no password has been provided. Have you entered the right password?',
             );
         }

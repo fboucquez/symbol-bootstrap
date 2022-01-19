@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { existsSync } from 'fs';
 import 'mocha';
 import { join } from 'path';
-import { ConfigService, FileSystemService, LoggerFactory, LogType } from '../../src';
+import { ConfigService, FileSystemService, LoggerFactory, LogType, Utils } from '../../src';
 import { BootstrapService, Preset, RunService, StartParams } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
@@ -48,7 +48,7 @@ describe('RunService', () => {
         try {
             await service.healthCheck(500);
         } catch (e) {
-            expect(e.message).to.equal('Network did NOT start!!!');
+            expect(Utils.getMessage(e)).to.equal('Network did NOT start!!!');
             return;
         }
         throw new Error('This should fail!');

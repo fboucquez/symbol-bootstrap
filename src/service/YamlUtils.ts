@@ -67,7 +67,7 @@ export class YamlUtils {
         const mkdirParentFolder = async (fileName: string): Promise<void> => {
             const parentFolder = dirname(fileName);
             if (parentFolder) {
-                return fsPromises.mkdir(parentFolder, { recursive: true });
+                await fsPromises.mkdir(parentFolder, { recursive: true });
             }
         };
         await mkdirParentFolder(path);

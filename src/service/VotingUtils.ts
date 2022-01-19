@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as noble from '@noble/ed25519';
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
-import * as noble from 'noble-ed25519';
 import { join } from 'path';
 import { Convert, Crypto } from 'symbol-sdk';
 import * as nacl from 'tweetnacl';

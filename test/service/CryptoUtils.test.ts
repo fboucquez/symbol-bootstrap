@@ -16,6 +16,7 @@
 
 import { expect } from 'chai';
 import 'mocha';
+import { Utils } from '../../src';
 import { PrivateKeySecurityMode } from '../../src/model';
 import { CryptoUtils } from '../../src/service/CryptoUtils';
 
@@ -125,7 +126,7 @@ describe('CryptoUtils', () => {
             CryptoUtils.decrypt(encryptedObject, 'invalidPassword');
             expect(1).eq(0);
         } catch (e) {
-            expect(e.message).eq('Value could not be decrypted!');
+            expect(Utils.getMessage(e)).eq('Value could not be decrypted!');
         }
     });
 

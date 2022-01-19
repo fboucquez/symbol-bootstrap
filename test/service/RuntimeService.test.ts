@@ -16,7 +16,7 @@
 
 import { expect } from 'chai';
 import { it } from 'mocha';
-import { LoggerFactory, LogType, OSUtils, RuntimeService } from '../../src';
+import { LoggerFactory, LogType, OSUtils, RuntimeService, Utils } from '../../src';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const service = new RuntimeService(logger);
 describe('RuntimeService', async () => {
@@ -33,11 +33,12 @@ describe('RuntimeService', async () => {
             await service.exec('wrong!');
             expect(true).eq(false); //Should fail!!
         } catch (e) {
-            expect(e.message.indexOf('wrong!')).not.eq(-1);
-            expect(e.stderr.indexOf('wrong!')).not.eq(-1);
-            expect(e.stdout).eq('');
-            expect(e.cmd).eq('wrong!');
-            expect(e.code).eq(OSUtils.isWindows() ? 1 : 127);
+            const error = e as any;
+            expect(Utils.getMessage(e).indexOf('wrong!')).not.eq(-1);
+            expect(error.stderr.indexOf('wrong!')).not.eq(-1);
+            expect(error.stdout).eq('');
+            expect(error.cmd).eq('wrong!');
+            expect(error.code).eq(OSUtils.isWindows() ? 1 : 127);
         }
     });
 
@@ -58,7 +59,7 @@ describe('RuntimeService', async () => {
             expect(true).eq(false); //Should fail!!
         } catch (e) {
             const code = OSUtils.isWindows() ? 1 : 127;
-            expect(e.message).eq(`Process exited with code ${code}\nCheck console for output....`);
+            expect(Utils.getMessage(e)).eq(`Process exited with code ${code}\nCheck console for output....`);
         }
     });
 

@@ -39,8 +39,8 @@ export class FileSystemService {
         }
     }
 
-    public mkdir(path: string): Promise<void> {
-        return fsPromises.mkdir(path, { recursive: true });
+    public async mkdir(path: string): Promise<void> {
+        await fsPromises.mkdir(path, { recursive: true });
     }
 
     public async mkdirParentFolder(fileName: string): Promise<void> {

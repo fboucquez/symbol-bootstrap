@@ -29,7 +29,7 @@ import {
     UInt64,
     VotingKeyLinkTransaction,
 } from 'symbol-sdk';
-import { Assembly, LoggerFactory, LogType } from '../../src';
+import { Assembly, LoggerFactory, LogType, Utils } from '../../src';
 import { BootstrapService, ConfigService, LinkService, LinkServiceTransactionFactoryParams, Preset } from '../../src/service';
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const password = '1234';
@@ -125,8 +125,8 @@ describe('LinkService', () => {
             await new BootstrapService(logger).config(params);
             await new BootstrapService(logger).link(params);
         } catch (e) {
-            expect(e.message.indexOf('No up and running node could be found out of:'), e.message).to.be.greaterThan(-1);
-            expect(e.message.indexOf('http://localhost:3000'), e.message).to.be.greaterThan(-1);
+            expect(Utils.getMessage(e).indexOf('No up and running node could be found out of:'), Utils.getMessage(e)).to.be.greaterThan(-1);
+            expect(Utils.getMessage(e).indexOf('http://localhost:3000'), Utils.getMessage(e)).to.be.greaterThan(-1);
         }
     });
 

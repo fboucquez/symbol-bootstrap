@@ -80,7 +80,7 @@ export class HandlebarsUtils {
         } catch (e) {
             const securedTemplate = Utils.secureString(template);
             const securedContext = Utils.secureString(YamlUtils.toYaml(templateContext));
-            const securedMessage = Utils.secureString(e.message || 'Unknown');
+            const securedMessage = Utils.secureString(Utils.getMessage(e));
 
             const message = `Unknown error rendering template. Error: ${securedMessage}\nTemplate:\n${securedTemplate}.`;
             throw new Error(`${message}\nContext: \n${securedContext}`);
@@ -157,7 +157,7 @@ export class HandlebarsUtils {
         try {
             return JSON.stringify(JSON.parse(string), null, 2);
         } catch (e) {
-            throw new Error(`${e.message}:JSON\n ${string}`);
+            throw new Error(`${Utils.getMessage(e)}:JSON\n ${string}`);
         }
     }
 

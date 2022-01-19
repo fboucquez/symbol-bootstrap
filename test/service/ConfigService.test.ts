@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import * as _ from 'lodash';
 import 'mocha';
 import { join } from 'path';
-import { Assembly, CustomPreset, LoggerFactory, LogType } from '../../src';
+import { Assembly, CustomPreset, LoggerFactory, LogType, Utils } from '../../src';
 import { ConfigService, CryptoUtils, Preset } from '../../src/service';
 // Local test utils
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -130,7 +130,7 @@ describe('ConfigService', () => {
             }).run();
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq(`${join('test', `customNetwork`, 'nemesis-seed-invalid')} folder does not exist`);
+            expect(Utils.getMessage(e)).eq(`${join('test', `customNetwork`, 'nemesis-seed-invalid')} folder does not exist`);
         }
     });
 
@@ -703,7 +703,7 @@ describe('ConfigService', () => {
             }).run();
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
-            expect(e.message).eq("Mosaic currency's fixed distributed supply 1000005 is grater than mosaic total supply 1000000");
+            expect(Utils.getMessage(e)).eq("Mosaic currency's fixed distributed supply 1000005 is grater than mosaic total supply 1000000");
         }
     });
 });

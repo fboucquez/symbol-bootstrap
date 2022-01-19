@@ -17,7 +17,7 @@
 import { Command, flags } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
 import { ConfigPreset } from '../model';
-import { CommandUtils, ConfigLoader, Constants, CryptoUtils, RemoteNodeService, VotingService, YamlUtils } from '../service';
+import { CommandUtils, ConfigLoader, Constants, CryptoUtils, RemoteNodeService, Utils, VotingService, YamlUtils } from '../service';
 
 export default class UpdateVotingKeys extends Command {
     static description = `It updates the voting files containing the voting keys when required.
@@ -64,9 +64,9 @@ When a new voting file is created, Bootstrap will advise running the \`link\` co
             });
         } catch (e) {
             throw new Error(
-                `Node's preset cannot be loaded. Have you provided the right --target? If you have, please rerun the 'config' command with --upgrade. Error: ${
-                    e.message || 'unknown'
-                }`,
+                `Node's preset cannot be loaded. Have you provided the right --target? If you have, please rerun the 'config' command with --upgrade. Error: ${Utils.getMessage(
+                    e,
+                )}`,
             );
         }
         const addresses = configLoader.loadExistingAddresses(target, password);

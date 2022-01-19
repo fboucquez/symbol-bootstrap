@@ -78,7 +78,7 @@ export class NemgenService {
             failed = stdout.indexOf('<error>') > -1;
         } catch (e) {
             failed = true;
-            ({ stdout, stderr, message } = e);
+            ({ stdout, stderr, message } = e as any);
         }
         if (failed) {
             if (message) this.logger.error(message);

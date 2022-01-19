@@ -17,6 +17,7 @@
 import { chmodSync, existsSync } from 'fs';
 import * as _ from 'lodash';
 import { join } from 'path';
+import { firstValueFrom } from 'rxjs';
 import { NodeStatusEnum } from 'symbol-openapi-typescript-fetch-client';
 import { RepositoryFactoryHttp } from 'symbol-sdk';
 import { Logger } from '../logger';
@@ -30,6 +31,7 @@ import { FileSystemService } from './FileSystemService';
 import { OSUtils } from './OSUtils';
 import { PortService } from './PortService';
 import { RuntimeService } from './RuntimeService';
+import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
 /**
  * params necessary to run the docker-compose network.
@@ -169,7 +171,7 @@ export class RunService {
                             const testUrl = `${url}/node/health`;
                             this.logger.info(`Testing ${testUrl}`);
                             try {
-                                const healthStatus = await nodeRepository.getNodeHealth().toPromise();
+                                const healthStatus = await firstValueFrom(nodeRepository.getNodeHealth());
                                 if (healthStatus.apiNode === NodeStatusEnum.Down) {
                                     this.logger.warn(`Rest ${testUrl} is NOT up and running YET: Api Node is still Down!`);
                                     return false;
@@ -181,7 +183,7 @@ export class RunService {
                                 this.logger.info(`Rest ${testUrl} is up and running...`);
                                 return true;
                             } catch (e) {
-                                this.logger.warn(`Rest ${testUrl} is NOT up and running YET: ${e.message}`);
+                                this.logger.warn(`Rest ${testUrl} is NOT up and running YET: ${Utils.getMessage(e)}`);
                                 return false;
                             }
                         }

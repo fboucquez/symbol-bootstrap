@@ -89,4 +89,7 @@ export class Utils {
             return current;
         })(_.cloneDeep(obj)); // Do not modify the original object, create a clone instead
     }
+    public static getMessage(e: unknown): string {
+        return (e as any)['message'] || `${e}`;
+    }
 }
