@@ -3,6 +3,7 @@
 export * from './AccountResolver';
 export * from './AddressesService';
 export * from './AnnounceService';
+export * from './AsyncUtils';
 export * from './BootstrapAccountResolver';
 export * from './BootstrapService';
 export * from './BootstrapUtils';

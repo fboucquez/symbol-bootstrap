@@ -1,9 +1,19 @@
 import { Account, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses } from '../model';
-import { Migration } from './BootstrapUtils';
 import { ConfigurationUtils } from './ConfigurationUtils';
+/**
+ * The operation to migrate the data.
+ */
+export interface Migration {
+    readonly description: string;
 
+    migrate(from: any): any;
+}
+
+/**
+ * Service used to migrate json objects like preset and addresses.
+ */
 export class MigrationService {
     constructor(private readonly logger: Logger) {}
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
