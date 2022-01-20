@@ -22,7 +22,6 @@ import {
     Assembly,
     ConfigParams,
     ConfigService,
-    Constants,
     CustomPreset,
     FileSystemService,
     LoggerFactory,
@@ -35,15 +34,15 @@ const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
 describe('ReportService', () => {
     const assertReport = async (params: ConfigParams, expectedReportsFolder: string): Promise<void> => {
-        const configResult = await new ConfigService(logger, { ...params, offline: true }).run();
-
-        const paths = await new ReportService(logger, params).run(configResult.presetData);
+        const resolvedParams = { ...params, offline: true, version: 'CURRENT_VERSION' };
+        const configResult = await new ConfigService(logger, resolvedParams).run();
+        const paths = await new ReportService(logger, resolvedParams).run(configResult.presetData);
         const expectedReportFolder = `./test/reports/${expectedReportsFolder}`;
         await fileSystemService.mkdir(expectedReportFolder);
 
         const promises = paths.map(async (reportPath) => {
             expect(reportPath.indexOf(join(params.target, 'report'))).to.be.greaterThan(-1);
-            const generatedReport = (await YamlUtils.readTextFile(reportPath)).replace(Constants.VERSION, 'CURRENT_VERSION');
+            const generatedReport = await YamlUtils.readTextFile(reportPath);
             const expectedReportPath = join(expectedReportFolder, reportPath.replace(/^.*[\\\/]/, ''));
             if (!existsSync(expectedReportPath)) {
                 await YamlUtils.writeTextFile(expectedReportPath, generatedReport.trim() + '\n');

@@ -52,6 +52,7 @@ export default class Compose extends Command {
             CommandUtils.passwordPromptDefaultMessage,
             true,
         );
-        await new BootstrapService(logger).compose(flags);
+        const workingDir = Constants.defaultWorkingDir;
+        await new BootstrapService(logger).compose({ ...flags, workingDir });
     }
 }
