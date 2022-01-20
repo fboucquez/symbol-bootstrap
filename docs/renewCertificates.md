@@ -1,7 +1,9 @@
 `symbol-bootstrap renewCertificates`
 ====================================
 
-It renews the SSL certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
+It renews the SSL certificates of the node regenerating the node.csr.pem files but reusing the current private keys.
+
+The certificates are only regenerated when they are closed to expiration (30 days). If you want to renew anyway, use the --force param.
 
 This command does not change the node private key (yet). This change would require a harvesters.dat migration and relinking the node key.
 
@@ -11,7 +13,7 @@ It's recommended to backup the target folder before running this operation!
 
 ## `symbol-bootstrap renewCertificates`
 
-It renews the SSL certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
+It renews the SSL certificates of the node regenerating the node.csr.pem files but reusing the current private keys.
 
 ```
 USAGE
@@ -30,6 +32,8 @@ OPTIONS
   -u, --user=user                  [default: current] User used to run docker images when generating the certificates.
                                    "current" means the current user.
 
+  --force                          Renew the certificates even though they are not close to expire.
+
   --logger=logger                  [default: Console,File] The loggers the command will use. Options are:
                                    Console,File,Silent. Use ',' to select multiple loggers.
 
@@ -42,6 +46,9 @@ OPTIONS
                                    (--noPassword).
 
 DESCRIPTION
+  The certificates are only regenerated when they are closed to expiration (30 days). If you want to renew anyway, use 
+  the --force param.
+
   This command does not change the node private key (yet). This change would require a harvesters.dat migration and 
   relinking the node key.
 

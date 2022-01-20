@@ -16,11 +16,13 @@
 import { Command, flags } from '@oclif/command';
 import { Account } from 'symbol-sdk';
 import { LoggerFactory, System } from '../logger';
-import { CertificatePair, ConfigAccount, ConfigPreset } from '../model';
-import { BootstrapUtils, CertificateService, CommandUtils, ConfigLoader } from '../service';
+import { CertificatePair, ConfigAccount } from '../model';
+import { BootstrapUtils, CertificateService, CommandUtils, ConfigLoader, RenewMode } from '../service';
 
 export default class RenewCertificates extends Command {
-    static description = `It renews the SSL certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.
+    static description = `It renews the SSL certificates of the node regenerating the node.csr.pem files but reusing the current private keys.
+
+The certificates are only regenerated when they are closed to expiration (30 days). If you want to renew anyway, use the --force param.
 
 This command does not change the node private key (yet). This change would require a harvesters.dat migration and relinking the node key.
 
@@ -44,6 +46,11 @@ It's recommended to backup the target folder before running this operation!
             description: `User used to run docker images when generating the certificates. "${BootstrapUtils.CURRENT_USER}" means the current user.`,
             default: BootstrapUtils.CURRENT_USER,
         }),
+
+        force: flags.boolean({
+            description: `Renew the certificates even though they are not close to expire.`,
+            default: false,
+        }),
         logger: CommandUtils.getLoggerFlag(...System),
     };
 
@@ -60,11 +67,15 @@ It's recommended to backup the target folder before running this operation!
         );
         const target = flags.target;
         const configLoader = new ConfigLoader(logger);
-        const presetData = configLoader.loadExistingPresetData(target, password);
-        const addresses = configLoader.loadExistingAddresses(target, password);
-        const customPreset = configLoader.loadCustomPreset(flags.customPreset, password);
-        const mergedPresetData: ConfigPreset = configLoader.mergePresets(presetData, customPreset);
 
+        const oldPresetData = configLoader.loadExistingPresetData(target, password);
+        const presetData = configLoader.createPresetData({
+            workingDir: BootstrapUtils.defaultWorkingDir,
+            customPreset: flags.customPreset,
+            password: password,
+            oldPresetData,
+        });
+        const addresses = configLoader.loadExistingAddresses(target, password);
         const networkType = presetData.networkType;
         const certificateService = new CertificateService(logger, {
             target,
@@ -72,7 +83,7 @@ It's recommended to backup the target folder before running this operation!
         });
         const certificateUpgraded = (
             await Promise.all(
-                (mergedPresetData.nodes || []).map((nodePreset, index) => {
+                (presetData.nodes || []).map((nodePreset, index) => {
                     const nodeAccount = addresses.nodes?.[index];
                     if (!nodeAccount) {
                         throw new Error(`There is not node in addresses at index ${index}`);
@@ -90,7 +101,12 @@ It's recommended to backup the target folder before running this operation!
                         main: resolveAccount(nodeAccount.main, nodePreset.mainPrivateKey),
                         transport: resolveAccount(nodeAccount.transport, nodePreset.transportPrivateKey),
                     };
-                    return certificateService.run(mergedPresetData, nodePreset.name, providedCertificates, true);
+                    return certificateService.run(
+                        presetData,
+                        nodePreset.name,
+                        providedCertificates,
+                        flags.force ? RenewMode.ALWAYS : RenewMode.WHEN_REQUIRED,
+                    );
                 }),
             )
         ).find((f) => f);
