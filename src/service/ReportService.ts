@@ -71,7 +71,7 @@ export class ReportService {
             .filter((l) => l && l.indexOf('#') != 0);
 
         lines.forEach((l) => {
-            const isHeader = /\[(.*?)]/.exec(l);
+            const isHeader = /\[([\w\s\.:]+)]/.exec(l);
             if (isHeader && isHeader.length && isHeader[1]) {
                 sections.push({
                     header: isHeader[1],
@@ -84,7 +84,11 @@ export class ReportService {
                     const descriptor = descriptions[propertyName];
                     const hidden = (descriptor && descriptor.hidden) || false;
                     const value = isProperty[2].trim();
-                    sections[sections.length - 1].lines.push({
+                    const section = sections[sections.length - 1];
+                    if (!section) {
+                        throw new Error(`Invalid line '${l}'. No section could be found!`);
+                    }
+                    section.lines.push({
                         property: propertyName,
                         value: hidden ? value.replace(/./g, '*') : value,
                         hidden: hidden,
