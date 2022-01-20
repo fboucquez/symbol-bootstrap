@@ -369,7 +369,7 @@ export type DeepPartial<T> = {
 
 export interface CommonConfigPreset extends NodeConfigPreset, GatewayConfigPreset {
     version: number; // file version
-    bootstrapVersion: string;
+    reportBootstrapVersion: string;
     preset: string;
     assembly: string;
     privateKeySecurityMode?: string;

@@ -97,7 +97,7 @@ export default class Pack extends Command {
         const configOnlyCustomPresetFileName = 'config-only-custom-preset.yml';
         const accountResolver = new BootstrapAccountResolver(logger);
         const configResult = await service.config({ ...flags, workingDir, accountResolver });
-        await service.compose(flags, configResult.presetData);
+        await service.compose({ ...flags, workingDir }, configResult.presetData);
 
         const noPrivateKeyTempFile = 'custom-preset-temp.temp';
 

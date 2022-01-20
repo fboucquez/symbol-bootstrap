@@ -26,7 +26,7 @@ import { FileSystemService } from './FileSystemService';
 import { RuntimeService } from './RuntimeService';
 import { YamlUtils } from './YamlUtils';
 
-export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; workingDir: string };
 
 const targetNodesFolder = Constants.targetNodesFolder;
 const targetDatabasesFolder = Constants.targetDatabasesFolder;
@@ -42,6 +42,7 @@ export class ComposeService {
     public static defaultParams: ComposeParams = {
         target: Constants.defaultTargetFolder,
         user: Constants.CURRENT_USER,
+        workingDir: Constants.defaultWorkingDir,
         upgrade: false,
     };
 

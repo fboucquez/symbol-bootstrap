@@ -16,7 +16,7 @@
 
 import { Command } from '@oclif/command';
 import { LoggerFactory, System } from '../logger';
-import { BootstrapService, CommandUtils } from '../service';
+import { BootstrapService, CommandUtils, Constants } from '../service';
 
 export default class Report extends Command {
     static description = 'it generates reStructuredText (.rst) reports describing the configuration of each node.';
@@ -33,6 +33,7 @@ export default class Report extends Command {
         const { flags } = this.parse(Report);
         CommandUtils.showBanner();
         const logger = LoggerFactory.getLogger(flags.logger);
-        await new BootstrapService(logger).report(flags);
+        const workingDir = Constants.defaultWorkingDir;
+        await new BootstrapService(logger).report({ ...flags, workingDir });
     }
 }

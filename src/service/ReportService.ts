@@ -24,7 +24,7 @@ import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
 import { YamlUtils } from './YamlUtils';
 
-export type ReportParams = { target: string };
+export type ReportParams = { target: string; workingDir: string; version?: string };
 
 interface ReportLine {
     property: string;
@@ -52,6 +52,7 @@ interface ReportNode {
 export class ReportService {
     public static defaultParams: ReportParams = {
         target: Constants.defaultTargetFolder,
+        workingDir: Constants.defaultWorkingDir,
     };
     private readonly configLoader: ConfigLoader;
     private readonly fileSystemService: FileSystemService;
@@ -70,7 +71,7 @@ export class ReportService {
             .filter((l) => l && l.indexOf('#') != 0);
 
         lines.forEach((l) => {
-            const isHeader = /\[(.*?)\]/.exec(l);
+            const isHeader = /\[(.*?)]/.exec(l);
             if (isHeader && isHeader.length && isHeader[1]) {
                 sections.push({
                     header: isHeader[1],
@@ -109,17 +110,15 @@ export class ReportService {
                 .map((fileName) => {
                     const resourceContent = readFileSync(join(resourcesFolder, fileName), 'utf-8');
                     const sections = this.createReportFromFile(resourceContent, descriptions);
-                    const reportFile: ReportFile = {
-                        fileName: fileName,
+                    return {
+                        fileName,
                         sections,
                     };
-                    return reportFile;
                 });
-            const reportNode: ReportNode = {
+            return {
                 name: n.name,
                 files: reportFiles,
             };
-            return reportNode;
         });
 
         return Promise.all(promises);
@@ -138,8 +137,10 @@ export class ReportService {
 
         const missingProperties = _.flatMap(reportNodes, (n) =>
             _.flatMap(n.files, (f) =>
-                _.flatMap(f.sections, (s) =>
-                    s.lines.filter((s) => !s.type && !s.description && !s.property.startsWith('starting-at-height')).map((s) => s.property),
+                _.flatMap(f.sections, (section) =>
+                    section.lines
+                        .filter((line) => !line.type && !line.description && !line.property.startsWith('starting-at-height'))
+                        .map((line) => line.property),
                 ),
             ),
         );
@@ -158,28 +159,33 @@ export class ReportService {
         // const missingDescriptions = reportNodes.map(node -> node.files)
 
         await this.fileSystemService.mkdir(reportFolder);
+        const version = this.getVersion(presetData);
         const promises = _.flatMap(reportNodes, (n) => {
-            return [this.toRstReport(reportFolder, n), this.toCsvReport(reportFolder, n)];
+            return [this.toRstReport(reportFolder, version, n), this.toCsvReport(reportFolder, version, n)];
         });
         return Promise.all(promises);
     }
 
-    private async toRstReport(reportFolder: string, n: ReportNode) {
+    private getVersion(passedPresetData: ConfigPreset | undefined): string {
+        return this.params.version || passedPresetData?.reportBootstrapVersion || Constants.VERSION;
+    }
+
+    private async toRstReport(reportFolder: string, version: string, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.rst`);
         const reportContent =
-            `Symbol Bootstrap Version: ${Constants.VERSION}\n` +
+            `Symbol Bootstrap Version: ${version}\n` +
             n.files
                 .map((fileReport) => {
                     const hasDescriptionSection = fileReport.sections.find((s) => s.lines.find((l) => l.description || l.type));
                     const header = hasDescriptionSection ? '"Property", "Value", "Type", "Description"' : '"Property", "Value"';
                     const csvBody = fileReport.sections
                         .map((s) => {
-                            const hasDescriptionSection = s.lines.find((l) => l.description || l.type);
+                            const hasDescriptionValueSection = s.lines.find((l) => l.description || l.type);
                             return (
-                                (hasDescriptionSection ? `**${s.header}**; ; ;\n` : `**${s.header}**;\n`) +
+                                (hasDescriptionValueSection ? `**${s.header}**; ; ;\n` : `**${s.header}**;\n`) +
                                 s.lines
                                     .map((l) => {
-                                        if (hasDescriptionSection)
+                                        if (hasDescriptionValueSection)
                                             return `${l.property}; ${l.value}; ${l.type}; ${l.description}`.trim() + '\n';
                                         else {
                                             return `${l.property}; ${l.value}`.trim() + '\n';
@@ -206,10 +212,10 @@ ${csvBody.trim().replace(/^/gm, '    ')}`;
         return reportFile;
     }
 
-    private async toCsvReport(reportFolder: string, n: ReportNode) {
+    private async toCsvReport(reportFolder: string, version: string | undefined, n: ReportNode) {
         const reportFile = join(reportFolder, `${n.name}-config.csv`);
         const reportContent =
-            `symbol-bootstrap-version; ${Constants.VERSION}\n\n` +
+            `symbol-bootstrap-version; ${version}\n\n` +
             n.files
                 .map((fileReport) => {
                     const csvBody = fileReport.sections
