@@ -28,6 +28,7 @@ import {
     ConfigLoader,
     NodeCertificates,
     Preset,
+    RenewMode,
     RuntimeService,
 } from '../../src/service';
 
@@ -87,7 +88,7 @@ describe('CertificateService', () => {
         BootstrapUtils.deleteFolder(logger, target);
 
         const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
-        await service.run(presetData, name, keys, false, target, randomSerial);
+        await service.run(presetData, name, keys, RenewMode.ONLY_WARNING, target, randomSerial);
 
         const expectedMetadata: CertificateMetadata = {
             version: 1,
@@ -104,7 +105,7 @@ describe('CertificateService', () => {
         const caCertificateExpirationInDays = presetData.caCertificateExpirationInDays;
 
         const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
-        await service.run(presetData, name, keys, false, target, randomSerial);
+        await service.run(presetData, name, keys, RenewMode.ONLY_WARNING, target, randomSerial);
 
         async function willExpire(certificateFileName: string, certificateExpirationWarningInDays: number): Promise<boolean> {
             const report = await service.willCertificateExpire(
@@ -133,25 +134,63 @@ describe('CertificateService', () => {
         }
 
         // First time generation
-        expect(await service.run({ ...presetData, nodeCertificateExpirationInDays: 10 }, name, keys, true, target)).eq(true);
+        expect(await service.run({ ...presetData, nodeCertificateExpirationInDays: 10 }, name, keys, RenewMode.WHEN_REQUIRED, target)).eq(
+            true,
+        );
         await verifyCertFolder();
         const originalCaFile = await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME);
         const originalNodeFile = await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME);
 
         //Renew is not required
-        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 9 }, name, keys, true, target)).eq(false);
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 9 }, name, keys, RenewMode.WHEN_REQUIRED, target)).eq(
+            false,
+        );
         await verifyCertFolder();
         expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
         expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).eq(originalNodeFile);
 
         //Renew is required but not auto-upgrade
-        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, false, target)).eq(false);
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, RenewMode.ONLY_WARNING, target)).eq(
+            false,
+        );
         await verifyCertFolder();
         expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
         expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).eq(originalNodeFile);
 
         //Renew is required and auto-upgrade
-        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, true, target)).eq(true);
+        expect(
+            await service.run({ ...presetData, certificateExpirationWarningInDays: 11 }, name, keys, RenewMode.WHEN_REQUIRED, target),
+        ).eq(true);
+        await verifyCertFolder();
+        expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
+        expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).not.eq(originalNodeFile); // Renewed
+    });
+
+    it('create and renew certificates always', async () => {
+        const target = 'target/tests/CertificateService.test';
+        BootstrapUtils.deleteFolder(logger, target);
+        const service = new CertificateService(logger, { target: target, user: await runtimeService.getDockerUserGroup() });
+
+        async function getCertFile(certificateFileName: string): Promise<string> {
+            return readFileSync(join(target, certificateFileName), 'utf-8');
+        }
+
+        // First time generation
+        expect(await service.run({ ...presetData }, name, keys, RenewMode.ONLY_WARNING, target)).eq(true);
+        await verifyCertFolder();
+        const originalCaFile = await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME);
+        const originalNodeFile = await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME);
+
+        //Renew is not required
+        expect(
+            await service.run({ ...presetData, certificateExpirationWarningInDays: 50 }, name, keys, RenewMode.WHEN_REQUIRED, target),
+        ).eq(false);
+        await verifyCertFolder();
+        expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
+        expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).eq(originalNodeFile);
+
+        //Renew is not required but always
+        expect(await service.run({ ...presetData, certificateExpirationWarningInDays: 50 }, name, keys, RenewMode.ALWAYS, target)).eq(true);
         await verifyCertFolder();
         expect(await getCertFile(CertificateService.CA_CERTIFICATE_FILE_NAME)).eq(originalCaFile);
         expect(await getCertFile(CertificateService.NODE_CERTIFICATE_FILE_NAME)).not.eq(originalNodeFile); // Renewed

@@ -34,7 +34,7 @@ import {
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, PeerInfo } from '../model';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
-import { CertificateService } from './CertificateService';
+import { CertificateService, RenewMode } from './CertificateService';
 import { CommandUtils } from './CommandUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { CryptoUtils } from './CryptoUtils';
@@ -323,7 +323,12 @@ export class ConfigService {
                     main: account.main,
                     transport: account.transport,
                 };
-                return new CertificateService(this.logger, this.params).run(presetData, account.name, providedCertificates, false);
+                return new CertificateService(this.logger, this.params).run(
+                    presetData,
+                    account.name,
+                    providedCertificates,
+                    RenewMode.ONLY_WARNING,
+                );
             }),
         );
     }
