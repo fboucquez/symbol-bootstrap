@@ -187,7 +187,7 @@
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
-symbol-bootstrap/1.1.3 linux-x64 node-v12.22.1
+symbol-bootstrap/1.1.4 linux-x64 node-v12.22.1
 $ symbol-bootstrap --help [COMMAND]
 USAGE
   $ symbol-bootstrap COMMAND
@@ -278,7 +278,7 @@ USAGE
 					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
 					<li><a href="docs/modifyMultisig.md"><code>symbol-bootstrap modifyMultisig</code></a> - Create or modify a multisig account</li>
 					<li><a href="docs/pack.md"><code>symbol-bootstrap pack</code></a> - It configures and packages your node into a zip file that can be uploaded to the final node machine.</li>
-					<li><a href="docs/renewCertificates.md"><code>symbol-bootstrap renewCertificates</code></a> - It renews the SSL certificates of the node regenerating the main ca.cert.pem and node.csr.pem files but reusing the current private keys.</li>
+					<li><a href="docs/renewCertificates.md"><code>symbol-bootstrap renewCertificates</code></a> - It renews the SSL certificates of the node regenerating the node.csr.pem files but reusing the current private keys.</li>
 					<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
 					<li><a href="docs/resetData.md"><code>symbol-bootstrap resetData</code></a> - It removes the data keeping the generated configuration, certificates, keys and block 1.</li>
 					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>

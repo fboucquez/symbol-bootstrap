@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>NodeCertificates | symbol-bootstrap</title>
+	<title>RenewMode | symbol-bootstrap</title>
 	<meta name="description" content="Documentation for symbol-bootstrap">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,57 +58,60 @@
 					<a href="../modules/service_certificateservice.html">service/CertificateService</a>
 				</li>
 				<li>
-					<a href="service_certificateservice.nodecertificates.html">NodeCertificates</a>
+					<a href="service_certificateservice.renewmode.html">RenewMode</a>
 				</li>
 			</ul>
-			<h1>Interface NodeCertificates</h1>
+			<h1>Enumeration RenewMode</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">NodeCertificates</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_certificateservice.nodecertificates.html#main" class="tsd-kind-icon">main</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="service_certificateservice.nodecertificates.html#transport" class="tsd-kind-icon">transport</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="service_certificateservice.renewmode.html#always" class="tsd-kind-icon">ALWAYS</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="service_certificateservice.renewmode.html#only_warning" class="tsd-kind-icon">ONLY_<wbr>WARNING</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="service_certificateservice.renewmode.html#when_required" class="tsd-kind-icon">WHEN_<wbr>REQUIRED</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="main" class="tsd-anchor"></a>
-					<h3>main</h3>
-					<div class="tsd-signature tsd-kind-icon">main<span class="tsd-signature-symbol">:</span> <a href="model_addresses.certificatepair.html" class="tsd-signature-type" data-tsd-kind="Interface">CertificatePair</a></div>
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="always" class="tsd-anchor"></a>
+					<h3>ALWAYS</h3>
+					<div class="tsd-signature tsd-kind-icon">ALWAYS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 2</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/828fbf0/src/service/CertificateService.ts#L43">src/service/CertificateService.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/828fbf0/src/service/CertificateService.ts#L58">src/service/CertificateService.ts:58</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="transport" class="tsd-anchor"></a>
-					<h3>transport</h3>
-					<div class="tsd-signature tsd-kind-icon">transport<span class="tsd-signature-symbol">:</span> <a href="model_addresses.certificatepair.html" class="tsd-signature-type" data-tsd-kind="Interface">CertificatePair</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="only_warning" class="tsd-anchor"></a>
+					<h3>ONLY_<wbr>WARNING</h3>
+					<div class="tsd-signature tsd-kind-icon">ONLY_<wbr>WARNING<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/828fbf0/src/service/CertificateService.ts#L44">src/service/CertificateService.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/828fbf0/src/service/CertificateService.ts#L56">src/service/CertificateService.ts:56</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="when_required" class="tsd-anchor"></a>
+					<h3>WHEN_<wbr>REQUIRED</h3>
+					<div class="tsd-signature tsd-kind-icon">WHEN_<wbr>REQUIRED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/828fbf0/src/service/CertificateService.ts#L57">src/service/CertificateService.ts:57</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -127,36 +130,39 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/service_certificateservice.renewmode.html" class="tsd-kind-icon">Renew<wbr>Mode</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/service_certificateservice.certificateservice.html" class="tsd-kind-icon">Certificate<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_certificateservice.certificateconfigpreset.html" class="tsd-kind-icon">Certificate<wbr>Config<wbr>Preset</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_certificateservice.certificatemetadata.html" class="tsd-kind-icon">Certificate<wbr>Metadata</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_certificateservice.certificateparams.html" class="tsd-kind-icon">Certificate<wbr>Params</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="service_certificateservice.nodecertificates.html" class="tsd-kind-icon">Node<wbr>Certificates</a>
+					<li class="current tsd-kind-enum tsd-parent-kind-module">
+						<a href="service_certificateservice.renewmode.html" class="tsd-kind-icon">Renew<wbr>Mode</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="service_certificateservice.nodecertificates.html#main" class="tsd-kind-icon">main</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="service_certificateservice.renewmode.html#always" class="tsd-kind-icon">ALWAYS</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="service_certificateservice.nodecertificates.html#transport" class="tsd-kind-icon">transport</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="service_certificateservice.renewmode.html#only_warning" class="tsd-kind-icon">ONLY_<wbr>WARNING</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="service_certificateservice.renewmode.html#when_required" class="tsd-kind-icon">WHEN_<wbr>REQUIRED</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/service_certificateservice.certificateservice.html" class="tsd-kind-icon">Certificate<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/service_certificateservice.certificateconfigpreset.html" class="tsd-kind-icon">Certificate<wbr>Config<wbr>Preset</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/service_certificateservice.certificatemetadata.html" class="tsd-kind-icon">Certificate<wbr>Metadata</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/service_certificateservice.certificateparams.html" class="tsd-kind-icon">Certificate<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/service_certificateservice.nodecertificates.html" class="tsd-kind-icon">Node<wbr>Certificates</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -172,11 +178,10 @@
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
