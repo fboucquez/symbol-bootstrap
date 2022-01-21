@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.1.3] - NEXT
+## [1.1.4] - NEXT
+
+**Milestone**: Mainnet(1.0.3.1)
+
+| Package          | Version | Link                                                               |
+| ---------------- |---------| ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.4  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- `BootstrapUtils` code clean up split.
+- Allowing user provided compose services via custom preset.
+
+## [1.1.3] - Jan-21-2022
 
 **Milestone**: Mainnet(1.0.3.1)
 
@@ -12,9 +23,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 | ---------------- |---------| ------------------------------------------------------------------ |
 | Symbol Bootstrap | v1.1.3  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
 
-- `BootstrapUtils` code clean up split.
-- Allowing user provided compose services via custom preset.
-
+- Added `--force` to `renewCertificates`.
+- Fixed `renewCertificates` when renewing certificates created using an old Bootstrap version.
 
 ## [1.1.2] - Jan-17-2022
 

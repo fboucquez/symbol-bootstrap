@@ -19,7 +19,7 @@ import { join, resolve } from 'path';
 import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { CertificatePair } from '../model';
-import { AccountResolver } from './';
+import { AccountResolver } from './AccountResolver';
 import { BootstrapUtils } from './BootstrapUtils';
 import { KeyName } from './ConfigService';
 import { Constants } from './Constants';
@@ -52,6 +52,12 @@ export interface CertificateConfigPreset {
     certificateExpirationWarningInDays: number;
 }
 
+export enum RenewMode {
+    ONLY_WARNING,
+    WHEN_REQUIRED,
+    ALWAYS,
+}
+
 export class CertificateService {
     public static NODE_CERTIFICATE_FILE_NAME = 'node.crt.pem';
     public static CA_CERTIFICATE_FILE_NAME = 'ca.cert.pem';
@@ -72,7 +78,7 @@ export class CertificateService {
         presetData: CertificateConfigPreset,
         name: string,
         providedCertificates: NodeCertificates,
-        renewIfRequired: boolean,
+        renewMode: RenewMode,
         customCertFolder?: string,
         randomSerial?: string,
     ): Promise<boolean> {
@@ -85,26 +91,34 @@ export class CertificateService {
                 CertificateService.NODE_CERTIFICATE_FILE_NAME,
                 presetData.certificateExpirationWarningInDays,
             );
+            const shouldRenew = (willExpireReport.willExpire && renewMode == RenewMode.WHEN_REQUIRED) || renewMode == RenewMode.ALWAYS;
+            const logWarning =
+                (willExpireReport.willExpire && renewMode == RenewMode.ONLY_WARNING) ||
+                (!willExpireReport.willExpire && renewMode == RenewMode.ALWAYS);
 
-            if (willExpireReport.willExpire) {
-                if (renewIfRequired) {
-                    this.logger.info(
-                        `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. Renewing...`,
-                    );
-                    await this.createCertificate(true, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
-                    return true;
+            const resolveRenewMessage = (): string => {
+                if (willExpireReport.willExpire) {
+                    if (renewMode == RenewMode.WHEN_REQUIRED || renewMode == RenewMode.ALWAYS) {
+                        return `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. Renewing...`;
+                    } else {
+                        return `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. You need to renew it.`;
+                    }
                 } else {
-                    this.logger.warn(
-                        `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire in less than ${presetData.certificateExpirationWarningInDays} days on ${willExpireReport.expirationDate}. You need to renew it.`,
-                    );
-                    return false;
+                    if (renewMode == RenewMode.ALWAYS) {
+                        return `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire on ${willExpireReport.expirationDate}, renewing anyway...`;
+                    } else {
+                        return `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire on ${willExpireReport.expirationDate}. No need to renew it yet.`;
+                    }
                 }
-            } else {
-                this.logger.info(
-                    `The ${CertificateService.NODE_CERTIFICATE_FILE_NAME} certificate for node ${name} will expire on ${willExpireReport.expirationDate}. No need to renew it yet.`,
-                );
-                return false;
+            };
+            const message = resolveRenewMessage();
+            if (logWarning) this.logger.warn(message);
+            else this.logger.info(message);
+
+            if (shouldRenew) {
+                await this.createCertificate(true, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
             }
+            return shouldRenew;
         } else {
             await this.createCertificate(false, presetData, certFolder, name, providedCertificates, metadataFile, randomSerial);
             return true;
@@ -178,7 +192,7 @@ export class CertificateService {
         if (certificates.length != 2) {
             throw new Error('Certificate creation failed. 2 certificates should have been created but got: ' + certificates.length);
         }
-        this.logger.info(renew ? `Certificate for node ${name} renewed` : `Certificate for node ${name} created`);
+        this.logger.info(renew ? `Certificate for node ${name} renewed.` : `Certificate for node ${name} created.`);
         const caCertificate = certificates[0];
         const nodeCertificate = certificates[1];
 
@@ -220,6 +234,10 @@ export class CertificateService {
     openssl x509 -in ${CertificateService.CA_CERTIFICATE_FILE_NAME}  -text -noout
     `;
         return `set -e
+
+# Clean up old versions files.
+rm -rf new_certs
+rm -f index.txt*
 
 mkdir new_certs
 chmod 700 new_certs

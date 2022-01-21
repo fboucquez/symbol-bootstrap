@@ -35,7 +35,7 @@ import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount
 import { AccountResolver, DefaultAccountResolver } from './AccountResolver';
 import { AddressesService } from './AddressesService';
 import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
-import { CertificateService } from './CertificateService';
+import { CertificateService, RenewMode } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { ConfigurationUtils } from './ConfigurationUtils';
 import { Constants } from './Constants';
@@ -330,7 +330,7 @@ export class ConfigService {
                     presetData,
                     account.name,
                     providedCertificates,
-                    false,
+                    RenewMode.ONLY_WARNING,
                 );
             }),
         );
