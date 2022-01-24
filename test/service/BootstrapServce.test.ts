@@ -23,6 +23,7 @@ describe('BootstrapService', () => {
     it(' bootstrap config compose bootstrap/default', async () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
+            offline: true,
             report: false,
             workingDir: Constants.defaultWorkingDir,
             preset: Preset.bootstrap,
@@ -45,6 +46,7 @@ describe('BootstrapService', () => {
     it(' bootstrap config compose testnet/dual', async () => {
         const service = new BootstrapService(logger);
         const config: StartParams = {
+            offline: true,
             report: false,
             workingDir: Constants.defaultWorkingDir,
             preset: Preset.testnet,

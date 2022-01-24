@@ -32,6 +32,7 @@ export default class Compose extends Command {
             description: 'It regenerates the docker compose and utility files from the <target>/docker folder',
             default: ComposeService.defaultParams.upgrade,
         }),
+        offline: CommandUtils.offlineFlag,
         user: flags.string({
             char: 'u',
             description: `User used to run the services in the docker-compose.yml file. "${Constants.CURRENT_USER}" means the current user.`,

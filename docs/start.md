@@ -16,8 +16,8 @@ USAGE
 OPTIONS
   -a, --assembly=assembly
       The assembly that defines the node(s) layout. It can be provided via custom preset or cli parameter. If not
-      provided, the value is resolved from the target/preset.yml file. Options are: api, demo, dual, multinode, peer,
-      my-custom-assembly.yml (advanced).
+      provided, the value is resolved from the target/preset.yml file. Options are: dual, peer, api, demo, multinode,
+      services, my-custom-assembly.yml (advanced).
 
   -b, --build
       If provided, docker-compose will run with -b (--build)
@@ -66,6 +66,9 @@ OPTIONS
 
   --noPassword
       When provided, Bootstrap will not use a password, so private keys will be stored in plain text. Use with caution.
+
+  --offline
+      If --offline is used, Bootstrap resolves the configuration without querying the running network.
 
   --password=password
       A password used to encrypt and decrypt private keys in preset files like addresses.yml and preset.yml. Bootstrap

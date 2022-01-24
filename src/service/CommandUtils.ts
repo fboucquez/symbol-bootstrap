@@ -40,6 +40,11 @@ export class CommandUtils {
         default: false,
     });
 
+    public static offlineFlag = flags.boolean({
+        description: 'If --offline is used, Bootstrap resolves the configuration without querying the running network.',
+        default: false,
+    });
+
     public static showBanner(): void {
         console.log(textSync('symbol-bootstrap', { horizontalLayout: 'fitted' }));
     }

@@ -385,3 +385,11 @@ Usage examples:
 - Replicate integration tests that may use specific values.
 
 Keep the generated `addresses.yml` and `preset.yml` in the target folder privately!
+
+## Services assembly
+
+When running a `services` assembly with a Faucet, Explorer and HttpProxy, you need to provide the following custom preset:
+```yaml
+domain: my.domain.com   #Your domain, faucet.my.domain.com and explorer.my.domain.com would need to be registered. 
+faucetPrivateKey: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA # The symbol account private key where the Faucet can transfer the tokens from.
+```

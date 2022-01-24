@@ -55,7 +55,7 @@ describe('ConfigLoader', () => {
             expect(false).to.be.eq(true); // should have raised an error!
         } catch (e) {
             expect(e.message).eq(
-                'Preset testnet requires assembly (-a, --assembly option). Possible values are: api, demo, dual, multinode, peer',
+                'Preset testnet requires assembly (-a, --assembly option). Possible values are: dual, peer, api, demo, multinode, services',
             );
         }
     });

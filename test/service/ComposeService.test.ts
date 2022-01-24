@@ -252,7 +252,7 @@ ${YamlUtils.toYaml(dockerCompose)}
             ...LinkService.defaultParams,
             target: 'target/tests/ComposeService-mainnet-custom-services',
             customPreset: './test/unit-test-profiles/custom_compose_service.yml',
-            reset: true,
+            reset: false,
             preset: Preset.testnet,
             assembly: Assembly.dual,
         };
@@ -293,6 +293,24 @@ ${YamlUtils.toYaml(dockerCompose)}
             preset: Preset.bootstrap,
         };
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-dual.yml');
+    });
+
+    it('Compose mainnet services', async () => {
+        const params: StartParams = {
+            ...ConfigService.defaultParams,
+            ...LinkService.defaultParams,
+            customPreset: './test/unit-test-profiles/services_custom_preset.yml',
+            customPresetObject: {
+                knownRestGateways: ['http://some.node.com:3000'],
+            },
+            offline: true,
+            target: 'target/tests/ComposeService-mainnet-services.dual',
+            password,
+            reset: false,
+            assembly: Assembly.services,
+            preset: Preset.mainnet,
+        };
+        await assertDockerCompose(params, 'expected-docker-compose-mainnet-services.yml');
     });
 
     it('Compose bootstrap repeat', async () => {

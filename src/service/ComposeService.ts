@@ -23,10 +23,11 @@ import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
+import { RemoteNodeService } from './RemoteNodeService';
 import { RuntimeService } from './RuntimeService';
 import { YamlUtils } from './YamlUtils';
 
-export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; workingDir: string };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; workingDir: string; offline: boolean };
 
 const targetNodesFolder = Constants.targetNodesFolder;
 const targetDatabasesFolder = Constants.targetDatabasesFolder;
@@ -44,6 +45,7 @@ export class ComposeService {
         user: Constants.CURRENT_USER,
         workingDir: Constants.defaultWorkingDir,
         upgrade: false,
+        offline: false,
     };
 
     public static readonly DEBUG_SERVICE_PARAMS = {
@@ -72,7 +74,7 @@ export class ComposeService {
 
     public async run(passedPresetData?: ConfigPreset, passedAddresses?: Addresses): Promise<DockerCompose> {
         const presetData = passedPresetData ?? this.configLoader.loadExistingPresetData(this.params.target, this.params.password || false);
-
+        const remoteNodeService = new RemoteNodeService(this.logger, presetData, this.params.offline);
         const currentDir = process.cwd();
         const target = join(currentDir, this.params.target);
         const targetDocker = join(target, `docker`);
@@ -263,18 +265,22 @@ export class ComposeService {
                 .filter((d) => !d.excludeDockerService)
                 .map(async (n) => {
                     const internalPort = 443;
-                    const host = n.host || presetData.nodes?.[0]?.host;
-                    if (!host) {
-                        throw new Error(
-                            `HTTPS Proxy ${n.name} is invalid, 'host' property could not be resolved. It must be set to a valid DNS record.`,
-                        );
-                    }
+                    const resolveHost = (): string => {
+                        const host = n.host || presetData.nodes?.[0]?.host;
+                        if (!host) {
+                            throw new Error(
+                                `HTTPS Proxy ${n.name} is invalid, 'host' property could not be resolved. It must be set to a valid DNS record.`,
+                            );
+                        }
+                        return host;
+                    };
                     const domains: string | undefined =
                         n.domains ||
-                        presetData.gateways?.map((g) => resolveHttpsProxyDomains(host, `http://${g.name}:${restInternalPort}`))[0];
+                        presetData.gateways?.map((g) => resolveHttpsProxyDomains(resolveHost(), `http://${g.name}:${restInternalPort}`))[0];
                     if (!domains) {
                         throw new Error(`HTTPS Proxy ${n.name} is invalid, 'domains' property could not be resolved!`);
                     }
+                    const restDependency = presetData.gateways?.[0]?.name;
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
@@ -291,7 +297,7 @@ export class ComposeService {
                                 SERVER_NAMES_HASH_BUCKET_SIZE: n.serverNamesHashBucketSize,
                             },
                             restart: restart,
-                            depends_on: [presetData.gateways![0].name],
+                            depends_on: restDependency ? [restDependency] : [],
                             ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
                         }),
                     );
@@ -329,13 +335,15 @@ export class ComposeService {
                 .map(async (n) => {
                     const mosaicPreset = presetData.nemesis.mosaics[0];
                     const fullName = `${presetData.baseNamespace}.${mosaicPreset.name}`;
-                    // const nemesisPrivateKey = addresses?.mosaics?[0]?/;
+                    const { defaultNode } = await remoteNodeService.resolveRestUrlsForServices();
                     services.push(
                         await resolveService(n, {
                             container_name: n.name,
                             image: presetData.symbolFaucetImage,
                             stop_signal: 'SIGINT',
                             environment: {
+                                DEFAULT_NODE: defaultNode,
+                                DEFAULT_NODE_CLIENT: defaultNode,
                                 NATIVE_CURRENCY_NAME: fullName,
                                 FAUCET_PRIVATE_KEY: this.getMainAccountPrivateKey(passedAddresses) || '',
                                 NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(presetData.currencyMosaicId || ''),

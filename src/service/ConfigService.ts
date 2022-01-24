@@ -57,11 +57,12 @@ export enum Preset {
 }
 
 export enum Assembly {
+    dual = 'dual',
+    peer = 'peer',
     api = 'api',
     demo = 'demo',
-    dual = 'dual',
     multinode = 'multinode',
-    peer = 'peer',
+    services = 'services',
 }
 
 export const defaultAssembly: Record<string, string> = {
@@ -83,7 +84,7 @@ export interface ConfigParams extends VotingParams, ReportParams {
     reset: boolean;
     upgrade: boolean;
     workingDir: string;
-    offline?: boolean;
+    offline: boolean;
     preset?: string;
     target: string;
     password?: string;
@@ -185,8 +186,10 @@ export class ConfigService {
             await this.generateGateways(presetData);
             await this.generateExplorers(presetData, remoteNodeService);
             const isUpgrade = !!oldPresetData || !!oldAddresses;
-            await this.resolveNemesis(presetData, addresses, isUpgrade);
-            await this.copyNemesis(addresses);
+            if (presetData.nodes?.length) {
+                await this.resolveNemesis(presetData, addresses, isUpgrade);
+                await this.copyNemesis(addresses);
+            }
             if (this.params.report) {
                 await new ReportService(this.logger, this.params).run(presetData);
             }
@@ -692,7 +695,7 @@ export class ConfigService {
                 const copyFrom = join(Constants.ROOT_FOLDER, 'config', 'explorer');
                 const fullName = `${presetData.baseNamespace}.${this.resolveCurrencyName(presetData)}`;
                 const namespaceId = new NamespaceId(fullName);
-                const { restNodes, defaultNode } = await this.resolveRests(presetData, remoteNodeService);
+                const { restNodes, defaultNode } = await remoteNodeService.resolveRestUrlsForServices();
                 const templateContext = {
                     namespaceName: fullName,
                     namespaceId: namespaceId.toHex(),
@@ -706,19 +709,6 @@ export class ConfigService {
                 await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
             }),
         );
-    }
-
-    private async resolveRests(
-        presetData: ConfigPreset,
-        remoteNodeService: RemoteNodeService,
-    ): Promise<{ restNodes: string[]; defaultNode: string }> {
-        const restNodes: string[] = [];
-        presetData.gateways?.forEach((restService) => {
-            const nodePreset = presetData.nodes?.find((g) => g.name == restService.apiNodeName);
-            restNodes.push(`http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
-        });
-        restNodes.push(...(await remoteNodeService.getRestUrls()));
-        return { restNodes: _.uniq(restNodes), defaultNode: restNodes[0] || 'http://localhost:3000' };
     }
 
     private cleanUpConfiguration(presetData: ConfigPreset) {
