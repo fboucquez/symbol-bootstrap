@@ -15,6 +15,7 @@
  */
 import fetch from 'cross-fetch';
 import { lookup } from 'dns';
+import * as _ from 'lodash';
 import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp, RoleType } from 'symbol-sdk';
 import { Configuration, NodeApi, NodeListFilter, RequestContext } from 'symbol-statistics-service-typescript-fetch-client';
 import { Logger } from '../logger';
@@ -27,11 +28,7 @@ export interface RepositoryInfo {
     chainInfo: ChainInfo;
 }
 export class RemoteNodeService {
-    constructor(
-        private readonly logger: Logger,
-        private readonly presetData: ConfigPreset,
-        private readonly offline: boolean | undefined,
-    ) {}
+    constructor(private readonly logger: Logger, private readonly presetData: ConfigPreset, private readonly offline: boolean) {}
     private restUrls: string[] | undefined;
 
     public async resolveCurrentFinalizationEpoch(): Promise<number> {
@@ -220,5 +217,19 @@ export class RemoteNodeService {
                 ],
             }),
         );
+    }
+
+    public async resolveRestUrlsForServices(): Promise<{ restNodes: string[]; defaultNode: string }> {
+        const restNodes: string[] = [];
+        this.presetData.gateways?.forEach((restService) => {
+            const nodePreset = this.presetData.nodes?.find((g) => g.name == restService.apiNodeName);
+            restNodes.push(`http://${restService.host || nodePreset?.host || 'localhost'}:3000`);
+        });
+        restNodes.push(...(await this.getRestUrls()));
+        const defaultNode = restNodes[0];
+        if (!defaultNode) {
+            throw new Error('Rest node could not be resolved!');
+        }
+        return { restNodes: _.uniq(restNodes), defaultNode: defaultNode };
     }
 }

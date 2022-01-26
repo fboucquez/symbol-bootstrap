@@ -69,7 +69,7 @@ export default class Pack extends Command {
         logger.info('');
         logger.info('');
         if (
-            !flags.ready &&
+            (!flags.ready || flags.offline) &&
             !(
                 await prompt([
                     {

@@ -61,7 +61,7 @@ export default class Config extends Command {
             description: `It regenerates the configuration reusing the previous keys. Use this flag when upgrading the version of bootstrap to keep your node up to date without dropping the local data. Backup the target folder before upgrading.`,
             default: ConfigService.defaultParams.reset,
         }),
-
+        offline: CommandUtils.offlineFlag,
         report: flags.boolean({
             description: 'It generates reStructuredText (.rst) reports describing the configuration of each node.',
             default: ConfigService.defaultParams.report,

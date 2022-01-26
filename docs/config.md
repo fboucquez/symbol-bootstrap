@@ -16,7 +16,7 @@ USAGE
 OPTIONS
   -a, --assembly=assembly          The assembly that defines the node(s) layout. It can be provided via custom preset or
                                    cli parameter. If not provided, the value is resolved from the target/preset.yml
-                                   file. Options are: api, demo, dual, multinode, peer, my-custom-assembly.yml
+                                   file. Options are: dual, peer, api, demo, multinode, services, my-custom-assembly.yml
                                    (advanced).
 
   -c, --customPreset=customPreset  External preset file. Values in this file will override the provided presets.
@@ -40,6 +40,9 @@ OPTIONS
 
   --noPassword                     When provided, Bootstrap will not use a password, so private keys will be stored in
                                    plain text. Use with caution.
+
+  --offline                        If --offline is used, Bootstrap resolves the configuration without querying the
+                                   running network.
 
   --password=password              A password used to encrypt and decrypt private keys in preset files like
                                    addresses.yml and preset.yml. Bootstrap prompts for a password by default, can be

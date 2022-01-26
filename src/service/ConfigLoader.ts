@@ -214,6 +214,7 @@ export class ConfigLoader {
             databases: this.expandServicesRepeat(presetData, presetData.databases || []),
             nodes: this.expandServicesRepeat(presetData, presetData.nodes || []),
             gateways: this.expandServicesRepeat(presetData, presetData.gateways || []),
+            httpsProxies: this.expandServicesRepeat(presetData, presetData.httpsProxies || []),
             explorers: this.expandServicesRepeat(presetData, presetData.explorers || []),
             faucets: this.expandServicesRepeat(presetData, presetData.faucets || []),
             nemesis: this.applyValueTemplate(presetData, presetData.nemesis),

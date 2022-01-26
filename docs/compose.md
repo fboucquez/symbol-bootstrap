@@ -26,6 +26,8 @@ OPTIONS
   --noPassword         When provided, Bootstrap will not use a password, so private keys will be stored in plain text.
                        Use with caution.
 
+  --offline            If --offline is used, Bootstrap resolves the configuration without querying the running network.
+
   --password=password  A password used to encrypt and decrypt private keys in preset files like addresses.yml and
                        preset.yml. Bootstrap prompts for a password by default, can be provided in the command line
                        (--password=XXXX) or disabled in the command line (--noPassword).

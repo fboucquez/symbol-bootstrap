@@ -70,6 +70,7 @@ Properties in each file override the previous values (by object deep merge).
 -   [`dual`](presets/assemblies/assembly-dual.yml): A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.
 -   [`demo`](presets/assemblies/assembly-demo.yml): A dual node with an additional explorer and faucet for test and demonstration purposes.
 -   [`multinode`](presets/assemblies/assembly-multinode.yml): A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.
+-   [`services`](presets/assemblies/assembly-services.yml): A special docker compose that includes the Explorer, Faucet and HTTPS proxy. This is an easy and quick way of running Symbol services when creating a new network. Note that the services are not HA, it's not for production environments. 
 
 ### Custom preset:
 
@@ -178,6 +179,7 @@ Network presets and assemblies can be combined to generate different types of no
 -   `$ symbol-bootstrap start -p bootstrap -a multinode -c customPreset.yml`
 -   `$ symbol-bootstrap start -p bootstrap -a demo -c customPreset.yml`
 -   `$ symbol-bootstrap start -p bootstrap -a dual -c customPreset.yml`
+-   `$ symbol-bootstrap start -p testnet -a services -c customServicesPreset.yml`
 
 Although some combinations can be done, they may not be really useful. Examples that are NOT useful:
 
@@ -188,6 +190,7 @@ A custom network preset file can also be provided. This is useful when you have 
 For this case, you provide your own `networkPreset.yml` and nemesis feed folder. The node admin can then run:
 
 - `$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml`
+- `$ symbol-bootstrap start -p customNetworkPreset.yml -a services -c customServicesPreset.yml`
 
 The `demo` assemblies starts a local Explorer http://localhost:90 and Faucet http://localhost:100.
 

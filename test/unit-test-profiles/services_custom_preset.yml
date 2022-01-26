@@ -1,0 +1,2 @@
+domain: test.domain.com #Your domain, faucet.my.domain.com and explorer.my.domain.com would need to be registered.
+faucetPrivateKey: BBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA # The symbol account private key where the Faucet can transfer the tokens from.

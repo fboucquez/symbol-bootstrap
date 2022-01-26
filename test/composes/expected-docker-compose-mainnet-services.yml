@@ -1,0 +1,52 @@
+version: '2.4'
+services:
+    https-proxy:
+        container_name: https-proxy
+        image: steveltn/https-portal:1.19
+        stop_signal: SIGINT
+        ports:
+            - '80:80'
+            - '443:443'
+        environment:
+            DOMAINS: explorer.test.domain.com -> http://explorer:4000, faucet.test.domain.com -> http://faucet:4000
+            WEBSOCKET: 'true'
+            STAGE: production
+            SERVER_NAMES_HASH_BUCKET_SIZE: 128
+        restart: on-failure:2
+    explorer:
+        container_name: explorer
+        image: symbolplatform/symbol-explorer:1.1.1-alpha-202110290945
+        entrypoint: ash -c "/bin/ash /symbol-commands/run.sh explorer"
+        stop_signal: SIGINT
+        working_dir: /symbol-workdir
+        ports:
+            - '90:4000'
+        restart: on-failure:2
+        volumes:
+            - ../explorers/explorer:/symbol-workdir:ro
+            - ./explorer:/symbol-commands:ro
+    faucet:
+        container_name: faucet
+        image: symbolplatform/symbol-faucet:1.0.1-alpha-202110131930
+        stop_signal: SIGINT
+        environment:
+            DEFAULT_NODE: http://some.node.com:3000
+            DEFAULT_NODE_CLIENT: http://some.node.com:3000
+            NATIVE_CURRENCY_NAME: symbol.xym
+            FAUCET_PRIVATE_KEY: BBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            NATIVE_CURRENCY_ID: 6BED913FA20223F8
+            NATIVE_CURRENCY_OUT_MAX: 500000000
+            NATIVE_CURRENCY_OUT_MIN: 100000000
+            MAX_FEE: 5000000
+            ENOUGH_BALANCE: 100000000000
+            MAX_UNCONFIRMED: 99
+            BLACKLIST_MOSAIC_IDS: '[]'
+            EXPLORER_URL: https://explorer.test.domain.com/
+        restart: on-failure:2
+        ports:
+            - '100:4000'
+networks:
+    default:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/24

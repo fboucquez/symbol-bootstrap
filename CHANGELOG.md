@@ -14,6 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 - `BootstrapUtils` code clean up split.
 - Allowing user provided compose services via custom preset.
+- Added `services` assembly.
 
 ## [1.1.3] - Jan-21-2022
 
