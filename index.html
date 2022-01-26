@@ -135,6 +135,7 @@
 					<li>  <a href="presets/assemblies/assembly-dual.yml"><code>dual</code></a>: A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.</li>
 					<li>  <a href="presets/assemblies/assembly-demo.yml"><code>demo</code></a>: A dual node with an additional explorer and faucet for test and demonstration purposes.</li>
 					<li>  <a href="presets/assemblies/assembly-multinode.yml"><code>multinode</code></a>: A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.</li>
+					<li>  <a href="presets/assemblies/assembly-services.yml"><code>services</code></a>: A special docker compose that includes the Explorer, Faucet and HTTPS proxy. This is an easy and quick way of running Symbol services when creating a new network. Note that the services are not HA, it&#39;s not for production environments. </li>
 				</ul>
 				<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
 					<h3>Custom preset:</h3>
@@ -219,6 +220,7 @@ USAGE
 					<li>  <code>$ symbol-bootstrap start -p bootstrap -a multinode -c customPreset.yml</code></li>
 					<li>  <code>$ symbol-bootstrap start -p bootstrap -a demo -c customPreset.yml</code></li>
 					<li>  <code>$ symbol-bootstrap start -p bootstrap -a dual -c customPreset.yml</code></li>
+					<li>  <code>$ symbol-bootstrap start -p testnet -a services -c customServicesPreset.yml</code></li>
 				</ul>
 				<p>Although some combinations can be done, they may not be really useful. Examples that are NOT useful:</p>
 				<ul>
@@ -229,6 +231,7 @@ USAGE
 				For this case, you provide your own <code>networkPreset.yml</code> and nemesis feed folder. The node admin can then run:</p>
 				<ul>
 					<li><code>$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml</code></li>
+					<li><code>$ symbol-bootstrap start -p customNetworkPreset.yml -a services -c customServicesPreset.yml</code></li>
 				</ul>
 				<p>The <code>demo</code> assemblies starts a local Explorer <a href="http://localhost:90">http://localhost:90</a> and Faucet <a href="http://localhost:100">http://localhost:100</a>.</p>
 				<a href="#wizard" id="wizard" style="color: inherit; text-decoration: none;">
