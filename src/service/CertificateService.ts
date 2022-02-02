@@ -221,7 +221,7 @@ export class CertificateService {
                 metadata.version !== CertificateService.METADATA_VERSION
             );
         } catch (e) {
-            this.logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${e.message}`, e);
+            this.logger.warn(`Cannot load node certificate metadata from file ${metadataFile}. Error: ${Utils.getMessage(e)}`, e);
             return true;
         }
     }

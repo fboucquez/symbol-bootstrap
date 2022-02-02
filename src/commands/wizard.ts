@@ -553,7 +553,7 @@ export class Wizard {
         );
     }
 
-    public async resolveFileContent(encoding: string, message: string, notFoundMessage: string): Promise<string> {
+    public async resolveFileContent(encoding: 'base64', message: string, notFoundMessage: string): Promise<string> {
         const { value } = await prompt([
             {
                 name: 'value',

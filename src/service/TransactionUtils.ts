@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { firstValueFrom } from 'rxjs';
 import { Address, MultisigAccountInfo, RepositoryFactory } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { ConfigPreset } from '../model';
@@ -34,7 +35,7 @@ export class TransactionUtils {
         accountAddress: Address,
     ): Promise<MultisigAccountInfo | undefined> {
         try {
-            const info = await repositoryFactory.createMultisigRepository().getMultisigAccountInfo(accountAddress).toPromise();
+            const info = await firstValueFrom(repositoryFactory.createMultisigRepository().getMultisigAccountInfo(accountAddress));
             return info.isMultisig() ? info : undefined;
         } catch (e) {
             return undefined;

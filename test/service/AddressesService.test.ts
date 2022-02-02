@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { DefaultAccountResolver, KeyName, LoggerFactory, LogType, PrivateKeySecurityMode } from '../../src';
+import { DefaultAccountResolver, KeyName, LoggerFactory, LogType, PrivateKeySecurityMode, Utils } from '../../src';
 import { AddressesService } from '../../src/service/AddressesService';
 
 const accountResolver = new DefaultAccountResolver();
@@ -278,7 +278,7 @@ describe('', () => {
             await service.resolveAccount(networkType, securityMode, KeyName.Main, nodeName, undefined, undefined);
             expect(false).eq(true);
         } catch (e) {
-            expect(e.message).eq(
+            expect(Utils.getMessage(e)).eq(
                 "Account Main cannot be generated when Private Key Security Mode is PROMPT_MAIN. Account won't be stored anywhere!. Please use ENCRYPT, or provider your Main account with custom presets!",
             );
         }

@@ -17,7 +17,7 @@
 import { expect } from 'chai';
 import { restore, stub } from 'sinon';
 import { Account, Deadline, MultisigAccountModificationTransaction, NetworkType, TransactionType, UInt64 } from 'symbol-sdk';
-import { LoggerFactory, LogType } from '../../src';
+import { LoggerFactory, LogType, Utils } from '../../src';
 import { ConfigPreset } from '../../src/model';
 import { ModifyMultisigParams, ModifyMultisigService, TransactionFactoryParams, TransactionUtils } from '../../src/service';
 import { StdUtils } from '../utils/StdUtils';
@@ -163,7 +163,7 @@ describe('ModifyMultisigService', () => {
                 cosignatoryAddresses: [cosigner1.address],
             });
         } catch (err) {
-            expect(err.message).to.be.eq(
+            expect(Utils.getMessage(err)).to.be.eq(
                 'There are 2 more required cosignatories than available cosignatories for min. approval. Please add cosignatories or reduce the min. approval delta.',
             );
         }
@@ -179,7 +179,7 @@ describe('ModifyMultisigService', () => {
                 cosignatoryAddresses: [cosigner1.address],
             });
         } catch (err) {
-            expect(err.message).to.be.eq(
+            expect(Utils.getMessage(err)).to.be.eq(
                 'There are 2  more required cosignatories than available cosignatories for min removal. Please add cosignatories or reduce the min. removal delta.',
             );
         }
@@ -195,7 +195,7 @@ describe('ModifyMultisigService', () => {
                 cosignatoryAddresses: [cosigner1.address],
             });
         } catch (err) {
-            expect(err.message).to.be.eq(
+            expect(Utils.getMessage(err)).to.be.eq(
                 'Minimum approval and/or minimum removal cannot be set to 0 while there are 1 cosignatories in your list.',
             );
         }
@@ -211,7 +211,7 @@ describe('ModifyMultisigService', () => {
                 cosignatoryAddresses: [cosigner1.address],
             });
         } catch (err) {
-            expect(err.message.startsWith('Cannot add cosignatory!')).to.be.true;
+            expect(Utils.getMessage(err).startsWith('Cannot add cosignatory!')).to.be.true;
         }
     });
 
@@ -225,7 +225,7 @@ describe('ModifyMultisigService', () => {
                 cosignatoryAddresses: [cosigner1.address],
             });
         } catch (err) {
-            expect(err.message.startsWith('Cannot remove cosignatory!')).to.be.true;
+            expect(Utils.getMessage(err).startsWith('Cannot remove cosignatory!')).to.be.true;
         }
     });
 });

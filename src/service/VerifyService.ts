@@ -18,6 +18,7 @@ import * as semver from 'semver';
 import { Logger } from '../logger';
 import { OSUtils } from './OSUtils';
 import { RuntimeService } from './RuntimeService';
+import { Utils } from './Utils';
 export interface VerifyReport {
     platform: string;
     lines: ReportLine[];
@@ -93,7 +94,7 @@ export class AppVersionService {
         } catch (e) {
             return {
                 header,
-                message: `Error: ${e.message}`,
+                message: `Error: ${Utils.getMessage(e)}`,
                 recommendation: `${recommendationPrefix} ${recommendationSuffix}`,
             };
         }
@@ -155,7 +156,7 @@ export class DockerRunVerifyAction implements VerifyAction {
         } catch (e) {
             return {
                 header,
-                message: `Command '${command}' could not be executed: Error: ${e.message}`,
+                message: `Command '${command}' could not be executed: Error: ${Utils.getMessage(e)}`,
                 recommendation: `Please check ${recommendationUrl}`,
             };
         }

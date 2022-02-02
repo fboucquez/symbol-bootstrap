@@ -18,7 +18,7 @@ import { expect } from 'chai';
 import { statSync } from 'fs';
 import 'mocha';
 import { it } from 'mocha';
-import { FileSystemService, LoggerFactory, LogType, YamlUtils } from '../../src';
+import { FileSystemService, LoggerFactory, LogType, Utils, YamlUtils } from '../../src';
 import nock = require('nock');
 const logger = LoggerFactory.getLogger(LogType.Silent);
 const fileSystemService = new FileSystemService(logger);
@@ -52,7 +52,7 @@ describe('FileSystemService', () => {
             await fileSystemService.download(url + '/boat.png', 'boat.png');
             expect(false).eq(true);
         } catch (e) {
-            expect(e.message).eq('Server responded with 404');
+            expect(Utils.getMessage(e)).eq('Server responded with 404');
         }
     });
 });

@@ -204,10 +204,10 @@ export class ConfigService {
             this.logger.info(`Configuration generated.`);
             return { presetData, addresses };
         } catch (e) {
-            if (e.known) {
-                this.logger.error(e.message);
+            if ((e as any).known) {
+                this.logger.error(Utils.getMessage(e));
             } else {
-                this.logger.error(`Unknown error generating the configuration. ${e.message}`, e);
+                this.logger.error(`Unknown error generating the configuration. ${Utils.getMessage(e)}`, e);
                 this.logger.error(`The target folder '${target}' should be deleted!!!`);
             }
             throw e;
