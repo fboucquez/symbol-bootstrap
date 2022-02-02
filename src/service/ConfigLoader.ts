@@ -19,11 +19,13 @@ import { join } from 'path';
 import { Account, PublicAccount } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigAccount, ConfigPreset, CustomPreset, NodePreset } from '../model';
-import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { Assembly, defaultAssembly } from './ConfigService';
 import { Constants } from './Constants';
+import { HandlebarsUtils } from './HandlebarsUtils';
+import { KnownError } from './KnownError';
 import { MigrationService } from './MigrationService';
-import { YamlUtils } from './YamlUtils';
+import { Utils } from './Utils';
+import { Password, YamlUtils } from './YamlUtils';
 
 /**
  * Helper object that knows how to load addresses and preset files.
@@ -59,7 +61,7 @@ export class ConfigLoader {
 
     private static loadBundledPreset(presetFile: string, bundledLocation: string, workingDir: string, errorMessage: string): CustomPreset {
         if (YamlUtils.isYmlFile(presetFile)) {
-            const assemblyFile = BootstrapUtils.resolveWorkingDirPath(workingDir, presetFile);
+            const assemblyFile = Utils.resolveWorkingDirPath(workingDir, presetFile);
             if (!existsSync(assemblyFile)) {
                 throw new KnownError(errorMessage);
             }
@@ -237,7 +239,7 @@ export class ConfigLoader {
         if (!_.isString(value)) {
             return value;
         }
-        return BootstrapUtils.runTemplate(value, context);
+        return HandlebarsUtils.runTemplate(value, context);
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

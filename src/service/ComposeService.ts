@@ -19,12 +19,13 @@ import * as _ from 'lodash';
 import { join } from 'path';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, DockerCompose, DockerComposeService, DockerServicePreset } from '../model';
-import { BootstrapUtils } from './BootstrapUtils';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
+import { HandlebarsUtils } from './HandlebarsUtils';
 import { RemoteNodeService } from './RemoteNodeService';
 import { RuntimeService } from './RuntimeService';
+import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
 
 export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; workingDir: string; offline: boolean };
@@ -88,7 +89,7 @@ export class ComposeService {
         }
 
         await this.fileSystemService.mkdir(targetDocker);
-        await BootstrapUtils.generateConfiguration(presetData, join(Constants.ROOT_FOLDER, 'config', 'docker'), targetDocker);
+        await HandlebarsUtils.generateConfiguration(presetData, join(Constants.ROOT_FOLDER, 'config', 'docker'), targetDocker);
 
         await this.fileSystemService.chmodRecursive(join(targetDocker, 'mongo'), 0o666);
 
@@ -346,7 +347,7 @@ export class ComposeService {
                                 DEFAULT_NODE_CLIENT: defaultNode,
                                 NATIVE_CURRENCY_NAME: fullName,
                                 FAUCET_PRIVATE_KEY: this.getMainAccountPrivateKey(passedAddresses) || '',
-                                NATIVE_CURRENCY_ID: BootstrapUtils.toSimpleHex(presetData.currencyMosaicId || ''),
+                                NATIVE_CURRENCY_ID: HandlebarsUtils.toSimpleHex(presetData.currencyMosaicId || ''),
                             },
                             restart: restart,
                             ports: resolvePorts([{ internalPort: 4000, openPort: n.openPort }]),
@@ -377,7 +378,7 @@ export class ComposeService {
                 },
             };
 
-        dockerCompose = BootstrapUtils.pruneEmpty(_.merge({}, dockerCompose, presetData.compose));
+        dockerCompose = Utils.pruneEmpty(_.merge({}, dockerCompose, presetData.compose));
         await YamlUtils.writeYaml(dockerFile, dockerCompose, undefined);
         this.logger.info(`The docker-compose.yml file created ${dockerFile}`);
         return dockerCompose;

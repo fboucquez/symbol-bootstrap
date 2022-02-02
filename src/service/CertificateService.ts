@@ -20,10 +20,10 @@ import { Convert, Crypto, NetworkType } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { CertificatePair } from '../model';
 import { AccountResolver } from './AccountResolver';
-import { BootstrapUtils } from './BootstrapUtils';
 import { KeyName } from './ConfigService';
 import { Constants } from './Constants';
 import { FileSystemService } from './FileSystemService';
+import { HandlebarsUtils } from './HandlebarsUtils';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
@@ -160,7 +160,7 @@ export class CertificateService {
 
         await this.fileSystemService.mkdir(certFolder);
         const generatedContext = { name };
-        await BootstrapUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
+        await HandlebarsUtils.generateConfiguration(generatedContext, copyFrom, certFolder, []);
 
         CertificateService.createDerFile(mainAccount.privateKey, join(certFolder, 'ca.der'));
         CertificateService.createDerFile(transportAccount.privateKey, join(certFolder, 'node.der'));

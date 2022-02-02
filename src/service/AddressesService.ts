@@ -2,11 +2,11 @@ import { Account, Address, Convert, Crypto, MosaicId, MosaicNonce, NetworkType, 
 import { Logger } from '../logger';
 import { Addresses, ConfigAccount, ConfigPreset, MosaicAccounts, NodeAccount, NodePreset, PrivateKeySecurityMode } from '../model';
 import { AccountResolver } from './AccountResolver';
-import { BootstrapUtils } from './BootstrapUtils';
 import { KeyName } from './ConfigService';
 import { ConfigurationUtils } from './ConfigurationUtils';
 import { CryptoUtils } from './CryptoUtils';
 import { MigrationService } from './MigrationService';
+import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
 
 /**
@@ -56,8 +56,8 @@ export class AddressesService {
         if (!presetData.namespaceRentalFeeSinkAddressV1) {
             presetData.namespaceRentalFeeSinkAddressV1 = presetData.namespaceRentalFeeSinkAddress;
         }
-        presetData.networkIdentifier = BootstrapUtils.getNetworkIdentifier(networkType);
-        presetData.networkName = BootstrapUtils.getNetworkName(networkType);
+        presetData.networkIdentifier = Utils.getNetworkIdentifier(networkType);
+        presetData.networkName = Utils.getNetworkName(networkType);
         presetData.nemesisGenerationHashSeed = addresses.nemesisGenerationHashSeed;
         addresses.nodes = await this.resolveNodesAccounts(oldAddresses, presetData, networkType);
 

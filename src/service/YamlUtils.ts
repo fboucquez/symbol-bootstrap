@@ -17,9 +17,11 @@
 import { promises as fsPromises, readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { dirname } from 'path';
-import { KnownError, Password } from './BootstrapUtils';
 import { CryptoUtils } from './CryptoUtils';
+import { KnownError } from './KnownError';
 import { Utils } from './Utils';
+
+export type Password = string | false | undefined;
 
 /**
  * Utility methods in charge of loading and saving yaml files (and text files).

@@ -34,18 +34,20 @@ import { Logger } from '../logger';
 import { Addresses, ConfigPreset, CustomPreset, GatewayConfigPreset, NodeAccount, PeerInfo } from '../model';
 import { AccountResolver, DefaultAccountResolver } from './AccountResolver';
 import { AddressesService } from './AddressesService';
-import { BootstrapUtils, KnownError, Password } from './BootstrapUtils';
 import { CertificateService, RenewMode } from './CertificateService';
 import { ConfigLoader } from './ConfigLoader';
 import { ConfigurationUtils } from './ConfigurationUtils';
 import { Constants } from './Constants';
 import { CryptoUtils } from './CryptoUtils';
 import { FileSystemService } from './FileSystemService';
+import { HandlebarsUtils } from './HandlebarsUtils';
+import { KnownError } from './KnownError';
 import { NemgenService } from './NemgenService';
 import { RemoteNodeService } from './RemoteNodeService';
 import { ReportParams, ReportService } from './ReportService';
+import { Utils } from './Utils';
 import { VotingParams, VotingService } from './VotingService';
-import { YamlUtils } from './YamlUtils';
+import { Password, YamlUtils } from './YamlUtils';
 
 /**
  * Defined presets.
@@ -259,7 +261,7 @@ export class ConfigService {
             if (!presetData.nemesisSeedFolder) {
                 return undefined;
             }
-            return BootstrapUtils.resolveWorkingDirPath(this.params.workingDir, presetData.nemesisSeedFolder);
+            return Utils.resolveWorkingDirPath(this.params.workingDir, presetData.nemesisSeedFolder);
         };
 
         const presetNemesisSeedFolder = resolvePresetNemesisSeedFolder();
@@ -419,7 +421,7 @@ export class ConfigService {
         };
 
         this.logger.info(`Generating ${name} server configuration`);
-        await BootstrapUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
+        await HandlebarsUtils.generateConfiguration({ ...serverRecoveryConfig, ...templateContext }, copyFrom, serverConfig, excludeFiles);
 
         const isPeer = (nodePresetData: PeerInfo): boolean => nodePresetData.metadata.roles.includes('Peer');
         const peers = knownPeers.filter((peer) => isPeer(peer) && peer.publicKey != account.main.publicKey);
@@ -446,7 +448,7 @@ export class ConfigService {
         }
         if (nodePreset.brokerName) {
             this.logger.info(`Generating ${nodePreset.brokerName} broker configuration`);
-            await BootstrapUtils.generateConfiguration(
+            await HandlebarsUtils.generateConfiguration(
                 { ...brokerRecoveryConfig, ...templateContext },
                 copyFrom,
                 brokerConfig,
@@ -519,7 +521,7 @@ export class ConfigService {
             this.logger.info(`Found ${transactions.length} provided in transactions.`);
         }
 
-        await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+        await HandlebarsUtils.generateConfiguration(templateContext, copyFrom, moveTo);
         await new NemgenService(this.logger, this.params).run(presetData);
     }
 
@@ -624,7 +626,7 @@ export class ConfigService {
                 const templateContext = { ...generatedContext, ...presetData, ...gatewayPreset };
                 const name = templateContext.name || `rest-gateway-${index}`;
                 const moveTo = this.fileSystemService.getTargetGatewayFolder(this.params.target, false, name);
-                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+                await HandlebarsUtils.generateConfiguration(templateContext, copyFrom, moveTo);
                 const apiNodeConfigFolder = this.fileSystemService.getTargetNodesFolder(
                     this.params.target,
                     false,
@@ -638,14 +640,14 @@ export class ConfigService {
                     gatewayPreset.apiNodeName,
                     'cert',
                 );
-                await BootstrapUtils.generateConfiguration(
+                await HandlebarsUtils.generateConfiguration(
                     {},
                     apiNodeConfigFolder,
                     join(moveTo, 'api-node-config'),
                     [],
                     ['config-network.properties', 'config-node.properties'],
                 );
-                await BootstrapUtils.generateConfiguration(
+                await HandlebarsUtils.generateConfiguration(
                     {},
                     apiNodeCertFolder,
                     join(moveTo, 'api-node-config', 'cert'),
@@ -706,7 +708,7 @@ export class ConfigService {
                 };
                 const name = templateContext.name || `explorer-${index}`;
                 const moveTo = this.fileSystemService.getTargetFolder(this.params.target, false, Constants.targetExplorersFolder, name);
-                await BootstrapUtils.generateConfiguration(templateContext, copyFrom, moveTo);
+                await HandlebarsUtils.generateConfiguration(templateContext, copyFrom, moveTo);
             }),
         );
     }
