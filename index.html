@@ -1,190 +1,139 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>symbol-bootstrap</title>
-	<meta name="description" content="Documentation for symbol-bootstrap">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script async src="assets/js/search.js" id="search-script"></script>
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">symbol-bootstrap</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<h1>symbol-bootstrap</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#symbol-bootstrap" id="symbol-bootstrap" style="color: inherit; text-decoration: none;">
-					<h1>symbol-bootstrap</h1>
-				</a>
-				<p>Symbol CLI tool that allows you creating, configuring and running <a href="https://docs.symbolplatform.com/">Symbol</a> blockchain complete networks or nodes to be sync with existing networks.</p>
-				<p><a href="https://oclif.io"><img src="https://img.shields.io/badge/cli-oclif-brightgreen.svg" alt="oclif"></a>
-					<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/v/symbol-bootstrap.svg" alt="Version"></a>
-					<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/dw/symbol-bootstrap.svg" alt="Downloads/week"></a>
-					<a href="https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json"><img src="https://img.shields.io/npm/l/symbol-bootstrap.svg" alt="License"></a>
-					<a href="https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml"><img src="https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml/badge.svg" alt="Build"></a>
-					<a href="https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=dev"><img src="https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=dev" alt="Coverage Status"></a>
-				<a href="https://fboucquez.github.io/symbol-bootstrap/"><img src="https://img.shields.io/badge/api-doc-blue.svg" alt="Api Doc"></a></p>
-				<!-- toc -->
-				<ul>
-					<li><a href="#symbol-bootstrap">symbol-bootstrap</a></li>
-					<li><a href="#key-features">Key features:</a></li>
-					<li><a href="#concepts">Concepts</a></li>
-					<li><a href="#requirements">Requirements</a></li>
-					<li><a href="#installation">Installation</a></li>
-					<li><a href="#wizard">Wizard</a></li>
-					<li><a href="#development">Development</a></li>
-					<li><a href="#support">Support</a></li>
-					<li><a href="#command-topics">Command Topics</a><!-- tocstop --></li>
-				</ul>
-				<a href="#key-features" id="key-features" style="color: inherit; text-decoration: none;">
-					<h1>Key features:</h1>
-				</a>
-				<ul>
-					<li>  It&#39;s an installable cli tool. It&#39;s not a repo you need to clone and compile.</li>
-					<li>  It provides a one liner command for testnet/mainnet node creation and upgrades.</li>
-					<li>  It provides a one liner command for local test network creation and upgrades.</li>
-					<li>  It includes a wizard for easy node and accounts creation.</li>
-					<li>  It includes a comprehensive list of commands for node administration.</li>
-					<li>  The configuration is parametrized via CLI commands and presets instead of by changing properties files.</li>
-					<li>  The tools code is unique for any type of network, new networks or nodes in a network. It doesn&#39;t need to be copied and pasted in different projects or assemblies.</li>
-					<li>  The config command runs on the host machine, not via docker making it easier to debug or tune</li>
-					<li>  It uses the TS SDK for key generation, vrf transactions, voting files, and address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
-					<li>  Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
-					<li>  Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
-					<li>  Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
-					<li>  The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
-					<li>  The used docker images versions can be changed via configuration/preset.</li>
-					<li>  It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
-					<li>  It can be used for <a href="docs/e2eTesting.md">e2e testing</a>.</li>
-					<li>  It works on Linux, Mac and Windows x86-64 arch.</li>
-				</ul>
-				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
-					<h1>Concepts</h1>
-				</a>
-				<a href="#preset" id="preset" style="color: inherit; text-decoration: none;">
-					<h2>Preset:</h2>
-				</a>
-				<p>Yaml files that define the configuration and layout of the network and nodes. It defines how many nodes, database, rest gateways, the modes, keys, etc.</p>
-				<p>Presets are defined at 4 levels from general to specific:</p>
-				<ul>
-					<li>  Shared: Default configurations for all the networks.</li>
-					<li>  Network: It defines the configuration of a given network.</li>
-					<li>  Assembly: It defines a modification of a network selecting the services that the node will run.</li>
-					<li>  Custom: A user provided yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</li>
-				</ul>
-				<p>Properties in each file override the previous values (by object deep merge).</p>
-				<a href="#network-presets" id="network-presets" style="color: inherit; text-decoration: none;">
-					<h3>Network Presets:</h3>
-				</a>
-				<ul>
-					<li>  <a href="presets/mainnet/network.yml"><code>mainnet</code></a>: Used to create nodes connected to Symbol&#39;s Mainnet network. The <a href="presets/mainnet/seed/00000">nemesis block</a> is copied over.</li>
-					<li>  <a href="presets/testnet/network.yml"><code>testnet</code></a>: Used to create nodes connected to Symbol&#39;s Testnet network. The <a href="presets/testnet/seed/00000">nemesis block</a> is copied over.</li>
-					<li>  <a href="presets/bootstrap/network.yml"><code>bootstrap</code></a>: Used to create new private networks with dual currency configuration, network and harvest currencies. Nemesis block is generated.</li>
-				</ul>
-				<a href="#assemblies" id="assemblies" style="color: inherit; text-decoration: none;">
-					<h3>Assemblies:</h3>
-				</a>
-				<ul>
-					<li>  <a href="presets/assemblies/assembly-peer.yml"><code>peer</code></a>: A standard peer-only node that contains 1 peer node.</li>
-					<li>  <a href="presets/assemblies/assembly-api.yml"><code>api</code></a>: A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.</li>
-					<li>  <a href="presets/assemblies/assembly-dual.yml"><code>dual</code></a>: A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.</li>
-					<li>  <a href="presets/assemblies/assembly-demo.yml"><code>demo</code></a>: A dual node with an additional explorer and faucet for test and demonstration purposes.</li>
-					<li>  <a href="presets/assemblies/assembly-multinode.yml"><code>multinode</code></a>: A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.</li>
-					<li>  <a href="presets/assemblies/assembly-services.yml"><code>services</code></a>: A special docker compose that includes the Explorer, Faucet and HTTPS proxy. This is an easy and quick way of running Symbol services when creating a new network. Note that the services are not HA, it&#39;s not for production environments. </li>
-				</ul>
-				<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
-					<h3>Custom preset:</h3>
-				</a>
-				<p>It&#39;s the way you can tune the network without modifying the code. It&#39;s a yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</p>
-				<p>Custom presets give Symbol Bootstrap its versatility. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
-				<a href="#target" id="target" style="color: inherit; text-decoration: none;">
-					<h2>Target:</h2>
-				</a>
-				<p>The folder where the generated config, docker files and data are stored.</p>
-				<p>The folder structure is:</p>
-				<ul>
-					<li>  <code>./preset.yml</code>: The final generated preset.yml that it&#39;s used to configure bootstrap, the nodes, docker, etc.</li>
-					<li>  <code>./addresses.yml</code>: Randomly generated data that wasn&#39;t provided in the preset. e.g.: SSL keys, nodes&#39; keys, nemesis accounts, generation hash seed, etc.</li>
-					<li>  <code>./nodes</code>: It holds the configuration, data and logs for all the defined node instances.</li>
-					<li>  <code>./gateways</code>: It holds the configuration and logs for all the defined node rest gateways.</li>
-					<li>  <code>./nemesis</code>: The folder used to hold the nemesis block. Block 1 data is generated via <code>nemgen</code> tool for new networks. For existing network, it is copied over.</li>
-					<li>  <code>./databases</code>: The location where the mongo data is stored for the different database instances.</li>
-					<li>  <code>./docker</code>: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.</li>
-					<li>  <code>./explorers</code>: The generated explorer configuration.</li>
-					<li>  <code>./reports</code>: The location of the generated reports.</li>
-				</ul>
-				<p>Note: <strong>The target folder should not be manually modified</strong>. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
-				<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
-					<h1>Requirements</h1>
-				</a>
-				<ul>
-					<li>  Node 12.0.0+</li>
-					<li>  Docker 18.3.0+</li>
-					<li>  Docker Compose 1.25.0+</li>
-				</ul>
-				<p>Check your user can run docker without sudo:</p>
-				<pre><code class="language-shell"><span style="color: #000000">docker run hello-world</span>
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>symbol-bootstrap</title><meta name="description" content="Documentation for symbol-bootstrap"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">symbol-bootstrap</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>symbol-bootstrap</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#symbol-bootstrap" id="symbol-bootstrap" style="color: inherit; text-decoration: none;">
+  <h1>symbol-bootstrap</h1>
+</a>
+<p>Symbol CLI tool that allows you creating, configuring and running <a href="https://docs.symbolplatform.com/">Symbol</a> blockchain complete networks or nodes to be sync with existing networks.</p>
+<p><a href="https://oclif.io"><img src="https://img.shields.io/badge/cli-oclif-brightgreen.svg" alt="oclif"></a>
+<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/v/symbol-bootstrap.svg" alt="Version"></a>
+<a href="https://npmjs.org/package/symbol-bootstrap"><img src="https://img.shields.io/npm/dw/symbol-bootstrap.svg" alt="Downloads/week"></a>
+<a href="https://github.com/fboucquez/symbol-bootstrap/blob/master/package.json"><img src="https://img.shields.io/npm/l/symbol-bootstrap.svg" alt="License"></a>
+<a href="https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml"><img src="https://github.com/fboucquez/symbol-bootstrap/actions/workflows/build.yml/badge.svg" alt="Build"></a>
+<a href="https://coveralls.io/github/fboucquez/symbol-bootstrap?branch=dev"><img src="https://coveralls.io/repos/github/fboucquez/symbol-bootstrap/badge.svg?branch=dev" alt="Coverage Status"></a>
+<a href="https://fboucquez.github.io/symbol-bootstrap/"><img src="https://img.shields.io/badge/api-doc-blue.svg" alt="Api Doc"></a></p>
+<!-- toc -->
+<ul>
+<li><a href="#symbol-bootstrap">symbol-bootstrap</a></li>
+<li><a href="#key-features">Key features:</a></li>
+<li><a href="#concepts">Concepts</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#wizard">Wizard</a></li>
+<li><a href="#development">Development</a></li>
+<li><a href="#support">Support</a></li>
+<li><a href="#command-topics">Command Topics</a><!-- tocstop --></li>
+</ul>
+
+<a href="#key-features" id="key-features" style="color: inherit; text-decoration: none;">
+  <h1>Key features:</h1>
+</a>
+<ul>
+<li>It&#39;s an installable cli tool. It&#39;s not a repo you need to clone and compile.</li>
+<li>It provides a one liner command for testnet/mainnet node creation and upgrades.</li>
+<li>It provides a one liner command for local test network creation and upgrades.</li>
+<li>It includes a wizard for easy node and accounts creation.</li>
+<li>It includes a comprehensive list of commands for node administration.</li>
+<li>The configuration is parametrized via CLI commands and presets instead of by changing properties files.</li>
+<li>The tools code is unique for any type of network, new networks or nodes in a network. It doesn&#39;t need to be copied and pasted in different projects or assemblies.</li>
+<li>The config command runs on the host machine, not via docker making it easier to debug or tune</li>
+<li>It uses the TS SDK for key generation, vrf transactions, voting files, and address generation instead of using catapult-tools (nemgen is still used to generate the nemesis block).</li>
+<li>Easier to maintain, the properties files are reused for all nodes, assemblies and network types.</li>
+<li>Network setup (how many database, nodes, rest gateways to run) is defined in presets, users can provide their own ones.</li>
+<li>Docker-compose yaml files are generated based on the network setup/preset instead of being manually created/upgraded.</li>
+<li>The created network (config, nemesis and docker-compose) can be zipped and distributed for other host machines to run it.</li>
+<li>The used docker images versions can be changed via configuration/preset.</li>
+<li>It uses the <a href="https://oclif.io">oclif</a> framework. New commands are easy to add and document.</li>
+<li>It can be used for <a href="docs/e2eTesting.md">e2e testing</a>.</li>
+<li>It works on Linux, Mac and Windows x86-64 arch.</li>
+</ul>
+
+<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
+  <h1>Concepts</h1>
+</a>
+
+<a href="#preset" id="preset" style="color: inherit; text-decoration: none;">
+  <h2>Preset:</h2>
+</a>
+<p>Yaml files that define the configuration and layout of the network and nodes. It defines how many nodes, database, rest gateways, the modes, keys, etc.</p>
+<p>Presets are defined at 4 levels from general to specific:</p>
+<ul>
+<li>Shared: Default configurations for all the networks.</li>
+<li>Network: It defines the configuration of a given network.</li>
+<li>Assembly: It defines a modification of a network selecting the services that the node will run.</li>
+<li>Custom: A user provided yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</li>
+</ul>
+<p>Properties in each file override the previous values (by object deep merge).</p>
+
+<a href="#network-presets" id="network-presets" style="color: inherit; text-decoration: none;">
+  <h3>Network Presets:</h3>
+</a>
+<ul>
+<li><a href="presets/mainnet/network.yml"><code>mainnet</code></a>: Used to create nodes connected to Symbol&#39;s Mainnet network. The <a href="presets/mainnet/seed/00000">nemesis block</a> is copied over.</li>
+<li><a href="presets/testnet/network.yml"><code>testnet</code></a>: Used to create nodes connected to Symbol&#39;s Testnet network. The <a href="presets/testnet/seed/00000">nemesis block</a> is copied over.</li>
+<li><a href="presets/bootstrap/network.yml"><code>bootstrap</code></a>: Used to create new private networks with dual currency configuration, network and harvest currencies. Nemesis block is generated.</li>
+</ul>
+
+<a href="#assemblies" id="assemblies" style="color: inherit; text-decoration: none;">
+  <h3>Assemblies:</h3>
+</a>
+<ul>
+<li><a href="presets/assemblies/assembly-peer.yml"><code>peer</code></a>: A standard peer-only node that contains 1 peer node.</li>
+<li><a href="presets/assemblies/assembly-api.yml"><code>api</code></a>: A standard API node that contains 1 Mongo database, 1 API node, 1 REST gateway, and 1 broker.</li>
+<li><a href="presets/assemblies/assembly-dual.yml"><code>dual</code></a>: A standard dual node that contains 1 Mongo database, 1 API node, 1 REST gateway, 1 broker, and 1 peer node.</li>
+<li><a href="presets/assemblies/assembly-demo.yml"><code>demo</code></a>: A dual node with an additional explorer and faucet for test and demonstration purposes.</li>
+<li><a href="presets/assemblies/assembly-multinode.yml"><code>multinode</code></a>: A special assembly that contains 1 API node and 2 peer-only nodes. This assembly is for testing, it showcases how a private network with 3 nodes runs.</li>
+<li><a href="presets/assemblies/assembly-services.yml"><code>services</code></a>: A special docker compose that includes the Explorer, Faucet and HTTPS proxy. This is an easy and quick way of running Symbol services when creating a new network. Note that the services are not HA, it&#39;s not for production environments.</li>
+</ul>
+
+<a href="#custom-preset" id="custom-preset" style="color: inherit; text-decoration: none;">
+  <h3>Custom preset:</h3>
+</a>
+<p>It&#39;s the way you can tune the network without modifying the code. It&#39;s a yml file (<code>--customPreset</code> param) that could override some or all properties in the out-of-the-box presets.</p>
+<p>Custom presets give Symbol Bootstrap its versatility. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
+
+<a href="#target" id="target" style="color: inherit; text-decoration: none;">
+  <h2>Target:</h2>
+</a>
+<p>The folder where the generated config, docker files and data are stored.</p>
+<p>The folder structure is:</p>
+<ul>
+<li><code>./preset.yml</code>: The final generated preset.yml that it&#39;s used to configure bootstrap, the nodes, docker, etc.</li>
+<li><code>./addresses.yml</code>: Randomly generated data that wasn&#39;t provided in the preset. e.g.: SSL keys, nodes&#39; keys, nemesis accounts, generation hash seed, etc.</li>
+<li><code>./nodes</code>: It holds the configuration, data and logs for all the defined node instances.</li>
+<li><code>./gateways</code>: It holds the configuration and logs for all the defined node rest gateways.</li>
+<li><code>./nemesis</code>: The folder used to hold the nemesis block. Block 1 data is generated via <code>nemgen</code> tool for new networks. For existing network, it is copied over.</li>
+<li><code>./databases</code>: The location where the mongo data is stored for the different database instances.</li>
+<li><code>./docker</code>: The generated docker-compose.yml, mongo init scripts and server basic bash scripts.</li>
+<li><code>./explorers</code>: The generated explorer configuration.</li>
+<li><code>./reports</code>: The location of the generated reports.</li>
+</ul>
+<p>Note: <strong>The target folder should not be manually modified</strong>. This tool may override any file in the target folder when doing upgrades. Any custom configuration should be provided via a custom preset. Check out the custom preset <a href="docs/presetGuides.md">guides</a>!</p>
+
+<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
+  <h1>Requirements</h1>
+</a>
+<ul>
+<li>Node 12.0.0+</li>
+<li>Docker 18.3.0+</li>
+<li>Docker Compose 1.25.0+</li>
+</ul>
+<p>Check your user can run docker without sudo:</p>
+<pre><code class="language-shell"><span class="hl-0">docker run hello-world</span>
 </code></pre>
-				<p>If you see an error like:</p>
-				<pre><code><span style="color: #001080">Got</span><span style="color: #000000"> </span><span style="color: #001080">permission</span><span style="color: #000000"> </span><span style="color: #001080">denied</span><span style="color: #000000"> </span><span style="color: #AF00DB">while</span><span style="color: #000000"> </span><span style="color: #001080">trying</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">connect</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #001080">Docker</span><span style="color: #000000"> </span><span style="color: #001080">daemon</span><span style="color: #000000"> </span><span style="color: #001080">socket</span><span style="color: #000000"> </span><span style="color: #001080">at</span><span style="color: #000000"> unix:</span><span style="color: #008000">///var/run/docker.sock</span>
+<p>If you see an error like:</p>
+<pre><code><span class="hl-1">Got</span><span class="hl-0"> </span><span class="hl-1">permission</span><span class="hl-0"> </span><span class="hl-1">denied</span><span class="hl-0"> </span><span class="hl-2">while</span><span class="hl-0"> </span><span class="hl-1">trying</span><span class="hl-0"> </span><span class="hl-1">to</span><span class="hl-0"> </span><span class="hl-1">connect</span><span class="hl-0"> </span><span class="hl-1">to</span><span class="hl-0"> </span><span class="hl-1">the</span><span class="hl-0"> </span><span class="hl-1">Docker</span><span class="hl-0"> </span><span class="hl-1">daemon</span><span class="hl-0"> </span><span class="hl-1">socket</span><span class="hl-0"> </span><span class="hl-1">at</span><span class="hl-0"> </span><span class="hl-3">unix</span><span class="hl-0">:</span><span class="hl-4">///var/run/docker.sock</span>
 </code></pre>
-				<p>Please follow this <a href="https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket">guide</a>.</p>
-				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
-					<h1>Installation</h1>
-				</a>
-				<p>It&#39;s recommended to run the commands from en empty working dir.</p>
-				<p>The network configuration, data and docker files will be created inside the target folder (&#39;./target&#39;) by default.</p>
-				<pre><code class="language-shell"><span style="color: #000000">mkdir my-networks</span>
-<span style="color: #795E26">cd</span><span style="color: #000000"> my-networks</span>
+<p>Please follow this <a href="https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket">guide</a>.</p>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h1>Installation</h1>
+</a>
+<p>It&#39;s recommended to run the commands from en empty working dir.</p>
+<p>The network configuration, data and docker files will be created inside the target folder (&#39;./target&#39;) by default.</p>
+<pre><code class="language-shell"><span class="hl-0">mkdir my-networks</span><br/><span class="hl-5">cd</span><span class="hl-0"> my-networks</span>
 </code></pre>
-				<p>Once in the working dir:</p>
-				<!-- usage -->
-				<pre><code class="language-sh-session">$ npm install -g symbol-bootstrap
+<p>Once in the working dir:</p>
+<!-- usage -->
+<pre><code class="language-sh-session">$ npm install -g symbol-bootstrap
 $ symbol-bootstrap COMMAND
 running command...
 $ symbol-bootstrap (-v|--version|version)
@@ -194,335 +143,106 @@ USAGE
   $ symbol-bootstrap COMMAND
 ...
 </code></pre>
-				<!-- usagestop -->
-				<p>Validate your environment by running:</p>
-				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap verify</span>
+<!-- usagestop -->
+
+<p>Validate your environment by running:</p>
+<pre><code class="language-shell"><span class="hl-0">symbol-bootstrap verify</span>
 </code></pre>
-				<p>The general usage would be:</p>
-				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap config -p testnet -a dual</span>
-<span style="color: #000000">symbol-bootstrap compose</span>
-<span style="color: #000000">symbol-bootstrap run</span>
+<p>The general usage would be:</p>
+<pre><code class="language-shell"><span class="hl-0">symbol-bootstrap config -p testnet -a dual</span><br/><span class="hl-0">symbol-bootstrap compose</span><br/><span class="hl-0">symbol-bootstrap run</span>
 </code></pre>
-				<p>You can aggregate all these commands with this one liner:</p>
-				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap start -p testnet -a dual</span>
+<p>You can aggregate all these commands with this one liner:</p>
+<pre><code class="language-shell"><span class="hl-0">symbol-bootstrap start -p testnet -a dual</span>
 </code></pre>
-				<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
-				<pre><code class="language-shell"><span style="color: #000000">sudo rm -rf ./target</span>
+<p>If you need to start fresh, you many need to sudo remove the target folder (docker volumes dirs may be created using sudo). Example:</p>
+<pre><code class="language-shell"><span class="hl-0">sudo rm -rf ./target</span>
 </code></pre>
-				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-					<h2>Examples</h2>
-				</a>
-				<p>Network presets and assemblies can be combined to generate different types of nodes. Some examples:</p>
-				<ul>
-					<li>  <code>$ symbol-bootstrap start -p mainnet -a dual -c customPreset.yml</code></li>
-					<li>  <code>$ symbol-bootstrap start -p testnet -a peer -c customPreset.yml</code></li>
-					<li>  <code>$ symbol-bootstrap start -p testnet -a demo -c customPreset.yml</code></li>
-					<li>  <code>$ symbol-bootstrap start -p bootstrap -a multinode -c customPreset.yml</code></li>
-					<li>  <code>$ symbol-bootstrap start -p bootstrap -a demo -c customPreset.yml</code></li>
-					<li>  <code>$ symbol-bootstrap start -p bootstrap -a dual -c customPreset.yml</code></li>
-					<li>  <code>$ symbol-bootstrap start -p testnet -a services -c customServicesPreset.yml</code></li>
-				</ul>
-				<p>Although some combinations can be done, they may not be really useful. Examples that are NOT useful:</p>
-				<ul>
-					<li>  <code>$ symbol-bootstrap start -p mainnet -a multinode</code></li>
-					<li>  <code>$ symbol-bootstrap start -p testnet -a multinode</code></li>
-				</ul>
-				<p>A custom network preset file can also be provided. This is useful when you have your own custom Symbol network, and you want other nodes to join.
-				For this case, you provide your own <code>networkPreset.yml</code> and nemesis feed folder. The node admin can then run:</p>
-				<ul>
-					<li><code>$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml</code></li>
-					<li><code>$ symbol-bootstrap start -p customNetworkPreset.yml -a services -c customServicesPreset.yml</code></li>
-				</ul>
-				<p>The <code>demo</code> assemblies starts a local Explorer <a href="http://localhost:90">http://localhost:90</a> and Faucet <a href="http://localhost:100">http://localhost:100</a>.</p>
-				<a href="#wizard" id="wizard" style="color: inherit; text-decoration: none;">
-					<h1>Wizard</h1>
-				</a>
-				<p>If this is your first time creating a node, it&#39;s recommended to use the Wizard. Just follow the instructions:</p>
-				<pre><code class="language-shell"><span style="color: #000000">symbol-bootstrap wizard</span>
+
+<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+  <h2>Examples</h2>
+</a>
+<p>Network presets and assemblies can be combined to generate different types of nodes. Some examples:</p>
+<ul>
+<li><code>$ symbol-bootstrap start -p mainnet -a dual -c customPreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p testnet -a peer -c customPreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p testnet -a demo -c customPreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p bootstrap -a multinode -c customPreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p bootstrap -a demo -c customPreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p bootstrap -a dual -c customPreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p testnet -a services -c customServicesPreset.yml</code></li>
+</ul>
+<p>Although some combinations can be done, they may not be really useful. Examples that are NOT useful:</p>
+<ul>
+<li><code>$ symbol-bootstrap start -p mainnet -a multinode</code></li>
+<li><code>$ symbol-bootstrap start -p testnet -a multinode</code></li>
+</ul>
+<p>A custom network preset file can also be provided. This is useful when you have your own custom Symbol network, and you want other nodes to join.
+For this case, you provide your own <code>networkPreset.yml</code> and nemesis feed folder. The node admin can then run:</p>
+<ul>
+<li><code>$ symbol-bootstrap start -p customNetworkPreset.yml -a dual -c customNodePreset.yml</code></li>
+<li><code>$ symbol-bootstrap start -p customNetworkPreset.yml -a services -c customServicesPreset.yml</code></li>
+</ul>
+<p>The <code>demo</code> assemblies starts a local Explorer <a href="http://localhost:90">http://localhost:90</a> and Faucet <a href="http://localhost:100">http://localhost:100</a>.</p>
+
+<a href="#wizard" id="wizard" style="color: inherit; text-decoration: none;">
+  <h1>Wizard</h1>
+</a>
+<p>If this is your first time creating a node, it&#39;s recommended to use the Wizard. Just follow the instructions:</p>
+<pre><code class="language-shell"><span class="hl-0">symbol-bootstrap wizard</span>
 </code></pre>
-				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
-					<h1>Development</h1>
-				</a>
-				<p>If you want to contribute to this tool, clone this repo and run:</p>
-				<pre><code class="language-shell"><span style="color: #000000">npm install -g</span>
+
+<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+  <h1>Development</h1>
+</a>
+<p>If you want to contribute to this tool, clone this repo and run:</p>
+<pre><code class="language-shell"><span class="hl-0">npm install -g</span>
 </code></pre>
-				<p>Then, <code>symbol-bootstrap</code> runs from the source code. You can now try your features after changing the code.</p>
-				<p>Pull Requests are appreciated! Please follow the contributing <a href="CONTRIBUTING.md">guidelines</a>.</p>
-				<p>Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
-				General users should install this tool like any other node module.</p>
-				<a href="#code-style" id="code-style" style="color: inherit; text-decoration: none;">
-					<h2>Code style</h2>
-				</a>
-				<p>To format the source code, verify/fix lint issues, and generate the commands docs, run:</p>
-				<pre><code class="language-shell"><span style="color: #000000">npm run style:fix</span>
+<p>Then, <code>symbol-bootstrap</code> runs from the source code. You can now try your features after changing the code.</p>
+<p>Pull Requests are appreciated! Please follow the contributing <a href="CONTRIBUTING.md">guidelines</a>.</p>
+<p>Note: cloning this repo is only for people that want to tune the tool in a way it cannot be configured. If this is your case, please provide a feature request.
+General users should install this tool like any other node module.</p>
+
+<a href="#code-style" id="code-style" style="color: inherit; text-decoration: none;">
+  <h2>Code style</h2>
+</a>
+<p>To format the source code, verify/fix lint issues, and generate the commands docs, run:</p>
+<pre><code class="language-shell"><span class="hl-0">npm run style:fix</span>
 </code></pre>
-				<a href="#support" id="support" style="color: inherit; text-decoration: none;">
-					<h1>Support</h1>
-				</a>
-				<p>Symbol Bootstrap is a personal project maintained on my free time.</p>
-				<p>If you like it, please consider supporting it by delegating your Symbol account to my <a href="http://symbol-node-dual-1.tawa.solutions:3000/node/info">node</a>:</p>
-				<pre><code><span style="color: #000000">name: </span><span style="color: #001080">symbol</span><span style="color: #000000">-</span><span style="color: #001080">node</span><span style="color: #000000">-</span><span style="color: #001080">dual</span><span style="color: #000000">-1.</span><span style="color: #001080">tawa</span><span style="color: #000000">.</span><span style="color: #001080">solutions</span>
-<span style="color: #000000">publicKey: 6</span><span style="color: #0070C1">DB275B83F4839768821FF621DD90358F99A84EC61EB7DE1F6947E5B0926B9BB</span>
+
+<a href="#support" id="support" style="color: inherit; text-decoration: none;">
+  <h1>Support</h1>
+</a>
+<p>Symbol Bootstrap is a personal project maintained on my free time.</p>
+<p>If you like it, please consider supporting it by delegating your Symbol account to my <a href="http://symbol-node-dual-1.tawa.solutions:3000/node/info">node</a>:</p>
+<pre><code><span class="hl-3">name</span><span class="hl-0">: </span><span class="hl-1">symbol</span><span class="hl-0">-</span><span class="hl-1">node</span><span class="hl-0">-</span><span class="hl-1">dual</span><span class="hl-0">-1.</span><span class="hl-1">tawa</span><span class="hl-0">.</span><span class="hl-1">solutions</span><br/><span class="hl-3">publicKey</span><span class="hl-0">: 6</span><span class="hl-6">DB275B83F4839768821FF621DD90358F99A84EC61EB7DE1F6947E5B0926B9BB</span>
 </code></pre>
-				<p>If you don&#39;t like it, let me know by creating issues on GitHub. Pull Requests are welcome!</p>
-				<!-- commands -->
-				<a href="#command-topics" id="command-topics" style="color: inherit; text-decoration: none;">
-					<h1>Command Topics</h1>
-				</a>
-				<ul>
-					<li><a href="docs/autocomplete.md"><code>symbol-bootstrap autocomplete</code></a> - display autocomplete installation instructions</li>
-					<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder deleting the generated configuration and data</li>
-					<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
-					<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
-					<li><a href="docs/decrypt.md"><code>symbol-bootstrap decrypt</code></a> - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.</li>
-					<li><a href="docs/encrypt.md"><code>symbol-bootstrap encrypt</code></a> - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.</li>
-					<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
-					<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
-					<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
-					<li><a href="docs/modifyMultisig.md"><code>symbol-bootstrap modifyMultisig</code></a> - Create or modify a multisig account</li>
-					<li><a href="docs/pack.md"><code>symbol-bootstrap pack</code></a> - It configures and packages your node into a zip file that can be uploaded to the final node machine.</li>
-					<li><a href="docs/renewCertificates.md"><code>symbol-bootstrap renewCertificates</code></a> - It renews the SSL certificates of the node regenerating the node.csr.pem files but reusing the current private keys.</li>
-					<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
-					<li><a href="docs/resetData.md"><code>symbol-bootstrap resetData</code></a> - It removes the data keeping the generated configuration, certificates, keys and block 1.</li>
-					<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
-					<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
-					<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
-					<li><a href="docs/updateVotingKeys.md"><code>symbol-bootstrap updateVotingKeys</code></a> - It updates the voting files containing the voting keys when required.</li>
-					<li><a href="docs/verify.md"><code>symbol-bootstrap verify</code></a> - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.</li>
-					<li><a href="docs/wizard.md"><code>symbol-bootstrap wizard</code></a> - An utility command that will help you configuring node!</li>
-				</ul>
-				<!-- commandsstop -->
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class=" ">
-						<a href="modules.html">Exports</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_clean.html">commands/clean</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_compose.html">commands/compose</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_config.html">commands/config</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_decrypt.html">commands/decrypt</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_encrypt.html">commands/encrypt</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_healthcheck.html">commands/health<wbr>Check</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_link.html">commands/link</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_modifymultisig.html">commands/modify<wbr>Multisig</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_pack.html">commands/pack</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_renewcertificates.html">commands/renew<wbr>Certificates</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_report.html">commands/report</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_resetdata.html">commands/reset<wbr>Data</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_run.html">commands/run</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_start.html">commands/start</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_stop.html">commands/stop</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_updatevotingkeys.html">commands/update<wbr>Voting<wbr>Keys</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_verify.html">commands/verify</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/commands_wizard.html">commands/wizard</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/index.html">index</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/logger.html">logger</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/logger_logtype.html">logger/<wbr>Log<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/logger_logger.html">logger/<wbr>Logger</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/logger_loggerfactory.html">logger/<wbr>Logger<wbr>Factory</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/model.html">model</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/model_addresses.html">model/<wbr>Addresses</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/model_configpreset.html">model/<wbr>Config<wbr>Preset</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/model_dockercompose.html">model/<wbr>Docker<wbr>Compose</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service.html">service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_accountresolver.html">service/<wbr>Account<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_addressesservice.html">service/<wbr>Addresses<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_announceservice.html">service/<wbr>Announce<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_asyncutils.html">service/<wbr>Async<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_bootstrapaccountresolver.html">service/<wbr>Bootstrap<wbr>Account<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_bootstrapservice.html">service/<wbr>Bootstrap<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_certificateservice.html">service/<wbr>Certificate<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_commandutils.html">service/<wbr>Command<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_composeservice.html">service/<wbr>Compose<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_configloader.html">service/<wbr>Config<wbr>Loader</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_configservice.html">service/<wbr>Config<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_configurationutils.html">service/<wbr>Configuration<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_constants.html">service/<wbr>Constants</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_cryptoutils.html">service/<wbr>Crypto<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_filesystemservice.html">service/<wbr>File<wbr>System<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_handlebarsutils.html">service/<wbr>Handlebars<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_knownerror.html">service/<wbr>Known<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_linkservice.html">service/<wbr>Link<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_migrationservice.html">service/<wbr>Migration<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_modifymultisigservice.html">service/<wbr>Modify<wbr>Multisig<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_nemgenservice.html">service/<wbr>Nemgen<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_osutils.html">service/OSUtils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_portservice.html">service/<wbr>Port<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_remotenodeservice.html">service/<wbr>Remote<wbr>Node<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_reportservice.html">service/<wbr>Report<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_runservice.html">service/<wbr>Run<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_runtimeservice.html">service/<wbr>Runtime<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_transactionutils.html">service/<wbr>Transaction<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_utils.html">service/<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_verifyservice.html">service/<wbr>Verify<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_votingkeyfileprovider.html">service/<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_votingservice.html">service/<wbr>Voting<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_votingutils.html">service/<wbr>Voting<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_yamlutils.html">service/<wbr>Yaml<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/service_ziputils.html">service/<wbr>Zip<wbr>Utils</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-</body>
-</html>
+<p>If you don&#39;t like it, let me know by creating issues on GitHub. Pull Requests are welcome!</p>
+<!-- commands -->
+
+<a href="#command-topics" id="command-topics" style="color: inherit; text-decoration: none;">
+  <h1>Command Topics</h1>
+</a>
+<ul>
+<li><a href="docs/autocomplete.md"><code>symbol-bootstrap autocomplete</code></a> - display autocomplete installation instructions</li>
+<li><a href="docs/clean.md"><code>symbol-bootstrap clean</code></a> - It removes the target folder deleting the generated configuration and data</li>
+<li><a href="docs/compose.md"><code>symbol-bootstrap compose</code></a> - It generates the <code>docker-compose.yml</code> file from the configured network.</li>
+<li><a href="docs/config.md"><code>symbol-bootstrap config</code></a> - Command used to set up the configuration files and the nemesis block for the current network</li>
+<li><a href="docs/decrypt.md"><code>symbol-bootstrap decrypt</code></a> - It decrypts a yml file using the provided password. The source file can be a custom preset file, a preset.yml file or an addresses.yml.</li>
+<li><a href="docs/encrypt.md"><code>symbol-bootstrap encrypt</code></a> - It encrypts a yml file using the provided password. The source files would be a custom preset file, a preset.yml file or an addresses.yml.</li>
+<li><a href="docs/healthCheck.md"><code>symbol-bootstrap healthCheck</code></a> - It checks if the services created with docker compose are up and running.</li>
+<li><a href="docs/help.md"><code>symbol-bootstrap help</code></a> - display help for symbol-bootstrap</li>
+<li><a href="docs/link.md"><code>symbol-bootstrap link</code></a> - It announces VRF and Voting Link transactions to the network for each node with &#39;Peer&#39; or &#39;Voting&#39; roles. This command finalizes the node registration to an existing network.</li>
+<li><a href="docs/modifyMultisig.md"><code>symbol-bootstrap modifyMultisig</code></a> - Create or modify a multisig account</li>
+<li><a href="docs/pack.md"><code>symbol-bootstrap pack</code></a> - It configures and packages your node into a zip file that can be uploaded to the final node machine.</li>
+<li><a href="docs/renewCertificates.md"><code>symbol-bootstrap renewCertificates</code></a> - It renews the SSL certificates of the node regenerating the node.csr.pem files but reusing the current private keys.</li>
+<li><a href="docs/report.md"><code>symbol-bootstrap report</code></a> - it generates reStructuredText (.rst) reports describing the configuration of each node.</li>
+<li><a href="docs/resetData.md"><code>symbol-bootstrap resetData</code></a> - It removes the data keeping the generated configuration, certificates, keys and block 1.</li>
+<li><a href="docs/run.md"><code>symbol-bootstrap run</code></a> - It boots the network via docker using the generated <code>docker-compose.yml</code> file and configuration. The config and compose methods/commands need to be called before this method. This is just a wrapper for the <code>docker-compose up</code> bash call.</li>
+<li><a href="docs/start.md"><code>symbol-bootstrap start</code></a> - Single command that aggregates config, compose and run in one line!</li>
+<li><a href="docs/stop.md"><code>symbol-bootstrap stop</code></a> - It stops the docker-compose network if running (symbol-bootstrap started with --detached). This is just a wrapper for the <code>docker-compose down</code> bash call.</li>
+<li><a href="docs/updateVotingKeys.md"><code>symbol-bootstrap updateVotingKeys</code></a> - It updates the voting files containing the voting keys when required.</li>
+<li><a href="docs/verify.md"><code>symbol-bootstrap verify</code></a> - It tests the installed software in the current computer reporting if there is any missing dependency, invalid version, or software related issue.</li>
+<li><a href="docs/wizard.md"><code>symbol-bootstrap wizard</code></a> - An utility command that will help you configuring node!</li>
+</ul>
+<!-- commandsstop -->
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-enum"><a href="enums/Assembly.html" class="tsd-kind-icon">Assembly</a></li><li class="tsd-kind-enum"><a href="enums/DebugLevel.html" class="tsd-kind-icon">Debug<wbr/>Level</a></li><li class="tsd-kind-enum"><a href="enums/KeyName.html" class="tsd-kind-icon">Key<wbr/>Name</a></li><li class="tsd-kind-enum"><a href="enums/LogType.html" class="tsd-kind-icon">Log<wbr/>Type</a></li><li class="tsd-kind-enum"><a href="enums/Preset.html" class="tsd-kind-icon">Preset</a></li><li class="tsd-kind-enum"><a href="enums/PrivateKeySecurityMode.html" class="tsd-kind-icon">Private<wbr/>Key<wbr/>Security<wbr/>Mode</a></li><li class="tsd-kind-enum"><a href="enums/RenewMode.html" class="tsd-kind-icon">Renew<wbr/>Mode</a></li><li class="tsd-kind-enum"><a href="enums/SinkType.html" class="tsd-kind-icon">Sink<wbr/>Type</a></li><li class="tsd-kind-enum"><a href="enums/TransactionSelectionStrategy.html" class="tsd-kind-icon">Transaction<wbr/>Selection<wbr/>Strategy</a></li><li class="tsd-kind-class"><a href="classes/AddressesService.html" class="tsd-kind-icon">Addresses<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/AnnounceService.html" class="tsd-kind-icon">Announce<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/AppVersionService.html" class="tsd-kind-icon">App<wbr/>Version<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/AppVersionVerifyAction.html" class="tsd-kind-icon">App<wbr/>Version<wbr/>Verify<wbr/>Action</a></li><li class="tsd-kind-class"><a href="classes/AsyncUtils.html" class="tsd-kind-icon">Async<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/BootstrapAccountResolver.html" class="tsd-kind-icon">Bootstrap<wbr/>Account<wbr/>Resolver</a></li><li class="tsd-kind-class"><a href="classes/BootstrapService.html" class="tsd-kind-icon">Bootstrap<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/CatapultVotingKeyFileProvider.html" class="tsd-kind-icon">Catapult<wbr/>Voting<wbr/>Key<wbr/>File<wbr/>Provider</a></li><li class="tsd-kind-class"><a href="classes/CertificateService.html" class="tsd-kind-icon">Certificate<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/CommandUtils.html" class="tsd-kind-icon">Command<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/ComposeService.html" class="tsd-kind-icon">Compose<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/ConfigLoader.html" class="tsd-kind-icon">Config<wbr/>Loader</a></li><li class="tsd-kind-class"><a href="classes/ConfigService.html" class="tsd-kind-icon">Config<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/ConfigurationUtils.html" class="tsd-kind-icon">Configuration<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/Constants.html" class="tsd-kind-icon">Constants</a></li><li class="tsd-kind-class"><a href="classes/CryptoUtils.html" class="tsd-kind-icon">Crypto<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/DefaultAccountResolver.html" class="tsd-kind-icon">Default<wbr/>Account<wbr/>Resolver</a></li><li class="tsd-kind-class"><a href="classes/DockerRunVerifyAction.html" class="tsd-kind-icon">Docker<wbr/>Run<wbr/>Verify<wbr/>Action</a></li><li class="tsd-kind-class"><a href="classes/FileSystemService.html" class="tsd-kind-icon">File<wbr/>System<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/HandlebarsUtils.html" class="tsd-kind-icon">Handlebars<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/KnownError.html" class="tsd-kind-icon">Known<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/LinkService.html" class="tsd-kind-icon">Link<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/LinkTransactionGenericFactory.html" class="tsd-kind-icon">Link<wbr/>Transaction<wbr/>Generic<wbr/>Factory</a></li><li class="tsd-kind-class"><a href="classes/LoggerFactory.html" class="tsd-kind-icon">Logger<wbr/>Factory</a></li><li class="tsd-kind-class"><a href="classes/MigrationService.html" class="tsd-kind-icon">Migration<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/ModifyMultisigService.html" class="tsd-kind-icon">Modify<wbr/>Multisig<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/NativeVotingKeyFileProvider.html" class="tsd-kind-icon">Native<wbr/>Voting<wbr/>Key<wbr/>File<wbr/>Provider</a></li><li class="tsd-kind-class"><a href="classes/NemgenService.html" class="tsd-kind-icon">Nemgen<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/OSUtils.html" class="tsd-kind-icon">OSUtils</a></li><li class="tsd-kind-class"><a href="classes/PortService.html" class="tsd-kind-icon">Port<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/RemoteNodeService.html" class="tsd-kind-icon">Remote<wbr/>Node<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/ReportService.html" class="tsd-kind-icon">Report<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/RunService.html" class="tsd-kind-icon">Run<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/RuntimeService.html" class="tsd-kind-icon">Runtime<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/SudoRunVerifyAction.html" class="tsd-kind-icon">Sudo<wbr/>Run<wbr/>Verify<wbr/>Action</a></li><li class="tsd-kind-class"><a href="classes/TransactionUtils.html" class="tsd-kind-icon">Transaction<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/Utils.html" class="tsd-kind-icon">Utils</a></li><li class="tsd-kind-class"><a href="classes/VerifyService.html" class="tsd-kind-icon">Verify<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/VotingService.html" class="tsd-kind-icon">Voting<wbr/>Service</a></li><li class="tsd-kind-class"><a href="classes/VotingUtils.html" class="tsd-kind-icon">Voting<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/YamlUtils.html" class="tsd-kind-icon">Yaml<wbr/>Utils</a></li><li class="tsd-kind-class"><a href="classes/ZipUtils.html" class="tsd-kind-icon">Zip<wbr/>Utils</a></li><li class="tsd-kind-interface"><a href="interfaces/AccountResolver.html" class="tsd-kind-icon">Account<wbr/>Resolver</a></li><li class="tsd-kind-interface"><a href="interfaces/Addresses.html" class="tsd-kind-icon">Addresses</a></li><li class="tsd-kind-interface"><a href="interfaces/CertificateConfigPreset.html" class="tsd-kind-icon">Certificate<wbr/>Config<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/CertificateMetadata.html" class="tsd-kind-icon">Certificate<wbr/>Metadata</a></li><li class="tsd-kind-interface"><a href="interfaces/CertificatePair.html" class="tsd-kind-icon">Certificate<wbr/>Pair</a></li><li class="tsd-kind-interface"><a href="interfaces/CertificateParams.html" class="tsd-kind-icon">Certificate<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/CommonConfigPreset.html" class="tsd-kind-icon">Common<wbr/>Config<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/ConfigAccount.html" class="tsd-kind-icon">Config<wbr/>Account</a></li><li class="tsd-kind-interface"><a href="interfaces/ConfigParams.html" class="tsd-kind-icon">Config<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/ConfigPreset.html" class="tsd-kind-icon">Config<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/ConfigResult.html" class="tsd-kind-icon">Config<wbr/>Result</a></li><li class="tsd-kind-interface"><a href="interfaces/CryptoImplementation.html" class="tsd-kind-icon">Crypto<wbr/>Implementation</a></li><li class="tsd-kind-interface"><a href="interfaces/CurrencyDistribution.html" class="tsd-kind-icon">Currency<wbr/>Distribution</a></li><li class="tsd-kind-interface"><a href="interfaces/CustomPreset.html" class="tsd-kind-icon">Custom<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/DatabasePreset.html" class="tsd-kind-icon">Database<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/DockerCompose.html" class="tsd-kind-icon">Docker<wbr/>Compose</a></li><li class="tsd-kind-interface"><a href="interfaces/DockerComposeService.html" class="tsd-kind-icon">Docker<wbr/>Compose<wbr/>Service</a></li><li class="tsd-kind-interface"><a href="interfaces/DockerComposeServiceLogging.html" class="tsd-kind-icon">Docker<wbr/>Compose<wbr/>Service<wbr/>Logging</a></li><li class="tsd-kind-interface"><a href="interfaces/DockerServicePreset.html" class="tsd-kind-icon">Docker<wbr/>Service<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/ExpectedVersions.html" class="tsd-kind-icon">Expected<wbr/>Versions</a></li><li class="tsd-kind-interface"><a href="interfaces/ExplorerPreset.html" class="tsd-kind-icon">Explorer<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/FaucetPreset.html" class="tsd-kind-icon">Faucet<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/GatewayConfigPreset.html" class="tsd-kind-icon">Gateway<wbr/>Config<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/GatewayPreset.html" class="tsd-kind-icon">Gateway<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/GenericNodeAccount.html" class="tsd-kind-icon">Generic<wbr/>Node<wbr/>Account</a></li><li class="tsd-kind-interface"><a href="interfaces/HttpsProxyPreset.html" class="tsd-kind-icon">Https<wbr/>Proxy<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/KeyPair.html" class="tsd-kind-icon">Key<wbr/>Pair</a></li><li class="tsd-kind-interface"><a href="interfaces/LinkServiceTransactionFactoryParams.html" class="tsd-kind-icon">Link<wbr/>Service<wbr/>Transaction<wbr/>Factory<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/Logger.html" class="tsd-kind-icon">Logger</a></li><li class="tsd-kind-interface"><a href="interfaces/Migration.html" class="tsd-kind-icon">Migration</a></li><li class="tsd-kind-interface"><a href="interfaces/MosaicAccounts.html" class="tsd-kind-icon">Mosaic<wbr/>Accounts</a></li><li class="tsd-kind-interface"><a href="interfaces/MosaicPreset.html" class="tsd-kind-icon">Mosaic<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/NemesisPreset.html" class="tsd-kind-icon">Nemesis<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/NodeAccount.html" class="tsd-kind-icon">Node<wbr/>Account</a></li><li class="tsd-kind-interface"><a href="interfaces/NodeCertificates.html" class="tsd-kind-icon">Node<wbr/>Certificates</a></li><li class="tsd-kind-interface"><a href="interfaces/NodeConfigPreset.html" class="tsd-kind-icon">Node<wbr/>Config<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/NodePreset.html" class="tsd-kind-icon">Node<wbr/>Preset</a></li><li class="tsd-kind-interface"><a href="interfaces/PeerInfo.html" class="tsd-kind-icon">Peer<wbr/>Info</a></li><li class="tsd-kind-interface"><a href="interfaces/PortConfiguration.html" class="tsd-kind-icon">Port<wbr/>Configuration</a></li><li class="tsd-kind-interface"><a href="interfaces/ReportLine.html" class="tsd-kind-icon">Report<wbr/>Line</a></li><li class="tsd-kind-interface"><a href="interfaces/RepositoryInfo.html" class="tsd-kind-icon">Repository<wbr/>Info</a></li><li class="tsd-kind-interface"><a href="interfaces/RunImageUsingExecParams.html" class="tsd-kind-icon">Run<wbr/>Image<wbr/>Using<wbr/>Exec<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/SpawnParams.html" class="tsd-kind-icon">Spawn<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/TransactionFactory.html" class="tsd-kind-icon">Transaction<wbr/>Factory</a></li><li class="tsd-kind-interface"><a href="interfaces/TransactionFactoryParams.html" class="tsd-kind-icon">Transaction<wbr/>Factory<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/VerifyAction.html" class="tsd-kind-icon">Verify<wbr/>Action</a></li><li class="tsd-kind-interface"><a href="interfaces/VerifyReport.html" class="tsd-kind-icon">Verify<wbr/>Report</a></li><li class="tsd-kind-interface"><a href="interfaces/VotingKeyAccount.html" class="tsd-kind-icon">Voting<wbr/>Key<wbr/>Account</a></li><li class="tsd-kind-interface"><a href="interfaces/VotingKeyCreationResult.html" class="tsd-kind-icon">Voting<wbr/>Key<wbr/>Creation<wbr/>Result</a></li><li class="tsd-kind-interface"><a href="interfaces/VotingKeyFileProvider.html" class="tsd-kind-icon">Voting<wbr/>Key<wbr/>File<wbr/>Provider</a></li><li class="tsd-kind-interface"><a href="interfaces/VotingKeyParams.html" class="tsd-kind-icon">Voting<wbr/>Key<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/VotingParams.html" class="tsd-kind-icon">Voting<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/ZipItem.html" class="tsd-kind-icon">Zip<wbr/>Item</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ComposeParams" class="tsd-kind-icon">Compose<wbr/>Params</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#DeepPartial" class="tsd-kind-icon">Deep<wbr/>Partial</a></li><li class="tsd-kind-type-alias"><a href="modules.html#KeyAccount" class="tsd-kind-icon">Key<wbr/>Account</a></li><li class="tsd-kind-type-alias"><a href="modules.html#LinkParams" class="tsd-kind-icon">Link<wbr/>Params</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ModifyMultisigParams" class="tsd-kind-icon">Modify<wbr/>Multisig<wbr/>Params</a></li><li class="tsd-kind-type-alias"><a href="modules.html#Password" class="tsd-kind-icon">Password</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ReportParams" class="tsd-kind-icon">Report<wbr/>Params</a></li><li class="tsd-kind-type-alias"><a href="modules.html#RunParams" class="tsd-kind-icon">Run<wbr/>Params</a></li><li class="tsd-kind-type-alias"><a href="modules.html#StartParams" class="tsd-kind-icon">Start<wbr/>Params</a></li><li class="tsd-kind-type-alias"><a href="modules.html#VotingKeyFile" class="tsd-kind-icon">Voting<wbr/>Key<wbr/>File</a></li><li class="tsd-kind-variable"><a href="modules.html#System" class="tsd-kind-icon">System</a></li><li class="tsd-kind-variable"><a href="modules.html#defaultAssembly" class="tsd-kind-icon">default<wbr/>Assembly</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
