@@ -18,18 +18,12 @@ import { promises as fsPromises } from 'fs';
 import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import { totalmem } from 'os';
-import { basename, isAbsolute, join } from 'path';
-import { DtoMapping, NetworkType } from 'symbol-sdk';
+import { basename, join } from 'path';
+import { DtoMapping } from 'symbol-sdk';
 import { Utils } from './Utils';
 import { YamlUtils } from './YamlUtils';
 
-export type Password = string | false | undefined;
-
-export class KnownError extends Error {
-    public readonly known = true;
-}
-
-export class BootstrapUtils {
+export class HandlebarsUtils {
     public static async generateConfiguration(
         // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
         templateContext: any,
@@ -62,7 +56,7 @@ export class BootstrapUtils {
                             await fsPromises.writeFile(
                                 destinationFile,
                                 destinationFile.toLowerCase().endsWith('.json')
-                                    ? BootstrapUtils.formatJson(renderedTemplate)
+                                    ? HandlebarsUtils.formatJson(renderedTemplate)
                                     : renderedTemplate,
                             );
                         } else {
@@ -93,33 +87,17 @@ export class BootstrapUtils {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    public static pruneEmpty(obj: any): any {
-        return (function prune(current: any) {
-            _.forOwn(current, (value, key) => {
-                if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value) || (_.isObject(value) && _.isEmpty(prune(value)))) {
-                    delete current[key];
-                }
-            });
-            // remove any leftover undefined values from the delete
-            // operation on an array
-            if (_.isArray(current)) _.pull(current, undefined);
-
-            return current;
-        })(_.cloneDeep(obj)); // Do not modify the original object, create a clone instead
-    }
-
     //HANDLEBARS READY FUNCTIONS:
     private static initialize = (() => {
-        Handlebars.registerHelper('toAmount', BootstrapUtils.toAmount);
-        Handlebars.registerHelper('toHex', BootstrapUtils.toHex);
-        Handlebars.registerHelper('toSimpleHex', BootstrapUtils.toSimpleHex);
-        Handlebars.registerHelper('toSeconds', BootstrapUtils.toSeconds);
-        Handlebars.registerHelper('toJson', BootstrapUtils.toJson);
-        Handlebars.registerHelper('splitCsv', BootstrapUtils.splitCsv);
-        Handlebars.registerHelper('add', BootstrapUtils.add);
-        Handlebars.registerHelper('minus', BootstrapUtils.minus);
-        Handlebars.registerHelper('computerMemory', BootstrapUtils.computerMemory);
+        Handlebars.registerHelper('toAmount', HandlebarsUtils.toAmount);
+        Handlebars.registerHelper('toHex', HandlebarsUtils.toHex);
+        Handlebars.registerHelper('toSimpleHex', HandlebarsUtils.toSimpleHex);
+        Handlebars.registerHelper('toSeconds', HandlebarsUtils.toSeconds);
+        Handlebars.registerHelper('toJson', HandlebarsUtils.toJson);
+        Handlebars.registerHelper('splitCsv', HandlebarsUtils.splitCsv);
+        Handlebars.registerHelper('add', HandlebarsUtils.add);
+        Handlebars.registerHelper('minus', HandlebarsUtils.minus);
+        Handlebars.registerHelper('computerMemory', HandlebarsUtils.computerMemory);
     })();
 
     private static add(a: any, b: any): string | number {
@@ -158,7 +136,7 @@ export class BootstrapUtils {
         if (!renderedText) {
             return '';
         }
-        const numberAsString = BootstrapUtils.toSimpleHex(renderedText);
+        const numberAsString = HandlebarsUtils.toSimpleHex(renderedText);
         return '0x' + (numberAsString.match(/\w{1,4}(?=(\w{4})*$)/g) || [numberAsString]).join("'");
     }
 
@@ -192,27 +170,5 @@ export class BootstrapUtils {
 
     public static toSeconds(serverDuration: string): number {
         return DtoMapping.parseServerDuration(serverDuration).seconds();
-    }
-
-    public static getNetworkIdentifier(networkType: NetworkType): string {
-        return BootstrapUtils.getNetworkName(networkType);
-    }
-
-    public static getNetworkName(networkType: NetworkType): string {
-        switch (networkType) {
-            case NetworkType.MAIN_NET:
-                return 'mainnet';
-            case NetworkType.TEST_NET:
-                return 'testnet';
-        }
-        throw new Error(`Invalid Network Type ${networkType}`);
-    }
-
-    public static resolveWorkingDirPath(workingDir: string, path: string): string {
-        if (isAbsolute(path)) {
-            return path;
-        } else {
-            return join(workingDir, path);
-        }
     }
 }

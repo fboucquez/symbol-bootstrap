@@ -16,7 +16,7 @@
 import * as _ from 'lodash';
 import { Crypto } from 'symbol-sdk';
 import { PrivateKeySecurityMode } from '../model';
-import { KnownError } from './BootstrapUtils';
+import { KnownError } from './KnownError';
 
 export class CryptoUtils {
     private static readonly ENCRYPT_PREFIX = 'ENCRYPTED:';

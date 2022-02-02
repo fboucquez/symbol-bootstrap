@@ -20,7 +20,7 @@ import { ChainInfo, RepositoryFactory, RepositoryFactoryHttp, RoleType } from 's
 import { Configuration, NodeApi, NodeListFilter, RequestContext } from 'symbol-statistics-service-typescript-fetch-client';
 import { Logger } from '../logger';
 import { ConfigPreset, PeerInfo } from '../model';
-import { KnownError } from './BootstrapUtils';
+import { KnownError } from './KnownError';
 
 export interface RepositoryInfo {
     repositoryFactory: RepositoryFactory;

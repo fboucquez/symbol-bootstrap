@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { KnownError } from './BootstrapUtils';
+import * as _ from 'lodash';
+import { isAbsolute, join } from 'path';
+import { NetworkType } from 'symbol-sdk';
+import { KnownError } from './KnownError';
 import { OSUtils } from './OSUtils';
 
 /**
@@ -47,5 +50,43 @@ export class Utils {
             throw new KnownError(`Password is too short. It should have at least ${passwordMinSize} characters!`);
         }
         return password;
+    }
+
+    public static getNetworkIdentifier(networkType: NetworkType): string {
+        return Utils.getNetworkName(networkType);
+    }
+
+    public static getNetworkName(networkType: NetworkType): string {
+        switch (networkType) {
+            case NetworkType.MAIN_NET:
+                return 'mainnet';
+            case NetworkType.TEST_NET:
+                return 'testnet';
+        }
+        throw new Error(`Invalid Network Type ${networkType}`);
+    }
+
+    public static resolveWorkingDirPath(workingDir: string, path: string): string {
+        if (isAbsolute(path)) {
+            return path;
+        } else {
+            return join(workingDir, path);
+        }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static pruneEmpty(obj: any): any {
+        return (function prune(current: any) {
+            _.forOwn(current, (value, key) => {
+                if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value) || (_.isObject(value) && _.isEmpty(prune(value)))) {
+                    delete current[key];
+                }
+            });
+            // remove any leftover undefined values from the delete
+            // operation on an array
+            if (_.isArray(current)) _.pull(current, undefined);
+
+            return current;
+        })(_.cloneDeep(obj)); // Do not modify the original object, create a clone instead
     }
 }
