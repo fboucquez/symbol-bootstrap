@@ -82,7 +82,6 @@
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#asyncutils" class="tsd-kind-icon">Async<wbr>Utils</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#bootstrapaccountresolver" class="tsd-kind-icon">Bootstrap<wbr>Account<wbr>Resolver</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#bootstrapservice" class="tsd-kind-icon">Bootstrap<wbr>Service</a></li>
-								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#bootstraputils" class="tsd-kind-icon">Bootstrap<wbr>Utils</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#catapultvotingkeyfileprovider" class="tsd-kind-icon">Catapult<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#certificateconfigpreset" class="tsd-kind-icon">Certificate<wbr>Config<wbr>Preset</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#certificatemetadata" class="tsd-kind-icon">Certificate<wbr>Metadata</a></li>
@@ -121,6 +120,7 @@
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#gatewayconfigpreset" class="tsd-kind-icon">Gateway<wbr>Config<wbr>Preset</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#gatewaypreset" class="tsd-kind-icon">Gateway<wbr>Preset</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#genericnodeaccount" class="tsd-kind-icon">Generic<wbr>Node<wbr>Account</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#handlebarsutils" class="tsd-kind-icon">Handlebars<wbr>Utils</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#httpsproxypreset" class="tsd-kind-icon">Https<wbr>Proxy<wbr>Preset</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#keyaccount" class="tsd-kind-icon">Key<wbr>Account</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#keyname" class="tsd-kind-icon">Key<wbr>Name</a></li>
@@ -244,11 +244,6 @@
 					<a name="bootstrapservice" class="tsd-anchor"></a>
 					<h3>Bootstrap<wbr>Service</h3>
 					Re-exports <a href="../classes/service_bootstrapservice.bootstrapservice.html">BootstrapService</a>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
-					<a name="bootstraputils" class="tsd-anchor"></a>
-					<h3>Bootstrap<wbr>Utils</h3>
-					Re-exports <a href="../classes/service_bootstraputils.bootstraputils.html">BootstrapUtils</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="catapultvotingkeyfileprovider" class="tsd-anchor"></a>
@@ -441,6 +436,11 @@
 					Re-exports <a href="../interfaces/service_linkservice.genericnodeaccount.html">GenericNodeAccount</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="handlebarsutils" class="tsd-anchor"></a>
+					<h3>Handlebars<wbr>Utils</h3>
+					Re-exports <a href="../classes/service_handlebarsutils.handlebarsutils.html">HandlebarsUtils</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="httpsproxypreset" class="tsd-anchor"></a>
 					<h3>Https<wbr>Proxy<wbr>Preset</h3>
 					Re-exports <a href="../interfaces/model_configpreset.httpsproxypreset.html">HttpsProxyPreset</a>
@@ -463,7 +463,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="knownerror" class="tsd-anchor"></a>
 					<h3>Known<wbr>Error</h3>
-					Re-exports <a href="../classes/service_bootstraputils.knownerror.html">KnownError</a>
+					Re-exports <a href="../classes/service_knownerror.knownerror.html">KnownError</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="linkparams" class="tsd-anchor"></a>
@@ -573,7 +573,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="password" class="tsd-anchor"></a>
 					<h3>Password</h3>
-					Re-exports <a href="service_bootstraputils.html#password">Password</a>
+					Re-exports <a href="service_yamlutils.html#password">Password</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="peerinfo" class="tsd-anchor"></a>
@@ -821,9 +821,6 @@
 						<a href="index.html#bootstrapservice" class="tsd-kind-icon">Bootstrap<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
-						<a href="index.html#bootstraputils" class="tsd-kind-icon">Bootstrap<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-reference tsd-parent-kind-module">
 						<a href="index.html#catapultvotingkeyfileprovider" class="tsd-kind-icon">Catapult<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
@@ -936,6 +933,9 @@
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
 						<a href="index.html#genericnodeaccount" class="tsd-kind-icon">Generic<wbr>Node<wbr>Account</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="index.html#handlebarsutils" class="tsd-kind-icon">Handlebars<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
 						<a href="index.html#httpsproxypreset" class="tsd-kind-icon">Https<wbr>Proxy<wbr>Preset</a>

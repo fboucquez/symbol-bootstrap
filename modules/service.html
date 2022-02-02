@@ -81,7 +81,6 @@
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#asyncutils" class="tsd-kind-icon">Async<wbr>Utils</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#bootstrapaccountresolver" class="tsd-kind-icon">Bootstrap<wbr>Account<wbr>Resolver</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#bootstrapservice" class="tsd-kind-icon">Bootstrap<wbr>Service</a></li>
-								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#bootstraputils" class="tsd-kind-icon">Bootstrap<wbr>Utils</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#catapultvotingkeyfileprovider" class="tsd-kind-icon">Catapult<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#certificateconfigpreset" class="tsd-kind-icon">Certificate<wbr>Config<wbr>Preset</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#certificatemetadata" class="tsd-kind-icon">Certificate<wbr>Metadata</a></li>
@@ -103,6 +102,7 @@
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#expectedversions" class="tsd-kind-icon">Expected<wbr>Versions</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#filesystemservice" class="tsd-kind-icon">File<wbr>System<wbr>Service</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#genericnodeaccount" class="tsd-kind-icon">Generic<wbr>Node<wbr>Account</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#handlebarsutils" class="tsd-kind-icon">Handlebars<wbr>Utils</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#keyaccount" class="tsd-kind-icon">Key<wbr>Account</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#keyname" class="tsd-kind-icon">Key<wbr>Name</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="service.html#keypair" class="tsd-kind-icon">Key<wbr>Pair</a></li>
@@ -206,11 +206,6 @@
 					<a name="bootstrapservice" class="tsd-anchor"></a>
 					<h3>Bootstrap<wbr>Service</h3>
 					Re-exports <a href="../classes/service_bootstrapservice.bootstrapservice.html">BootstrapService</a>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
-					<a name="bootstraputils" class="tsd-anchor"></a>
-					<h3>Bootstrap<wbr>Utils</h3>
-					Re-exports <a href="../classes/service_bootstraputils.bootstraputils.html">BootstrapUtils</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="catapultvotingkeyfileprovider" class="tsd-anchor"></a>
@@ -318,6 +313,11 @@
 					Re-exports <a href="../interfaces/service_linkservice.genericnodeaccount.html">GenericNodeAccount</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="handlebarsutils" class="tsd-anchor"></a>
+					<h3>Handlebars<wbr>Utils</h3>
+					Re-exports <a href="../classes/service_handlebarsutils.handlebarsutils.html">HandlebarsUtils</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="keyaccount" class="tsd-anchor"></a>
 					<h3>Key<wbr>Account</h3>
 					Re-exports <a href="service_linkservice.html#keyaccount">KeyAccount</a>
@@ -335,7 +335,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="knownerror" class="tsd-anchor"></a>
 					<h3>Known<wbr>Error</h3>
-					Re-exports <a href="../classes/service_bootstraputils.knownerror.html">KnownError</a>
+					Re-exports <a href="../classes/service_knownerror.knownerror.html">KnownError</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="linkparams" class="tsd-anchor"></a>
@@ -400,7 +400,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="password" class="tsd-anchor"></a>
 					<h3>Password</h3>
-					Re-exports <a href="service_bootstraputils.html#password">Password</a>
+					Re-exports <a href="service_yamlutils.html#password">Password</a>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
 					<a name="portconfiguration" class="tsd-anchor"></a>
@@ -620,9 +620,6 @@
 						<a href="service.html#bootstrapservice" class="tsd-kind-icon">Bootstrap<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
-						<a href="service.html#bootstraputils" class="tsd-kind-icon">Bootstrap<wbr>Utils</a>
-					</li>
-					<li class=" tsd-kind-reference tsd-parent-kind-module">
 						<a href="service.html#catapultvotingkeyfileprovider" class="tsd-kind-icon">Catapult<wbr>Voting<wbr>Key<wbr>File<wbr>Provider</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
@@ -684,6 +681,9 @@
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
 						<a href="service.html#genericnodeaccount" class="tsd-kind-icon">Generic<wbr>Node<wbr>Account</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="service.html#handlebarsutils" class="tsd-kind-icon">Handlebars<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-module">
 						<a href="service.html#keyaccount" class="tsd-kind-icon">Key<wbr>Account</a>

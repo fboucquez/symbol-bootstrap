@@ -96,7 +96,11 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#getnetworkidentifier" class="tsd-kind-icon">get<wbr>Network<wbr>Identifier</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#getnetworkname" class="tsd-kind-icon">get<wbr>Network<wbr>Name</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#logsamelinemessage" class="tsd-kind-icon">log<wbr>Same<wbr>Line<wbr>Message</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#pruneempty" class="tsd-kind-icon">prune<wbr>Empty</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#resolveworkingdirpath" class="tsd-kind-icon">resolve<wbr>Working<wbr>Dir<wbr>Path</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#securestring" class="tsd-kind-icon">secure<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#validateisdefined" class="tsd-kind-icon">validate<wbr>IsDefined</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="service_utils.utils.html#validateistrue" class="tsd-kind-icon">validate<wbr>IsTrue</a></li>
@@ -126,6 +130,52 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getnetworkidentifier" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Network<wbr>Identifier</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Network<wbr>Identifier<span class="tsd-signature-symbol">(</span>networkType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NetworkType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L55">src/service/Utils.ts:55</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>networkType: <span class="tsd-signature-type">NetworkType</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getnetworkname" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Network<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Network<wbr>Name<span class="tsd-signature-symbol">(</span>networkType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NetworkType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L59">src/service/Utils.ts:59</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>networkType: <span class="tsd-signature-type">NetworkType</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="logsamelinemessage" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> log<wbr>Same<wbr>Line<wbr>Message</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
@@ -135,7 +185,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/e63d2e2/src/service/Utils.ts#L40">src/service/Utils.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L43">src/service/Utils.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -149,6 +199,55 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="pruneempty" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> prune<wbr>Empty</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">prune<wbr>Empty<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L78">src/service/Utils.ts:78</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="resolveworkingdirpath" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> resolve<wbr>Working<wbr>Dir<wbr>Path</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Working<wbr>Dir<wbr>Path<span class="tsd-signature-symbol">(</span>workingDir<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L69">src/service/Utils.ts:69</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>workingDir: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="securestring" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> secure<wbr>String</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
@@ -158,7 +257,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/e63d2e2/src/service/Utils.ts#L24">src/service/Utils.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L27">src/service/Utils.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -181,7 +280,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/e63d2e2/src/service/Utils.ts#L29">src/service/Utils.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L32">src/service/Utils.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -207,7 +306,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/e63d2e2/src/service/Utils.ts#L35">src/service/Utils.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L38">src/service/Utils.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -233,7 +332,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/e63d2e2/src/service/Utils.ts#L44">src/service/Utils.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/fboucquez/symbol-bootstrap/blob/75cd67e/src/service/Utils.ts#L47">src/service/Utils.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -270,7 +369,19 @@
 								<a href="service_utils.utils.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="service_utils.utils.html#getnetworkidentifier" class="tsd-kind-icon">get<wbr>Network<wbr>Identifier</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="service_utils.utils.html#getnetworkname" class="tsd-kind-icon">get<wbr>Network<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="service_utils.utils.html#logsamelinemessage" class="tsd-kind-icon">log<wbr>Same<wbr>Line<wbr>Message</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="service_utils.utils.html#pruneempty" class="tsd-kind-icon">prune<wbr>Empty</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="service_utils.utils.html#resolveworkingdirpath" class="tsd-kind-icon">resolve<wbr>Working<wbr>Dir<wbr>Path</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="service_utils.utils.html#securestring" class="tsd-kind-icon">secure<wbr>String</a>
