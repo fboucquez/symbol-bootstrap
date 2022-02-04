@@ -27,7 +27,7 @@ import {
 } from 'symbol-sdk';
 import { Logger } from '../logger';
 import { Addresses, ConfigPreset, NodeAccount } from '../model';
-import { AccountResolver, BootstrapAccountResolver } from '../service';
+import { AccountResolver, BootstrapAccountResolver, Password } from '../service';
 import { AnnounceService, TransactionFactory } from './AnnounceService';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
@@ -38,7 +38,7 @@ import { VotingKeyAccount } from './VotingUtils';
  */
 export type LinkParams = {
     target: string;
-    password?: string;
+    password?: Password;
     url: string;
     maxFee?: number | undefined;
     unlink: boolean;

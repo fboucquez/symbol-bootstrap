@@ -26,9 +26,9 @@ import { HandlebarsUtils } from './HandlebarsUtils';
 import { RemoteNodeService } from './RemoteNodeService';
 import { RuntimeService } from './RuntimeService';
 import { Utils } from './Utils';
-import { YamlUtils } from './YamlUtils';
+import { Password, YamlUtils } from './YamlUtils';
 
-export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: string; workingDir: string; offline: boolean };
+export type ComposeParams = { target: string; user?: string; upgrade?: boolean; password?: Password; workingDir: string; offline: boolean };
 
 const targetNodesFolder = Constants.targetNodesFolder;
 const targetDatabasesFolder = Constants.targetDatabasesFolder;

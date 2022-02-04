@@ -89,7 +89,7 @@ export interface ConfigParams extends VotingParams, ReportParams {
     offline: boolean;
     preset?: string;
     target: string;
-    password?: string;
+    password?: Password;
     user: string;
     assembly?: string;
     customPreset?: string;

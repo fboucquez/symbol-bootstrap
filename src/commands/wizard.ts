@@ -30,6 +30,7 @@ import {
     ConfigService,
     Constants,
     KeyName,
+    Password,
     Preset,
     RuntimeService,
     YamlUtils,
@@ -113,7 +114,7 @@ export class Wizard {
         noPassword: boolean;
         skipPull?: boolean;
         target: string;
-        password: string | undefined;
+        password: Password;
         network: Network | undefined;
         customPreset: string;
         ready?: boolean;

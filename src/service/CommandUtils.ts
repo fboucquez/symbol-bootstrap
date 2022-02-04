@@ -20,6 +20,7 @@ import { prompt } from 'inquirer';
 import { Convert, PublicAccount } from 'symbol-sdk';
 import { Logger, LoggerFactory, LogType } from '../logger';
 import { Constants } from './Constants';
+import { Password } from './YamlUtils';
 
 export class CommandUtils {
     public static passwordPromptDefaultMessage = `Enter the password used to encrypt and decrypt custom presets, addresses.yml, and preset.yml files. When providing a password, private keys will be encrypted. Keep this password in a secure place!`;
@@ -74,7 +75,7 @@ export class CommandUtils {
 
     public static async resolvePassword(
         logger: Logger,
-        providedPassword: string | undefined,
+        providedPassword: Password | undefined,
         noPassword: boolean,
         message: string,
         log: boolean,

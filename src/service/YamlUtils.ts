@@ -31,7 +31,7 @@ export class YamlUtils {
         return string.toLowerCase().endsWith('.yml') || string.toLowerCase().endsWith('.yaml');
     }
 
-    public static async writeYaml(path: string, object: unknown, password: string | undefined): Promise<void> {
+    public static async writeYaml(path: string, object: unknown, password: Password): Promise<void> {
         const yamlString = this.toYaml(password ? CryptoUtils.encrypt(object, Utils.validatePassword(password)) : object);
         await this.writeTextFile(path, yamlString);
     }

@@ -31,13 +31,14 @@ import { BootstrapAccountResolver } from './BootstrapAccountResolver';
 import { ConfigLoader } from './ConfigLoader';
 import { Constants } from './Constants';
 import { TransactionUtils } from './TransactionUtils';
+import { Password } from './YamlUtils';
 
 /**
  * params necessary to announce multisig account modification transaction to network.
  */
 export type ModifyMultisigParams = {
     target: string;
-    password?: string;
+    password?: Password;
     url: string;
     maxFee?: number;
     useKnownRestGateways: boolean;
@@ -84,6 +85,7 @@ export class ModifyMultisigService implements TransactionFactory {
             this.params.serviceProviderPublicKey,
         );
     }
+
     public async createTransactions({ presetData, deadline, maxFee, mainAccount }: TransactionFactoryParams): Promise<Transaction[]> {
         const networkType = presetData.networkType;
 
@@ -193,6 +195,7 @@ export class ModifyMultisigService implements TransactionFactory {
             }) || []
         );
     }
+
     private toAddress(addressString: string, networkType: NetworkType): Address {
         if (!Address.isValidRawAddress(addressString)) {
             throw new Error(`Address ${addressString} is not valid!`);
