@@ -40,12 +40,15 @@
     db.transactions.createIndex({ 'transaction.deadline': -1 });
     db.transactions.createIndex({ 'transaction.cosignatures.signerPublicKey': 1 }, makeSparse('transaction.cosignatures.signerPublicKey'));
     db.transactions.createIndex({ 'transaction.id': 1, 'transaction.type': 1 }, makeSparse('transaction.id'));
+    db.transactions.createIndex({ 'transaction.mosaics.id': 1});
 
     db.createCollection('transactionStatements');
     db.transactionStatements.createIndex(
         { 'statement.height': 1, 'statement.source.primaryId': 1, 'statement.source.secondaryId': 1 },
         { unique: true },
     );
+    db.transactionStatements.createIndex({ 'statement.receipts.targetAddress': 1 });
+    db.transactionStatements.createIndex({ 'statement.receipts.senderAddress': 1 });
 
     ['addressResolutionStatements', 'mosaicResolutionStatements'].forEach((collectionName) => {
         db.createCollection(collectionName);
