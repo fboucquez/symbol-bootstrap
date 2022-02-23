@@ -15,7 +15,9 @@
  */
 import { prompt } from 'inquirer';
 import { Account, NetworkType, PublicAccount } from 'symbol-sdk';
-import { AccountResolver, CertificatePair, CommandUtils, KeyName, KnownError, Logger } from '../';
+import { Logger } from '../logger';
+import { CertificatePair } from '../model';
+import { AccountResolver, CommandUtils, KeyName, KnownError } from './';
 
 /**
  * Prompt ready implementation of the account resolver.
