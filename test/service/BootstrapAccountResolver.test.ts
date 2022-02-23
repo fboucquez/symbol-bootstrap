@@ -17,7 +17,7 @@
 import { expect } from 'chai';
 import { it } from 'mocha';
 import { Account, NetworkType } from 'symbol-sdk';
-import { BootstrapAccountResolver, KeyName, LoggerFactory, LogType } from '../../src';
+import { BootstrapAccountResolver, KeyName, LoggerFactory, LogType, Utils } from '../../src';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { StdUtils } from '../utils/StdUtils';
@@ -44,7 +44,8 @@ describe('BootstrapAccountResolver', () => {
     });
 
     it('should resolveAccount prompt private key when private key is provided', async () => {
-        StdUtils.in(['INVALID', '\n', testAccount.privateKey, '\n']);
+        // first 2 are invalid, last one passes.
+        StdUtils.in(['INVALID', '\n', testAccount.publicKey, '\n', testAccount.privateKey, '\n']);
         const account = await resolver.resolveAccount(
             networkType,
             {
@@ -62,5 +63,14 @@ describe('BootstrapAccountResolver', () => {
         const account = await resolver.resolveAccount(networkType, undefined, KeyName.Main, 'some node', 'some description', undefined);
         expect(account).to.not.be.undefined;
         expect(account).to.be.not.deep.eq(testAccount);
+    });
+
+    it('should resolveAccount raise error when no account is not provided', async () => {
+        try {
+            await resolver.resolveAccount(networkType, undefined, KeyName.Main, 'some node', 'some description', 'DO NOT GENERATE');
+            expect.fail('Should raise error!');
+        } catch (e) {
+            expect(Utils.getMessage(e)).to.be.eq('DO NOT GENERATE');
+        }
     });
 });
