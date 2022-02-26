@@ -21,7 +21,6 @@ import {
     AccountInfo,
     Address,
     AggregateTransaction,
-    Convert,
     Currency,
     Deadline,
     IListener,
@@ -432,7 +431,7 @@ export class AnnounceService {
                     name: 'privateKey',
                     message: `Enter the 64 HEX private key of one of the addresses ${expectedDescription}. Already entered ${providedAccounts.length} out of ${minApproval} required cosigners.`,
                     type: 'password',
-                    validate: AnnounceService.isValidPrivateKey,
+                    validate: CommandUtils.isValidPrivateKey,
                 },
             ]);
             const privateKey = responses.privateKey;
@@ -474,10 +473,6 @@ export class AnnounceService {
                 }
             }
         }
-    }
-
-    public static isValidPrivateKey(input: string): boolean | string {
-        return Convert.isHexString(input, 64) ? true : 'Invalid private key. It must be has 64 hex characters!';
     }
 
     private async getAccountInfo(repositoryFactory: RepositoryFactory, mainAccountAddress: Address): Promise<AccountInfo | undefined> {

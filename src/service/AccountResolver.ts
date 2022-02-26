@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import { Account, NetworkType } from 'symbol-sdk';
-import { CertificatePair, KeyName } from '../';
+import { CertificatePair } from '../model';
+import { KeyName } from '../service';
 
 /**
  * Delegate that knows how to retrieve or generate accounts.
