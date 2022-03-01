@@ -47,4 +47,4 @@ EXAMPLE
   $ symbol-bootstrap updateVotingKeys
 ```
 
-_See code: [src/commands/updateVotingKeys.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.5/src/commands/updateVotingKeys.ts)_
+_See code: [src/commands/updateVotingKeys.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.6/src/commands/updateVotingKeys.ts)_

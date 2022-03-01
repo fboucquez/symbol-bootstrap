@@ -24,4 +24,4 @@ EXAMPLE
   $ symbol-bootstrap report
 ```
 
-_See code: [src/commands/report.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.5/src/commands/report.ts)_
+_See code: [src/commands/report.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.6/src/commands/report.ts)_
