@@ -1,7 +1,7 @@
 {
     "name": "symbol-bootstrap",
     "description": "Symbol tool that allows you creating, configuring and running Symbol's networks",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "author": "Fernando Boucquez <fboucquez@gmail.com>",
     "bin": {
         "symbol-bootstrap": "bin/run"

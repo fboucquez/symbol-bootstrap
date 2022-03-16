@@ -66,4 +66,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap pack -c custom-preset.yml
 ```
 
-_See code: [src/commands/pack.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.6/src/commands/pack.ts)_
+_See code: [src/commands/pack.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.7/src/commands/pack.ts)_
