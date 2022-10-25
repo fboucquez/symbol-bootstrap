@@ -269,7 +269,9 @@ config-network.properties
     **fork_heights**; ; ;
     totalVotingBalanceCalculationFix; 0; uint32_t; Height of fork to fix TotalVotingBalance calculation.
     treasuryReissuance; 0; ;
+    strictAggregateTransactionHash; 0; ;
     **treasury_reissuance_transaction_signatures**;
+    **corrupt_aggregate_transaction_hashes**;
 
 config-node.properties
 ======================
