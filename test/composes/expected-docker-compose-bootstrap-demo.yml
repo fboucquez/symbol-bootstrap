@@ -19,7 +19,7 @@ services:
         privileged: true
     node:
         container_name: node
-        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.3'
+        image: 'symbolplatform/symbol-server:gcc-1.0.3.4'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node DEBUG true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -39,7 +39,7 @@ services:
         privileged: true
     broker:
         container_name: broker
-        image: 'symbolplatform/symbol-server:gcc-10-1.0.3.3'
+        image: 'symbolplatform/symbol-server:gcc-1.0.3.4'
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker DEBUG
         stop_signal: SIGINT
@@ -57,8 +57,10 @@ services:
     rest-gateway:
         container_name: rest-gateway
         user: '1000:1000'
-        image: 'symbolplatform/symbol-rest:2.4.0'
-        command: npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json
+        environment:
+          npm_config_cache: /symbol-workdir
+        image: 'symbolplatform/symbol-rest:2.4.2'
+        command: npm start --prefix /app /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir
         ports:

@@ -247,8 +247,9 @@ export class ComposeService {
                         await resolveService(n, {
                             container_name: n.name,
                             user,
+                            environment: { npm_config_cache: nodeWorkingDirectory },
                             image: presetData.symbolRestImage,
-                            command: 'npm start --prefix /app/catapult-rest/rest /symbol-workdir/rest.json',
+                            command: 'npm start --prefix /app /symbol-workdir/rest.json',
                             stop_signal: 'SIGINT',
                             working_dir: nodeWorkingDirectory,
                             ports: resolvePorts([{ internalPort: restInternalPort, openPort: n.openPort }]),
