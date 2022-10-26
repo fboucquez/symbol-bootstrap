@@ -10,7 +10,7 @@ jobs:
               uses: actions/checkout@v2
             - uses: actions/setup-node@v2
               with:
-                  node-version: 12.x
+                  node-version: 14.x
                   registry-url: https://registry.npmjs.org
             - run: npm ci
             - id: version
@@ -47,7 +47,7 @@ jobs:
               uses: actions/checkout@v2
             - uses: actions/setup-node@v2
               with:
-                  node-version: 12.x
+                  node-version: 14.x
                   registry-url: https://registry.npmjs.org
             - run: npm ci
             - run: npm version patch -m "Increasing version to %s" --git-tag-version false
