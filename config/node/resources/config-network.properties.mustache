@@ -126,9 +126,16 @@ maxMessageSize = {{{maxMessageSize}}}
 
 totalVotingBalanceCalculationFix = {{{toAmount totalVotingBalanceCalculationFix}}}
 treasuryReissuance = {{{toAmount treasuryReissuance}}}
+strictAggregateTransactionHash = {{{toAmount strictAggregateTransactionHash}}}
 
 [treasury_reissuance_transaction_signatures]
 
 {{#each treasuryReissuanceTransactionSignatures}}
 {{this}} = true
+{{/each}}
+
+[corrupt_aggregate_transaction_hashes]
+
+{{#each corruptAggregateTransactionHashes}}
+{{this.key}} = {{this.value}}
 {{/each}}
