@@ -128,14 +128,16 @@ totalVotingBalanceCalculationFix = {{{toAmount totalVotingBalanceCalculationFix}
 treasuryReissuance = {{{toAmount treasuryReissuance}}}
 strictAggregateTransactionHash = {{{toAmount strictAggregateTransactionHash}}}
 
+{{#treasuryReissuanceTransactionSignatures_has_items}}
 [treasury_reissuance_transaction_signatures]
-
+{{/treasuryReissuanceTransactionSignatures_has_items}}
 {{#each treasuryReissuanceTransactionSignatures}}
 {{this}} = true
 {{/each}}
 
+{{#corruptAggregateTransactionHashes_has_items}}
 [corrupt_aggregate_transaction_hashes]
-
+{{/corruptAggregateTransactionHashes_has_items}}
 {{#each corruptAggregateTransactionHashes}}
 {{this.key}} = {{this.value}}
 {{/each}}
