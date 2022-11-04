@@ -608,15 +608,15 @@ config-network.properties
 
     **network**; ; ;
     identifier; testnet; NetworkIdentifier; Network identifier.
-    nemesisSignerPublicKey; FD0A6FAFEF047C5E251F60DBC2A30327AB401E629806A52BB4ED3007EC32C9B7; Key; Nemesis public key.
+    nemesisSignerPublicKey; 76E94661562762111FF7E592B00398554973396D8A4B922F3E3D139892F7C35C; Key; Nemesis public key.
     nodeEqualityStrategy; host; NodeIdentityEqualityStrategy; Node equality strategy.
-    generationHashSeed; 7FCCD304802016BEBBCD342A332F91FF1F3BB5E902988B352697BE245F48E836; ;
-    epochAdjustment; 1637848847s; utils::TimeSpan; Nemesis epoch time adjustment.
+    generationHashSeed; 49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4; ;
+    epochAdjustment; 1667250467s; utils::TimeSpan; Nemesis epoch time adjustment.
     **chain**; ; ;
     enableVerifiableState; true; bool; Set to true if block chain should calculate state hashes so that state is fully verifiable at each block.
     enableVerifiableReceipts; true; bool; Set to true if block chain should calculate receipts so that state changes are fully verifiable at each block.
-    currencyMosaicId; 0x3A84'16DB'2D53'B6C8; MosaicId; Mosaic id used as primary chain currency.
-    harvestingMosaicId; 0x3A84'16DB'2D53'B6C8; MosaicId; Mosaic id used to provide harvesting ability.
+    currencyMosaicId; 0x72C0'212E'67A0'8BCE; MosaicId; Mosaic id used as primary chain currency.
+    harvestingMosaicId; 0x72C0'212E'67A0'8BCE; MosaicId; Mosaic id used to provide harvesting ability.
     blockGenerationTargetTime; 30s; utils::TimeSpan; Targeted time between blocks.
     blockTimeSmoothingFactor; 3000; uint32_t; Note: A higher value makes the network more biased. Note: This can lower security because it will increase the influence of time relative to importance.
     importanceGrouping; 180; uint64_t; Number of blocks that should be treated as a group for importance purposes. Note: Importances will only be calculated at blocks that are multiples of this grouping number.
@@ -638,8 +638,8 @@ config-network.properties
     maxVotingKeyLifetime; 720; uint32_t; Maximum number of finalization rounds for which voting key can be registered.
     harvestBeneficiaryPercentage; 25; uint8_t; Percentage of the harvested fee that is collected by the beneficiary account.
     harvestNetworkPercentage; 5; uint8_t; Percentage of the harvested fee that is collected by the network.
-    harvestNetworkFeeSinkAddressV1; TBR3XLCYWLI4AC5CRMBMHOLFROA3WC2IXQGKGTI; ;
-    harvestNetworkFeeSinkAddress; TBR3XLCYWLI4AC5CRMBMHOLFROA3WC2IXQGKGTI; Address; Address of the harvest network fee sink account.
+    harvestNetworkFeeSinkAddressV1; TBC3AX4TMSYWTCWR6LDHPKWQQL7KPCOMHECN2II; ;
+    harvestNetworkFeeSinkAddress; TBC3AX4TMSYWTCWR6LDHPKWQQL7KPCOMHECN2II; Address; Address of the harvest network fee sink account.
     maxTransactionsPerBlock; 6'000; uint32_t; Maximum number of transactions per block.
     **plugin:catapult.plugins.accountlink**;
     dummy; to trigger plugin load
@@ -662,8 +662,8 @@ config-network.properties
     maxMosaicsPerAccount; 1'000; uint16_t; Maximum number of mosaics that an account can own.
     maxMosaicDuration; 3650d; utils::BlockSpan; Maximum mosaic duration.
     maxMosaicDivisibility; 6; uint8_t; Maximum mosaic divisibility.
-    mosaicRentalFeeSinkAddressV1; TDFYDFR4V6U3NOU7RELXNVXE2UJDKWNEYSU2ODQ; ;
-    mosaicRentalFeeSinkAddress; TDFYDFR4V6U3NOU7RELXNVXE2UJDKWNEYSU2ODQ; Address; Address of the mosaic rental fee sink account.
+    mosaicRentalFeeSinkAddressV1; TA53AVLYMT5HCP5TJ23CGKGTUXQHNPBTJ4Z2LIQ; ;
+    mosaicRentalFeeSinkAddress; TA53AVLYMT5HCP5TJ23CGKGTUXQHNPBTJ4Z2LIQ; Address; Address of the mosaic rental fee sink account.
     mosaicRentalFee; 500000; Amount; Mosaic rental fee.
     **plugin:catapult.plugins.multisig**; ; ;
     maxMultisigDepth; 3; uint8_t; Maximum number of multisig levels.
@@ -677,8 +677,8 @@ config-network.properties
     maxNamespaceDuration; 1825d; utils::BlockSpan; Maximum namespace duration.
     namespaceGracePeriodDuration; 1d; utils::BlockSpan; Grace period during which time only the previous owner can renew an expired namespace.
     reservedRootNamespaceNames; symbol, symbl, xym, xem, nem, user, account, org, com, biz, net, edu, mil, gov, info; unordered_set<string>; Reserved root namespaces that cannot be claimed.
-    namespaceRentalFeeSinkAddressV1; TANQYMTLDSIQYXDV37IXJBK5HNDCRTIMJDKCKJQ; ;
-    namespaceRentalFeeSinkAddress; TANQYMTLDSIQYXDV37IXJBK5HNDCRTIMJDKCKJQ; Address; Address of the namespace rental fee sink account.
+    namespaceRentalFeeSinkAddressV1; TDVFW6NZN3YI6O4ZRYZHGY73KADCW4HX6IDIKZI; ;
+    namespaceRentalFeeSinkAddress; TDVFW6NZN3YI6O4ZRYZHGY73KADCW4HX6IDIKZI; Address; Address of the namespace rental fee sink account.
     rootNamespaceRentalFeePerBlock; 2; Amount; Root namespace rental fee per block.
     childNamespaceRentalFee; 100000; Amount; Child namespace rental fee.
     **plugin:catapult.plugins.restrictionaccount**; ; ;
@@ -691,8 +691,6 @@ config-network.properties
     totalVotingBalanceCalculationFix; 0; uint32_t; Height of fork to fix TotalVotingBalance calculation.
     treasuryReissuance; 0; ;
     strictAggregateTransactionHash; 0; ;
-    **treasury_reissuance_transaction_signatures**;
-    **corrupt_aggregate_transaction_hashes**;
 
 config-node.properties
 ======================

@@ -1,20 +1,20 @@
-networkDescription: Symbol Joeynet Network
+networkDescription: Symbol Sainet Network
 baseNamespace: symbol
 batchVerificationRandomSource: /dev/urandom
-currencyMosaicId: 3A8416DB2D53B6C8
+currencyMosaicId: 72C0212E67A08BCE
 harvestBeneficiaryPercentage: 25
-harvestingMosaicId: 3A8416DB2D53B6C8
-epochAdjustment: 1637848847s
+harvestingMosaicId: 72C0212E67A08BCE
+epochAdjustment: 1667250467s
 enableRevoteOnBoot: false
 maxHarvesterBalance: 50000000000000
 maxMosaicAtomicUnits: 8999999999000000
 minHarvesterBalance: 10000000000
 minVoterBalance: 3000000000000
-nemesisGenerationHashSeed: 7FCCD304802016BEBBCD342A332F91FF1F3BB5E902988B352697BE245F48E836
-harvestNetworkFeeSinkAddress: TBR3XLCYWLI4AC5CRMBMHOLFROA3WC2IXQGKGTI
-namespaceRentalFeeSinkAddress: TANQYMTLDSIQYXDV37IXJBK5HNDCRTIMJDKCKJQ
-mosaicRentalFeeSinkAddress: TDFYDFR4V6U3NOU7RELXNVXE2UJDKWNEYSU2ODQ
-nemesisSignerPublicKey: FD0A6FAFEF047C5E251F60DBC2A30327AB401E629806A52BB4ED3007EC32C9B7
+nemesisGenerationHashSeed: 49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4
+harvestNetworkFeeSinkAddress: TBC3AX4TMSYWTCWR6LDHPKWQQL7KPCOMHECN2II
+namespaceRentalFeeSinkAddress: TDVFW6NZN3YI6O4ZRYZHGY73KADCW4HX6IDIKZI
+mosaicRentalFeeSinkAddress: TA53AVLYMT5HCP5TJ23CGKGTUXQHNPBTJ4Z2LIQ
+nemesisSignerPublicKey: 76E94661562762111FF7E592B00398554973396D8A4B922F3E3D139892F7C35C
 networkType: 152
 totalChainImportance: 7842928625000000
 initialCurrencyAtomicUnits: 7842928625000000
@@ -22,7 +22,7 @@ importanceGrouping: 180
 votingSetGrouping: 720
 votingKeyDesiredLifetime: 720
 votingKeyDesiredFutureLifetime: 120
-lastKnownNetworkEpoch: 1002
+lastKnownNetworkEpoch: 7
 minVotingKeyLifetime: 28
 maxVotingKeyLifetime: 720
 stepDuration: 4m
@@ -52,7 +52,6 @@ timeSynchronizationMinImportance: 10000000000
 faucetUrl: https://testnet.symbol.tools
 explorerUrl: https://testnet.symbol.fyi
 statisticsServiceUrl: https://testnet.symbol.services
-treasuryReissuanceTransactionSignatures: []
 nemesis:
     mosaics:
         -
@@ -489,47 +488,47 @@ inflation:
     starting-at-height-110422799: 0
 treasuryReissuance: 0
 knownRestGateways:
-    - https://001-joey-dual.symboltest.net:3001
-    - https://201-joey-dual.symboltest.net:3001
-    - https://401-joey-dual.symboltest.net:3001
+    - https://001-sai-dual.symboltest.net:3001
+    - https://201-sai-dual.symboltest.net:3001
+    - https://401-sai-dual.symboltest.net:3001
 knownPeers:
     -
-        publicKey: AAA1922FA60DB681092CBE70A9A1BAB85745025310AE7567F95EA7FD05B3D3FC
+        publicKey: 07D38BAE29464C1F54CC1C8202DD83B65AF21C8E5FF1FB01ACEEE2243C55EF2A
         endpoint:
-            host: 001-joey-dual.symboltest.net
+            host: 001-sai-dual.symboltest.net
             port: 7900
         metadata:
-            name: 001-joey-dual
+            name: 001-sai-dual
             roles: Api,Peer,Voting
     -
-        publicKey: 0B366C6ED891D9461DC81F4B85D253669E88D055970527D65353F4D22AE7DAFD
+        publicKey: E29CD799B119BB28ACEB643F603CAF0558ABF33DD6D95C65ECA7F0E64C2CC47F
         endpoint:
-            host: 101-joey-peer.symboltest.net
+            host: 101-sai-peer.symboltest.net
             port: 7900
         metadata:
-            name: 101-joey-peer
+            name: 101-sai-peer
             roles: Peer,Voting
     -
-        publicKey: 3460D29534CA997D6A74BEBB93F38356833B806E1A35F700EBE08D57FC8D3FED
+        publicKey: 645E2E56B5F8680B69BC0255F4930169DBC052BB25F8121055DE2072D37E2C30
         endpoint:
-            host: 201-joey-dual.symboltest.net
+            host: 201-sai-dual.symboltest.net
             port: 7900
         metadata:
-            name: 201-joey-dual
+            name: 201-sai-dual
             roles: Api,Peer
     -
-        publicKey: DFD29AD20BFEECBA8999C566226B39A63D5076CBE3C69201632C092D2F2C6373
+        publicKey: D01EA831B8736A8F97868C261246EA49215A007FE3542426DBA187183D56313B
         endpoint:
-            host: 301-joey-peer.symboltest.net
+            host: 301-sai-peer.symboltest.net
             port: 7900
         metadata:
-            name: 301-joey-peer
+            name: 301-sai-peer
             roles: Peer,Voting
     -
-        publicKey: 3E9C8CCC16DDB1EDFF9F2D0BB92D3F839CCC33D38034E526DC768F7BA3958E00
+        publicKey: C1773740461C97FF172E966213716E089A93DC43F10BE55DC27CC49CBA67E692
         endpoint:
-            host: 401-joey-dual.symboltest.net
+            host: 401-sai-dual.symboltest.net
             port: 7900
         metadata:
-            name: 401-joey-dual
+            name: 401-sai-dual
             roles: Api,Peer,Voting
