@@ -3,7 +3,7 @@ services:
     node:
         user: '1000:1000'
         container_name: node
-        image: 'symbolplatform/symbol-server:gcc-1.0.3.4'
+        image: 'symbolplatform/symbol-server:gcc-1.0.3.5'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node NORMAL false
         stop_signal: SIGINT
         working_dir: /symbol-workdir
