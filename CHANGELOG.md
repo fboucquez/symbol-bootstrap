@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## [1.1.9] - Nov-09-2022
+
+**Milestone**: Mainnet(1.0.3.5)
+
+| Package          | Version | Link                                                               |
+| ---------------- |---------| ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.9  | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+- Testnet reset(sainet).
+- Update to [Catapult Client v1.0.3.5](https://github.com/symbol/symbol/releases/tag/client%2Fcatapult%2Fv1.0.3.5)
+
 ## [1.1.8] - Oct-25-2022
 
 **Milestone**: Mainnet(1.0.3.4)
