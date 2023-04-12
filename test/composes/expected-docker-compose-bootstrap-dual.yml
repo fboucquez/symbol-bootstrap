@@ -5,7 +5,7 @@ services:
         environment:
             MONGO_INITDB_DATABASE: catapult
         container_name: db
-        image: 'mongo:4.4.3-bionic'
+        image: 'mongo:5.0.15'
         command: mongod --dbpath=/dbdata --bind_ip=db --wiredTigerCacheSizeGB 2
         stop_signal: SIGINT
         working_dir: /docker-entrypoint-initdb.d
@@ -15,7 +15,7 @@ services:
     node:
         user: '1000:1000'
         container_name: node
-        image: 'symbolplatform/symbol-server:gcc-1.0.3.5'
+        image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node NORMAL true
         stop_signal: SIGINT
         working_dir: /symbol-workdir
@@ -31,7 +31,7 @@ services:
     broker:
         user: '1000:1000'
         container_name: broker
-        image: 'symbolplatform/symbol-server:gcc-1.0.3.5'
+        image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker NORMAL
         stop_signal: SIGINT
@@ -46,7 +46,7 @@ services:
         user: '1000:1000'
         environment:
           npm_config_cache: /symbol-workdir
-        image: 'symbolplatform/symbol-rest:2.4.2'
+        image: 'symbolplatform/symbol-rest:2.4.3'
         command: npm start --prefix /app /symbol-workdir/rest.json
         stop_signal: SIGINT
         working_dir: /symbol-workdir

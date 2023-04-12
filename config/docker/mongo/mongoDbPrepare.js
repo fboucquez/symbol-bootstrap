@@ -40,7 +40,7 @@
     db.transactions.createIndex({ 'transaction.deadline': -1 });
     db.transactions.createIndex({ 'transaction.cosignatures.signerPublicKey': 1 }, makeSparse('transaction.cosignatures.signerPublicKey'));
     db.transactions.createIndex({ 'transaction.id': 1, 'transaction.type': 1 }, makeSparse('transaction.id'));
-    db.transactions.createIndex({ 'transaction.mosaics.id': 1});
+    db.transactions.createIndex({ 'transaction.mosaics.id': 1 });
 
     db.createCollection('transactionStatements');
     db.transactionStatements.createIndex(

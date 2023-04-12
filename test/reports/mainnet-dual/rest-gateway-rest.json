@@ -54,7 +54,8 @@
     "tlsCaCertificatePath": "/symbol-workdir/api-node-config/cert/ca.cert.pem",
     "timeout": 1000,
     "networkPropertyFilePath": "/symbol-workdir/api-node-config/config-network.properties",
-    "nodePropertyFilePath": "/symbol-workdir/api-node-config/config-node.properties"
+    "nodePropertyFilePath": "/symbol-workdir/api-node-config/config-node.properties",
+    "inflationPropertyFilePath": "/symbol-workdir/api-node-config/config-inflation.properties"
   },
   "websocket": {
     "mq": {
