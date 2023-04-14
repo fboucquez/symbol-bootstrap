@@ -24,4 +24,4 @@ EXAMPLE
   $ symbol-bootstrap stop
 ```
 
-_See code: [src/commands/stop.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.7/src/commands/stop.ts)_
+_See code: [src/commands/stop.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.11/src/commands/stop.ts)_

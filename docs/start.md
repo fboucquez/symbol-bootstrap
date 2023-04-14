@@ -101,4 +101,4 @@ EXAMPLES
   $ echo "$MY_ENV_VAR_PASSWORD" | symbol-bootstrap start -p testnet -a dual
 ```
 
-_See code: [src/commands/start.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.7/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.11/src/commands/start.ts)_

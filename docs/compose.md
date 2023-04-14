@@ -38,4 +38,4 @@ EXAMPLE
   $ symbol-bootstrap compose
 ```
 
-_See code: [src/commands/compose.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.7/src/commands/compose.ts)_
+_See code: [src/commands/compose.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.11/src/commands/compose.ts)_

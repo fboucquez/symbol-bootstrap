@@ -39,4 +39,4 @@ EXAMPLE
   $ symbol-bootstrap wizard
 ```
 
-_See code: [src/commands/wizard.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.7/src/commands/wizard.ts)_
+_See code: [src/commands/wizard.ts](https://github.com/fboucquez/symbol-bootstrap/blob/v1.1.11/src/commands/wizard.ts)_
