@@ -17,6 +17,12 @@ Update the following packages:
 - [Rest 2.4.3](https://github.com/symbol/symbol/releases/tag/rest%2Fv2.4.3)
 - MongoDB 5.0.15
 - https-portal 1.23.0
+- update uncirculating account public keys
+- add new indexes to MongoDB 
+  - transaction.mosaics.id
+  - statement.receipts.targetAddress 
+  - statement.receipts.senderAddress
+
 
 ## [1.1.9] - Nov-09-2022
 
