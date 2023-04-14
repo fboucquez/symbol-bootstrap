@@ -645,7 +645,7 @@ export class ConfigService {
                     apiNodeConfigFolder,
                     join(moveTo, 'api-node-config'),
                     [],
-                    ['config-network.properties', 'config-node.properties'],
+                    ['config-network.properties', 'config-node.properties', 'config-inflation.properties'],
                 );
                 await HandlebarsUtils.generateConfiguration(
                     {},

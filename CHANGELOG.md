@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## [1.1.10] - Apr-14-2023
+
+**Milestone**: Mainnet(1.0.3.6)
+
+| Package          | Version | Link                                                               |
+| ---------------- |---------| ------------------------------------------------------------------ |
+| Symbol Bootstrap | v1.1.10 | [symbol-bootstrap](https://www.npmjs.com/package/symbol-bootstrap) |
+
+Update the following packages:
+
+- [Catapult Client v1.0.3.6](https://github.com/symbol/symbol/releases/tag/client%2Fcatapult%2Fv1.0.3.6)
+- [Rest 2.4.3](https://github.com/symbol/symbol/releases/tag/rest%2Fv2.4.3)
+- MongoDB 5.0.15
+- https-portal 1.23.0
+- update uncirculating account public keys
+- add new indexes to MongoDB 
+  - transaction.mosaics.id
+  - statement.receipts.targetAddress 
+  - statement.receipts.senderAddress
+
+
 ## [1.1.9] - Nov-09-2022
 
 **Milestone**: Mainnet(1.0.3.5)
