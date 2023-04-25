@@ -227,6 +227,8 @@ restProtocol: HTTP
 restSSLPath: '/symbol-workdir'
 restSSLKeyFileName: 'restSSL.key'
 restSSLCertificateFileName: 'restSSL.crt'
+restNodeMetadata:
+  _info: "Node metadata"
 statisticsServicePeerFilter: ''
 statisticsServicePeerLimit: 50
 statisticsServiceRestFilter: suggested
