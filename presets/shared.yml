@@ -96,6 +96,10 @@ maxWriterThreads: 8
 maxDropBatchSize: 10
 writeTimeout: 10m
 
+# stop grace periods
+nodeStopGracePeriod: '300s'
+brokerStopGracePeriod: '20s'
+
 #Peer List configuration
 peersP2PListLimit: 10
 peersApiListLimit: 10
@@ -232,3 +236,4 @@ treasuryReissuanceTransactionSignatures_has_items: false
 corruptAggregateTransactionHashes_has_items: false
 treasuryReissuanceTransactionSignatures: []
 corruptAggregateTransactionHashes: []
+

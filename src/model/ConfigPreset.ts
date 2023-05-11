@@ -31,6 +31,7 @@ export interface DockerServicePreset {
     excludeDockerService?: boolean;
     compose?: DockerComposeService;
     dockerComposeDebugMode?: boolean;
+    stopGracePeriod?: string;
 }
 
 export interface CurrencyDistribution {
@@ -254,6 +255,8 @@ export interface NodeConfigPreset {
     caCertificateExpirationInDays: number;
     nodeCertificateExpirationInDays: number;
     certificateExpirationWarningInDays: number;
+    nodeStopGracePeriod: string;
+    brokerStopGracePeriod: string;
 }
 
 export interface NodePreset extends DockerServicePreset, Partial<NodeConfigPreset> {

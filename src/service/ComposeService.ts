@@ -130,6 +130,9 @@ export class ComposeService {
                 service.hostname = servicePreset.host;
                 service.networks!.default.aliases = [servicePreset.host];
             }
+            if (servicePreset.stopGracePeriod) {
+                service.stop_grace_period = servicePreset.stopGracePeriod;
+            }
             if (servicePreset.ipv4_address) {
                 service.networks!.default.ipv4_address = servicePreset.ipv4_address;
             }
@@ -194,20 +197,29 @@ export class ComposeService {
                         vol(`../${targetNodesFolder}/${n.name}`, nodeWorkingDirectory, false),
                         vol(`./server`, nodeCommandsDirectory, true),
                     ];
-                    const nodeService = await resolveService(n, {
-                        user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
-                        container_name: n.name,
-                        image: presetData.symbolServerImage,
-                        command: serverCommand,
-                        stop_signal: 'SIGINT',
-                        stop_grace_period: '300s',
-                        working_dir: nodeWorkingDirectory,
-                        restart: restart,
-                        ports: resolvePorts(portConfigurations),
-                        volumes: volumes,
-                        depends_on: serverDependsOn,
-                        ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
-                    });
+                    const nodeService = await resolveService(
+                        {
+                            ipv4_address: n.ipv4_address,
+                            openPort: n.openPort,
+                            excludeDockerService: n.excludeDockerService,
+                            host: n.host,
+                            compose: n.compose,
+                            stopGracePeriod: n.nodeStopGracePeriod || presetData.nodeStopGracePeriod,
+                        },
+                        {
+                            user: serverDebugMode === debugFlag ? undefined : user, // if debug on, run as root
+                            container_name: n.name,
+                            image: presetData.symbolServerImage,
+                            command: serverCommand,
+                            stop_signal: 'SIGINT',
+                            working_dir: nodeWorkingDirectory,
+                            restart: restart,
+                            ports: resolvePorts(portConfigurations),
+                            volumes: volumes,
+                            depends_on: serverDependsOn,
+                            ...this.resolveDebugOptions(presetData.dockerComposeDebugMode, n.dockerComposeDebugMode),
+                        },
+                    );
 
                     services.push(nodeService);
                     if (n.brokerName) {
@@ -219,6 +231,7 @@ export class ComposeService {
                                     excludeDockerService: n.brokerExcludeDockerService,
                                     host: n.brokerHost,
                                     compose: n.brokerCompose,
+                                    stopGracePeriod: n.brokerStopGracePeriod || presetData.brokerStopGracePeriod,
                                 },
                                 {
                                     user: brokerDebugMode === debugFlag ? undefined : user, // if debug on, run as root
@@ -228,7 +241,6 @@ export class ComposeService {
                                     command: brokerCommand,
                                     ports: resolvePorts([{ internalPort: 7902, openPort: n.brokerOpenPort }]),
                                     stop_signal: 'SIGINT',
-                                    stop_grace_period: '20s',
                                     restart: restart,
                                     volumes: nodeService.volumes,
                                     depends_on: brokerDependsOn,
