@@ -318,6 +318,7 @@ export interface GatewayConfigPreset {
     restProtocol: 'HTTPS' | 'HTTP';
     restExtensions: string;
     restUncirculatingAccountPublicKeys: string;
+    restNodeMetadata: Map<string, any>;
     restSSLPath: string;
     restSSLKeyFileName: string;
     restSSLCertificateFileName: string;
