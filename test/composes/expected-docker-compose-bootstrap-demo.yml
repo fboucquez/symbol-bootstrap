@@ -22,6 +22,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker node DEBUG true
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         ports:
@@ -43,6 +44,7 @@ services:
         working_dir: /symbol-workdir
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data broker server broker DEBUG
         stop_signal: SIGINT
+        stop_grace_period: 20s
         restart: 'on-failure:2'
         volumes:
             - '../nodes/node:/symbol-workdir:rw'

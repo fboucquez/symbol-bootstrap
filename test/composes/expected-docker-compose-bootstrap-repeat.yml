@@ -62,6 +62,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker peer-node-0 NORMAL false
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         ports:
@@ -80,6 +81,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker peer-node-1 NORMAL false
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         ports:
@@ -98,6 +100,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker peer-node-2 NORMAL false
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         ports:
@@ -116,6 +119,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker api-node-0 NORMAL true
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         volumes:
@@ -135,6 +139,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker api-node-1 NORMAL true
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         volumes:
@@ -154,6 +159,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker api-node-2 NORMAL true
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         volumes:
@@ -173,6 +179,7 @@ services:
         image: 'symbolplatform/symbol-server:gcc-1.0.3.6'
         command: /bin/bash /symbol-commands/start.sh /usr/catapult ./data server broker api-node-3 NORMAL true
         stop_signal: SIGINT
+        stop_grace_period: 300s
         working_dir: /symbol-workdir
         restart: 'on-failure:2'
         volumes:
@@ -195,6 +202,7 @@ services:
         ports:
             - '8002:7902'
         stop_signal: SIGINT
+        stop_grace_period: 20s
         restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node-0:/symbol-workdir:rw'
@@ -210,6 +218,7 @@ services:
         ports:
             - '8003:7902'
         stop_signal: SIGINT
+        stop_grace_period: 20s
         restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node-1:/symbol-workdir:rw'
@@ -225,6 +234,7 @@ services:
         ports:
             - '8004:7902'
         stop_signal: SIGINT
+        stop_grace_period: 20s
         restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node-2:/symbol-workdir:rw'
@@ -240,6 +250,7 @@ services:
         ports:
             - '8005:7902'
         stop_signal: SIGINT
+        stop_grace_period: 20s
         restart: 'on-failure:2'
         volumes:
             - '../nodes/api-node-3:/symbol-workdir:rw'

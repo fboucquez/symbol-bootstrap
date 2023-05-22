@@ -246,7 +246,7 @@ ${YamlUtils.toYaml(dockerCompose)}
         await assertDockerCompose(params, 'expected-docker-compose-bootstrap-custom.yml');
     });
 
-    it('Compose mainnet custom services and logging', async () => {
+    it('Compose mainnet custom services, logging and grace period', async () => {
         const params = {
             ...ConfigService.defaultParams,
             ...LinkService.defaultParams,

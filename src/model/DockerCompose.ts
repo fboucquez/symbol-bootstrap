@@ -32,6 +32,7 @@ export interface DockerComposeService {
     hostname?: string;
     environment?: Record<string, string>;
     stop_signal?: string;
+    stop_grace_period?: string;
     volumes?: string[];
     ports?: string[];
     depends_on?: string[];
